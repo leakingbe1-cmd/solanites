@@ -99,12 +99,15 @@ All rules are in `src/config/gameConfig.ts`. The How It Works page reads them di
 | Creature transfer | `transferable-resets-progress` (descriptive only) |
 | Rarity | Rolled from a seed when the egg is granted, hidden until it hatches |
 
-## Connecting to Solana later
+## On-chain holder tracking
 
-1. **Token mint**: copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SOLANITES_MINT` (and optionally `NEXT_PUBLIC_SOLANA_RPC_URL`).
-2. **Wallets**: `services/wallet/injectedWallet.ts` already connects to Phantom, Solflare or Backpack through the injected provider. It is shown as *experimental* in the UI. You can swap in `@solana/wallet-adapter-react` by implementing the `WalletAdapter` interface.
-3. **Balances**: `services/token/rpcBalance.ts` reads the SPL balance with `getTokenAccountsByOwner`. With a real wallet, the Hatchery checks this every 60 seconds. This is **for display only**.
-4. **Authority**: implement `SolaniteRegistry` (`services/registry/types.ts`) as an API client and replace the reducer's claim, hatch and tick logic in `HatcheryProvider` with calls to it. The UI only reads the context, so it doesn't need to change.
+The Hatchery's **Check a wallet** panel calls `GET /api/wallet/:address`. That endpoint reads a public address's real balance of the official token on the server and works out egg eligibility, with no wallet connection. It needs `SOLANITES_MINT` and `SOLANA_RPC_URL` (see `.env.example`). Without them it answers "not configured" instead of guessing.
+
+The audit, architecture, data model, holding policy and remaining phases (history tracking, rewards in dry-run mode, ownership verification, gated distribution) are in [`docs/holder-tracking.md`](docs/holder-tracking.md).
+
+```bash
+npm test             # server tests (address validation, precision, eligibility, RPC failures, API route)
+```
 
 ### Production security requirements
 

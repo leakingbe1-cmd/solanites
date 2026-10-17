@@ -2,14 +2,13 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
 import { gameConfig, TIME, type GameConfig } from "@/config/gameConfig";
-import { chainConfig, isLiveChainConfigured } from "@/config/chain";
 import { advance, eggsAllowed, phaseOf, rollSpecies, type SolaniteRecord } from "@/lib/progression";
 import { randomSeed } from "@/lib/rng";
 import { setSoundEnabled } from "@/lib/sound";
 import { demoWallet } from "@/services/wallet/demoWallet";
 import { injectedWallet } from "@/services/wallet/injectedWallet";
 import type { WalletKind, WalletSession } from "@/services/wallet/types";
-import { RpcBalanceProvider } from "@/services/token/rpcBalance";
+import { ApiBalanceProvider } from "@/services/token/apiBalance";
 
 /**
  * Client-side game state for the PROTOTYPE.
@@ -47,6 +46,7 @@ type Action =
   | { type: "connect"; wallet: WalletSession; demo: boolean }
   | { type: "disconnect" }
   | { type: "balance"; value: number; source: "mock" | "rpc"; error?: string | null }
+  | { type: "balanceError"; error: string }
   | { type: "tick"; deltaMs: number }
   | { type: "claim"; seed: number }
   | { type: "hatch"; id: string }
@@ -114,6 +114,9 @@ function reducer(state: State, action: Action): State {
       return { ...state, wallet: null };
     case "balance":
       return { ...state, balance: action.value, balanceSource: action.source, balanceError: action.error ?? null };
+    case "balanceError":
+      // Keep the last known balance rather than inventing a zero.
+      return { ...state, balanceError: action.error };
     case "tick": {
       if (!state.wallet || action.deltaMs <= 0) return state;
       return { ...state, simNow: state.simNow + action.deltaMs, records: advance(state.records, action.deltaMs, state.balance, cfg) };
@@ -161,7 +164,6 @@ interface HatcheryContextValue extends State {
   isDemo: boolean;
   allowedEggs: number;
   canClaim: boolean;
-  liveChainConfigured: boolean;
   injectedAvailable: boolean;
   connect(kind: WalletKind): Promise<void>;
   disconnect(): void;
@@ -219,21 +221,17 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
     return () => clearInterval(t);
   }, [state.wallet, state.speed]);
 
-  // Live balance polling for real wallets (display only — see RpcBalanceProvider).
+  // Live balance polling for real wallets via the server (display only — see ApiBalanceProvider).
   useEffect(() => {
     if (state.wallet?.kind !== "injected") return;
-    if (!isLiveChainConfigured) {
-      dispatch({ type: "balance", value: 0, source: "rpc", error: "Token mint not configured (NEXT_PUBLIC_SOLANITES_MINT)." });
-      return;
-    }
-    const provider = new RpcBalanceProvider(chainConfig.rpcUrl, chainConfig.tokenMint);
+    const provider = new ApiBalanceProvider();
     const address = state.wallet.address;
     let cancelled = false;
     const load = () =>
       provider
         .getBalance(address)
         .then((v) => !cancelled && dispatch({ type: "balance", value: v, source: "rpc" }))
-        .catch((e: Error) => !cancelled && dispatch({ type: "balance", value: 0, source: "rpc", error: e.message }));
+        .catch((e: Error) => !cancelled && dispatch({ type: "balanceError", error: e.message }));
     load();
     const t = setInterval(load, 60_000);
     return () => {
@@ -256,7 +254,6 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
       isDemo: state.wallet?.kind === "demo",
       allowedEggs: allowed,
       canClaim: !!state.wallet && state.records.length < allowed,
-      liveChainConfigured: isLiveChainConfigured,
       injectedAvailable: typeof window !== "undefined" && injectedWallet.isAvailable(),
       connect,
       disconnect: () => {

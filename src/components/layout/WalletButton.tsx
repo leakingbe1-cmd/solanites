@@ -94,9 +94,7 @@ export function WalletButton({ compact = false }: { compact?: boolean }) {
               <span className="block text-xs leading-relaxed text-mist">
                 {!h.injectedAvailable
                   ? "No wallet extension detected."
-                  : h.liveChainConfigured
-                    ? "Reads your real balance via RPC. Progress is tracked locally and is not authoritative."
-                    : "Token mint not configured yet — balance will read as 0."}
+                  : "Reads your real balance through the Solanites server. Egg progress in this prototype is still simulated."}
               </span>
             </span>
           </button>

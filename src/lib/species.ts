@@ -1,8 +1,5 @@
 import type { RarityId } from "@/config/gameConfig";
 
-export type Archetype = "drake" | "serpent" | "manta" | "phoenix";
-export type HornStyle = "swept" | "crown" | "antler" | "crescent" | "spire";
-export type Marking = "none" | "stripes" | "runes" | "spots" | "constellation" | "veins";
 
 export type Element =
   | "Verdant"
@@ -31,6 +28,10 @@ export interface Palette {
   horn: string;
 }
 
+/**
+ * A Solanite species. Each id has its own body plan renderer in
+ * components/creature/species — see docs/creature-design.md for the matrix.
+ */
 export interface Species {
   id: string;
   dex: number;
@@ -38,9 +39,6 @@ export interface Species {
   epithet: string;
   rarity: RarityId;
   element: Element;
-  archetype: Archetype;
-  horns: HornStyle;
-  marking: Marking;
   palette: Palette;
   personality: [string, string, string];
   lore: string;
@@ -73,9 +71,6 @@ export const SPECIES: Species[] = [
     epithet: "The Patient Sprout",
     rarity: "common",
     element: "Verdant",
-    archetype: "drake",
-    horns: "antler",
-    marking: "spots",
     palette: {
       body: "#3fbf7f",
       bodyLight: "#a8f0c4",
@@ -98,9 +93,6 @@ export const SPECIES: Species[] = [
     epithet: "Tide-Whisperer",
     rarity: "common",
     element: "Tidal",
-    archetype: "serpent",
-    horns: "swept",
-    marking: "stripes",
     palette: {
       body: "#3b9dff",
       bodyLight: "#a9dcff",
@@ -123,9 +115,6 @@ export const SPECIES: Species[] = [
     epithet: "The Pearl Herald",
     rarity: "common",
     element: "Lumen",
-    archetype: "phoenix",
-    horns: "spire",
-    marking: "none",
     palette: {
       body: "#e8ecf7",
       bodyLight: "#ffffff",
@@ -148,9 +137,6 @@ export const SPECIES: Species[] = [
     epithet: "Shallows Drifter",
     rarity: "common",
     element: "Tidal",
-    archetype: "manta",
-    horns: "crescent",
-    marking: "spots",
     palette: {
       body: "#5cc8e8",
       bodyLight: "#c6f4ff",
@@ -173,9 +159,6 @@ export const SPECIES: Species[] = [
     epithet: "Coil of the Canopy",
     rarity: "common",
     element: "Verdant",
-    archetype: "serpent",
-    horns: "antler",
-    marking: "spots",
     palette: {
       body: "#69c95a",
       bodyLight: "#c8f5a8",
@@ -188,7 +171,7 @@ export const SPECIES: Species[] = [
       horn: "#c9a676",
     },
     personality: ["Stubborn", "Warm", "Hungry"],
-    lore: "A Sproutwyrm can coil around a single seed for a hundred epochs, waiting for it to bloom.",
+    lore: "A Sproutwyrm inches forward one segment per epoch, sprouting a new bud each time its keeper holds on.",
     stats: { power: 26, spirit: 24, agility: 28 },
   },
   {
@@ -198,9 +181,6 @@ export const SPECIES: Species[] = [
     epithet: "Little Glacier",
     rarity: "common",
     element: "Frost",
-    archetype: "drake",
-    horns: "spire",
-    marking: "stripes",
     palette: {
       body: "#d9ecff",
       bodyLight: "#ffffff",
@@ -225,9 +205,6 @@ export const SPECIES: Species[] = [
     epithet: "Of the Abyssal Trench",
     rarity: "rare",
     element: "Tidal",
-    archetype: "serpent",
-    horns: "crescent",
-    marking: "veins",
     palette: {
       body: "#1f3fbf",
       bodyLight: "#5d86ff",
@@ -250,9 +227,6 @@ export const SPECIES: Species[] = [
     epithet: "Thunder's Courier",
     rarity: "rare",
     element: "Storm",
-    archetype: "phoenix",
-    horns: "swept",
-    marking: "stripes",
     palette: {
       body: "#5a3bd6",
       bodyLight: "#a58bff",
@@ -275,9 +249,6 @@ export const SPECIES: Species[] = [
     epithet: "Twilight Sentinel",
     rarity: "rare",
     element: "Shadow",
-    archetype: "drake",
-    horns: "swept",
-    marking: "runes",
     palette: {
       body: "#4a2a8c",
       bodyLight: "#8b63d9",
@@ -300,9 +271,6 @@ export const SPECIES: Species[] = [
     epithet: "Shard Glider",
     rarity: "rare",
     element: "Crystal",
-    archetype: "manta",
-    horns: "spire",
-    marking: "veins",
     palette: {
       body: "#1b4fa8",
       bodyLight: "#6fb6ff",
@@ -315,7 +283,7 @@ export const SPECIES: Species[] = [
       horn: "#c9f4ff",
     },
     personality: ["Precise", "Cold", "Elegant"],
-    lore: "Cryovant's wings are grown from lattice ice — every facet a frozen hash.",
+    lore: "Cryovant's bell is grown from lattice ice — every facet a frozen hash, every shard tendril a broken one.",
     stats: { power: 34, spirit: 38, agility: 42 },
   },
   {
@@ -325,9 +293,6 @@ export const SPECIES: Species[] = [
     epithet: "Kiln-Hearted",
     rarity: "rare",
     element: "Ember",
-    archetype: "drake",
-    horns: "crown",
-    marking: "veins",
     palette: {
       body: "#3a1f5c",
       bodyLight: "#7a4aa8",
@@ -352,9 +317,6 @@ export const SPECIES: Species[] = [
     epithet: "The Lantern Wyrm",
     rarity: "epic",
     element: "Lumen",
-    archetype: "drake",
-    horns: "crescent",
-    marking: "runes",
     palette: {
       body: "#2a0f4a",
       bodyLight: "#6a2bb0",
@@ -377,9 +339,6 @@ export const SPECIES: Species[] = [
     epithet: "Veil of Northern Fire",
     rarity: "epic",
     element: "Aether",
-    archetype: "manta",
-    horns: "crescent",
-    marking: "stripes",
     palette: {
       body: "#0b3b44",
       bodyLight: "#1fa59a",
@@ -392,7 +351,7 @@ export const SPECIES: Species[] = [
       horn: "#b9fff6",
     },
     personality: ["Dreamy", "Wise", "Distant"],
-    lore: "Aurorath's wings are curtains of aurora. Where it passes, the sky remembers colour.",
+    lore: "Aurorath swims the upper sky trailing curtains of aurora. Where it passes, the sky remembers colour.",
     stats: { power: 46, spirit: 66, agility: 52 },
   },
   {
@@ -402,9 +361,6 @@ export const SPECIES: Species[] = [
     epithet: "Coil of Living Current",
     rarity: "epic",
     element: "Storm",
-    archetype: "serpent",
-    horns: "spire",
-    marking: "runes",
     palette: {
       body: "#0e1f4d",
       bodyLight: "#2f5fd6",
@@ -427,9 +383,6 @@ export const SPECIES: Species[] = [
     epithet: "Refractor Queen",
     rarity: "epic",
     element: "Crystal",
-    archetype: "phoenix",
-    horns: "crown",
-    marking: "veins",
     palette: {
       body: "#3a1460",
       bodyLight: "#9a4dff",
@@ -454,9 +407,6 @@ export const SPECIES: Species[] = [
     epithet: "Sovereign of the Gilded Slot",
     rarity: "legendary",
     element: "Solar",
-    archetype: "drake",
-    horns: "crown",
-    marking: "runes",
     palette: {
       body: "#e0a52a",
       bodyLight: "#fff1a8",
@@ -479,9 +429,6 @@ export const SPECIES: Species[] = [
     epithet: "The Sunscale Leviathan",
     rarity: "legendary",
     element: "Solar",
-    archetype: "serpent",
-    horns: "swept",
-    marking: "stripes",
     palette: {
       body: "#e8b23a",
       bodyLight: "#fff0b0",
@@ -504,9 +451,6 @@ export const SPECIES: Species[] = [
     epithet: "Phoenix of the Golden Pyre",
     rarity: "legendary",
     element: "Ember",
-    archetype: "phoenix",
-    horns: "crown",
-    marking: "veins",
     palette: {
       body: "#e89a2a",
       bodyLight: "#ffe08a",
@@ -529,9 +473,6 @@ export const SPECIES: Species[] = [
     epithet: "The Gilded Tide",
     rarity: "legendary",
     element: "Solar",
-    archetype: "manta",
-    horns: "crown",
-    marking: "runes",
     palette: {
       body: "#d79a24",
       bodyLight: "#fff0a0",
@@ -556,9 +497,6 @@ export const SPECIES: Species[] = [
     epithet: "Platinum Starforged",
     rarity: "mythic",
     element: "Nebula",
-    archetype: "drake",
-    horns: "spire",
-    marking: "constellation",
     palette: {
       body: "#c9d2ea",
       bodyLight: "#ffffff",
@@ -571,7 +509,7 @@ export const SPECIES: Species[] = [
       horn: "#f4f6ff",
     },
     personality: ["Infinite", "Calm", "Omniscient"],
-    lore: "Astravex's belly is a window into the night sky — the constellations shift to match its keeper's history.",
+    lore: "Astravex's flank is a window into the night sky, and its antlers are constellations that shift to match its keeper's history.",
     stats: { power: 90, spirit: 94, agility: 84 },
   },
   {
@@ -581,9 +519,6 @@ export const SPECIES: Species[] = [
     epithet: "The Celestine Coil",
     rarity: "mythic",
     element: "Aether",
-    archetype: "serpent",
-    horns: "crescent",
-    marking: "constellation",
     palette: {
       body: "#d5dcf2",
       bodyLight: "#ffffff",
@@ -596,7 +531,7 @@ export const SPECIES: Species[] = [
       horn: "#f6f7ff",
     },
     personality: ["Eternal", "Patient", "Cosmic"],
-    lore: "Orbelith is coiled around the edge of known space. Only part of it ever fits on screen.",
+    lore: "Orbelith is a world that learned to watch. Its ring is lined with eyes; its moons are the ones it has adopted.",
     stats: { power: 88, spirit: 98, agility: 82 },
   },
   {
@@ -606,9 +541,6 @@ export const SPECIES: Species[] = [
     epithet: "Wing of the Last Light",
     rarity: "mythic",
     element: "Void",
-    archetype: "manta",
-    horns: "spire",
-    marking: "constellation",
     palette: {
       body: "#bcc4e0",
       bodyLight: "#ffffff",
@@ -621,7 +553,7 @@ export const SPECIES: Species[] = [
       horn: "#eef0ff",
     },
     personality: ["Silent", "Vast", "Merciful"],
-    lore: "Eventide's wings hold the stars that have already burned out. It carries them so they are not forgotten.",
+    lore: "Eventide's head is an eclipse; its glass wings hold the stars that have already burned out, so they are not forgotten.",
     stats: { power: 86, spirit: 92, agility: 96 },
   },
 
@@ -633,9 +565,6 @@ export const SPECIES: Species[] = [
     epithet: "Slot Zero",
     rarity: "secret",
     element: "Prism",
-    archetype: "drake",
-    horns: "crown",
-    marking: "runes",
     palette: {
       body: "#0b0b14",
       bodyLight: "#2a2a44",
@@ -658,9 +587,6 @@ export const SPECIES: Species[] = [
     epithet: "The Unindexed",
     rarity: "secret",
     element: "Void",
-    archetype: "phoenix",
-    horns: "spire",
-    marking: "constellation",
     palette: {
       body: "#f3f3f7",
       bodyLight: "#ffffff",

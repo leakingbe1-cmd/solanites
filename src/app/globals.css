@@ -148,6 +148,9 @@ body {
 .is-animated .sl-bob {
   animation: sl-bob 5s ease-in-out infinite;
 }
+.is-animated .sl-hover {
+  animation: sl-hover 6s ease-in-out infinite;
+}
 .is-animated .sl-flap {
   animation: sl-flap 3.2s ease-in-out infinite;
 }
@@ -207,6 +210,10 @@ body {
 @keyframes sl-bob {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-9px); }
+}
+@keyframes sl-hover {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(-1deg); }
 }
 @keyframes sl-flap {
   0%, 100% { transform: rotate(0deg); }

@@ -42,19 +42,16 @@ Sound is off by default; turn it on with the speaker button in the nav. All soun
 
 ### Creature artwork
 
-The creatures are original vector art drawn by `src/components/creature/CreatureArt.tsx`. There are no external image files.
+The creatures are original vector art drawn in code. There are no image files.
 
-- **Four body types**: Drake, Serpent (coiled), Manta (cosmic ray) and Phoenix (feathered wyrm).
-- **Built from parts**: horn styles, markings (stripes, runes, spots, veins, constellations), a palette and an elemental type per species.
-- **Shared Solgem**: every creature has the same gem on its forehead, so the collection reads as one family.
-- **Four evolution forms**: Hatchling (large head, horn nubs) → Fledgling → Ascendant → Apex (full horns and a halo).
-- **Effects by rarity**:
-  - Epic: glowing rings and runes.
-  - Legendary: rotating golden rays and sparkles.
-  - Mythic: nebula, starfield, orbit rings and star-filled bellies.
-  - Secret: prism rays, glitch effect and scanlines.
+- **One body plan per species.** All 24 are different: a leaf-armoured quadruped, a sail-finned eel, a feather-ringed orb, a manta, an arching inchworm, a crystal fox, a swan-necked serpent, a stilt-legged bird, a moth, a glass jellyfish, an armoured salamander, an angler-wyrm, a sky whale, a ring-coiled serpent, a prism peacock, a rearing dragon, a leviathan around a sun, a phoenix in flight, a gilded turtle, a star-antlered stag, a ringed planet-being, an eclipse dragonfly, a polyhedron construct and an inverted nine-tailed fox.
+- **Shared rendering kit** (`src/components/creature/kit.tsx`). It keeps them in one universe: one key light, the same gradient materials, the same eye construction and exactly one Solgem per creature.
+- **Evolution grows anatomy.** Antlers branch, quills multiply, wings spread and tendrils lengthen from Hatchling to Apex. The Apex form also gains a halo.
+- **Rarity shows in the design.** Commons have simple silhouettes. Legendaries and Mythics are large, ornate or cosmic compositions. The rarity aura adds effects on top.
 
-Eggs (`src/components/egg/EggArt.tsx`) have three shell patterns and five hue sets, chosen by each egg's seed. Cracks appear progressively, the core pulses like a heartbeat, the creature's silhouette shows inside from Stage 3, and each stage has its own animation (wobble, shake, then a violent shake while hatching).
+The full audit and species design matrix are in [`docs/creature-design.md`](docs/creature-design.md).
+
+Eggs (`src/components/egg/EggArt.tsx`) have three shell patterns and five hue sets, chosen by each egg's seed. Cracks appear progressively, the core pulses like a heartbeat, the creature's silhouette shows inside from Stage 3, and each stage has its own animation.
 
 ## Project structure
 
@@ -72,7 +69,9 @@ src/
     token/               ← TokenBalanceProvider interface, MockBalanceProvider, RpcBalanceProvider
     registry/types.ts    ← SolaniteRegistry interface: the future server authority
   state/HatcheryProvider.tsx  ← prototype state + simulated clock (acts as a local registry)
-  components/            ← creature/, egg/, hatchery/, landing/, layout/, ui/
+  components/
+    creature/            ← CreatureArt (shell), kit.tsx (shared look), species/* (one renderer per species)
+    egg/, hatchery/, landing/, layout/, ui/
   data/leaderboard.ts    ← simulated leaderboard
   app/                   ← Next.js routes: / /hatchery /collection /how-it-works /leaderboard
 ```

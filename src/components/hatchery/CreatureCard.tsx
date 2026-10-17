@@ -10,6 +10,7 @@ import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 
+/** A hatched Solanite as a specimen plate. */
 export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpen(): void }) {
   const s = SPECIES_BY_ID[record.speciesId];
   const evo = evolutionOf(record.growthMs, gameConfig);
@@ -20,25 +21,23 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
         sfx.click();
         onOpen();
       }}
-      onMouseEnter={() => sfx.hover()}
-      className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
+      className="group relative flex flex-col bg-void p-6 text-left transition-colors hover:bg-abyss sm:p-8"
     >
-      <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-30 blur-3xl transition group-hover:opacity-60" style={{ background: meta.color }} />
-      <div className="relative flex items-center justify-between">
+      <div className="flex items-baseline justify-between">
         <RarityBadge rarity={s.rarity} />
-        <span className="font-mono text-[10px] uppercase tracking-wider text-mist/70">{record.backed ? evo.name : "Dormant"}</span>
+        <span className="text-[9px] uppercase tracking-[0.24em] text-mist">{record.backed ? evo.name : "Dormant"}</span>
       </div>
-      <div className="relative mx-auto mt-1 aspect-square w-full max-w-[240px] transition-transform duration-500 group-hover:scale-[1.05]">
-        <CreatureArt species={s} stage={evo.stage} />
+      <div className="relative mx-auto my-4 aspect-square w-full max-w-[300px] transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+        <CreatureArt species={s} stage={evo.stage} animated={false} />
       </div>
-      <p className="relative font-display text-xl text-white">{record.nickname ?? s.name}</p>
-      <p className="relative text-xs text-mist">{record.nickname ? s.name : s.epithet}</p>
-      <div className="relative mt-4">
-        <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider text-mist/70">
-          <span>{evo.isMax ? "Apex form" : `→ ${evo.nextName}`}</span>
-          <span>{evo.isMax ? "MAX" : formatDuration(evo.remainingMs)}</span>
+      <p className="font-display text-3xl text-platinum">{record.nickname ?? s.name}</p>
+      <p className="mt-1 text-sm italic text-mist">{record.nickname ? s.name : s.epithet}</p>
+      <div className="mt-6">
+        <div className="flex justify-between text-[10px] uppercase tracking-[0.2em] text-dim">
+          <span>{evo.isMax ? "Apex form" : `Toward ${evo.nextName}`}</span>
+          <span className="sl-num normal-case tracking-normal">{evo.isMax ? "—" : formatDuration(evo.remainingMs)}</span>
         </div>
-        <ProgressBar value={evo.progress} className="mt-2" colors={[meta.color2, meta.color]} />
+        <ProgressBar value={evo.progress} className="mt-3" colors={[meta.color2, meta.color]} />
       </div>
     </button>
   );

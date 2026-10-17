@@ -6,38 +6,28 @@ export function HowSteps() {
     {
       n: "1",
       title: "Hold the qualifying amount",
-      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} in your wallet backs one egg — up to ${gameConfig.eggs.maxEggsPerWallet} per wallet.`,
-      icon: (
-        <path d="M12 3l7 4v6c0 4-3 7-7 8-4-1-7-4-7-8V7l7-4z M9 12l2 2 4-4" />
-      ),
+      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} in your wallet backs one egg, up to ${gameConfig.eggs.maxEggsPerWallet} per wallet.`,
     },
     {
       n: "2",
-      title: "Receive an egg & watch it develop",
-      text: `Your egg incubates while you hold — glowing, cracking and stirring over roughly ${formatDays(gameConfig.eggs.incubationMs)}.`,
-      icon: <path d="M12 3c4 0 7 6 7 11a7 7 0 0 1-14 0c0-5 3-11 7-11z M10 10l2 2-1 3" />,
+      title: "Receive an egg and watch it develop",
+      text: `Your egg incubates while you hold. It warms, fractures and stirs over roughly ${formatDays(gameConfig.eggs.incubationMs)}.`,
     },
     {
       n: "3",
-      title: "Hatch & keep evolving",
+      title: "Hatch and keep evolving",
       text: `Reveal a unique Solanite, then hold to evolve it through ${gameConfig.evolution.names.join(" → ")}.`,
-      icon: <path d="M4 18l4-6 4 3 4-7 4 10 M4 21h16" />,
     },
   ];
   return (
-    <div className="mt-14 grid gap-4 md:grid-cols-3">
-      {steps.map((s) => (
-        <div key={s.n} className="sl-card-hover sl-gradient-border group relative overflow-hidden rounded-3xl bg-white/[0.02] p-7 sm:p-8">
-          <span className="absolute -right-4 -top-10 font-display text-[9rem] font-bold leading-none text-white/[0.03] transition group-hover:text-white/[0.06]">{s.n}</span>
-          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-sol-purple/30 to-sol-green/20 text-white ring-1 ring-white/10">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-              {s.icon}
-            </svg>
-          </div>
-          <h3 className="mt-6 font-display text-xl text-white">{s.title}</h3>
-          <p className="mt-3 leading-relaxed text-mist">{s.text}</p>
-        </div>
+    <ol className="mt-16 grid gap-10 md:grid-cols-3 md:gap-0">
+      {steps.map((s, i) => (
+        <li key={s.n} className={`border-t border-line pt-8 md:pr-10 ${i ? "md:pl-10 md:border-l" : ""}`}>
+          <span className="sl-display text-6xl text-dim">{s.n}</span>
+          <h3 className="mt-6 font-display text-2xl text-platinum">{s.title}</h3>
+          <p className="mt-3 max-w-sm leading-relaxed text-mist">{s.text}</p>
+        </li>
       ))}
-    </div>
+    </ol>
   );
 }

@@ -5,6 +5,7 @@ import { gameConfig, TIME, type GameConfig } from "@/config/gameConfig";
 import { chainConfig, isLiveChainConfigured } from "@/config/chain";
 import { advance, eggsAllowed, phaseOf, rollSpecies, type SolaniteRecord } from "@/lib/progression";
 import { randomSeed } from "@/lib/rng";
+import { resolveSpeciesId } from "@/lib/species";
 import { setSoundEnabled } from "@/lib/sound";
 import { demoWallet } from "@/services/wallet/demoWallet";
 import { injectedWallet } from "@/services/wallet/injectedWallet";
@@ -190,6 +191,9 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
     } catch {
       /* storage unavailable — start fresh */
     }
+    // Species retired in the visual redesign map to a same-rarity replacement.
+    if (saved.records) saved.records = saved.records.map((r) => ({ ...r, speciesId: resolveSpeciesId(r.speciesId) }));
+    if (saved.discovered) saved.discovered = Array.from(new Set(saved.discovered.map(resolveSpeciesId)));
     dispatch({ type: "hydrate", state: { ...saved, hydrated: true, balanceError: null } });
   }, []);
 

@@ -3,9 +3,9 @@ import type { RarityId } from "@/config/gameConfig";
 export interface RarityMeta {
   id: RarityId;
   label: string;
-  /** Primary accent colour. */
+  /** Tier accent — used sparingly: a dot, a hairline, a label. */
   color: string;
-  /** Secondary accent for gradients. */
+  /** Secondary tone for gradients. */
   color2: string;
   glow: string;
   tagline: string;
@@ -16,54 +16,54 @@ export const RARITIES: Record<RarityId, RarityMeta> = {
   common: {
     id: "common",
     label: "Common",
-    color: "#9fe8c8",
-    color2: "#7cc4ff",
-    glow: "rgba(140, 230, 200, 0.35)",
-    tagline: "Born of morning dew and quiet validators.",
+    color: "#aab8ae",
+    color2: "#7f8c86",
+    glow: "rgba(170, 184, 174, 0.18)",
+    tagline: "Quiet creatures of stone, moss and shallow water.",
     order: 0,
   },
   rare: {
     id: "rare",
     label: "Rare",
-    color: "#5b8cff",
-    color2: "#a26bff",
-    glow: "rgba(110, 120, 255, 0.45)",
-    tagline: "Elemental anomalies drawn from deep currents.",
+    color: "#86a3ff",
+    color2: "#5b6fd6",
+    glow: "rgba(120, 150, 255, 0.22)",
+    tagline: "Unusual anatomy: obsidian cloaks and living crystal.",
     order: 1,
   },
   epic: {
     id: "epic",
     label: "Epic",
-    color: "#d64bff",
-    color2: "#14f1d9",
-    glow: "rgba(214, 75, 255, 0.5)",
-    tagline: "Living light. They glow from the inside out.",
+    color: "#b79bff",
+    color2: "#7f6ae0",
+    glow: "rgba(170, 140, 255, 0.26)",
+    tagline: "Creatures that make their own light.",
     order: 2,
   },
   legendary: {
     id: "legendary",
     label: "Legendary",
-    color: "#ffc94a",
-    color2: "#ff8a3d",
-    glow: "rgba(255, 196, 74, 0.55)",
-    tagline: "Gilded titans whispered about in every block.",
+    color: "#e2c27e",
+    color2: "#a8843f",
+    glow: "rgba(226, 194, 126, 0.24)",
+    tagline: "Gilded and armoured. Recognised on sight.",
     order: 3,
   },
   mythic: {
     id: "mythic",
     label: "Mythic",
-    color: "#e6ecff",
-    color2: "#8f7bff",
-    glow: "rgba(200, 210, 255, 0.55)",
-    tagline: "Platinum. Cosmic. Older than the genesis slot.",
+    color: "#e4e7f3",
+    color2: "#9aa0c0",
+    glow: "rgba(220, 225, 245, 0.24)",
+    tagline: "Bodies that are not entirely bodies.",
     order: 4,
   },
   secret: {
     id: "secret",
     label: "Secret",
-    color: "#14f195",
-    color2: "#ff3df2",
-    glow: "rgba(20, 241, 149, 0.55)",
+    color: "#86ecca",
+    color2: "#a98bff",
+    glow: "rgba(134, 236, 202, 0.22)",
     tagline: "Not in any registry. Not supposed to exist.",
     order: 5,
   },

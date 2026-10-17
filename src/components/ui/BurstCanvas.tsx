@@ -20,8 +20,8 @@ export function BurstCanvas({ colors, count = 160, trigger }: { colors: string[]
     const cy = h / 2;
     const ps = Array.from({ length: count }, () => {
       const a = Math.random() * Math.PI * 2;
-      const sp = Math.random() * 9 + 2;
-      return { x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: Math.random() * 2.6 + 0.6, life: 1, decay: Math.random() * 0.012 + 0.006, c: colors[Math.floor(Math.random() * colors.length)] };
+      const sp = Math.random() * 5 + 0.8;
+      return { x: cx, y: cy, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, r: Math.random() * 1.4 + 0.4, life: 1, decay: Math.random() * 0.008 + 0.004, c: colors[Math.floor(Math.random() * colors.length)] };
     });
     let raf = 0;
     const step = () => {
@@ -34,16 +34,16 @@ export function BurstCanvas({ colors, count = 160, trigger }: { colors: string[]
         p.x += p.vx;
         p.y += p.vy;
         p.vx *= 0.965;
-        p.vy = p.vy * 0.965 + 0.02;
+        p.vy = p.vy * 0.965 - 0.004;
         p.life -= p.decay;
         ctx.globalAlpha = Math.max(0, p.life);
         ctx.fillStyle = p.c;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
-        ctx.globalAlpha = Math.max(0, p.life) * 0.2;
+        ctx.globalAlpha = Math.max(0, p.life) * 0.08;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2);
+        ctx.arc(p.x, p.y, p.r * 4, 0, Math.PI * 2);
         ctx.fill();
       }
       if (alive) raf = requestAnimationFrame(step);

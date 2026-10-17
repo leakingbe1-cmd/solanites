@@ -5,12 +5,11 @@ import { CreatureArt } from "@/components/creature/CreatureArt";
 import { CreatureDetail } from "@/components/creature/CreatureDetail";
 import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { RarityBadge } from "@/components/ui/RarityBadge";
 import { useHatchery } from "@/state/HatcheryProvider";
 import type { RarityId } from "@/config/gameConfig";
 import { evolutionOf } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
+import { SPECIES, type Element, type Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 
 /** Mythic and Secret entries stay classified until the viewer hatches one. */
@@ -45,54 +44,60 @@ export default function CollectionPage() {
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[600px]" />
-      <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+      <div className="relative mx-auto max-w-7xl px-4 pb-28 sm:px-6 lg:px-10">
+        <div className="flex flex-col justify-between gap-10 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Solanidex</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Collection</h1>
-            <p className="mt-4 max-w-xl text-mist">Every known Solanite, catalogued by the Hatchery. Some signatures remain classified — the only way to reveal them is to hatch one yourself.</p>
+            <p className="sl-label">The Archive</p>
+            <h1 className="sl-display mt-4 text-6xl text-platinum sm:text-7xl">The Collection</h1>
+            <p className="mt-6 max-w-lg leading-relaxed text-mist">Every Solanite the Hatchery has recorded. Some entries hold only a silhouette; the only way to complete them is to hatch one yourself.</p>
           </div>
-          <div className="sl-glass w-full rounded-2xl p-5 lg:w-80">
+          <div className="w-full lg:w-72">
             <div className="flex items-baseline justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your discoveries</p>
-              <p className="font-display text-2xl text-white">
+              <p className="sl-label">Your discoveries</p>
+              <p className="sl-display text-4xl text-platinum">
                 {ownedCount}
-                <span className="text-base text-mist">/{SPECIES.length}</span>
+                <span className="text-xl text-dim"> / {SPECIES.length}</span>
               </p>
             </div>
-            <ProgressBar value={ownedCount / SPECIES.length} className="mt-3" />
+            <ProgressBar value={ownedCount / SPECIES.length} className="mt-4" />
           </div>
         </div>
 
         {/* filters */}
-        <div className="sticky top-16 z-20 -mx-4 mt-10 border-y border-white/5 bg-void/80 px-4 py-3 backdrop-blur-xl lg:top-20">
-          <div className="sl-scrollbar-none flex items-center gap-2 overflow-x-auto">
-            <FilterChip active={rarity === "all"} onClick={() => setRarity("all")}>
+        <div className="sticky top-16 z-20 -mx-4 mt-14 border-y border-line bg-void/90 px-4 backdrop-blur-md sm:-mx-6 sm:px-6 lg:top-20 lg:-mx-10 lg:px-10">
+          <div className="sl-scrollbar-none flex items-center gap-7 overflow-x-auto py-4">
+            <FilterTab active={rarity === "all"} onClick={() => setRarity("all")}>
               All
-            </FilterChip>
+            </FilterTab>
             {RARITY_ORDER.map((r) => (
-              <FilterChip key={r} active={rarity === r} onClick={() => setRarity(r)} color={RARITIES[r].color}>
+              <FilterTab key={r} active={rarity === r} onClick={() => setRarity(r)} color={RARITIES[r].color}>
                 {RARITIES[r].label}
-              </FilterChip>
+              </FilterTab>
             ))}
-            <span className="mx-1 h-6 w-px shrink-0 bg-white/10" />
-            <select value={element} onChange={(e) => setElement(e.target.value as Element | "all")} className="shrink-0 rounded-full border border-white/10 bg-abyss px-3 py-1.5 text-xs text-mist outline-none" aria-label="Element filter">
+            <span className="h-4 w-px shrink-0 bg-line" />
+            <label htmlFor="sl-element" className="sr-only">
+              Element
+            </label>
+            <select id="sl-element" value={element} onChange={(e) => setElement(e.target.value as Element | "all")} className="shrink-0 cursor-pointer bg-transparent text-[11px] uppercase tracking-[0.2em] text-mist outline-none">
               <option value="all">All elements</option>
               {elements.map((el) => (
                 <option key={el} value={el}>
-                  {ELEMENT_GLYPH[el]} {el}
+                  {el}
                 </option>
               ))}
             </select>
-            <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className="shrink-0 rounded-full border border-white/10 bg-abyss px-3 py-1.5 text-xs text-mist outline-none" aria-label="Discovery filter">
-              <option value="all">All statuses</option>
+            <label htmlFor="sl-status" className="sr-only">
+              Discovery status
+            </label>
+            <select id="sl-status" value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className="shrink-0 cursor-pointer bg-transparent text-[11px] uppercase tracking-[0.2em] text-mist outline-none">
+              <option value="all">All entries</option>
               <option value="owned">Discovered by me</option>
               <option value="missing">Not yet discovered</option>
             </select>
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-10 grid grid-cols-1 border-l border-t border-line [&>*]:border-b [&>*]:border-r [&>*]:border-line sm:grid-cols-2 lg:grid-cols-3">
           {list.map((s) => {
             const d = discovery(s);
             const meta = RARITIES[s.rarity];
@@ -104,27 +109,21 @@ export default function CollectionPage() {
                   sfx.click();
                   setOpen(s);
                 }}
-                onMouseEnter={() => sfx.hover()}
-                className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-transparent p-3 text-left hover:border-white/15 sm:p-4"
+                className="group relative flex flex-col bg-void p-6 text-left transition-colors duration-500 hover:bg-abyss sm:p-8"
               >
-                <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${hidden ? "#666" : meta.color}, transparent)` }} />
-                <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-25 blur-3xl transition group-hover:opacity-50" style={{ background: hidden ? "#5b4bff" : meta.color }} />
-                <div className="relative flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
-                  <span className={`font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : hidden ? "Classified" : "Catalogued"}</span>
+                <div className="flex items-baseline justify-between">
+                  <span className="sl-num text-[11px] text-dim">No. {String(s.dex).padStart(3, "0")}</span>
+                  <span className={`text-[9px] uppercase tracking-[0.26em] ${d === "owned" ? "text-platinum" : "text-dim"}`}>{d === "owned" ? "Discovered" : hidden ? "Unrecorded" : "Catalogued"}</span>
                 </div>
-                <div className="relative aspect-square transition-transform duration-500 group-hover:scale-[1.06]">
-                  <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden} animated={!hidden} />
-                  {hidden && <span className="absolute inset-0 grid place-items-center font-display text-3xl text-white/70">?</span>}
+                <div className="relative mx-auto my-6 aspect-square w-full max-w-[320px] transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+                  <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden} animated={false} />
                 </div>
-                <div className="relative">
-                  <p className="truncate font-display text-base text-white sm:text-lg">{hidden ? "???" : s.name}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                    <RarityBadge rarity={s.rarity} hidden={hidden && s.rarity === "secret"} />
-                    {!hidden && <span className="text-[11px] text-mist">{ELEMENT_GLYPH[s.element]} {s.element}</span>}
-                  </div>
-                  <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-mist/50">{bestForm[s.id] !== undefined ? `Your best: ${h.config.evolution.names[bestForm[s.id]]}` : "Evolution: —"}</p>
-                </div>
+                <p className="font-display text-3xl text-platinum">{hidden ? "Unrecorded" : s.name}</p>
+                <p className="mt-2 text-[10px] uppercase tracking-[0.26em]">
+                  <span style={{ color: hidden && s.rarity === "secret" ? "#5c5e6c" : meta.color }}>{hidden && s.rarity === "secret" ? "Unknown" : meta.label}</span>
+                  {!hidden && <span className="text-dim"> · {s.element}</span>}
+                  {bestForm[s.id] !== undefined && <span className="text-dim"> · {h.config.evolution.names[bestForm[s.id]]}</span>}
+                </p>
               </button>
             );
           })}
@@ -139,14 +138,12 @@ export default function CollectionPage() {
   );
 }
 
-function FilterChip({ active, onClick, color, children }: { active: boolean; onClick(): void; color?: string; children: React.ReactNode }) {
+function FilterTab({ active, onClick, color, children }: { active: boolean; onClick(): void; color?: string; children: React.ReactNode }) {
   return (
-    <button
-      onClick={onClick}
-      className={`shrink-0 rounded-full border px-4 py-1.5 text-xs transition ${active ? "border-white/30 bg-white/10 text-white" : "border-white/10 text-mist hover:text-white"}`}
-      style={active && color ? { borderColor: `${color}88`, color, background: `${color}14` } : undefined}
-    >
+    <button onClick={onClick} className={`relative shrink-0 py-1 text-[11px] uppercase tracking-[0.24em] transition-colors ${active ? "text-platinum" : "text-dim hover:text-silver"}`}>
+      {color && <span className="mr-2 inline-block h-[5px] w-[5px] rotate-45 align-middle" style={{ background: color, opacity: active ? 1 : 0.5 }} />}
       {children}
+      {active && <span className="absolute inset-x-0 -bottom-[17px] h-px bg-platinum" />}
     </button>
   );
 }

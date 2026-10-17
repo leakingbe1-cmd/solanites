@@ -33,10 +33,10 @@ export default function HowItWorksPage() {
   return (
     <div className="relative pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
-      <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Rules of the Hatchery</p>
-        <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl">
-          Sustained holding is the only thing that <span className="sl-gradient-text">makes them grow.</span>
+      <div className="relative mx-auto max-w-7xl px-4 pb-28 sm:px-6 lg:px-10">
+        <p className="sl-label">The Rules of the Hatchery</p>
+        <h1 className="sl-display mt-6 max-w-4xl text-5xl text-platinum sm:text-7xl">
+          Sustained holding is the only thing that <span className="italic text-silver">makes them grow.</span>
         </h1>
         <HowSteps />
 
@@ -49,52 +49,52 @@ export default function HowItWorksPage() {
 
         <div id="rules" className="mt-28 scroll-mt-28">
           <SectionHeading eyebrow="Current configuration" title="Gameplay rules.">
-            These are the prototype&apos;s working assumptions. Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-white/80">src/config/gameConfig.ts</code>, and final rules will be announced before launch.
+            These are the prototype&apos;s working assumptions. Every value is configurable in <code className="sl-num text-sm text-silver">src/config/gameConfig.ts</code>, and final rules will be announced before launch.
           </SectionHeading>
-          <div className="mt-10 overflow-hidden rounded-3xl border border-white/[0.07]">
+          <div className="mt-12 border-y border-line">
             {rules.map(([k, v, note]) => (
-              <div key={k} className="grid gap-1 border-b border-white/[0.05] px-5 py-4 last:border-0 sm:grid-cols-[1fr_1.4fr] sm:gap-6 sm:px-7">
+              <div key={k} className="grid gap-1 border-b border-line py-5 last:border-0 sm:grid-cols-[1fr_1.4fr] sm:gap-8">
                 <p className="text-sm text-mist">{k}</p>
                 <div>
-                  <p className="text-sm text-white">{v}</p>
-                  {note && <p className="mt-1 text-xs text-mist/60">{note}</p>}
+                  <p className="text-platinum">{v}</p>
+                  {note && <p className="mt-1 text-xs text-dim">{note}</p>}
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-20 grid gap-4 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] p-6 sm:p-8">
-            <h3 className="font-display text-xl text-white">Hatch probabilities</h3>
-            <p className="mt-2 text-sm text-mist">Rarity is sealed when the egg is granted and revealed when it hatches.</p>
-            <div className="mt-6 space-y-3">
+        <div className="mt-24 grid border-l border-t border-line [&>*]:border-b [&>*]:border-r [&>*]:border-line lg:grid-cols-2">
+          <div className="bg-void p-7 sm:p-10">
+            <h3 className="font-display text-3xl text-platinum">Hatch probabilities</h3>
+            <p className="mt-3 text-sm text-mist">Rarity is sealed when the egg is granted and revealed when it hatches.</p>
+            <div className="mt-8 space-y-4">
               {RARITY_ORDER.map((r) => (
                 <div key={r} className="grid grid-cols-[90px_1fr_56px] items-center gap-3 text-sm">
-                  <span style={{ color: RARITIES[r].color }}>{RARITIES[r].label}</span>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
-                    <div className="h-full rounded-full" style={{ width: `${Math.max(1.5, chances[r] * 100)}%`, background: `linear-gradient(90deg, ${RARITIES[r].color2}, ${RARITIES[r].color})` }} />
+                  <span className="text-xs uppercase tracking-[0.2em]" style={{ color: RARITIES[r].color }}>{RARITIES[r].label}</span>
+                  <div className="h-px bg-white/10">
+                    <div className="h-full" style={{ width: `${Math.max(1.5, chances[r] * 100)}%`, background: `linear-gradient(90deg, ${RARITIES[r].color2}, ${RARITIES[r].color})` }} />
                   </div>
-                  <span className="text-right font-mono text-xs text-white/70">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
+                  <span className="sl-num text-right text-xs text-silver">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-3xl border border-sol-purple/20 bg-sol-purple/[0.04] p-6 sm:p-8">
-            <h3 className="font-display text-xl text-white">Fair &amp; verifiable — by design</h3>
-            <ul className="mt-5 space-y-3 text-sm leading-relaxed text-mist">
-              <li>◇ This prototype runs on <span className="text-white">simulated wallets, balances and timers</span>. Nothing shown is on-chain.</li>
-              <li>◇ In production, eligibility and progression are computed by a server that snapshots on-chain balances — never by browser timers or user-supplied data.</li>
-              <li>◇ Wallet ownership is proven by signing a one-time message, not just by connecting.</li>
-              <li>◇ Rarity is rolled with a commit-reveal scheme so outcomes can&apos;t be predicted or rerolled.</li>
-              <li>◇ Claims are capped server-side at the number of eggs your balance backs.</li>
+          <div className="bg-void p-7 sm:p-10">
+            <h3 className="font-display text-3xl text-platinum">Fair and verifiable by design</h3>
+            <ul className="mt-6 space-y-4 text-sm leading-relaxed text-mist">
+              <li className="border-l border-line pl-4">This prototype runs on <span className="text-platinum">simulated wallets, balances and timers</span>. Nothing shown is on-chain.</li>
+              <li className="border-l border-line pl-4">In production, eligibility and progression are computed by a server that snapshots on-chain balances — never by browser timers or user-supplied data.</li>
+              <li className="border-l border-line pl-4">Wallet ownership is proven by signing a one-time message, not just by connecting.</li>
+              <li className="border-l border-line pl-4">Rarity is rolled with a commit-reveal scheme so outcomes can&apos;t be predicted or rerolled.</li>
+              <li className="border-l border-line pl-4">Claims are capped server-side at the number of eggs your balance backs.</li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-20 text-center">
-          <Link href="/hatchery" className="sl-btn-primary inline-flex items-center gap-3 rounded-full px-9 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
-            ENTER THE HATCHERY →
+        <div className="mt-24 text-center">
+          <Link href="/hatchery" className="sl-btn sl-btn-primary px-9 py-4">
+            Enter the Hatchery →
           </Link>
         </div>
       </div>

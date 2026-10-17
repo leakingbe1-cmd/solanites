@@ -1,38 +1,39 @@
 "use client";
 
 import { EggArt } from "@/components/egg/EggArt";
-import { ParticleField } from "@/components/ui/ParticleField";
 import { useHatchery } from "@/state/HatcheryProvider";
 import { formatNumber } from "@/lib/format";
 
 export function ConnectGate() {
   const h = useHatchery();
   return (
-    <section className="sl-atmosphere relative flex min-h-[100svh] items-center overflow-hidden pt-20">
-      <ParticleField />
-      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2">
-        <div className="mx-auto h-[340px] w-[260px] sm:h-[440px] sm:w-[340px]">
+    <section className="sl-atmosphere relative overflow-hidden pt-24 lg:pt-28">
+      <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-24 pt-8 sm:px-6 md:grid-cols-2 lg:min-h-[calc(100svh-7rem)]">
+        <div className="relative mx-auto h-[360px] w-[280px] sm:h-[460px] sm:w-[360px]">
+          <div className="pointer-events-none absolute left-1/2 top-[-12%] h-[70%] w-[90%] -translate-x-1/2 rounded-full bg-[#b9b6ff]/[0.06] blur-3xl" />
           <EggArt stage={1} seed={2} />
         </div>
         <div className="text-center md:text-left">
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Hatchery</p>
-          <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">Your eggs are sealed until you arrive.</h1>
-          <p className="mt-5 text-lg leading-relaxed text-mist">
+          <p className="sl-label">The Hatchery</p>
+          <h1 className="sl-display mt-6 text-5xl text-platinum sm:text-6xl">
+            Your eggs are sealed <span className="italic text-silver">until you arrive.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-md leading-relaxed text-mist md:mx-0">
             Connect a wallet to see eligibility, claim eggs and watch them incubate. Each {formatNumber(h.config.token.tokensPerEgg)} {h.config.token.symbol} backs one egg.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row md:justify-start">
-            <button onClick={() => h.connect("demo")} className="sl-btn-primary rounded-full px-8 py-4 font-display text-xs font-semibold tracking-[0.2em] text-white">
-              ENTER WITH DEMO WALLET
+          <div className="mt-10 flex flex-col items-center gap-5 sm:flex-row md:justify-start">
+            <button onClick={() => h.connect("demo")} className="sl-btn sl-btn-primary px-8 py-4">
+              Enter with demo wallet
             </button>
             <button
               disabled={!h.injectedAvailable}
               onClick={() => h.connect("injected").catch(() => {})}
-              className="rounded-full border border-white/15 px-7 py-4 text-xs uppercase tracking-[0.2em] text-mist transition enabled:hover:text-white disabled:opacity-40"
+              className="sl-btn text-mist transition-colors enabled:hover:text-platinum disabled:opacity-40"
             >
-              Solana Wallet (experimental)
+              Solana wallet · experimental
             </button>
           </div>
-          <p className="mt-6 max-w-md text-xs leading-relaxed text-amber-200/70 md:mx-0 mx-auto">
+          <p className="mx-auto mt-10 max-w-md border-l border-ember/60 pl-4 text-left text-xs leading-relaxed text-mist md:mx-0">
             The demo wallet is simulated: it has a mock balance of 52,000 tokens and a pre-grown collection so you can explore every stage. Nothing is read from or written to Solana.
           </p>
         </div>

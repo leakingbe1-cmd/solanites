@@ -6,13 +6,13 @@ import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
 import { BurstCanvas } from "@/components/ui/BurstCanvas";
 import { RARITIES } from "@/lib/rarity";
-import { ELEMENT_GLYPH, type Species } from "@/lib/species";
+import type { Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 
 type Phase = "charge" | "burst" | "reveal";
 
 /** Charge-up timing grows with rarity so rare hatches feel heavier. */
-const CHARGE_MS: Record<Species["rarity"], number> = { common: 1800, rare: 2200, epic: 2600, legendary: 3200, mythic: 3600, secret: 4200 };
+const CHARGE_MS: Record<Species["rarity"], number> = { common: 2200, rare: 2600, epic: 3000, legendary: 3600, mythic: 4000, secret: 4600 };
 
 interface HatchRevealProps {
   species: Species;
@@ -22,16 +22,23 @@ interface HatchRevealProps {
   onView(): void;
 }
 
+/**
+ * The hatching event. Darkness, a single light, a trembling egg, a measured
+ * flash, then the creature emerging from shadow. Each tier earns one
+ * signature: a gilded ring (Legendary), a starfield (Mythic), an inversion
+ * (Secret). Particles are reserved for Epic and above.
+ */
 export function HatchReveal({ species, seed, onHatched, onClose, onView }: HatchRevealProps) {
   const [phase, setPhase] = useState<Phase>("charge");
   const [burst, setBurst] = useState(0);
   const meta = RARITIES[species.rarity];
-  const big = ["legendary", "mythic", "secret"].includes(species.rarity);
-  const charge = CHARGE_MS[species.rarity];
+  const tier = species.rarity;
+  const particles = tier === "epic" || tier === "legendary" || tier === "mythic" || tier === "secret";
+  const charge = CHARGE_MS[tier];
 
   useEffect(() => {
     sfx.rumble();
-    const cracks = [0.3, 0.55, 0.75, 0.9].map((f, i) => setTimeout(() => sfx.crack(0.6 + i * 0.15), charge * f));
+    const cracks = [0.35, 0.6, 0.8, 0.93].map((f, i) => setTimeout(() => sfx.crack(0.5 + i * 0.15), charge * f));
     const t1 = setTimeout(() => {
       setPhase("burst");
       setBurst(Date.now());
@@ -40,80 +47,76 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
     }, charge);
     const t2 = setTimeout(() => {
       setPhase("reveal");
-      sfx.reveal(species.rarity);
-    }, charge + 450);
+      sfx.reveal(tier);
+    }, charge + 700);
     return () => [t1, t2, ...cracks].forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const colors = species.rarity === "secret" ? ["#14f195", "#9945ff", "#ff3df2", "#00c2ff", "#ffffff"] : [meta.color, meta.color2, "#ffffff"];
+  const colors = tier === "secret" ? ["#86ecca", "#a98bff", "#ffffff"] : [meta.color, "#ffffff"];
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] overflow-hidden bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
-      {/* rarity atmosphere */}
+    <div className="fixed inset-0 z-[80] overflow-hidden bg-[#030304]" role="dialog" aria-modal="true" aria-label="Hatching">
+      {/* overhead light */}
       <div
-        className="absolute inset-0 transition-opacity duration-1000"
-        style={{ opacity: phase === "reveal" ? 1 : phase === "charge" ? 0.35 : 0.8, background: `radial-gradient(circle at 50% 45%, ${meta.glow}, transparent 60%)` }}
+        className="pointer-events-none absolute left-1/2 top-[-20%] h-[90%] w-[70vmin] -translate-x-1/2 rounded-full blur-3xl transition-opacity duration-[2000ms]"
+        style={{ background: phase === "reveal" ? meta.glow : "rgba(185,182,255,0.06)", opacity: phase === "charge" ? 0.8 : 1 }}
       />
-      {phase === "reveal" && (big || species.rarity === "epic") && (
-        <div
-          className="sl-rays absolute left-1/2 top-[45%] h-[220vmax] w-[220vmax] opacity-50"
-          style={{
-            transform: "translate(-50%, -50%)",
-            background:
-              species.rarity === "secret"
-                ? "repeating-conic-gradient(from 0deg, #14f19533 0deg 6deg, transparent 6deg 18deg, #ff3df233 18deg 24deg, transparent 24deg 36deg)"
-                : `repeating-conic-gradient(from 0deg, ${meta.color}30 0deg 5deg, transparent 5deg 15deg)`,
-            maskImage: "radial-gradient(circle, black 0%, transparent 45%)",
-            WebkitMaskImage: "radial-gradient(circle, black 0%, transparent 45%)",
-          }}
-        />
+      {tier === "mythic" && phase === "reveal" && (
+        <div className="sl-fade-in absolute inset-0 opacity-40" style={{ animationDuration: "3s", backgroundImage: "radial-gradient(1px 1px at 20% 30%, #fff, transparent), radial-gradient(1px 1px at 70% 20%, #fff, transparent), radial-gradient(1px 1px at 40% 70%, #dfe4ff, transparent), radial-gradient(1px 1px at 85% 60%, #fff, transparent), radial-gradient(1px 1px at 10% 80%, #fff, transparent), radial-gradient(1px 1px at 55% 45%, #e6dcff, transparent)", backgroundSize: "340px 340px" }} />
       )}
-      {species.rarity === "mythic" && phase === "reveal" && (
-        <div className="absolute inset-0 opacity-60" style={{ background: "radial-gradient(40rem 30rem at 30% 30%, #6c4bff33, transparent), radial-gradient(40rem 30rem at 70% 60%, #2fa8ff2a, transparent)" }} />
+      {particles && <BurstCanvas colors={colors} count={tier === "epic" ? 70 : 120} trigger={burst} />}
+      {phase !== "charge" && (
+        <div className="sl-flash pointer-events-none absolute inset-0" style={{ background: tier === "secret" ? "#e9fff6" : `radial-gradient(circle at 50% 46%, #ffffff, ${meta.color} 22%, transparent 62%)`, mixBlendMode: tier === "secret" ? "difference" : "normal" }} />
       )}
-      <BurstCanvas colors={colors} count={big ? 320 : 160} trigger={burst} />
-      {phase !== "charge" && <div className="sl-flash pointer-events-none absolute inset-0" style={{ background: `radial-gradient(circle at 50% 45%, #fff, ${meta.color} 30%, transparent 70%)` }} />}
 
       <div className="relative flex h-full flex-col items-center justify-center px-4">
         {phase === "charge" && (
           <div className="flex flex-col items-center">
-            <p className="sl-fade-in mb-6 font-mono text-[11px] uppercase tracking-[0.5em] text-white/60">Something is breaking through…</p>
-            <div className="h-[46vh] max-h-[420px] w-[80vw] max-w-[360px]" style={{ filter: `drop-shadow(0 0 60px ${meta.glow})` }}>
+            <div className="h-[48vh] max-h-[440px] w-[78vw] max-w-[350px]">
               <EggArt stage={4} seed={seed} hatching inside={species} />
             </div>
+            <p className="sl-label sl-fade-in mt-10" style={{ animationDelay: "0.6s" }}>
+              The shell is giving way
+            </p>
           </div>
         )}
 
         {phase === "reveal" && (
-          <div className="flex w-full max-w-xl flex-col items-center text-center">
-            <p className="sl-letter font-display text-xs font-semibold uppercase sm:text-sm" style={{ color: meta.color, textShadow: `0 0 24px ${meta.glow}` }}>
-              {species.rarity === "secret" ? "▚ SECRET ▞" : meta.label}
+          <div className="flex w-full max-w-2xl flex-col items-center text-center">
+            <p className="sl-letter text-[11px] uppercase" style={{ color: meta.color }}>
+              {tier === "secret" ? "Secret · Unindexed" : meta.label}
             </p>
-            <div className="sl-pop relative mt-2 aspect-square w-[78vw] max-w-[400px]" style={{ animationDelay: "0.05s" }}>
-              <CreatureArt species={species} stage={0} />
+            <div className="relative mt-2 aspect-square w-[80vw] max-w-[440px]">
+              {tier === "legendary" && (
+                <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full" aria-hidden>
+                  <circle cx="200" cy="196" r="166" fill="none" stroke={meta.color} strokeOpacity="0.5" strokeWidth="0.8" className="sl-draw" transform="rotate(-90 200 196)" />
+                </svg>
+              )}
+              <div className="sl-emerge absolute inset-0">
+                <CreatureArt species={species} stage={0} showAura={tier !== "legendary"} />
+              </div>
+              <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                <div className="sl-sweep absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              </div>
             </div>
-            <h2 className="sl-fade-up font-display text-4xl font-bold tracking-tight text-white sm:text-5xl" style={{ animationDelay: "0.5s" }}>
+            <h2 className="sl-display sl-fade-up text-6xl text-platinum sm:text-7xl" style={{ animationDelay: "1.4s" }}>
               {species.name}
             </h2>
-            <p className="sl-fade-up mt-2 text-mist" style={{ animationDelay: "0.65s" }}>
+            <p className="sl-fade-up mt-3 font-display text-xl italic text-silver" style={{ animationDelay: "1.6s" }}>
               {species.epithet}
             </p>
-            <div className="sl-fade-up mt-5 flex flex-wrap justify-center gap-2" style={{ animationDelay: "0.8s" }}>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
-                {ELEMENT_GLYPH[species.element]} {species.element}
-              </span>
-              {species.personality.map((p) => (
-                <span key={p} className="rounded-full border border-white/10 px-3 py-1 text-xs text-mist">
-                  {p}
-                </span>
-              ))}
-            </div>
-            <div className="sl-fade-up mt-9 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "1s" }}>
-              <button onClick={onView} className="sl-btn-primary rounded-full px-8 py-3.5 font-display text-xs font-semibold tracking-[0.2em] text-white">
-                MEET YOUR SOLANITE
+            <p className="sl-fade-up mt-5 max-w-md text-sm leading-relaxed text-mist" style={{ animationDelay: "1.8s" }}>
+              {species.anatomy}
+            </p>
+            <p className="sl-fade-up mt-5 text-[10px] uppercase tracking-[0.3em] text-dim" style={{ animationDelay: "1.9s" }}>
+              {species.element} · {species.personality.join(" · ")}
+            </p>
+            <div className="sl-fade-up mt-11 flex flex-col gap-4 sm:flex-row" style={{ animationDelay: "2.2s" }}>
+              <button onClick={onView} className="sl-btn sl-btn-primary px-9 py-4">
+                Meet your Solanite
               </button>
-              <button onClick={onClose} className="rounded-full border border-white/15 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+              <button onClick={onClose} className="sl-btn sl-btn-ghost px-9 py-4">
                 Back to Hatchery
               </button>
             </div>

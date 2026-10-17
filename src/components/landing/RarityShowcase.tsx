@@ -2,47 +2,32 @@ import { CreatureArt } from "@/components/creature/CreatureArt";
 import { gameConfig } from "@/config/gameConfig";
 import { rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES_BY_ID } from "@/lib/species";
+import { speciesOfRarity } from "@/lib/species";
 
-const FEATURED: Record<string, string> = {
-  common: "mossling",
-  rare: "duskwing",
-  epic: "neonyx",
-  legendary: "aurelion",
-  mythic: "astravex",
-  secret: "genesis",
-};
-
+/** One specimen per tier, presented as archive plates. */
 export function RarityShowcase() {
   const chances = rarityChances(gameConfig);
   return (
-    <div className="mt-14 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
+    <div className="mt-16 grid grid-cols-1 border-l border-t border-line [&>*]:border-b [&>*]:border-r [&>*]:border-line sm:grid-cols-2 lg:grid-cols-3">
       {RARITY_ORDER.map((r) => {
         const meta = RARITIES[r];
-        const s = SPECIES_BY_ID[FEATURED[r]];
+        const s = speciesOfRarity(r)[0];
         const secret = r === "secret";
         const c = chances[r] * 100;
         return (
-          <div
-            key={r}
-            className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-transparent p-4"
-            style={{ boxShadow: `inset 0 1px 0 ${meta.color}22` }}
-          >
-            <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} />
-            <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover:opacity-80" style={{ background: meta.color }} />
-            <div className="relative aspect-square transition-transform duration-500 group-hover:scale-[1.06]">
-              <CreatureArt species={s} stage={2} silhouette={secret} showAura={!secret} />
-              {secret && <span className="absolute inset-0 grid place-items-center font-display text-4xl text-white/80">?</span>}
-            </div>
-            <div className="relative mt-2">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: meta.color }}>
+          <article key={r} className="group relative bg-void p-6 sm:p-8">
+            <div className="flex items-baseline justify-between">
+              <span className="text-[10px] uppercase tracking-[0.34em]" style={{ color: meta.color }}>
                 {meta.label}
-              </p>
-              <p className="mt-1 font-display text-base text-white">{secret ? "Classified" : s.name}</p>
-              <p className="mt-2 text-xs leading-relaxed text-mist/80">{meta.tagline}</p>
-              <p className="mt-3 font-mono text-[11px] text-white/50">{c < 1 ? c.toFixed(1) : Math.round(c)}% hatch rate</p>
+              </span>
+              <span className="sl-num text-[11px] text-dim">{c < 1 ? c.toFixed(1) : Math.round(c)}%</span>
             </div>
-          </div>
+            <div className="relative mx-auto my-4 aspect-square w-full max-w-[300px] transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+              <CreatureArt species={s} stage={secret ? 2 : 3} silhouette={secret} showAura={!secret} animated={false} />
+            </div>
+            <h3 className="font-display text-3xl text-platinum">{secret ? "Classified" : s.name}</h3>
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-mist">{meta.tagline}</p>
+          </article>
         );
       })}
     </div>

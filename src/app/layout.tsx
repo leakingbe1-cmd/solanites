@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/unbounded";
+import "@fontsource/cormorant-garamond/500.css";
+import "@fontsource/cormorant-garamond/500-italic.css";
+import "@fontsource/cormorant-garamond/600.css";
 import "@fontsource-variable/inter";
 import "@fontsource/jetbrains-mono/400.css";
 import "./globals.css";
@@ -13,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#05050a",
+  themeColor: "#060608",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

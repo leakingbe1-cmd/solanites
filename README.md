@@ -33,28 +33,43 @@ Sound is off by default; turn it on with the speaker button in the nav. All soun
 
 ## What's built
 
-- **Landing page**: hero egg with pointer parallax and particles, a strip of creatures, a showcase of the six rarities with live hatch rates, the five-stage lifecycle and the three-step explanation.
-- **Hatchery**: wallet and eligibility status, egg cards with live progress, time held and time left. Click an egg for the stage stepper, progress ring, timers and sealed rarity. Also: claiming eggs (capped by balance), dormant and paused states, the hatch reveal sequence, creature cards with evolution progress, and renaming creatures.
-- **Hatch reveal**: a charge-up that lasts longer for rarer creatures, cracking sounds, a flash and particle burst, then the rarity reveal. Epic and above get light rays, Mythic gets a nebula, and Secret gets prism rays and a glitch effect. Each rarity has its own chord.
-- **Collection**: all 24 species with rarity, element and discovery filters, plus a detail view with all four evolution forms, stats, personality and lore. Mythic and Secret species stay hidden until you hatch one.
+- **Landing page**: a single lit hero egg on a plinth with subtle pointer parallax, a slow procession of creatures, a showcase of the six rarities with live hatch rates, the five-stage lifecycle and the three-step explanation.
+- **Hatchery**: a status line (balance, eligibility, collection, next egg) above an incubation chamber, where the selected egg sits alone under the light with its stage stepper, progress dial, timers and sealed rarity. A rack of egg slots below lets you choose which egg is in the chamber. Also: claiming eggs (capped by balance), dormant and paused states, the hatch reveal sequence, creature cards with evolution progress, and renaming creatures.
+- **Hatch reveal**: darkness and a single light. The egg trembles for longer the rarer it is, the shell gives way in a measured flash, and the creature emerges from shadow under a light sweep. Fine particles appear only for Epic and above. Legendary draws a gilded ring, Mythic fades in a starfield, and Secret inverts the flash. Each rarity has its own chord.
+- **Collection**: all 12 species with rarity, element and discovery filters, plus a detail view with all four evolution forms, stats, personality and lore. Mythic and Secret species stay hidden until you hatch one.
 - **How It Works**: the three steps, the lifecycle, a **live rules table generated from the config**, the hatch probabilities, and notes on how a production version would be secured.
 - **Leaderboard**: Most Evolved, Longest Holders and Rarest Discoveries, with a podium. Uses deterministic simulated data.
 
+### Art direction
+
+The site has the feel of an obsidian archive: near-black grounds, platinum type set in Cormorant Garamond and Inter, and one restrained violet/electric-blue light. Hairline rules replace cards and glows. Effects are kept for creatures and for the hatching moment.
+
 ### Creature artwork
 
-The creatures are original vector art drawn by `src/components/creature/CreatureArt.tsx`. There are no external image files.
+There are 12 species, two per rarity tier. Every species has **its own body plan**, so rarity comes from anatomy and material, not from recolouring:
 
-- **Four body types**: Drake, Serpent (coiled), Manta (cosmic ray) and Phoenix (feathered wyrm).
-- **Built from parts**: horn styles, markings (stripes, runes, spots, veins, constellations), a palette and an elemental type per species.
-- **Shared Solgem**: every creature has the same gem on its forehead, so the collection reads as one family.
-- **Four evolution forms**: Hatchling (large head, horn nubs) → Fledgling → Ascendant → Apex (full horns and a halo).
-- **Effects by rarity**:
-  - Epic: glowing rings and runes.
-  - Legendary: rotating golden rays and sparkles.
-  - Mythic: nebula, starfield, orbit rings and star-filled bellies.
-  - Secret: prism rays, glitch effect and scanlines.
+| Tier | Species | Body plan |
+|---|---|---|
+| Common | Mossling | Low armoured shellback; a garden grows on its slate shell |
+| Common | Driftfin | Veil-finned aerial eel |
+| Rare | Duskwing | Obsidian raptor perched on a ledge; its wings unfold only at Apex |
+| Rare | Cryovant | Stag with living crystal antlers and spine |
+| Epic | Neonyx | Rising hooded serpent with lantern organs |
+| Epic | Aurorath | Sky-ray with an aurora held inside its membranes |
+| Legendary | Aurelion | The archive's only true dragon: obsidian and gilded armour |
+| Legendary | Pyraurum | Crane-like phoenix crowned with blade feathers |
+| Mythic | Astravex | No continuous body: a platinum mask and armour orbiting a star |
+| Mythic | Orbelith | Leviathan whose body is a window into space |
+| Secret | GENESIS | Geometric being built from three slanted bars |
+| Secret | NULLBORN | Inverted, many-eyed moth |
 
-Eggs (`src/components/egg/EggArt.tsx`) have three shell patterns and five hue sets, chosen by each egg's seed. Cracks appear progressively, the core pulses like a heartbeat, the creature's silhouette shows inside from Stage 3, and each stage has its own animation (wobble, shake, then a violent shake while hatching).
+All the art is vector, drawn in code (`src/components/creature/species/*`). A shared kit (`kit.tsx`) gives every species the same lighting: key light from the upper left, a rim light, small intense eyes and a surface texture. Evolution grows anatomy (crests, crystals, armour, feathers, orbiting plates) rather than just scaling the drawing.
+
+The eggs (`src/components/egg/EggArt.tsx`) are drawn as physical obsidian. The surface relief comes from an SVG lighting filter, with a fine platinum inlay and fissures that hold more light at each stage.
+
+**Asset note:** these are hand-built vector illustrations, not painted or 3D-rendered artwork. For a launch-grade collection, commission painted or rendered key art for each species in this same art direction, starting with the Legendary, Mythic and Secret tiers. `CreatureArt` can then switch to those images, keeping the vector versions as small thumbnails.
+
+Species retired in the redesign are mapped to a replacement of the same rarity (`LEGACY_SPECIES` in `src/lib/species.ts`), so collections saved before the redesign still load. Rarity weights and every other rule are unchanged.
 
 ## Project structure
 
@@ -65,7 +80,7 @@ src/
     chain.ts             ← token mint + RPC URL from env vars
   lib/
     progression.ts       ← pure rules engine: advance(), eggStage(), evolutionOf(), rollSpecies()
-    species.ts           ← the 24 species (palette, archetype, lore, stats)
+    species.ts           ← the 12 species (body plan, palette, lore, stats)
     rarity.ts, rng.ts, format.ts, sound.ts
   services/
     wallet/              ← WalletAdapter interface, demoWallet, injectedWallet (experimental)
@@ -77,7 +92,7 @@ src/
   app/                   ← Next.js routes: / /hatchery /collection /how-it-works /leaderboard
 ```
 
-Stack: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, self-hosted fonts (Unbounded, Inter, JetBrains Mono).
+Stack: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, self-hosted fonts (Cormorant Garamond, Inter, JetBrains Mono).
 
 ## Gameplay rules (prototype assumptions)
 

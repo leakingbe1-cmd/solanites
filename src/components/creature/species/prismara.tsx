@@ -46,7 +46,7 @@ function fan(c: Ctx, key: string, cx: number, cy: number, n: number, from: numbe
 /** Thin spectral beams refracted out of the fan. */
 function beams(c: Ctx, key: string, cx: number, cy: number, n: number, from: number, to: number, r: number, o: number) {
   return (
-    <g className="sl-twinkle" opacity={o} key={key}>
+    <g className="sl-twinkle" opacity={o} key={key} filter={c.u("blur8")}>
       {Array.from({ length: n }, (_, k) => {
         const a = from + ((to - from) * (k + 0.5)) / n;
         const [x1, y1] = polar(cx, cy, r, a - 1.6);
@@ -131,7 +131,13 @@ function Thigh({ c, x, y, w, h }: { c: Ctx; x: number; y: number; w: number; h: 
         fill={u("body")}
         {...rim(c, 1)}
       />
-      <path d={`M${round(x - w * 0.7)},${round(y + h * 0.62)} c3,4 7,4 10,0 M${round(x + w * 0.05)},${round(y + h * 0.66)} c3,4 7,4 10,0 M${round(x - w * 0.35)},${round(y + h * 0.88)} c3,3 6,3 9,0`} fill="none" stroke={p.bodyDark} strokeOpacity="0.35" strokeWidth="1.1" />
+      <path
+        d={`M${round(x - w * 0.7)},${round(y + h * 0.62)} c3,4 7,4 10,0 M${round(x + w * 0.05)},${round(y + h * 0.66)} c3,4 7,4 10,0 M${round(x - w * 0.35)},${round(y + h * 0.88)} c3,3 6,3 9,0`}
+        fill="none"
+        stroke={p.bodyDark}
+        strokeOpacity="0.35"
+        strokeWidth="1.1"
+      />
     </g>
   );
 }
@@ -170,8 +176,8 @@ const evolved: Renderer = {
       <g>
         {/* the display fan: a slow sway */}
         <g className="sl-sway-slow" style={{ transformOrigin: "200px 252px" }}>
-          {beams(c, "b", 200, 252, 14, -172, -8, 168, 0.12)}
-          <path d="M200,252 L64,252 A136,136 0 0 1 336,252 Z" fill={p.wing} opacity="0.18" />
+          {beams(c, "b", 200, 252, 14, -172, -8, 160, 0.3)}
+          <circle cx="200" cy="252" r="120" fill={u("light")} opacity="0.1" />
           {fan(c, "f", 200, 252, 13, -174, -6, 140, 13)}
           {/* inner covert ring hiding the quills */}
           {fan(c, "i", 200, 252, 9, -164, -16, 62, 9, 0.95, 3)}
@@ -199,7 +205,8 @@ const evolved: Renderer = {
         <path d={scallops(200, 160, [10, 13], 7, 3)} fill="none" stroke={p.wingEdge} strokeOpacity="0.7" strokeWidth="1.1" />
         {/* head */}
         <path d="M200,84 C215,84 223,98 223,110 C223,124 212,132 200,132 C188,132 177,124 177,110 C177,98 185,84 200,84 Z" fill={u("body")} {...rim(c)} />
-        <path d="M183,116 C188,121 194,122 197,119 M217,116 C212,121 206,122 203,119" fill="none" stroke={p.belly} strokeOpacity="0.75" strokeWidth="1.8" strokeLinecap="round" />
+        <ellipse cx="189" cy="108" rx="9" ry="7" fill={p.belly} opacity="0.28" transform="rotate(-14 189 108)" />
+        <ellipse cx="211" cy="108" rx="9" ry="7" fill={p.belly} opacity="0.28" transform="rotate(14 211 108)" />
         <Spec x={192} y={92} rx={7} ry={3} rot={-20} o={0.42} />
         <Eye c={c} x={190} y={108} r={4.8} kind="almond" flip />
         <Eye c={c} x={210} y={108} r={4.8} kind="almond" />
@@ -232,10 +239,10 @@ function eggling(c: Ctx) {
   return (
     <g>
       {/* the single first shard, peeking up from the tail */}
-      <g transform="translate(234 312)">
+      <g transform="translate(232 318)">
         <g className="sl-sway" style={{ transformOrigin: "0px 0px" }}>
-          <g transform="rotate(-58)">
-            <Prism c={c} l={66} w={11} i={4} />
+          <g transform="rotate(-50)">
+            <Prism c={c} l={104} w={14} i={4} />
           </g>
         </g>
       </g>
@@ -260,7 +267,6 @@ function eggling(c: Ctx) {
       {/* big round head */}
       {fluff(c, 200, 208, 50, 48, 12, 8, 200, 340)}
       <circle cx="200" cy="212" r="54" fill={u("body")} {...rim(c)} />
-      <path d="M156,236 C166,256 186,264 200,264 C214,264 234,256 244,236 C232,248 214,252 200,252 C186,252 168,248 156,236 Z" fill={p.belly} opacity="0.6" />
       <Spec x={180} y={176} rx={20} ry={7} rot={-18} o={0.4} />
       {/* crown bump: three tiny crystal nubs */}
       <path d="M190,162 L186,150 L195,159 Z M210,162 L214,150 L205,159 Z M195,160 L200,144 L205,160 Z" fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.8" strokeWidth="0.9" strokeLinejoin="round" />
@@ -285,7 +291,6 @@ function hatchling(c: Ctx) {
     <g>
       {/* small fan of five shards */}
       <g className="sl-sway" style={{ transformOrigin: "200px 262px" }}>
-        {beams(c, "b", 200, 262, 5, -150, -30, 110, 0.08)}
         {fan(c, "f", 200, 262, 5, -150, -30, 92, 11, 1, 2)}
       </g>
       {/* long knobbly legs */}
@@ -327,8 +332,8 @@ function hatchling(c: Ctx) {
         <circle cx="200" cy="116" r="2.2" fill={p.wingEdge} filter={u("glow")} />
         <ellipse cx="178" cy="178" rx="6" ry="3.5" fill={p.accent} opacity="0.3" />
         <ellipse cx="222" cy="178" rx="6" ry="3.5" fill={p.accent} opacity="0.3" />
-        <Eye c={c} x={187} y={164} r={7.2} kind="almond" flip />
-        <Eye c={c} x={213} y={164} r={7.2} kind="almond" />
+        <Eye c={c} x={187} y={163} r={8.4} kind="round" />
+        <Eye c={c} x={213} y={163} r={8.4} kind="round" />
         <path d="M194,174 L206,174 L201,190 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="0.8" />
         <Gem c={c} x={200} y={146} s={0.4} />
       </g>
@@ -342,38 +347,40 @@ function hatchling(c: Ctx) {
 function ascended(c: Ctx) {
   const { p, u } = c;
   const crown: [number, number, number][] = [
-    [172, 70, -30],
-    [186, 56, -14],
-    [200, 44, 0],
-    [214, 56, 14],
-    [228, 70, 30],
+    [172, 62, -30],
+    [186, 46, -14],
+    [200, 32, 0],
+    [214, 46, 14],
+    [228, 62, 30],
   ];
   return (
     <g>
       {/* spectral refraction behind everything */}
-      {beams(c, "b", 200, 246, 28, -182, 2, 200, 0.16)}
+      {beams(c, "b", 200, 246, 24, -180, 0, 176, 0.42)}
       <g className="sl-sway-slow" style={{ transformOrigin: "200px 246px" }}>
         <circle cx="200" cy="246" r="150" fill={u("light")} opacity="0.12" />
         {/* back tier: long shards */}
-        {fan(c, "f", 200, 246, 19, -184, 4, 166, 13)}
+        {fan(c, "f", 200, 246, 23, -202, 22, 166, 13)}
         {/* front tier: shorter, offset shards */}
-        {fan(c, "m", 200, 246, 14, -174, -6, 112, 11, 1, 3)}
+        {fan(c, "m", 200, 246, 17, -188, 8, 116, 11, 1, 3)}
         {/* inner coverts */}
         {fan(c, "i", 200, 246, 9, -160, -20, 62, 8, 1, 5)}
       </g>
-      {/* half-spread crystal wings */}
+      {/* wings raised and half spread, crystal primaries flaring up and out */}
       {[0, 1].map((m) => (
         <g key={m} transform={m ? MIRROR : undefined}>
-          <g className="sl-flap" style={{ transformOrigin: "172px 206px" }}>
-            {[150, 160, 170, 180, 190].map((a, i) => (
-              <g key={a} transform={`translate(${150 - i * 2} ${226 + i * 6}) rotate(${a})`}>
-                <path d={blade(74 - i * 8, 9, 0.75)} fill={u("glass")} stroke={i % 2 ? p.accent : p.wingEdge} strokeOpacity="0.7" />
-                <path d={`M6,0 L${70 - i * 8},0`} stroke="#fff" strokeOpacity="0.4" strokeWidth="0.8" />
+          <g className="sl-flap" style={{ transformOrigin: "176px 200px" }}>
+            {[188, 200, 212, 224, 236].map((a, i) => (
+              <g key={a} transform={`translate(${round(124 + i * 4)} ${round(196 - i * 5)}) rotate(${a})`}>
+                <path d={blade(78 - Math.abs(i - 2) * 8, 10, 0.75)} fill={u("feather")} stroke={p.bodyDark} strokeOpacity="0.6" />
+                <path d={`M${round(52 - Math.abs(i - 2) * 6)},-5 L${78 - Math.abs(i - 2) * 8},0 L${round(52 - Math.abs(i - 2) * 6)},5 Z`} fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.9" strokeWidth="0.8" />
+                <path d={`M6,0 L${74 - Math.abs(i - 2) * 8},0`} stroke={p.wingEdge} strokeOpacity="0.5" strokeWidth="0.8" />
               </g>
             ))}
-            <path d="M176,200 C150,204 126,220 114,244 C132,250 150,252 164,246 C176,236 182,218 176,200 Z" fill={u("wing")} {...rim(c, 1)} />
-            <path d="M150,226 c5,4 10,4 14,0 M132,238 c5,4 10,4 14,0" fill="none" stroke={p.bodyDark} strokeOpacity="0.35" strokeWidth="1.1" />
-            <path d="M176,200 C154,204 134,216 120,234 L128,236 C140,222 156,212 178,208 Z" fill="#fff" opacity="0.22" className="sl-shimmer-facet" />
+            <path d="M180,206 C164,188 142,176 118,176 C114,190 124,208 140,220 C154,228 168,226 180,218 Z" fill={u("wing")} {...rim(c, 1)} />
+            <path d="M126,190 c5,4 10,4 14,0 M140,204 c5,4 10,4 14,0 M152,192 c4,4 9,4 12,0" fill="none" stroke={p.bodyDark} strokeOpacity="0.35" strokeWidth="1.1" />
+            <path d="M180,206 C164,190 144,180 120,178 L122,186 C142,188 160,196 176,212 Z" fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="0.8" />
+            <path d="M180,206 C166,192 150,184 132,180 L134,186 C150,190 164,198 176,212 Z" fill="#fff" opacity="0.22" className="sl-shimmer-facet" />
           </g>
         </g>
       ))}
@@ -399,6 +406,8 @@ function ascended(c: Ctx) {
       {[0, 1].map((m) => (
         <path key={m} transform={m ? MIRROR : undefined} d="M164,196 C150,222 150,262 162,292 C168,270 174,240 182,212 Z" fill={u("wing")} {...rim(c, 1)} />
       ))}
+      {/* standing ruff of crystal behind the neck */}
+      {fan(c, "r", 200, 154, 9, -168, -12, 54, 8, 1, 1)}
       {/* neck lifted high, with a jewelled collar */}
       <path d="M187,162 C189,140 191,122 193,104 L207,104 C209,122 211,140 213,162 Z" fill={u("body")} {...rim(c, 1)} />
       <path d="M196,108 C196,128 196,144 198,160" fill="none" stroke={p.bodyLight} strokeOpacity="0.5" strokeWidth="2.6" strokeLinecap="round" />
@@ -407,49 +416,42 @@ function ascended(c: Ctx) {
       {[188, 194, 200, 206, 212].map((x, i) => (
         <circle key={x} cx={x} cy={round(160 + (i === 2 ? 2.4 : i % 4 === 0 ? 0 : 1.6))} r={i === 2 ? 2.4 : 1.6} fill={SPECTRUM[(i * 2) % 7]} filter={u("glow")} />
       ))}
-      {/* trailing crest plumes */}
-      {[0, 1].map((m) => (
-        <g key={m} transform={m ? MIRROR : undefined}>
-          <g className="sl-sway" style={{ transformOrigin: "190px 72px" }}>
-            <path d="M190,72 C176,52 160,40 140,36" fill="none" stroke={p.wingEdge} strokeOpacity="0.85" strokeWidth="1.6" strokeLinecap="round" />
-            <path d="M140,36 L134,30 L128,36 L134,42 Z" fill={u("glass")} stroke={p.accent} strokeWidth="0.8" />
-            <circle cx="134" cy="36" r="2" fill={p.accent} filter={u("glow")} />
-          </g>
-        </g>
-      ))}
-      {/* head */}
-      <path d="M200,62 C216,62 225,76 225,90 C225,104 213,112 200,112 C187,112 175,104 175,90 C175,76 184,62 200,62 Z" fill={u("body")} {...rim(c)} />
-      <path d="M181,96 C186,102 193,103 196,100 M219,96 C214,102 207,103 204,100" fill="none" stroke={p.belly} strokeOpacity="0.8" strokeWidth="1.8" strokeLinecap="round" />
-      <Spec x={191} y={70} rx={8} ry={3} rot={-20} o={0.42} />
-      <Eye c={c} x={189} y={88} r={5} kind="almond" flip />
-      <Eye c={c} x={211} y={88} r={5} kind="almond" />
-      <path d="M195,96 L205,96 L201,113 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="0.8" />
-      <path d="M197,99 L203,99" stroke={p.bodyDark} strokeOpacity="0.45" strokeWidth="0.8" />
-      {/* jewelled five-point crown */}
-      <g className="sl-sway" style={{ transformOrigin: "200px 72px" }}>
-        <path d="M176,74 C184,68 216,68 224,74 L222,80 C214,76 186,76 178,80 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="0.8" />
-        {crown.map(([x, y, a], i) => {
-          const h = 76 - y;
-          return (
-            <g key={x}>
-              <path
-                d={`M${x - 5},${round(72 + Math.abs(a) * 0.08)} L${x},${y} L${x + 5},${round(72 + Math.abs(a) * 0.08)} Z`}
-                transform={`rotate(${round(a * 0.5)} ${x} 74)`}
-                fill={u("glass")}
-                stroke={p.wingEdge}
-                strokeOpacity="0.9"
-                strokeWidth="1"
-                strokeLinejoin="round"
-              />
-              <g transform={`rotate(${round(a * 0.5)} ${x} 74)`}>
-                <path d={`M${x},${y} L${x},${round(y + h * 0.9)} L${x - 4},${round(y + h * 0.9)} Z`} fill="#fff" opacity="0.3" className="sl-shimmer-facet" style={{ animationDelay: `${i * 0.3}s` }} />
-                <circle cx={x} cy={y} r={i === 2 ? 3.2 : 2.4} fill={SPECTRUM[(i * 3) % 7]} filter={u("glow")} className="sl-twinkle" style={{ animationDelay: `${i * 0.35}s` }} />
+      <g transform="rotate(-6 200 104)">
+        {/* head */}
+        <path d="M200,62 C216,62 225,76 225,90 C225,104 213,112 200,112 C187,112 175,104 175,90 C175,76 184,62 200,62 Z" fill={u("body")} {...rim(c)} />
+        <ellipse cx="188" cy="88" rx="9.5" ry="7" fill={p.belly} opacity="0.3" transform="rotate(-14 188 88)" />
+        <ellipse cx="212" cy="88" rx="9.5" ry="7" fill={p.belly} opacity="0.3" transform="rotate(14 212 88)" />
+        <Spec x={191} y={70} rx={8} ry={3} rot={-20} o={0.42} />
+        <Eye c={c} x={189} y={88} r={5} kind="almond" flip />
+        <Eye c={c} x={211} y={88} r={5} kind="almond" />
+        <path d="M195,96 L205,96 L201,113 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="0.8" />
+        <path d="M197,99 L203,99" stroke={p.bodyDark} strokeOpacity="0.45" strokeWidth="0.8" />
+        {/* jewelled five-point crown */}
+        <g className="sl-sway" style={{ transformOrigin: "200px 72px" }}>
+          <path d="M176,74 C184,68 216,68 224,74 L222,80 C214,76 186,76 178,80 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="0.8" />
+          {crown.map(([x, y, a], i) => {
+            const h = 76 - y;
+            return (
+              <g key={x}>
+                <path
+                  d={`M${x - 5},${round(72 + Math.abs(a) * 0.08)} L${x},${y} L${x + 5},${round(72 + Math.abs(a) * 0.08)} Z`}
+                  transform={`rotate(${round(a * 0.5)} ${x} 74)`}
+                  fill={u("glass")}
+                  stroke={p.wingEdge}
+                  strokeOpacity="0.9"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+                <g transform={`rotate(${round(a * 0.5)} ${x} 74)`}>
+                  <path d={`M${x},${y} L${x},${round(y + h * 0.9)} L${x - 4},${round(y + h * 0.9)} Z`} fill="#fff" opacity="0.3" className="sl-shimmer-facet" style={{ animationDelay: `${i * 0.3}s` }} />
+                  <circle cx={x} cy={y} r={i === 2 ? 3.2 : 2.4} fill={SPECTRUM[(i * 3) % 7]} filter={u("glow")} className="sl-twinkle" style={{ animationDelay: `${i * 0.35}s` }} />
+                </g>
               </g>
-            </g>
-          );
-        })}
+            );
+          })}
+        </g>
+        <Gem c={c} x={200} y={76} s={0.5} />
       </g>
-      <Gem c={c} x={200} y={76} s={0.5} />
       {/* drifting refracted motes */}
       <g className="sl-twinkle">
         {[
@@ -469,7 +471,7 @@ function ascended(c: Ctx) {
 
 export const prismara: Renderer = {
   ...evolved,
-  halo: [200, 22, 26],
+  halo: [196, 14, 26],
   stageFit: [1.18, 1.08, 1, 0.9],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

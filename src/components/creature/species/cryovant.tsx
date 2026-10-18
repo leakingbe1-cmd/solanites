@@ -226,17 +226,17 @@ const evolved: Renderer = {
 function eggling(c: Ctx) {
   const { p } = c;
   const cx = 200;
-  const by = 222;
+  const by = 220;
   const w = 60;
-  const k = 0.22;
+  const k = 0.3;
   const { front, back } = bellGeo(cx, by, w, 1, k);
   return (
     <g>
       <Chain c={c} x={back(90)[0]} y={back(90)[1]} n={2} s={4} step={14} amp={2} o={0.5} slow />
       {/* bud nub on top */}
-      <path d="M192,156 L200,138 L208,156 Z" fill={c.u("glass")} {...rim(c, 1)} />
-      <path d="M192,156 L200,138 L200,156 Z" fill="#fff" opacity="0.35" />
-      <Bell c={c} cx={cx} by={by} w={w} h={74} k={k} rings={[34, 64]} seg={4} soft={0.45} core={0.45} />
+      <path d="M193,152 L200,134 L207,152 Z" fill={c.u("glass")} {...rim(c, 1)} />
+      <path d="M193,152 L200,134 L200,152 Z" fill="#fff" opacity="0.35" />
+      <Bell c={c} cx={cx} by={by} w={w} h={76} k={k} rings={[34, 64]} seg={4} soft={0.45} core={0.45} />
       <Spec x={172} y={172} rx={20} ry={8} rot={-38} o={0.42} />
       <Spec x={226} y={164} rx={5} ry={3} rot={-20} o={0.5} />
       {/* soft rim scallops */}
@@ -266,8 +266,8 @@ function eggling(c: Ctx) {
 function hatchling(c: Ctx) {
   const { p } = c;
   const cx = 200;
-  const by = 198;
-  const w = 70;
+  const by = 194;
+  const w = 66;
   const k = 0.2;
   const { front, back } = bellGeo(cx, by, w, 1, k);
   return (
@@ -276,18 +276,18 @@ function hatchling(c: Ctx) {
         const [x, y] = back(t);
         return <Chain key={t} c={c} x={x} y={y} n={4} s={4.4} step={16} amp={4} phase={i} delay={i * 0.6} o={0.5} slow />;
       })}
-      <Ribbon c={c} x={192} y={204} len={70} w={9} dir={-1} delay={0.4} o={0.7} />
-      <Ribbon c={c} x={208} y={204} len={58} w={8} dir={1} delay={1} o={0.6} />
-      <Bell c={c} cx={cx} by={by} w={w} h={84} k={k} rings={[28, 56]} seg={6} soft={0.75} core={0.4} />
+      <Ribbon c={c} x={194} y={200} len={96} w={9} dir={-1} delay={0.4} o={0.75} />
+      <Ribbon c={c} x={206} y={200} len={80} w={8} dir={1} waves={1.8} delay={1} o={0.65} />
+      <Bell c={c} cx={cx} by={by} w={w} h={88} k={k} rings={[28, 56]} seg={6} soft={0.75} core={0.4} />
       {/* tip crystal, slightly askew */}
-      <path d="M194,116 L201,94 L208,116 Z" fill={c.u("glass")} {...rim(c, 1)} />
-      <path d="M194,116 L201,94 L201,116 Z" fill="#fff" opacity="0.35" />
+      <path d="M194,110 L201,88 L208,110 Z" fill={c.u("glass")} {...rim(c, 1)} />
+      <path d="M194,110 L201,88 L201,110 Z" fill="#fff" opacity="0.35" />
       <Spec x={166} y={142} rx={24} ry={8} rot={-40} o={0.38} />
       <RimPoints c={c} cx={cx} by={by} w={w} k={k} n={7} l={7} from={14} to={166} />
-      {[18, 46, 74, 106, 134, 162].map((t, i) => {
+      {[14, 40, 66, 114, 140, 166].map((t, i) => {
         const [x, y] = front(t);
-        const n = [4, 5, 6, 6, 5, 4][i];
-        return <Chain key={t} c={c} x={x} y={round(y + 4)} n={n} s={5.6} step={16} amp={5} phase={i * 1.1} delay={i * 0.4} tip={i === 2 || i === 3} />;
+        const n = [5, 6, 7, 7, 6, 5][i];
+        return <Chain key={t} c={c} x={x} y={round(y + 4)} n={n} s={5.4} step={17} amp={6} phase={i * 1.1} delay={i * 0.4} tip={i === 2 || i === 3} />;
       })}
       <ellipse cx="166" cy="190" rx="7" ry="3.6" fill={p.accent} opacity="0.25" />
       <ellipse cx="234" cy="190" rx="7" ry="3.6" fill={p.accent} opacity="0.25" />
@@ -300,17 +300,57 @@ function hatchling(c: Ctx) {
 
 /* ───────────────────────────── Ascended ───────────────────────────── */
 
-/** Ascended: a tilted crystal chandelier — gem-cut bell under a spired crown, frost filigree, festooned bead swags, cascading prism chains and four ribbon arms. */
+/** Ascended: a crystal chandelier surging upward — gem-cut bell under a faceted cupola and spire, frost filigree, sweeping chandelier arms, bead swags and cascading prism chains. */
 function ascended(c: Ctx) {
   const { p, u } = c;
   const id = `${c.id}asc`;
   const cx = 200;
-  const by = 170;
-  const w = 104;
+  const by = 178;
+  const w = 100;
   const k = 0.2;
   const { front, back } = bellGeo(cx, by, w, 1, k);
-  const frontT = [10, 30, 50, 70, 90, 110, 130, 150, 170];
+  const frontT = [12, 38, 64, 90, 116, 142, 168];
   const spectrum = ["#ff7ab6", "#ffd66e", "#7dffc0", "#7ab8ff", "#c08bff"];
+  const arm = (s: number, i: number) => {
+    // A tapering crystal arm swept out and down along a cubic curve.
+    const P0: Pt = [round(cx + s * (w - 12)), 128 + i * 30];
+    const P1: Pt = [round(cx + s * (w + 24)), 108 + i * 32];
+    const P3: Pt = [round(cx + s * (w + 34 - i * 6)), 164 + i * 40];
+    const P2: Pt = [round(P3[0] + s * 8), P3[1] - 36];
+    const at = (t: number): Pt => {
+      const m = 1 - t;
+      return [0, 1].map((q) => m * m * m * P0[q] + 3 * m * m * t * P1[q] + 3 * m * t * t * P2[q] + t * t * t * P3[q]) as Pt;
+    };
+    const top: Pt[] = [];
+    const bot: Pt[] = [];
+    for (let j = 0; j <= 12; j++) {
+      const t = j / 12;
+      const [x, y] = at(t);
+      const [x2, y2] = at(Math.min(1, t + 0.01));
+      const [x1, y1] = at(Math.max(0, t - 0.01));
+      const len = Math.hypot(x2 - x1, y2 - y1) || 1;
+      const nx = -(y2 - y1) / len;
+      const ny = (x2 - x1) / len;
+      const hw = 5 - 3.6 * t;
+      top.push([round(x + nx * hw), round(y + ny * hw)]);
+      bot.push([round(x - nx * hw), round(y - ny * hw)]);
+    }
+    const spine = Array.from({ length: 13 }, (_, j) => at(j / 12)).map(([x, y]) => [round(x), round(y)] as Pt);
+    const [ex, ey] = P3;
+    return (
+      <g key={`${s}${i}`}>
+        <polygon points={pts([...top, ...bot.reverse()])} fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.7" strokeWidth="0.9" strokeLinejoin="round" />
+        <polyline points={pts(spine)} fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="1" />
+        {[0.35, 0.7].map((t) => {
+          const [x, y] = at(t);
+          return <circle key={t} cx={round(x)} cy={round(y)} r="2.4" fill={p.belly} stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="0.6" />;
+        })}
+        {/* drip cup the pendant hangs from */}
+        <polygon points={pts([[round(ex - 7), ey - 3], [round(ex + 7), ey - 3], [round(ex + 3), ey + 4], [round(ex - 3), ey + 4]])} fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.7" strokeWidth="0.8" />
+        <Chain c={c} x={ex} y={ey + 3} n={4 - i} s={5.4} step={15} amp={2} delay={i * 0.5 + (s > 0 ? 0.8 : 0)} tip />
+      </g>
+    );
+  };
   return (
     <g>
       <defs>
@@ -325,77 +365,83 @@ function ascended(c: Ctx) {
           <stop offset="1" stopColor={p.accent} stopOpacity="0" />
         </radialGradient>
       </defs>
-      {/* prismatic refraction fanning out from the heart */}
-      <g opacity="0.32" className="sl-shimmer-facet">
-        {[-160, -128, -52, -20].map((a) => {
-          const [x1, y1] = polar(200, 128, 150, a);
-          const [x2, y2] = polar(200, 128, 150, a + 7);
-          return <polygon key={a} points={pts([[200, 128], [x1, y1], [x2, y2]])} fill={`url(#${id}-prism)`} />;
-        })}
-      </g>
-      <g transform="rotate(-5 200 200)">
+      <g transform="rotate(-6 200 200)">
+        {/* soft prismatic refraction fanning out from the heart */}
+        <g filter={u("glow")} opacity="0.4" className="sl-shimmer-facet">
+          {[-168, -150, -30, -12].map((a, j) =>
+            spectrum.map((s, i) => {
+              const [x1, y1] = polar(200, 136, 165, a + (i - 2) * 1.4 * (j < 2 ? 1 : -1));
+              return <line key={`${a}${s}`} x1={200} y1={136} x2={x1} y2={y1} stroke={s} strokeWidth="1.6" strokeLinecap="round" />;
+            }),
+          )}
+        </g>
         {/* back chains */}
-        {[24, 52, 80, 108, 136, 160].map((t, i) => {
+        {[34, 74, 106, 146].map((t, i) => {
           const [x, y] = back(t);
-          return <Chain key={t} c={c} x={x} y={y} n={8} s={5} step={19} amp={6} phase={i} lean={0.04} delay={i * 0.4} o={0.5} slow />;
+          return <Chain key={t} c={c} x={x} y={y} n={8} s={5} step={19} amp={6} phase={i} lean={0.1} delay={i * 0.4} o={0.45} slow />;
         })}
         {/* four ribbon arms */}
-        <Ribbon c={c} x={178} y={180} len={178} w={14} dir={-1} delay={0.2} />
-        <Ribbon c={c} x={222} y={180} len={168} w={13} dir={1} waves={1.7} delay={0.9} o={0.8} />
-        <Ribbon c={c} x={192} y={184} len={130} w={10} dir={1} waves={1.2} delay={1.5} o={0.6} />
-        <Ribbon c={c} x={208} y={184} len={120} w={9} dir={-1} waves={1.9} delay={2.1} o={0.55} />
-        {/* crown spire behind the bell */}
+        <Ribbon c={c} x={180} y={188} len={170} w={14} dir={-1} delay={0.2} />
+        <Ribbon c={c} x={220} y={188} len={160} w={13} dir={1} waves={1.7} delay={0.9} o={0.8} />
+        <Ribbon c={c} x={194} y={192} len={120} w={10} dir={1} waves={1.2} delay={1.5} o={0.6} />
+        <Ribbon c={c} x={206} y={192} len={112} w={9} dir={-1} waves={1.9} delay={2.1} o={0.55} />
+        {/* sweeping chandelier arms */}
+        {[-1, 1].map((s) => [0, 1].map((i) => arm(s, i)))}
+        {/* spire rising from the cupola */}
         {[
-          [-34, 40, 9],
-          [-17, 56, 10],
-          [0, 74, 12],
-          [17, 56, 10],
-          [34, 40, 9],
+          [-30, 26, 6],
+          [-14, 38, 7],
+          [0, 50, 8.5],
+          [14, 38, 7],
+          [30, 26, 6],
         ].map(([a, l, wd], i) => {
-          const [x, y] = polar(200, 92, 8, a - 90);
+          const [x, y] = polar(200, 74, 6, a - 90);
           return (
             <g key={a} transform={`translate(${x} ${y}) rotate(${a})`}>
-              <polygon points={pts([[-wd, 0], [round(-wd * 0.7), round(-l * 0.55)], [0, -l], [round(wd * 0.7), round(-l * 0.55)], [wd, 0]])} fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="0.9" />
-              <polygon points={pts([[-wd, 0], [round(-wd * 0.7), round(-l * 0.55)], [0, -l], [0, 0]])} fill="#fff" opacity="0.3" className="sl-shimmer-facet" style={{ animationDelay: `${i * 0.3}s` }} />
+              <polygon points={pts([[-wd, 0], [round(-wd * 0.7), round(-l * 0.55)], [0, -l], [round(wd * 0.7), round(-l * 0.55)], [wd, 0]])} fill={u("glass")} stroke={p.wingEdge} strokeOpacity="0.65" strokeWidth="0.9" />
+              <polygon points={pts([[-wd, 0], [round(-wd * 0.7), round(-l * 0.55)], [0, -l], [0, 0]])} fill="#fff" opacity="0.32" className="sl-shimmer-facet" style={{ animationDelay: `${i * 0.3}s` }} />
               <circle cx="0" cy={-l - 4} r={i === 2 ? 2.6 : 1.6} fill={p.accent} filter={u("glow")} className="sl-twinkle" />
             </g>
           );
         })}
-        <Bell c={c} cx={cx} by={by} w={w} h={98} k={k} rings={[18, 38, 58, 76]} seg={10} core={0.85} />
+        <Bell c={c} cx={cx} by={by} w={w} h={92} k={k} rings={[18, 38, 58, 76]} seg={10} core={0.85} />
+        {/* faceted cupola crowning the bell */}
+        <Bell c={c} cx={cx} by={96} w={28} h={26} k={0.3} rings={[40]} seg={4} soft={1.1} core={0.5} />
+        <RimPoints c={c} cx={cx} by={96} w={28} k={0.3} n={5} l={6} from={20} to={160} />
         {/* heart of light */}
-        <circle cx="200" cy="128" r="34" fill={`url(#${id}-heart)`} className="sl-core" />
+        <circle cx="200" cy="138" r="36" fill={`url(#${id}-heart)`} className="sl-core" />
         {/* frost filigree */}
         <g fill="none" stroke={p.belly} strokeLinecap="round" strokeOpacity="0.75" strokeWidth="1.3">
           {[1, -1].map((s) => (
             <g key={s} transform={s < 0 ? "translate(400 0) scale(-1 1)" : undefined}>
-              <path d="M200,98 C186,100 174,108 170,120 C166,132 176,140 184,134 C190,128 184,120 178,124" />
-              <path d="M170,120 C156,128 142,142 136,160 C132,172 142,178 148,170 C152,164 146,158 142,162" />
-              <path d="M136,160 C128,164 118,166 110,164" />
-              <path d="M184,152 C176,156 170,164 172,172" strokeOpacity="0.5" />
+              <path d="M186,110 C176,114 168,122 168,132 C168,142 178,146 184,140 C188,134 182,128 177,132" />
+              <path d="M168,132 C154,138 140,150 134,166 C130,178 140,182 146,176 C150,170 144,164 140,168" />
+              <path d="M134,166 C124,170 114,172 106,170" />
+              <path d="M184,158 C176,162 170,170 172,178" strokeOpacity="0.5" />
             </g>
           ))}
         </g>
-        <Dots c={c} pts={[[178, 124], [222, 124], [142, 162], [258, 162], [200, 96]]} r={1.6} color="#fff" />
+        <Dots c={c} pts={[[177, 132], [223, 132], [140, 168], [260, 168]]} r={1.6} color="#fff" />
         {/* chromatic edge glints */}
-        <g fill="none" strokeWidth="1.2" opacity="0.6">
-          <path d="M108,166 C104,124 128,86 170,76" stroke="#ff7ab6" />
-          <path d="M111,166 C107,125 131,88 172,79" stroke="#ffd66e" />
-          <path d="M114,166 C110,126 134,90 174,82" stroke="#7dffc0" />
+        <g fill="none" strokeWidth="1.2" opacity="0.55">
+          <path d="M106,170 C102,132 122,104 160,92" stroke="#ff7ab6" />
+          <path d="M109,170 C105,133 125,106 162,95" stroke="#ffd66e" />
+          <path d="M112,170 C108,134 128,108 164,98" stroke="#7dffc0" />
         </g>
-        <Spec x={158} y={98} rx={34} ry={9} rot={-36} o={0.36} />
+        <Spec x={160} y={112} rx={30} ry={8} rot={-36} o={0.36} />
         <Velum c={c} cx={cx} by={by} w={w} k={k} depth={9} n={12} />
         <RimPoints c={c} cx={cx} by={by} w={w} k={k} n={13} l={15} />
-        {/* festooned bead swags between the rim crystals */}
-        <g fill="none" stroke={p.wingEdge} strokeOpacity="0.55" strokeWidth="1">
+        {/* festooned bead swags between the chains */}
+        <g fill="none" stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="1">
           {frontT.slice(0, -1).map((t, i) => {
             const [x0, y0] = front(t);
             const [x1, y1] = front(frontT[i + 1]);
             const mx = round((x0 + x1) / 2);
-            const my = round((y0 + y1) / 2 + 26);
+            const my = round((y0 + y1) / 2 + 34);
             return (
               <g key={t}>
-                <path d={`M${x0},${round(y0 + 8)} Q${mx},${my} ${x1},${round(y1 + 8)}`} />
-                <circle cx={mx} cy={round(my - 9)} r="2.4" fill={p.belly} fillOpacity="0.8" stroke="none" />
+                <path d={`M${x0},${round(y0 + 10)} Q${mx},${my} ${x1},${round(y1 + 10)}`} />
+                <circle cx={mx} cy={round(my - 12)} r="2.6" fill={p.belly} fillOpacity="0.85" stroke="none" />
               </g>
             );
           })}
@@ -403,12 +449,12 @@ function ascended(c: Ctx) {
         {/* cascading chandelier chains, longest in the middle, trailing as it rises */}
         {frontT.map((t, i) => {
           const [x, y] = front(t);
-          const n = [6, 8, 9, 10, 11, 10, 9, 8, 6][i];
-          return <Chain key={t} c={c} x={x} y={round(y + 8)} n={n} s={6.6} step={17} amp={6} phase={i * 1.2} lean={0.05} delay={i * 0.3} tip />;
+          const n = [6, 8, 9, 10, 9, 8, 6][i];
+          return <Chain key={t} c={c} x={x} y={round(y + 8)} n={n} s={6.8} step={17} amp={5} phase={i * 1.2} lean={0.1} delay={i * 0.3} tip />;
         })}
-        <Eye c={c} x={180} y={162} r={7} kind="orb" />
-        <Eye c={c} x={220} y={162} r={7} kind="orb" />
-        <Gem c={c} x={200} y={128} s={0.82} />
+        <Eye c={c} x={180} y={170} r={7} kind="orb" />
+        <Eye c={c} x={220} y={170} r={7} kind="orb" />
+        <Gem c={c} x={200} y={138} s={0.82} />
       </g>
     </g>
   );
@@ -416,7 +462,7 @@ function ascended(c: Ctx) {
 
 export const cryovant: Renderer = {
   ...evolved,
-  halo: [200, 30, 26],
-  stageFit: [1.45, 1.2, 1.08, 0.94],
+  halo: [194, 16, 22],
+  stageFit: [1.62, 1.22, 1.08, 0.94],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

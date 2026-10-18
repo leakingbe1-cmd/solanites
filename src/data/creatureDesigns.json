@@ -55,19 +55,19 @@
       "stages": [
         {
           "summary": "A tiny tadpole-like swimmer with stubby fins and enormous eyes.",
-          "brief": "Short chubby tadpole body, oversized head and eyes, small rounded fin nubs, short tail, no sail fin yet."
+          "brief": "A tiny tadpole-like aquatic creature with an oversized head, tiny fins, a short tail and undeveloped anatomy. Big round curious eyes, soft translucent skin, no sail fin."
         },
         {
           "summary": "Its body lengthens and the first sail fin unfurls along its back.",
-          "brief": "Elongated juvenile eel, one small translucent sail fin, pectoral fins forming, a few glowing lateral dots."
+          "brief": "A visibly larger juvenile with a longer body, developed pectoral fins, an emerging dorsal fin and more expressive features. Still juvenile proportions; first glowing lateral dots."
         },
         {
           "summary": "A fish-dragon with sweeping, flowing fins.",
-          "brief": "Curved fish-dragon with large translucent sweeping fins, long tail curling upward, glowing dots."
+          "brief": "A substantially redesigned aquatic creature with a longer, more powerful body, flowing translucent fins, a developed dorsal crest and a clearly different silhouette from the juvenile. Fan tail, visible fin rays."
         },
         {
           "summary": "A tide-whisperer rising through the current on silken fins.",
-          "brief": "Upright curling sea dragon, flowing silk-like fins and streamers, iridescent scales, swirling water."
+          "brief": "A majestic aquatic sea dragon with elaborate flowing fins, an extended tail, mature anatomy, intricate markings and sophisticated bioluminescence. Silk-like fin streamers, iridescent scales, regal pose."
         }
       ],
       "reference": "docs/creature-art/reference/species/driftfin.webp"

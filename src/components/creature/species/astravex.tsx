@@ -345,7 +345,7 @@ function StarWindow({
   );
 }
 
-/** Muscle mass (shoulder or haunch) laid over the leg tops so limbs grow out of the body. */
+/** Muscle contour (shoulder or haunch): a soft rim-lit arc so the limb reads as growing out of the body. */
 function Mass({
   c,
   cx,
@@ -361,25 +361,25 @@ function Mass({
   ry: number;
   rot?: number;
 }) {
+  const [x0, y0] = [round(cx - rx * 0.94), round(cy + ry * 0.34)];
+  const [x1, y1] = [round(cx + rx * 0.5), round(cy - ry * 0.87)];
   return (
     <g transform={`rotate(${rot} ${cx} ${cy})`}>
-      <ellipse
-        cx={cx}
-        cy={cy}
-        rx={rx}
-        ry={ry}
-        fill={c.u("body")}
+      <path
+        d={`M${x0},${y0} A${rx},${ry} 0 0 1 ${x1},${y1}`}
+        fill="none"
         stroke={c.p.bodyDark}
         strokeOpacity="0.22"
-        strokeWidth="1"
+        strokeWidth="1.4"
+        strokeLinecap="round"
       />
-      <Spec
-        x={cx - rx * 0.25}
-        y={cy - ry * 0.55}
-        rx={rx * 0.5}
-        ry={ry * 0.14}
-        rot={-25}
-        o={0.35}
+      <path
+        d={`M${round(x0 + 4)},${round(y0 - 6)} A${rx - 5},${ry - 5} 0 0 1 ${round(x1 - 2)},${round(y1 + 5)}`}
+        fill="none"
+        stroke="#fff"
+        strokeOpacity="0.28"
+        strokeWidth="2"
+        strokeLinecap="round"
       />
     </g>
   );
@@ -388,18 +388,16 @@ function Mass({
 /** Short upright deer tail with a white underside. */
 function Tail({ c, x, y, a }: { c: Ctx; x: number; y: number; a: number }) {
   return (
-    <g
-      transform={`translate(${x} ${y}) rotate(${a})`}
-      className="sl-sway"
-      style={{ transformOrigin: `${x}px ${y}px` }}
-    >
-      <path d={blade(22, 8)} fill={c.u("body")} {...rim(c, 1)} />
-      <path
-        d={blade(16, 4)}
-        transform="translate(3 2)"
-        fill="#fff"
-        opacity="0.8"
-      />
+    <g className="sl-sway" style={{ transformOrigin: `${x}px ${y}px` }}>
+      <g transform={`translate(${x} ${y}) rotate(${a})`}>
+        <path d={blade(22, 8)} fill={c.u("body")} {...rim(c, 1)} />
+        <path
+          d={blade(16, 4)}
+          transform="translate(3 2)"
+          fill="#fff"
+          opacity="0.8"
+        />
+      </g>
     </g>
   );
 }
@@ -464,6 +462,40 @@ function eggling(c: Ctx) {
         opacity="0.7"
         transform="rotate(-30 120 300)"
       />
+      <Leg
+        c={c}
+        pts={[
+          [158, 338, 12],
+          [140, 344, 8],
+          [124, 346, 6.5],
+          [116, 346, 6],
+        ]}
+        near
+        lightSide={-1}
+      />
+      {/* arched neck, slim at the throat */}
+      <path
+        d="M236,312 C236,284 246,260 266,242 L292,252 C282,264 276,284 278,316 Z"
+        fill={u("body")}
+        {...rim(c)}
+      />
+      <ellipse
+        cx="279"
+        cy="276"
+        rx="4.5"
+        ry="15"
+        fill={p.bodyLight}
+        opacity="0.5"
+        transform="rotate(10 284 274)"
+      />
+      <path
+        d="M242,300 C244,280 252,264 264,252"
+        fill="none"
+        stroke="#fff"
+        strokeOpacity="0.35"
+        strokeWidth="2.4"
+        strokeLinecap="round"
+      />
       <path
         d="M120,330 C118,296 160,282 204,282 C250,282 282,296 286,322 C288,342 268,352 236,352 L160,352 C134,352 122,344 120,330 Z"
         fill={u("body")}
@@ -491,17 +523,7 @@ function eggling(c: Ctx) {
       />
       <Spec x={214} y={288} rx={40} ry={5} rot={-2} o={0.4} />
       {/* folded hind leg with the hoof peeking out behind */}
-      <Leg
-        c={c}
-        pts={[
-          [158, 338, 12],
-          [140, 344, 8],
-          [124, 346, 6.5],
-          [116, 346, 6],
-        ]}
-        near
-        lightSide={-1}
-      />
+
       <Mass c={c} cx={160} cy={318} rx={34} ry={27} />
       <Dots
         c={c}
@@ -526,29 +548,6 @@ function eggling(c: Ctx) {
         ]}
         near
         lightSide={-1}
-      />
-      {/* arched neck, slim at the throat */}
-      <path
-        d="M236,312 C236,284 246,260 266,242 L292,252 C282,264 276,284 278,316 Z"
-        fill={u("body")}
-        {...rim(c)}
-      />
-      <ellipse
-        cx="284"
-        cy="274"
-        rx="6"
-        ry="16"
-        fill={p.bodyLight}
-        opacity="0.7"
-        transform="rotate(10 284 274)"
-      />
-      <path
-        d="M242,300 C244,280 252,264 264,252"
-        fill="none"
-        stroke="#fff"
-        strokeOpacity="0.35"
-        strokeWidth="2.4"
-        strokeLinecap="round"
       />
       <DeerHead c={c} {...head} fawn eye="round" />
       <g filter={u("glow")} className="sl-twinkle">
@@ -609,25 +608,6 @@ function hatchling(c: Ctx) {
         near={false}
       />
       <Tail c={c} x={154} y={236} a={-150} />
-      <path d={body} fill={u("body")} {...rim(c)} />
-      <g clipPath={`url(#${id}-hatch-flank)`}>
-        <StarWindow c={c} name="hatch" cx={206} cy={252} rx={40} ry={18} />
-      </g>
-      <Dots
-        c={c}
-        pts={[
-          [180, 230],
-          [204, 224],
-          [232, 226],
-          [192, 238],
-          [218, 236],
-        ]}
-        r={1.5}
-        color="#fff"
-        glow={false}
-      />
-      <Spec x={206} y={224} rx={36} ry={4} rot={-2} o={0.45} />
-      {/* near legs: long and knobbly */}
       <Leg
         c={c}
         pts={[
@@ -654,8 +634,6 @@ function hatchling(c: Ctx) {
         ]}
         near
       />
-      <Mass c={c} cx={172} cy={248} rx={22} ry={25} rot={-10} />
-      <Mass c={c} cx={248} cy={250} rx={16} ry={22} rot={8} />
       {/* arched neck, slim at the throat */}
       <path
         d="M238,246 C240,220 252,198 270,184 L292,192 C282,206 276,226 276,256 Z"
@@ -663,12 +641,12 @@ function hatchling(c: Ctx) {
         {...rim(c)}
       />
       <ellipse
-        cx="282"
-        cy="218"
-        rx="5"
-        ry="14"
+        cx="277"
+        cy="220"
+        rx="4"
+        ry="13"
         fill={p.bodyLight}
-        opacity="0.7"
+        opacity="0.5"
         transform="rotate(12 282 218)"
       />
       <path
@@ -679,6 +657,28 @@ function hatchling(c: Ctx) {
         strokeWidth="2.2"
         strokeLinecap="round"
       />
+      <path d={body} fill={u("body")} {...rim(c)} />
+      <g clipPath={`url(#${id}-hatch-flank)`}>
+        <StarWindow c={c} name="hatch" cx={206} cy={252} rx={40} ry={18} />
+      </g>
+      <Dots
+        c={c}
+        pts={[
+          [180, 230],
+          [204, 224],
+          [232, 226],
+          [192, 238],
+          [218, 236],
+        ]}
+        r={1.5}
+        color="#fff"
+        glow={false}
+      />
+      <Spec x={206} y={224} rx={36} ry={4} rot={-2} o={0.45} />
+      {/* near legs: long and knobbly */}
+
+      <Mass c={c} cx={172} cy={248} rx={22} ry={25} rot={-10} />
+      <Mass c={c} cx={248} cy={250} rx={16} ry={22} rot={8} />
       <DeerHead c={c} {...head} fawn eye="round" />
       <Crown
         c={c}
@@ -750,11 +750,6 @@ function evolvedForm(c: Ctx) {
         near={false}
       />
       <Tail c={c} x={130} y={222} a={-160} />
-      <path d={ADULT_BODY} fill={u("body")} {...rim(c)} />
-      <g clipPath={`url(#${id}-evo-flank)`}>
-        <StarWindow c={c} name="evo" cx={206} cy={238} rx={58} ry={25} />
-      </g>
-      <Spec x={206} y={204} rx={52} ry={5} rot={-2} o={0.42} />
       <Leg
         c={c}
         pts={[
@@ -768,7 +763,6 @@ function evolvedForm(c: Ctx) {
         ]}
         near
       />
-      {/* near foreleg lifted mid-step */}
       <Leg
         c={c}
         pts={[
@@ -782,6 +776,37 @@ function evolvedForm(c: Ctx) {
         ]}
         near
       />
+      {/* arched neck, slim at the throat */}
+      <path
+        d="M246,212 C254,174 270,144 290,120 L314,128 C306,150 298,180 298,218 C284,230 258,228 246,212 Z"
+        fill={u("body")}
+        {...rim(c)}
+      />
+      <ellipse
+        cx="299"
+        cy="166"
+        rx="4.5"
+        ry="19"
+        fill={p.bodyLight}
+        opacity="0.5"
+        transform="rotate(12 306 162)"
+      />
+      <path
+        d="M256,204 C262,176 274,152 290,132"
+        fill="none"
+        stroke="#fff"
+        strokeOpacity="0.32"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path d={ADULT_BODY} fill={u("body")} {...rim(c)} />
+      <g clipPath={`url(#${id}-evo-flank)`}>
+        <StarWindow c={c} name="evo" cx={206} cy={238} rx={58} ry={25} />
+      </g>
+      <Spec x={206} y={204} rx={52} ry={5} rot={-2} o={0.42} />
+
+      {/* near foreleg lifted mid-step */}
+
       <Mass c={c} cx={152} cy={234} rx={32} ry={36} rot={-10} />
       <Mass c={c} cx={264} cy={236} rx={22} ry={30} rot={10} />
       <Mane
@@ -792,29 +817,6 @@ function evolvedForm(c: Ctx) {
           "M288,146 C260,160 236,182 202,190 C236,202 268,184 292,166 Z",
           "M280,172 C258,190 236,208 210,216 C240,224 266,206 284,192 Z",
         ]}
-      />
-      {/* arched neck, slim at the throat */}
-      <path
-        d="M246,212 C254,174 270,144 290,120 L314,128 C306,150 298,180 298,218 C284,230 258,228 246,212 Z"
-        fill={u("body")}
-        {...rim(c)}
-      />
-      <ellipse
-        cx="306"
-        cy="162"
-        rx="6"
-        ry="20"
-        fill={p.bodyLight}
-        opacity="0.7"
-        transform="rotate(12 306 162)"
-      />
-      <path
-        d="M256,204 C262,176 274,152 290,132"
-        fill="none"
-        stroke="#fff"
-        strokeOpacity="0.32"
-        strokeWidth="3"
-        strokeLinecap="round"
       />
       <DeerHead c={c} {...head} />
       <Crown
@@ -963,20 +965,6 @@ function ascended(c: Ctx) {
         lightSide={-1}
       />
       <Tail c={c} x={124} y={252} a={175} />
-      <path d={ADULT_BODY} transform={tilt} fill={u("body")} {...rim(c)} />
-      <g clipPath={`url(#${id}-asc-flank)`}>
-        <StarWindow
-          c={c}
-          name="asc"
-          cx={196}
-          cy={220}
-          rx={60}
-          ry={26}
-          rot={-35}
-        />
-      </g>
-      <Spec x={170} y={196} rx={50} ry={5} rot={-35} o={0.42} />
-      {/* hind legs planted under the body; forelegs tucked */}
       <Leg
         c={c}
         pts={[
@@ -1004,6 +992,44 @@ function ascended(c: Ctx) {
         near
         lightSide={-1}
       />
+      {/* arched neck, slim at the throat */}
+      <path
+        d="M216,150 C220,116 234,90 258,72 L282,82 C270,100 264,124 266,164 C252,174 228,168 216,150 Z"
+        fill={u("body")}
+        {...rim(c)}
+      />
+      <ellipse
+        cx="267"
+        cy="116"
+        rx="4.5"
+        ry="17"
+        fill={p.bodyLight}
+        opacity="0.5"
+        transform="rotate(14 274 112)"
+      />
+      <path
+        d="M226,142 C230,116 240,96 256,82"
+        fill="none"
+        stroke="#fff"
+        strokeOpacity="0.32"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      <path d={ADULT_BODY} transform={tilt} fill={u("body")} {...rim(c)} />
+      <g clipPath={`url(#${id}-asc-flank)`}>
+        <StarWindow
+          c={c}
+          name="asc"
+          cx={196}
+          cy={220}
+          rx={60}
+          ry={26}
+          rot={-35}
+        />
+      </g>
+      <Spec x={170} y={196} rx={50} ry={5} rot={-35} o={0.42} />
+      {/* hind legs planted under the body; forelegs tucked */}
+
       <Mass c={c} cx={146} cy={240} rx={32} ry={37} rot={-40} />
       <Mass c={c} cx={232} cy={176} rx={22} ry={30} rot={-25} />
       <Mane
@@ -1014,29 +1040,6 @@ function ascended(c: Ctx) {
           "M248,104 C222,116 196,136 164,140 C194,154 228,140 250,124 Z",
           "M236,130 C214,146 192,168 162,176 C194,186 222,168 240,150 Z",
         ]}
-      />
-      {/* arched neck, slim at the throat */}
-      <path
-        d="M216,150 C220,116 234,90 258,72 L282,82 C270,100 264,124 266,164 C252,174 228,168 216,150 Z"
-        fill={u("body")}
-        {...rim(c)}
-      />
-      <ellipse
-        cx="274"
-        cy="112"
-        rx="5.5"
-        ry="18"
-        fill={p.bodyLight}
-        opacity="0.7"
-        transform="rotate(14 274 112)"
-      />
-      <path
-        d="M226,142 C230,116 240,96 256,82"
-        fill="none"
-        stroke="#fff"
-        strokeOpacity="0.32"
-        strokeWidth="3"
-        strokeLinecap="round"
       />
       <DeerHead c={c} {...head} />
       <Crown

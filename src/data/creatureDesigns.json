@@ -717,7 +717,8 @@
           "summary": "The Ribbon of Dusk: twin ribbon tails, crescent-tipped ears and a veil of drifting twilight.",
           "brief": "The ascended form: elongated crescent-tipped ears, two long ribbon tails weaving a figure-eight, a pale twilight mane, a crescent mark on the brow and a soft veil of violet motes trailing behind it."
         }
-      ]
+      ],
+      "reference": null
     },
     "thalor": {
       "silhouette": "Massive deep-sea guardian fish-beast with a heavy armoured head shield, layered fan fins and a powerful crescent tail.",
@@ -743,7 +744,8 @@
           "summary": "The Deepwarden: crowned helmet, cathedral fins and a tail like a breaking wave.",
           "brief": "The ascended form: a crowned helmet with swept-back horn ridges, towering layered dorsal fins like cathedral spires, tusks, trailing fin streamers, a huge crescent tail and a slow ring of light around it."
         }
-      ]
+      ],
+      "reference": null
     },
     "helivane": {
       "silhouette": "A raptor fused with a celestial body: hooked-beak falcon head, swept wings and a sun-disc corona behind the shoulders.",
@@ -769,7 +771,8 @@
           "summary": "The Sunpiercer: wings raised wide, a full sun disc behind it and orbiting sun-motes.",
           "brief": "The ascended form: wings raised wide like a crest, a full blazing sun disc with long rays behind it, crown feathers, long streamer tail feathers, and orbiting sun-motes — a falcon carrying a star."
         }
-      ]
+      ],
+      "reference": null
     }
   }
 }

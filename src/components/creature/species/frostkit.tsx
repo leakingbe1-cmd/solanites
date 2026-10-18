@@ -227,10 +227,10 @@ function ascended(c: Ctx) {
   );
   // Crown: branching ice that rises from behind the ears.
   const crown: [number, number, number, number][] = [
-    [132, 116, -28, 58],
-    [126, 118, -52, 44],
-    [140, 114, -6, 46],
-    [150, 112, 18, 32],
+    [150, 118, 4, 58],
+    [142, 120, -22, 44],
+    [158, 118, 28, 50],
+    [164, 124, 52, 34],
   ];
   return (
     <g>
@@ -267,13 +267,15 @@ function ascended(c: Ctx) {
       ].map(([x, y, l, a], i) => (
         <Shard key={x} c={c} x={x} y={y} l={l} w={8} rot={a} o={0.95 - i * 0.04} />
       ))}
-      {/* raised neck and chest ruff */}
-      <path d="M180,276 C166,240 150,200 128,164 L168,148 C180,178 198,212 222,236 C214,256 198,272 180,276 Z" fill={u("body")} {...rim(c)} />
-      <path d="M180,278 C164,262 150,232 140,200 C134,216 136,236 142,252 C150,270 164,282 180,278 Z" fill={p.belly} />
-      <path d="M148,226 L154,232 M150,244 L158,248 M158,260 L166,262" stroke={p.bodyDark} strokeOpacity="0.25" strokeWidth="1.2" />
-      <path d="M150,190 C158,206 168,222 180,236" fill="none" stroke="#fff" strokeOpacity="0.3" strokeWidth="2.4" strokeLinecap="round" />
-      {/* crown behind the ears */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "136px 116px" }}>
+      {/* raised neck flowing into the chest; rim only on the open edges so it joins the body cleanly */}
+      <path d="M176,282 C164,246 148,204 126,166 L168,146 C180,176 200,206 232,228 C246,250 236,284 210,296 C196,298 184,292 176,282 Z" fill={u("body")} />
+      <path d="M176,282 C164,246 148,204 126,166 M168,146 C180,176 200,206 228,226" fill="none" {...rim(c)} />
+      {/* fluffy chest ruff */}
+      <path d="M176,282 C166,262 156,236 148,208 C156,214 160,222 160,230 C168,234 170,244 168,252 C176,256 180,266 178,274 C184,276 186,280 184,286 Z" fill={p.belly} />
+      <path d="M154,220 L160,226 M160,240 L166,244 M168,258 L174,262" stroke={p.bodyDark} strokeOpacity="0.22" strokeWidth="1.2" />
+      <path d="M152,190 C162,208 176,224 192,236" fill="none" stroke="#fff" strokeOpacity="0.3" strokeWidth="2.4" strokeLinecap="round" />
+      {/* crown: branching ice rising behind the head like antlers */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "146px 118px" }}>
         {crown.map(([x, y, a, l], i) => {
           const [bx, by] = polar(x, y, l * 0.55, a - 90);
           return (
@@ -285,10 +287,10 @@ function ascended(c: Ctx) {
           );
         })}
       </g>
-      {/* ears */}
-      <path d="M128,124 C130,106 136,92 146,80 C150,96 150,112 146,126 Z" fill={p.bodyDark} opacity="0.85" />
-      <path d="M108,126 C108,106 112,90 120,76 C128,92 132,108 130,126 Z" fill={u("body")} {...rim(c, 1)} />
-      <path d="M114,120 C114,106 116,96 120,88 C124,98 126,110 124,120 Z" fill={u("glass")} />
+      {/* tall ears */}
+      <path d="M126,124 C128,104 134,86 144,70 C150,90 150,110 146,126 Z" fill={p.bodyDark} opacity="0.9" />
+      <path d="M104,128 C102,106 106,86 114,68 C124,86 130,106 130,128 Z" fill={u("body")} stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.4" />
+      <path d="M110,122 C109,106 111,92 115,82 C121,94 124,108 124,122 Z" fill={u("glass")} stroke={p.accent} strokeOpacity="0.5" strokeWidth="0.8" />
       {/* long elegant head held high */}
       <path d="M162,148 C156,126 138,114 116,114 C96,114 76,122 52,134 C46,137 48,144 54,146 C74,150 94,160 114,168 C138,174 160,168 162,148 Z" fill={u("body")} {...rim(c)} />
       <path d="M52,134 C64,138 76,144 90,152 C78,154 64,150 54,146 C48,144 46,137 52,134 Z" fill={p.belly} />
@@ -312,7 +314,7 @@ function ascended(c: Ctx) {
 
 export const frostkit: Renderer = {
   ...evolved,
-  halo: [138, 34, 24],
+  halo: [154, 34, 24],
   stageFit: [1.25, 1.12, 1.08, 0.94],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

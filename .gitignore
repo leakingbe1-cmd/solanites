@@ -5,3 +5,7 @@ out
 next-env.d.ts
 .env*.local
 preview/dist
+
+# Creature artwork source masters (large); optimised outputs live in public/creatures
+art/creatures/*
+!art/creatures/README.md

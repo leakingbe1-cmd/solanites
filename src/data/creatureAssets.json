@@ -1,0 +1,156 @@
+{
+  "generated": "scripts/creature-art.mjs",
+  "spec": {
+    "size": 1024,
+    "format": "webp",
+    "alpha": true,
+    "maxBytes": 400000,
+    "thumbSize": 384
+  },
+  "species": {
+    "mossling": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "driftfin": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "pallow": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "glimmeray": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "sproutwyrm": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "frostkit": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "abyssal-vael": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "stormquill": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "duskwing": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "cryovant": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "emberlisk": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "neonyx": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "aurorath": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "zephrax": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "prismara": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "aurelion": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "solvanth": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "pyraurum": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "aurelith": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "astravex": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "orbelith": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "eventide": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "genesis": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "nullborn": [
+      null,
+      null,
+      null,
+      null
+    ]
+  }
+}

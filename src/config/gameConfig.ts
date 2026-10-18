@@ -77,7 +77,7 @@ export const gameConfig: GameConfig = {
   },
   evolution: {
     thresholdsMs: [0, 14 * DAY, 45 * DAY, 120 * DAY],
-    names: ["Hatchling", "Fledgling", "Ascendant", "Apex"],
+    names: ["Eggling", "Hatchling", "Evolved", "Ascended"],
   },
   rarityWeights: {
     common: 60,

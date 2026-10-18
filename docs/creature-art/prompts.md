@@ -1,0 +1,824 @@
+# Creature artwork prompts
+
+Generated from `src/data/creatureDesigns.json` by `npm run art:prompts`. One prompt per species and stage; generate each image on its own (never a sheet to be cropped).
+
+**Output spec:** 1024×1024 px, transparent background preferred (PNG or WebP), creature centred at about 80% of the frame height, same camera and lighting for every image.
+
+**Save as:** `art/creatures/<species-id>/<n>-<stage>.png`, then run `npm run art:build`.
+
+**Shared style (included in every prompt):**
+
+> Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame.
+
+**Avoid:** no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified
+
+## mossling
+
+- **Silhouette:** Low, broad, rounded quadruped with a domed back and branching antlers rising above the head.
+- **Anatomy:** Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail.
+- **Face:** Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils.
+- **Posture:** Calm, grounded, walking slowly forward with its head low and curious.
+- **Materials:** Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain.
+- **Effects:** Tiny floating green spores and faint bioluminescent veins in the leaves.
+- **Reference strip:** `docs/creature-art/reference/species/mossling.webp`
+
+### 1. Eggling → `art/creatures/mossling/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "mossling", Eggling stage (1 of 4). Low, broad, rounded quadruped with a domed back and branching antlers rising above the head. Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail. Face: Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils. Materials: Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain. Effects: Tiny floating green spores and faint bioluminescent veins in the leaves. This stage: Round, plush baby with an oversized head and huge eyes, stubby nub legs, one or two sprout leaves on top instead of antlers, soft pale-green moss fuzz, no leaf armour yet. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/mossling/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "mossling", Hatchling stage (2 of 4). Low, broad, rounded quadruped with a domed back and branching antlers rising above the head. Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail. Face: Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils. Materials: Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain. Effects: Tiny floating green spores and faint bioluminescent veins in the leaves. This stage: Small quadruped, still big-headed, first short branching antlers with a few leaves, first leaf shingles on shoulders, legs now visible, alert sitting pose. Posture: Calm, grounded, walking slowly forward with its head low and curious. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/mossling/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "mossling", Evolved stage (3 of 4). Low, broad, rounded quadruped with a domed back and branching antlers rising above the head. Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail. Face: Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils. Materials: Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain. Effects: Tiny floating green spores and faint bioluminescent veins in the leaves. This stage: Mature broad body with layered leaf armour covering the back, full branching antlers, bark plating on legs, low powerful walking stance, longer leafy tail. Posture: Calm, grounded, walking slowly forward with its head low and curious. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/mossling/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "mossling", Ascended stage (4 of 4). Low, broad, rounded quadruped with a domed back and branching antlers rising above the head. Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail. Face: Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils. Materials: Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain. Effects: Tiny floating green spores and faint bioluminescent veins in the leaves. This stage: Large, majestic, wide antlers like a small tree crown with glowing leaves and blossoms, moss and crystals growing from the back, bioluminescent green veins, slow regal stance, faint spores drifting. Posture: Calm, grounded, walking slowly forward with its head low and curious. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## driftfin
+
+- **Silhouette:** Small streamlined fish that grows into a rising, curling sea dragon with flowing fins.
+- **Anatomy:** Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs.
+- **Face:** Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel.
+- **Posture:** Swimming mid-water in a relaxed wave.
+- **Materials:** Smooth wet blue skin with pale belly, translucent membrane fins with fine rays.
+- **Effects:** Small glowing lateral-line dots and drifting bubbles.
+- **Reference strip:** `docs/creature-art/reference/species/driftfin.webp`
+
+### 1. Eggling → `art/creatures/driftfin/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "driftfin", Eggling stage (1 of 4). Small streamlined fish that grows into a rising, curling sea dragon with flowing fins. Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs. Face: Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel. Materials: Smooth wet blue skin with pale belly, translucent membrane fins with fine rays. Effects: Small glowing lateral-line dots and drifting bubbles. This stage: Short chubby tadpole body, oversized head and eyes, small rounded fin nubs, short tail, no sail fin yet. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/driftfin/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "driftfin", Hatchling stage (2 of 4). Small streamlined fish that grows into a rising, curling sea dragon with flowing fins. Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs. Face: Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel. Materials: Smooth wet blue skin with pale belly, translucent membrane fins with fine rays. Effects: Small glowing lateral-line dots and drifting bubbles. This stage: Elongated juvenile eel, one small translucent sail fin, pectoral fins forming, a few glowing lateral dots. Posture: Swimming mid-water in a relaxed wave. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/driftfin/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "driftfin", Evolved stage (3 of 4). Small streamlined fish that grows into a rising, curling sea dragon with flowing fins. Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs. Face: Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel. Materials: Smooth wet blue skin with pale belly, translucent membrane fins with fine rays. Effects: Small glowing lateral-line dots and drifting bubbles. This stage: Curved fish-dragon with large translucent sweeping fins, long tail curling upward, glowing dots. Posture: Swimming mid-water in a relaxed wave. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/driftfin/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "driftfin", Ascended stage (4 of 4). Small streamlined fish that grows into a rising, curling sea dragon with flowing fins. Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs. Face: Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel. Materials: Smooth wet blue skin with pale belly, translucent membrane fins with fine rays. Effects: Small glowing lateral-line dots and drifting bubbles. This stage: Upright curling sea dragon, flowing silk-like fins and streamers, iridescent scales, swirling water. Posture: Swimming mid-water in a relaxed wave. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## pallow
+
+- **Silhouette:** Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals.
+- **Anatomy:** Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels.
+- **Face:** One large serene eye in a pearly face plate, faint tear-like markings.
+- **Posture:** Hovering upright, drifting slowly.
+- **Materials:** Pearl core, layered ivory blade-petals with translucent edges.
+- **Effects:** Soft dawn-coloured glow from within the pearl.
+- **Reference strip:** `docs/creature-art/reference/species/pallow.webp`
+
+### 1. Eggling → `art/creatures/pallow/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pallow", Eggling stage (1 of 4). Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals. Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels. Face: One large serene eye in a pearly face plate, faint tear-like markings. Materials: Pearl core, layered ivory blade-petals with translucent edges. Effects: Soft dawn-coloured glow from within the pearl. This stage: Small pearl orb, fuzzy down instead of feathers, eye half-closed, two short tassels, no feather fronds. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/pallow/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pallow", Hatchling stage (2 of 4). Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals. Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels. Face: One large serene eye in a pearly face plate, faint tear-like markings. Materials: Pearl core, layered ivory blade-petals with translucent edges. Effects: Soft dawn-coloured glow from within the pearl. This stage: Pearl with one uneven ring of short soft feathers, eye fully open, three short tassels. Posture: Hovering upright, drifting slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/pallow/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pallow", Evolved stage (3 of 4). Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals. Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels. Face: One large serene eye in a pearly face plate, faint tear-like markings. Materials: Pearl core, layered ivory blade-petals with translucent edges. Effects: Soft dawn-coloured glow from within the pearl. This stage: Two to three tiers of asymmetric layered feathers with translucent tips, long tassels with glowing ends, pearl face plate. Posture: Hovering upright, drifting slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/pallow/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pallow", Ascended stage (4 of 4). Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals. Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels. Face: One large serene eye in a pearly face plate, faint tear-like markings. Materials: Pearl core, layered ivory blade-petals with translucent edges. Effects: Soft dawn-coloured glow from within the pearl. This stage: Large crown of layered sweeping feathers in pearl, cream and pale blue, faint halo of light, very long tassels, ancient serene presence. Posture: Hovering upright, drifting slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## glimmeray
+
+- **Silhouette:** Very wide flat manta ray seen from above at a slight angle, with a long whip tail.
+- **Anatomy:** Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail.
+- **Face:** Small round eyes on the sides of the head, gill spiracles behind them.
+- **Posture:** Gliding with wings slightly lifted.
+- **Materials:** Smooth light-blue skin with white spots on top, pale underside.
+- **Effects:** Soft caustic light patterns over its back.
+- **Reference strip:** `docs/creature-art/reference/species/glimmeray.webp`
+
+### 1. Eggling → `art/creatures/glimmeray/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "glimmeray", Eggling stage (1 of 4). Very wide flat manta ray seen from above at a slight angle, with a long whip tail. Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail. Face: Small round eyes on the sides of the head, gill spiracles behind them. Materials: Smooth light-blue skin with white spots on top, pale underside. Effects: Soft caustic light patterns over its back. This stage: Small rounded diamond body, short wings, short tail, big eyes, a few faint spots. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/glimmeray/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "glimmeray", Hatchling stage (2 of 4). Very wide flat manta ray seen from above at a slight angle, with a long whip tail. Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail. Face: Small round eyes on the sides of the head, gill spiracles behind them. Materials: Smooth light-blue skin with white spots on top, pale underside. Effects: Soft caustic light patterns over its back. This stage: Wider wings, longer tail, cephalic lobes beginning to curl, clear spot pattern. Posture: Gliding with wings slightly lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/glimmeray/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "glimmeray", Evolved stage (3 of 4). Very wide flat manta ray seen from above at a slight angle, with a long whip tail. Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail. Face: Small round eyes on the sides of the head, gill spiracles behind them. Materials: Smooth light-blue skin with white spots on top, pale underside. Effects: Soft caustic light patterns over its back. This stage: Full wide manta wings with rippling edges, long whip tail, fully curled lobes, crisp spot pattern. Posture: Gliding with wings slightly lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/glimmeray/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "glimmeray", Ascended stage (4 of 4). Very wide flat manta ray seen from above at a slight angle, with a long whip tail. Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail. Face: Small round eyes on the sides of the head, gill spiracles behind them. Materials: Smooth light-blue skin with white spots on top, pale underside. Effects: Soft caustic light patterns over its back. This stage: Very wide elegant wings with translucent trailing ribbons, iridescent spots, long tail with a glowing tip, caustic light across the back. Posture: Gliding with wings slightly lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## sproutwyrm
+
+- **Silhouette:** Segmented inchworm in a high arch, with a flower-bud head.
+- **Anatomy:** Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top.
+- **Face:** Small round eyes beneath a closed tulip-like petal hood, tiny mouth.
+- **Posture:** Arching forward mid-step, inching along.
+- **Materials:** Green bark rings with lichen, waxy petals, root tendrils.
+- **Effects:** Glowing yellow-green buds.
+- **Reference strip:** `docs/creature-art/reference/species/sproutwyrm.webp`
+
+### 1. Eggling → `art/creatures/sproutwyrm/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "sproutwyrm", Eggling stage (1 of 4). Segmented inchworm in a high arch, with a flower-bud head. Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top. Face: Small round eyes beneath a closed tulip-like petal hood, tiny mouth. Materials: Green bark rings with lichen, waxy petals, root tendrils. Effects: Glowing yellow-green buds. This stage: Three or four plump segments, tiny root feet, one sprout on top, big eyes, no petal hood. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/sproutwyrm/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "sproutwyrm", Hatchling stage (2 of 4). Segmented inchworm in a high arch, with a flower-bud head. Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top. Face: Small round eyes beneath a closed tulip-like petal hood, tiny mouth. Materials: Green bark rings with lichen, waxy petals, root tendrils. Effects: Glowing yellow-green buds. This stage: Six to eight segments in a low arch, small buds on top, petal hood beginning to form. Posture: Arching forward mid-step, inching along. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/sproutwyrm/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "sproutwyrm", Evolved stage (3 of 4). Segmented inchworm in a high arch, with a flower-bud head. Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top. Face: Small round eyes beneath a closed tulip-like petal hood, tiny mouth. Materials: Green bark rings with lichen, waxy petals, root tendrils. Effects: Glowing yellow-green buds. This stage: Eleven segments in a high arch, rooted legs, leafy shoots with glowing buds, closed tulip hood framing the face. Posture: Arching forward mid-step, inching along. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/sproutwyrm/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "sproutwyrm", Ascended stage (4 of 4). Segmented inchworm in a high arch, with a flower-bud head. Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top. Face: Small round eyes beneath a closed tulip-like petal hood, tiny mouth. Materials: Green bark rings with lichen, waxy petals, root tendrils. Effects: Glowing yellow-green buds. This stage: Large leafy wyrm with a raised head, branching antler-like growth, leaves along a segmented body, small root legs, glowing buds. Posture: Arching forward mid-step, inching along. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## frostkit
+
+- **Silhouette:** Compact low quadruped like a fox carved from ice, with a thick crystal tail.
+- **Anatomy:** Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back.
+- **Face:** Wedge-shaped snout, narrow ice-blue eyes, dark nose.
+- **Posture:** Alert prowl, one paw raised.
+- **Materials:** Frosted white fur with translucent refracting ice crystals.
+- **Effects:** Light refraction through the crystals; a little frost breath.
+- **Reference strip:** `docs/creature-art/reference/species/frostkit.webp`
+
+### 1. Eggling → `art/creatures/frostkit/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "frostkit", Eggling stage (1 of 4). Compact low quadruped like a fox carved from ice, with a thick crystal tail. Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back. Face: Wedge-shaped snout, narrow ice-blue eyes, dark nose. Materials: Frosted white fur with translucent refracting ice crystals. Effects: Light refraction through the crystals; a little frost breath. This stage: Round fluffy kit, big eyes, short legs, small crystal tips on the ears, fluffy tail. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/frostkit/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "frostkit", Hatchling stage (2 of 4). Compact low quadruped like a fox carved from ice, with a thick crystal tail. Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back. Face: Wedge-shaped snout, narrow ice-blue eyes, dark nose. Materials: Frosted white fur with translucent refracting ice crystals. Effects: Light refraction through the crystals; a little frost breath. This stage: Leaner kit, short ice spines on the back, crystal ears, tail starting to crystallise. Posture: Alert prowl, one paw raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/frostkit/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "frostkit", Evolved stage (3 of 4). Compact low quadruped like a fox carved from ice, with a thick crystal tail. Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back. Face: Wedge-shaped snout, narrow ice-blue eyes, dark nose. Materials: Frosted white fur with translucent refracting ice crystals. Effects: Light refraction through the crystals; a little frost breath. This stage: Elegant crystal-plated fox, tall ice ears, row of spines, thick translucent faceted tail, refracting light. Posture: Alert prowl, one paw raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/frostkit/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "frostkit", Ascended stage (4 of 4). Compact low quadruped like a fox carved from ice, with a thick crystal tail. Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back. Face: Wedge-shaped snout, narrow ice-blue eyes, dark nose. Materials: Frosted white fur with translucent refracting ice crystals. Effects: Light refraction through the crystals; a little frost breath. This stage: Large regal ice fox with branching crystal crest, a flowing tail of many crystals, frost aura and snowflakes, prismatic refraction. Posture: Alert prowl, one paw raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## abyssal-vael
+
+- **Silhouette:** Swan-necked ribbon serpent rising vertically out of its own coils.
+- **Anatomy:** Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs.
+- **Face:** Long narrow head, slit glowing cyan eyes.
+- **Posture:** Rising and watchful, head angled down.
+- **Materials:** Deep-blue smooth scales, translucent ribbon fins.
+- **Effects:** Bioluminescent cyan veins.
+- **Reference strip:** `docs/creature-art/reference/species/abyssal-vael.webp`
+
+### 1. Eggling → `art/creatures/abyssal-vael/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "abyssal-vael", Eggling stage (1 of 4). Swan-necked ribbon serpent rising vertically out of its own coils. Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs. Face: Long narrow head, slit glowing cyan eyes. Materials: Deep-blue smooth scales, translucent ribbon fins. Effects: Bioluminescent cyan veins. This stage: Small coil, short neck, large eyes, tiny crest bump, a few faint glowing veins. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/abyssal-vael/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "abyssal-vael", Hatchling stage (2 of 4). Swan-necked ribbon serpent rising vertically out of its own coils. Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs. Face: Long narrow head, slit glowing cyan eyes. Materials: Deep-blue smooth scales, translucent ribbon fins. Effects: Bioluminescent cyan veins. This stage: Neck rising higher, short ribbon fins at the tail, crest growing, clearer vein pattern. Posture: Rising and watchful, head angled down. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/abyssal-vael/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "abyssal-vael", Evolved stage (3 of 4). Swan-necked ribbon serpent rising vertically out of its own coils. Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs. Face: Long narrow head, slit glowing cyan eyes. Materials: Deep-blue smooth scales, translucent ribbon fins. Effects: Bioluminescent cyan veins. This stage: Full vertical S-neck, long backswept crest, trailing ribbon fins, glowing veins along the neck. Posture: Rising and watchful, head angled down. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/abyssal-vael/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "abyssal-vael", Ascended stage (4 of 4). Swan-necked ribbon serpent rising vertically out of its own coils. Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs. Face: Long narrow head, slit glowing cyan eyes. Materials: Deep-blue smooth scales, translucent ribbon fins. Effects: Bioluminescent cyan veins. This stage: Very tall neck, multiple trailing ribbon fins like silk, crown-like crest, intense bioluminescent veins, deep-sea particles. Posture: Rising and watchful, head angled down. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## stormquill
+
+- **Silhouette:** Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast.
+- **Anatomy:** Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars.
+- **Face:** Hooked beak, round fierce eye under a strong brow.
+- **Posture:** Standing tall, chest out, wings half lifted.
+- **Materials:** Violet feathers with electric-cyan barbs, horn-coloured legs.
+- **Effects:** Small static sparks between the quill tips.
+- **Reference strip:** `docs/creature-art/reference/species/stormquill.webp`
+
+### 1. Eggling → `art/creatures/stormquill/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "stormquill", Eggling stage (1 of 4). Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast. Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars. Face: Hooked beak, round fierce eye under a strong brow. Materials: Violet feathers with electric-cyan barbs, horn-coloured legs. Effects: Small static sparks between the quill tips. This stage: Fluffy round violet chick, big eyes, three small crest quills, stubby legs. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/stormquill/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "stormquill", Hatchling stage (2 of 4). Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast. Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars. Face: Hooked beak, round fierce eye under a strong brow. Materials: Violet feathers with electric-cyan barbs, horn-coloured legs. Effects: Small static sparks between the quill tips. This stage: Juvenile bird, fuller quill crest, small wings, first lightning barring on the tail. Posture: Standing tall, chest out, wings half lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/stormquill/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "stormquill", Evolved stage (3 of 4). Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast. Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars. Face: Hooked beak, round fierce eye under a strong brow. Materials: Violet feathers with electric-cyan barbs, horn-coloured legs. Effects: Small static sparks between the quill tips. This stage: Strong storm bird, full spiky crest, broad wings half open, barred tail plumes, sparks between the quills. Posture: Standing tall, chest out, wings half lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/stormquill/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "stormquill", Ascended stage (4 of 4). Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast. Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars. Face: Hooked beak, round fierce eye under a strong brow. Materials: Violet feathers with electric-cyan barbs, horn-coloured legs. Effects: Small static sparks between the quill tips. This stage: Majestic griffin-like storm bird, huge crest of long quills, wings spread, arcing lightning around it. Posture: Standing tall, chest out, wings half lifted. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## duskwing
+
+- **Silhouette:** Moth with four broad eye-spotted wings and feathered antennae.
+- **Anatomy:** Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs.
+- **Face:** Two large dark compound eyes, fuzzy face.
+- **Posture:** Hovering, wings open.
+- **Materials:** Velvet violet scales on the wings, fur on the body.
+- **Effects:** Eye-spots glow faintly in the dark.
+- **Reference strip:** `docs/creature-art/reference/species/duskwing.webp`
+
+### 1. Eggling → `art/creatures/duskwing/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "duskwing", Eggling stage (1 of 4). Moth with four broad eye-spotted wings and feathered antennae. Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs. Face: Two large dark compound eyes, fuzzy face. Materials: Velvet violet scales on the wings, fur on the body. Effects: Eye-spots glow faintly in the dark. This stage: Fluffy round larva-moth hybrid, tiny wing buds, short antennae, big eyes. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/duskwing/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "duskwing", Hatchling stage (2 of 4). Moth with four broad eye-spotted wings and feathered antennae. Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs. Face: Two large dark compound eyes, fuzzy face. Materials: Velvet violet scales on the wings, fur on the body. Effects: Eye-spots glow faintly in the dark. This stage: Small soft crumpled wings, first eye-spots, longer antennae. Posture: Hovering, wings open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/duskwing/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "duskwing", Evolved stage (3 of 4). Moth with four broad eye-spotted wings and feathered antennae. Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs. Face: Two large dark compound eyes, fuzzy face. Materials: Velvet violet scales on the wings, fur on the body. Effects: Eye-spots glow faintly in the dark. This stage: Full four-winged moth, crisp eye-spots, feathered antennae, furry thorax. Posture: Hovering, wings open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/duskwing/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "duskwing", Ascended stage (4 of 4). Moth with four broad eye-spotted wings and feathered antennae. Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs. Face: Two large dark compound eyes, fuzzy face. Materials: Velvet violet scales on the wings, fur on the body. Effects: Eye-spots glow faintly in the dark. This stage: Large dramatic wings with long tails on the hindwings, glowing eye-spots, scalloped edges, dusk-coloured gradient, floating dust. Posture: Hovering, wings open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## cryovant
+
+- **Silhouette:** Floating crystal jellyfish: a faceted bell with hanging shard tendrils.
+- **Anatomy:** Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms.
+- **Face:** Two glowing orb eyes under the rim.
+- **Posture:** Drifting upward, tendrils trailing.
+- **Materials:** Clear and blue refractive crystal, frosted edges.
+- **Effects:** Inner glowing core and refracted caustics.
+- **Reference strip:** `docs/creature-art/reference/species/cryovant.webp`
+
+### 1. Eggling → `art/creatures/cryovant/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "cryovant", Eggling stage (1 of 4). Floating crystal jellyfish: a faceted bell with hanging shard tendrils. Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms. Face: Two glowing orb eyes under the rim. Materials: Clear and blue refractive crystal, frosted edges. Effects: Inner glowing core and refracted caustics. This stage: Small rounded crystal bell, three short shard tendrils, big glowing eyes. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/cryovant/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "cryovant", Hatchling stage (2 of 4). Floating crystal jellyfish: a faceted bell with hanging shard tendrils. Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms. Face: Two glowing orb eyes under the rim. Materials: Clear and blue refractive crystal, frosted edges. Effects: Inner glowing core and refracted caustics. This stage: Larger faceted bell, five or six shard tendrils, faint core glow. Posture: Drifting upward, tendrils trailing. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/cryovant/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "cryovant", Evolved stage (3 of 4). Floating crystal jellyfish: a faceted bell with hanging shard tendrils. Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms. Face: Two glowing orb eyes under the rim. Materials: Clear and blue refractive crystal, frosted edges. Effects: Inner glowing core and refracted caustics. This stage: Detailed faceted bell with rim crystals, many long shard chains, ribbon arms, bright core. Posture: Drifting upward, tendrils trailing. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/cryovant/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "cryovant", Ascended stage (4 of 4). Floating crystal jellyfish: a faceted bell with hanging shard tendrils. Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms. Face: Two glowing orb eyes under the rim. Materials: Clear and blue refractive crystal, frosted edges. Effects: Inner glowing core and refracted caustics. This stage: Large ornate crystalline bell with frost filigree, cascading shard chains like a chandelier, strong prismatic refraction. Posture: Drifting upward, tendrils trailing. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## emberlisk
+
+- **Silhouette:** Spiked lava lizard on four legs, growing a jagged ridge of molten spines.
+- **Anatomy:** Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail.
+- **Face:** Wide jaw, slit amber eyes, glowing nostrils.
+- **Posture:** Crawling, low to the ground.
+- **Materials:** Dark violet basalt-like armour with molten orange seams, warm glowing belly.
+- **Effects:** Heat shimmer and embers rising from the seams.
+- **Reference strip:** `docs/creature-art/reference/species/emberlisk.webp`
+
+### 1. Eggling → `art/creatures/emberlisk/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "emberlisk", Eggling stage (1 of 4). Spiked lava lizard on four legs, growing a jagged ridge of molten spines. Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail. Face: Wide jaw, slit amber eyes, glowing nostrils. Materials: Dark violet basalt-like armour with molten orange seams, warm glowing belly. Effects: Heat shimmer and embers rising from the seams. This stage: Small chubby lizard, big eyes, tiny bumps along the back, glowing orange spots. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/emberlisk/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "emberlisk", Hatchling stage (2 of 4). Spiked lava lizard on four legs, growing a jagged ridge of molten spines. Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail. Face: Wide jaw, slit amber eyes, glowing nostrils. Materials: Dark violet basalt-like armour with molten orange seams, warm glowing belly. Effects: Heat shimmer and embers rising from the seams. This stage: Young lizard with a row of small spines, first lava cracks. Posture: Crawling, low to the ground. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/emberlisk/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "emberlisk", Evolved stage (3 of 4). Spiked lava lizard on four legs, growing a jagged ridge of molten spines. Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail. Face: Wide jaw, slit amber eyes, glowing nostrils. Materials: Dark violet basalt-like armour with molten orange seams, warm glowing belly. Effects: Heat shimmer and embers rising from the seams. This stage: Strong lizard, tall jagged spine ridge with molten edges, cracked dark hide. Posture: Crawling, low to the ground. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/emberlisk/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "emberlisk", Ascended stage (4 of 4). Spiked lava lizard on four legs, growing a jagged ridge of molten spines. Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail. Face: Wide jaw, slit amber eyes, glowing nostrils. Materials: Dark violet basalt-like armour with molten orange seams, warm glowing belly. Effects: Heat shimmer and embers rising from the seams. This stage: Massive lava lizard, huge jagged flaming spines, glowing cracks, embers and heat haze. Posture: Crawling, low to the ground. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## neonyx
+
+- **Silhouette:** Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk.
+- **Anatomy:** Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead.
+- **Face:** Small glowing eye, huge mouth with neon teeth.
+- **Posture:** Hovering, mouth open.
+- **Materials:** Dark velvet skin with neon photophores.
+- **Effects:** Magenta and cyan lure light.
+- **Reference strip:** `docs/creature-art/reference/species/neonyx.webp`
+
+### 1. Eggling → `art/creatures/neonyx/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "neonyx", Eggling stage (1 of 4). Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk. Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead. Face: Small glowing eye, huge mouth with neon teeth. Materials: Dark velvet skin with neon photophores. Effects: Magenta and cyan lure light. This stage: Small round fry, big eye, tiny lure dot, small fins, mouth closed. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/neonyx/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "neonyx", Hatchling stage (2 of 4). Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk. Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead. Face: Small glowing eye, huge mouth with neon teeth. Materials: Dark velvet skin with neon photophores. Effects: Magenta and cyan lure light. This stage: Rounder body, longer lure stalk, a few photophores, small teeth. Posture: Hovering, mouth open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/neonyx/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "neonyx", Evolved stage (3 of 4). Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk. Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead. Face: Small glowing eye, huge mouth with neon teeth. Materials: Dark velvet skin with neon photophores. Effects: Magenta and cyan lure light. This stage: Full body, frilled fins, open glowing maw, bright lantern lure, rows of photophores. Posture: Hovering, mouth open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/neonyx/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "neonyx", Ascended stage (4 of 4). Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk. Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead. Face: Small glowing eye, huge mouth with neon teeth. Materials: Dark velvet skin with neon photophores. Effects: Magenta and cyan lure light. This stage: Large ornate angler with multiple lures, flowing frills, intricate neon patterns, glowing particles. Posture: Hovering, mouth open. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## aurorath
+
+- **Silhouette:** Sky whale trailing curtains of aurora beneath its belly.
+- **Anatomy:** Massive whale body, long pectoral fins, flukes, throat grooves.
+- **Face:** Small kind eye, long mouth line.
+- **Posture:** Gliding slowly through the sky.
+- **Materials:** Teal skin with aurora bands, pale throat grooves.
+- **Effects:** Translucent aurora light curtains.
+- **Reference strip:** `docs/creature-art/reference/species/aurorath.webp`
+
+### 1. Eggling → `art/creatures/aurorath/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurorath", Eggling stage (1 of 4). Sky whale trailing curtains of aurora beneath its belly. Massive whale body, long pectoral fins, flukes, throat grooves. Face: Small kind eye, long mouth line. Materials: Teal skin with aurora bands, pale throat grooves. Effects: Translucent aurora light curtains. This stage: Round whale calf, stubby fins, small faint aurora shimmer, big kind eye. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/aurorath/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurorath", Hatchling stage (2 of 4). Sky whale trailing curtains of aurora beneath its belly. Massive whale body, long pectoral fins, flukes, throat grooves. Face: Small kind eye, long mouth line. Materials: Teal skin with aurora bands, pale throat grooves. Effects: Translucent aurora light curtains. This stage: Longer calf, two or three thin aurora veils, longer fins. Posture: Gliding slowly through the sky. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/aurorath/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurorath", Evolved stage (3 of 4). Sky whale trailing curtains of aurora beneath its belly. Massive whale body, long pectoral fins, flukes, throat grooves. Face: Small kind eye, long mouth line. Materials: Teal skin with aurora bands, pale throat grooves. Effects: Translucent aurora light curtains. This stage: Large whale, full curtains of green and violet aurora hanging below, aurora bands on the back. Posture: Gliding slowly through the sky. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/aurorath/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurorath", Ascended stage (4 of 4). Sky whale trailing curtains of aurora beneath its belly. Massive whale body, long pectoral fins, flukes, throat grooves. Face: Small kind eye, long mouth line. Materials: Teal skin with aurora bands, pale throat grooves. Effects: Translucent aurora light curtains. This stage: Enormous majestic sky whale, flowing aurora curtains and streamers, starlit skin, gentle light rays. Posture: Gliding slowly through the sky. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## zephrax
+
+- **Silhouette:** Long Eastern storm dragon whose serpentine body coils through billowing storm clouds.
+- **Anatomy:** Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail.
+- **Face:** Long horned dragon head, slit yellow eyes, flowing whiskers.
+- **Posture:** Rising in a coil through the clouds, head raised.
+- **Materials:** Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud.
+- **Effects:** Small lightning arcs inside the clouds.
+- **Reference strip:** `docs/creature-art/reference/species/zephrax.webp`
+
+### 1. Eggling → `art/creatures/zephrax/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "zephrax", Eggling stage (1 of 4). Long Eastern storm dragon whose serpentine body coils through billowing storm clouds. Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail. Face: Long horned dragon head, slit yellow eyes, flowing whiskers. Materials: Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud. Effects: Small lightning arcs inside the clouds. This stage: Short curled serpent with big eyes and tiny horn nubs, wrapped in a small cloud puff, a spark at the tail tip. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/zephrax/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "zephrax", Hatchling stage (2 of 4). Long Eastern storm dragon whose serpentine body coils through billowing storm clouds. Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail. Face: Long horned dragon head, slit yellow eyes, flowing whiskers. Materials: Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud. Effects: Small lightning arcs inside the clouds. This stage: Longer S-shaped serpent, short mane, small blue spines, little legs, cloud trailing from the tail. Posture: Rising in a coil through the clouds, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/zephrax/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "zephrax", Evolved stage (3 of 4). Long Eastern storm dragon whose serpentine body coils through billowing storm clouds. Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail. Face: Long horned dragon head, slit yellow eyes, flowing whiskers. Materials: Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud. Effects: Small lightning arcs inside the clouds. This stage: Long coiled dragon among large clouds, full mane and whiskers, crystal spines, lightning flickering in the clouds. Posture: Rising in a coil through the clouds, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/zephrax/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "zephrax", Ascended stage (4 of 4). Long Eastern storm dragon whose serpentine body coils through billowing storm clouds. Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail. Face: Long horned dragon head, slit yellow eyes, flowing whiskers. Materials: Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud. Effects: Small lightning arcs inside the clouds. This stage: Majestic upright storm dragon rising from a cloud bank, tall crystal spines, long horns, crackling lightning, flowing mane. Posture: Rising in a coil through the clouds, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## prismara
+
+- **Silhouette:** Tall crowned bird displaying a peacock-like fan of prism shards.
+- **Anatomy:** Slender upright body, thin legs, small crowned head, fan tail of crystal shards.
+- **Face:** Small almond eyes, short beak.
+- **Posture:** Standing tall, displaying.
+- **Materials:** Violet plumage, refractive glass shards.
+- **Effects:** Rainbow refractions from the shards.
+- **Reference strip:** `docs/creature-art/reference/species/prismara.webp`
+
+### 1. Eggling → `art/creatures/prismara/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "prismara", Eggling stage (1 of 4). Tall crowned bird displaying a peacock-like fan of prism shards. Slender upright body, thin legs, small crowned head, fan tail of crystal shards. Face: Small almond eyes, short beak. Materials: Violet plumage, refractive glass shards. Effects: Rainbow refractions from the shards. This stage: Small chick, one crystal shard on the tail, tiny crown bump. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/prismara/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "prismara", Hatchling stage (2 of 4). Tall crowned bird displaying a peacock-like fan of prism shards. Slender upright body, thin legs, small crowned head, fan tail of crystal shards. Face: Small almond eyes, short beak. Materials: Violet plumage, refractive glass shards. Effects: Rainbow refractions from the shards. This stage: Juvenile with a small fan of five shards, crown forming. Posture: Standing tall, displaying. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/prismara/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "prismara", Evolved stage (3 of 4). Tall crowned bird displaying a peacock-like fan of prism shards. Slender upright body, thin legs, small crowned head, fan tail of crystal shards. Face: Small almond eyes, short beak. Materials: Violet plumage, refractive glass shards. Effects: Rainbow refractions from the shards. This stage: Tall slender bird, full fan of crystal shards, three-point crown, refracted light. Posture: Standing tall, displaying. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/prismara/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "prismara", Ascended stage (4 of 4). Tall crowned bird displaying a peacock-like fan of prism shards. Slender upright body, thin legs, small crowned head, fan tail of crystal shards. Face: Small almond eyes, short beak. Materials: Violet plumage, refractive glass shards. Effects: Rainbow refractions from the shards. This stage: Majestic queen with a huge layered shard fan, jewelled crown, spectral rainbow refraction. Posture: Standing tall, displaying. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## aurelion
+
+- **Silhouette:** Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised.
+- **Anatomy:** Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates.
+- **Face:** Proud lion-dragon face, fierce almond eyes, short snout.
+- **Posture:** Standing tall on four legs, wings raised.
+- **Materials:** Gold scale armour over a pale-gold coat, filigree on the wings.
+- **Effects:** Soft golden light and drifting motes.
+- **Reference strip:** `docs/creature-art/reference/species/aurelion.webp`
+
+### 1. Eggling → `art/creatures/aurelion/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelion", Eggling stage (1 of 4). Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised. Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates. Face: Proud lion-dragon face, fierce almond eyes, short snout. Materials: Gold scale armour over a pale-gold coat, filigree on the wings. Effects: Soft golden light and drifting motes. This stage: Small round golden whelp lying curled, big eyes, tiny wing nubs, soft gold fuzz. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/aurelion/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelion", Hatchling stage (2 of 4). Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised. Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates. Face: Proud lion-dragon face, fierce almond eyes, short snout. Materials: Gold scale armour over a pale-gold coat, filigree on the wings. Effects: Soft golden light and drifting motes. This stage: Lion-dragon cub standing, small feathered wings, short horns, first scale plates. Posture: Standing tall on four legs, wings raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/aurelion/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelion", Evolved stage (3 of 4). Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised. Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates. Face: Proud lion-dragon face, fierce almond eyes, short snout. Materials: Gold scale armour over a pale-gold coat, filigree on the wings. Effects: Soft golden light and drifting motes. This stage: Mature winged lion-dragon on four legs, large raised wings, mane of golden plates, crown of horns. Posture: Standing tall on four legs, wings raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/aurelion/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelion", Ascended stage (4 of 4). Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised. Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates. Face: Proud lion-dragon face, fierce almond eyes, short snout. Materials: Gold scale armour over a pale-gold coat, filigree on the wings. Effects: Soft golden light and drifting motes. This stage: Huge regal lion-dragon, enormous ornate wings, filigreed gold armour, tall crown, golden light. Posture: Standing tall on four legs, wings raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## solvanth
+
+- **Silhouette:** Leviathan coiled around a captive sun.
+- **Anatomy:** Long serpentine body wrapping an orb, maned head rising above it, fins along the coil.
+- **Face:** Long maned head, slit red eyes.
+- **Posture:** Coiled protectively around the sun.
+- **Materials:** Gold scales, flame-like mane.
+- **Effects:** Solar corona.
+- **Reference strip:** `docs/creature-art/reference/species/solvanth.webp`
+
+### 1. Eggling → `art/creatures/solvanth/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "solvanth", Eggling stage (1 of 4). Leviathan coiled around a captive sun. Long serpentine body wrapping an orb, maned head rising above it, fins along the coil. Face: Long maned head, slit red eyes. Materials: Gold scales, flame-like mane. Effects: Solar corona. This stage: Small golden serpent curled around a small ember orb, big eyes. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/solvanth/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "solvanth", Hatchling stage (2 of 4). Leviathan coiled around a captive sun. Long serpentine body wrapping an orb, maned head rising above it, fins along the coil. Face: Long maned head, slit red eyes. Materials: Gold scales, flame-like mane. Effects: Solar corona. This stage: Longer serpent wrapping a brighter orb, short mane. Posture: Coiled protectively around the sun. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/solvanth/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "solvanth", Evolved stage (3 of 4). Leviathan coiled around a captive sun. Long serpentine body wrapping an orb, maned head rising above it, fins along the coil. Face: Long maned head, slit red eyes. Materials: Gold scales, flame-like mane. Effects: Solar corona. This stage: Large coil around a blazing sun orb, full mane, fins along the coil. Posture: Coiled protectively around the sun. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/solvanth/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "solvanth", Ascended stage (4 of 4). Leviathan coiled around a captive sun. Long serpentine body wrapping an orb, maned head rising above it, fins along the coil. Face: Long maned head, slit red eyes. Materials: Gold scales, flame-like mane. Effects: Solar corona. This stage: Massive leviathan, multiple coils, radiant corona, flame mane, regal head. Posture: Coiled protectively around the sun. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## pyraurum
+
+- **Silhouette:** Golden phoenix in full flight trailing flame streamers.
+- **Anatomy:** Sleek body, raised wings, long flame tail plumes, crested head.
+- **Face:** Sharp beak, almond eyes.
+- **Posture:** Flying upward.
+- **Materials:** Gold and orange feathers with fire edges.
+- **Effects:** Embers and flame trails.
+- **Reference strip:** `docs/creature-art/reference/species/pyraurum.webp`
+
+### 1. Eggling → `art/creatures/pyraurum/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pyraurum", Eggling stage (1 of 4). Golden phoenix in full flight trailing flame streamers. Sleek body, raised wings, long flame tail plumes, crested head. Face: Sharp beak, almond eyes. Materials: Gold and orange feathers with fire edges. Effects: Embers and flame trails. This stage: Round downy chick, small flame tuft, big eyes. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/pyraurum/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pyraurum", Hatchling stage (2 of 4). Golden phoenix in full flight trailing flame streamers. Sleek body, raised wings, long flame tail plumes, crested head. Face: Sharp beak, almond eyes. Materials: Gold and orange feathers with fire edges. Effects: Embers and flame trails. This stage: Juvenile phoenix, short wings, two flame tail plumes. Posture: Flying upward. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/pyraurum/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pyraurum", Evolved stage (3 of 4). Golden phoenix in full flight trailing flame streamers. Sleek body, raised wings, long flame tail plumes, crested head. Face: Sharp beak, almond eyes. Materials: Gold and orange feathers with fire edges. Effects: Embers and flame trails. This stage: Full phoenix in flight, raised wings, long flame streamers, crest. Posture: Flying upward. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/pyraurum/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "pyraurum", Ascended stage (4 of 4). Golden phoenix in full flight trailing flame streamers. Sleek body, raised wings, long flame tail plumes, crested head. Face: Sharp beak, almond eyes. Materials: Gold and orange feathers with fire edges. Effects: Embers and flame trails. This stage: Majestic phoenix with huge flaming wings, flowing fire tail, ember storm, ornate crest. Posture: Flying upward. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## aurelith
+
+- **Silhouette:** Ancient sea turtle carrying a gilded, inlaid shell.
+- **Anatomy:** Domed shell with hex scutes, large front flippers, wise head.
+- **Face:** Beaked head, heavy-lidded kind eyes.
+- **Posture:** Swimming slowly.
+- **Materials:** Gold shell with inlaid glowing patterns, weathered skin.
+- **Effects:** Gentle shimmering water light.
+- **Reference strip:** `docs/creature-art/reference/species/aurelith.webp`
+
+### 1. Eggling → `art/creatures/aurelith/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelith", Eggling stage (1 of 4). Ancient sea turtle carrying a gilded, inlaid shell. Domed shell with hex scutes, large front flippers, wise head. Face: Beaked head, heavy-lidded kind eyes. Materials: Gold shell with inlaid glowing patterns, weathered skin. Effects: Gentle shimmering water light. This stage: Tiny turtle with a soft rounded shell, big eyes, small flippers. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/aurelith/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelith", Hatchling stage (2 of 4). Ancient sea turtle carrying a gilded, inlaid shell. Domed shell with hex scutes, large front flippers, wise head. Face: Beaked head, heavy-lidded kind eyes. Materials: Gold shell with inlaid glowing patterns, weathered skin. Effects: Gentle shimmering water light. This stage: Juvenile turtle, defined scutes, faint gold inlay. Posture: Swimming slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/aurelith/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelith", Evolved stage (3 of 4). Ancient sea turtle carrying a gilded, inlaid shell. Domed shell with hex scutes, large front flippers, wise head. Face: Beaked head, heavy-lidded kind eyes. Materials: Gold shell with inlaid glowing patterns, weathered skin. Effects: Gentle shimmering water light. This stage: Large turtle, ornate gold hex inlay, big flippers, wise face. Posture: Swimming slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/aurelith/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "aurelith", Ascended stage (4 of 4). Ancient sea turtle carrying a gilded, inlaid shell. Domed shell with hex scutes, large front flippers, wise head. Face: Beaked head, heavy-lidded kind eyes. Materials: Gold shell with inlaid glowing patterns, weathered skin. Effects: Gentle shimmering water light. This stage: Colossal turtle with a shell like a temple roof, glowing runes, barnacle jewels, slow majestic swim. Posture: Swimming slowly. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## astravex
+
+- **Silhouette:** Tall platinum stag whose antlers are constellations.
+- **Anatomy:** Long slender legs, elegant neck, flowing mane, wispy tail.
+- **Face:** Long elegant head, glowing orb eyes.
+- **Posture:** Standing tall, head raised.
+- **Materials:** Platinum hide with a star-field window on the flank.
+- **Effects:** Constellation lines and twinkling stars.
+
+### 1. Eggling → `art/creatures/astravex/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "astravex", Eggling stage (1 of 4). Tall platinum stag whose antlers are constellations. Long slender legs, elegant neck, flowing mane, wispy tail. Face: Long elegant head, glowing orb eyes. Materials: Platinum hide with a star-field window on the flank. Effects: Constellation lines and twinkling stars. This stage: Small fawn, long wobbly legs, big eyes, a few stars on its back, no antlers. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/astravex/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "astravex", Hatchling stage (2 of 4). Tall platinum stag whose antlers are constellations. Long slender legs, elegant neck, flowing mane, wispy tail. Face: Long elegant head, glowing orb eyes. Materials: Platinum hide with a star-field window on the flank. Effects: Constellation lines and twinkling stars. This stage: Young deer, short antler constellations, star-field on the flank. Posture: Standing tall, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/astravex/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "astravex", Evolved stage (3 of 4). Tall platinum stag whose antlers are constellations. Long slender legs, elegant neck, flowing mane, wispy tail. Face: Long elegant head, glowing orb eyes. Materials: Platinum hide with a star-field window on the flank. Effects: Constellation lines and twinkling stars. This stage: Tall stag, full constellation antlers, flowing mane, star-field flank. Posture: Standing tall, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/astravex/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "astravex", Ascended stage (4 of 4). Tall platinum stag whose antlers are constellations. Long slender legs, elegant neck, flowing mane, wispy tail. Face: Long elegant head, glowing orb eyes. Materials: Platinum hide with a star-field window on the flank. Effects: Constellation lines and twinkling stars. This stage: Majestic stag with vast branching constellation antlers, nebula mane, cosmic glow. Posture: Standing tall, head raised. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## orbelith
+
+- **Silhouette:** Ringed planet-being with orbiting moons and comet tendrils.
+- **Anatomy:** Spherical body, a tilted ring lined with small eyes, trailing comet tendrils.
+- **Face:** A row of small orb eyes along the ring.
+- **Posture:** Slowly rotating.
+- **Materials:** Banded platinum surface with a star-field.
+- **Effects:** Small orbiting moons.
+
+### 1. Eggling → `art/creatures/orbelith/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "orbelith", Eggling stage (1 of 4). Ringed planet-being with orbiting moons and comet tendrils. Spherical body, a tilted ring lined with small eyes, trailing comet tendrils. Face: A row of small orb eyes along the ring. Materials: Banded platinum surface with a star-field. Effects: Small orbiting moons. This stage: Small orb, one eye, thin faint ring. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/orbelith/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "orbelith", Hatchling stage (2 of 4). Ringed planet-being with orbiting moons and comet tendrils. Spherical body, a tilted ring lined with small eyes, trailing comet tendrils. Face: A row of small orb eyes along the ring. Materials: Banded platinum surface with a star-field. Effects: Small orbiting moons. This stage: Larger orb, clear ring with three eyes, one moon. Posture: Slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/orbelith/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "orbelith", Evolved stage (3 of 4). Ringed planet-being with orbiting moons and comet tendrils. Spherical body, a tilted ring lined with small eyes, trailing comet tendrils. Face: A row of small orb eyes along the ring. Materials: Banded platinum surface with a star-field. Effects: Small orbiting moons. This stage: Full ringed planet, five eyes on the ring, two moons, comet tendrils. Posture: Slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/orbelith/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "orbelith", Ascended stage (4 of 4). Ringed planet-being with orbiting moons and comet tendrils. Spherical body, a tilted ring lined with small eyes, trailing comet tendrils. Face: A row of small orb eyes along the ring. Materials: Banded platinum surface with a star-field. Effects: Small orbiting moons. This stage: Grand planet with multiple rings, many eyes, three moons, long comet tails, cosmic glow. Posture: Slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## eventide
+
+- **Silhouette:** Eclipse-headed dragonfly with four long glass wings.
+- **Anatomy:** Eclipse-disc head, small thorax, long segmented tail, four long wings.
+- **Face:** Two tiny glowing eyes in a black eclipse disc with a corona.
+- **Posture:** Hovering.
+- **Materials:** Glass wings with star patterns, dark body.
+- **Effects:** Eclipse corona.
+
+### 1. Eggling → `art/creatures/eventide/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "eventide", Eggling stage (1 of 4). Eclipse-headed dragonfly with four long glass wings. Eclipse-disc head, small thorax, long segmented tail, four long wings. Face: Two tiny glowing eyes in a black eclipse disc with a corona. Materials: Glass wings with star patterns, dark body. Effects: Eclipse corona. This stage: Small nymph, short tail, tiny wing buds, faint halo around the head. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/eventide/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "eventide", Hatchling stage (2 of 4). Eclipse-headed dragonfly with four long glass wings. Eclipse-disc head, small thorax, long segmented tail, four long wings. Face: Two tiny glowing eyes in a black eclipse disc with a corona. Materials: Glass wings with star patterns, dark body. Effects: Eclipse corona. This stage: Short glass wings, longer tail, partial eclipse ring. Posture: Hovering. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/eventide/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "eventide", Evolved stage (3 of 4). Eclipse-headed dragonfly with four long glass wings. Eclipse-disc head, small thorax, long segmented tail, four long wings. Face: Two tiny glowing eyes in a black eclipse disc with a corona. Materials: Glass wings with star patterns, dark body. Effects: Eclipse corona. This stage: Four long star-patterned wings, full eclipse head with corona, long segmented tail. Posture: Hovering. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/eventide/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "eventide", Ascended stage (4 of 4). Eclipse-headed dragonfly with four long glass wings. Eclipse-disc head, small thorax, long segmented tail, four long wings. Face: Two tiny glowing eyes in a black eclipse disc with a corona. Materials: Glass wings with star patterns, dark body. Effects: Eclipse corona. This stage: Large ethereal dragonfly, wings full of galaxies, brilliant corona, trailing stardust. Posture: Hovering. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## genesis
+
+- **Silhouette:** Floating polyhedron construct with a visor eye and orbiting Solana bars.
+- **Anatomy:** Faceted crystal core, visor eye, three orbiting bars.
+- **Face:** A single green visor eye.
+- **Posture:** Levitating, slowly rotating.
+- **Materials:** Obsidian facets with green edge light.
+- **Effects:** Orbiting bars.
+
+### 1. Eggling → `art/creatures/genesis/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "genesis", Eggling stage (1 of 4). Floating polyhedron construct with a visor eye and orbiting Solana bars. Faceted crystal core, visor eye, three orbiting bars. Face: A single green visor eye. Materials: Obsidian facets with green edge light. Effects: Orbiting bars. This stage: Small simple tetrahedron with one green light, one orbiting bar. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/genesis/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "genesis", Hatchling stage (2 of 4). Floating polyhedron construct with a visor eye and orbiting Solana bars. Faceted crystal core, visor eye, three orbiting bars. Face: A single green visor eye. Materials: Obsidian facets with green edge light. Effects: Orbiting bars. This stage: Octahedron core with visor, two orbiting bars. Posture: Levitating, slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/genesis/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "genesis", Evolved stage (3 of 4). Floating polyhedron construct with a visor eye and orbiting Solana bars. Faceted crystal core, visor eye, three orbiting bars. Face: A single green visor eye. Materials: Obsidian facets with green edge light. Effects: Orbiting bars. This stage: Complex polyhedron, glowing visor, three orbiting bars. Posture: Levitating, slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/genesis/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "genesis", Ascended stage (4 of 4). Floating polyhedron construct with a visor eye and orbiting Solana bars. Faceted crystal core, visor eye, three orbiting bars. Face: A single green visor eye. Materials: Obsidian facets with green edge light. Effects: Orbiting bars. This stage: Elaborate nested polyhedra, many orbiting bars, intense green and violet light. Posture: Levitating, slowly rotating. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+## nullborn
+
+- **Silhouette:** Inverted, glitched nine-tailed fox.
+- **Anatomy:** Sitting fox, fox mask face, fanned tails.
+- **Face:** Void-black slit eyes with pink pupils, pink cheek marks.
+- **Posture:** Sitting upright.
+- **Materials:** Inverted white fur with black inner details.
+- **Effects:** Pink glitch.
+
+### 1. Eggling → `art/creatures/nullborn/1-eggling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "nullborn", Eggling stage (1 of 4). Inverted, glitched nine-tailed fox. Sitting fox, fox mask face, fanned tails. Face: Void-black slit eyes with pink pupils, pink cheek marks. Materials: Inverted white fur with black inner details. Effects: Pink glitch. This stage: Small sitting kit, one tail, big void eyes, faint glitch. Posture: small, young and vulnerable Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 2. Hatchling → `art/creatures/nullborn/2-hatchling.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "nullborn", Hatchling stage (2 of 4). Inverted, glitched nine-tailed fox. Sitting fox, fox mask face, fanned tails. Face: Void-black slit eyes with pink pupils, pink cheek marks. Materials: Inverted white fur with black inner details. Effects: Pink glitch. This stage: Juvenile fox, three tails, pink cheek marks. Posture: Sitting upright. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 3. Evolved → `art/creatures/nullborn/3-evolved.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "nullborn", Evolved stage (3 of 4). Inverted, glitched nine-tailed fox. Sitting fox, fox mask face, fanned tails. Face: Void-black slit eyes with pink pupils, pink cheek marks. Materials: Inverted white fur with black inner details. Effects: Pink glitch. This stage: Sitting fox, seven tails fanned out, mask markings. Posture: Sitting upright. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```
+
+### 4. Ascended → `art/creatures/nullborn/4-ascended.png`
+
+```text
+Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame. Species "nullborn", Ascended stage (4 of 4). Inverted, glitched nine-tailed fox. Sitting fox, fox mask face, fanned tails. Face: Void-black slit eyes with pink pupils, pink cheek marks. Materials: Inverted white fur with black inner details. Effects: Pink glitch. This stage: Majestic nine-tailed fox, glowing tail tips, strong glitch distortion, inverted halo. Posture: Sitting upright. Avoid: no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified.
+```

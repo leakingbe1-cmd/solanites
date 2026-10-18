@@ -135,7 +135,7 @@ export default function HatcheryPage() {
         </div>
       </div>
 
-      <Modal open={!!inspected} onClose={() => setInspect(null)} label="Inspect" wide={inspected ? phaseOf(inspected, cfg) === "creature" : false}>
+      <Modal open={!!inspected} onClose={() => setInspect(null)} label="Inspect" xl={inspected ? phaseOf(inspected, cfg) === "creature" : false}>
         {inspected &&
           (phaseOf(inspected, cfg) === "creature" ? (
             <CreatureDetail key={inspected.id} species={SPECIES_BY_ID[inspected.speciesId]} record={inspected} onRename={(n) => h.rename(inspected.id, n)} />

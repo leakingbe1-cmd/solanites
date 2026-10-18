@@ -35,7 +35,7 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
       <p className="relative text-xs text-mist">{record.nickname ? s.name : s.epithet}</p>
       <div className="relative mt-4">
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider text-mist/70">
-          <span>{evo.isMax ? "Apex form" : `→ ${evo.nextName}`}</span>
+          <span>{evo.isMax ? "Ascended form" : `→ ${evo.nextName}`}</span>
           <span>{evo.isMax ? "MAX" : formatDuration(evo.remainingMs)}</span>
         </div>
         <ProgressBar value={evo.progress} className="mt-2" colors={[meta.color2, meta.color]} />

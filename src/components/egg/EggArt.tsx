@@ -120,7 +120,7 @@ export function EggArt({ stage, progress = 0, seed = 0, inside, paused, hatching
             <g opacity={stage === 4 ? 0.8 : 0.55} className="sl-egg-inside">
               <g filter={`url(#${id}-shadow)`}>
                 <svg x="40" y="92" width="220" height="220" viewBox="0 0 400 400" overflow="visible">
-                  <CreatureArt species={inside} stage={0} showAura={false} animated />
+                  <CreatureArt species={inside} stage={0} showAura={false} animated vector />
                 </svg>
               </g>
             </g>

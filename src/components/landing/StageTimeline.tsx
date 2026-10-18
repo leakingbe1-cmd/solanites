@@ -11,7 +11,7 @@ export function StageTimeline() {
     { n: "02", title: "Awakening", text: "The shell begins to glow. Hairline cracks leak light.", when: formatDays(inc * gameConfig.eggs.crackingAt), visual: <EggArt stage={2} progress={0.6} seed={1} /> },
     { n: "03", title: "Stirring", text: "Energy surges. A silhouette moves behind the shell.", when: formatDays(inc * gameConfig.eggs.stirringAt), visual: <EggArt stage={3} progress={0.5} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
     { n: "04", title: "Hatch", text: "A dramatic reveal. Rarity is unveiled in light and particles.", when: formatDays(inc), visual: <EggArt stage={4} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
-    { n: "05", title: "Evolve", text: "Keep holding. Your Solanite grows through four forms to Apex.", when: `+${formatDays(gameConfig.evolution.thresholdsMs.at(-1)!)}`, visual: <CreatureArt species={SPECIES_BY_ID["stormquill"]} stage={3} /> },
+    { n: "05", title: "Evolve", text: "Keep holding. Your Solanite grows through four forms, from Eggling to Ascended.", when: `+${formatDays(gameConfig.evolution.thresholdsMs.at(-1)!)}`, visual: <CreatureArt species={SPECIES_BY_ID["stormquill"]} stage={3} /> },
   ];
   return (
     <div className="relative mt-16">

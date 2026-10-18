@@ -26,7 +26,7 @@ export interface Renderer {
   render(c: Ctx): ReactNode;
   /** Hovering/swimming species scale around their centre and cast a faint shadow. */
   floating?: boolean;
-  /** Apex halo position [x, y, radius]. */
+  /** Ascended-form halo position [x, y, radius]. */
   halo?: [number, number, number];
   /** Extra scale so wide or tall body plans fit the frame. */
   fit?: number;

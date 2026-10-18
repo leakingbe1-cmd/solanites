@@ -41,7 +41,7 @@ export default function HowItWorksPage() {
         <HowSteps />
 
         <div className="mt-28">
-          <SectionHeading eyebrow="Lifecycle" title="From shell to Apex.">
+          <SectionHeading eyebrow="Lifecycle" title="From Eggling to Ascended.">
             Each stage is unlocked by qualifying holding time — not by clicking, not by paying. The clock only runs while your balance backs the egg.
           </SectionHeading>
           <StageTimeline />

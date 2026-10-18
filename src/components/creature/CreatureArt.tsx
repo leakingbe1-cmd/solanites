@@ -3,23 +3,30 @@
 import { useId, type ReactNode } from "react";
 import type { Palette, Species } from "@/lib/species";
 import { RARITIES } from "@/lib/rarity";
+import { stageAsset, type StageAsset } from "@/lib/creatureAssets";
 import { RENDERERS } from "./species";
 import type { Ctx } from "./kit";
 
 /**
- * Procedurally rendered Solanite artwork.
+ * Solanite artwork for one species at one evolution stage.
+ *
+ * When real artwork has been supplied for that stage (see
+ * docs/creature-art/README.md) it is shown as an image; otherwise the
+ * procedural vector placeholder below is drawn.
  *
  * Every species has its own body plan (see docs/creature-design.md and
  * ./species/*). What they share is the rendering kit in ./kit.tsx: one key
  * light, the same gradient materials, the same eye construction and a single
  * Solgem — so they read as one universe without being one character.
- * `stage` (0..3) grows each species' own anatomy and adds a halo at Apex.
+ * `stage` (0..3) grows each species' own anatomy and adds a halo when Ascended.
  */
 
 interface CreatureArtProps {
   species: Species;
-  /** Evolution stage 0 (Hatchling) … 3 (Apex). */
+  /** Evolution stage 0 (Eggling) … 3 (Ascended). */
   stage?: number;
+  /** Always draw the vector version (needed when nested inside another SVG). */
+  vector?: boolean;
   animated?: boolean;
   showAura?: boolean;
   /** Renders the creature as a dark silhouette (undiscovered / inside egg). */
@@ -27,7 +34,7 @@ interface CreatureArtProps {
   className?: string;
 }
 
-export function CreatureArt({ species, stage = 2, animated = true, showAura = true, silhouette = false, className = "" }: CreatureArtProps) {
+export function CreatureArt({ species, stage = 2, animated = true, showAura = true, silhouette = false, vector = false, className = "" }: CreatureArtProps) {
   const raw = useId();
   const id = "sl" + raw.replace(/[^a-zA-Z0-9]/g, "");
   const evo = Math.max(0, Math.min(3, Math.round(stage)));
@@ -49,13 +56,39 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
   const scale = [0.74, 0.85, 0.94, 1][evo] * (r.fit ?? 1);
   const anchor = r.floating ? 210 : 360;
   const shadowW = (r.shadow ?? 95) * scale;
+  const label = silhouette ? "Undiscovered Solanite" : `${species.name}, ${RARITIES[rarity].label} ${species.element} Solanite`;
+
+  const asset = vector ? null : stageAsset(species.id, evo);
+  const imageSrc = asset ? pickImage(asset, silhouette, rarity === "mythic" || rarity === "secret") : null;
+  if (asset && imageSrc) {
+    return (
+      <div className={`sl-creature relative ${animated ? "is-animated" : ""} rar-${rarity} ${silhouette ? "is-silhouette" : ""} ${className}`} role="img" aria-label={label}>
+        <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
+          <Defs id={id} p={p} rarity={rarity} />
+          {showAura && !silhouette && <Aura id={id} species={species} evo={evo} />}
+          <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />
+        </svg>
+        {/* eslint-disable-next-line @next/next/no-img-element -- pre-optimised static WebP with its own thumbnail */}
+        <img
+          src={imageSrc.src}
+          srcSet={imageSrc.srcSet}
+          sizes="(max-width: 640px) 70vw, 420px"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          className={`sl-creature-img absolute inset-0 h-full w-full object-contain ${asset.alpha ? "" : "sl-vignette"}`}
+        />
+      </div>
+    );
+  }
 
   return (
     <svg
       viewBox="0 0 400 400"
       className={`sl-creature ${animated ? "is-animated" : ""} rar-${rarity} ${silhouette ? "is-silhouette" : ""} ${className}`}
       role="img"
-      aria-label={silhouette ? "Undiscovered Solanite" : `${species.name}, ${RARITIES[rarity].label} ${species.element} Solanite`}
+      aria-label={label}
     >
       <Defs id={id} p={p} rarity={rarity} />
       {showAura && !silhouette && <Aura id={id} species={species} evo={evo} />}
@@ -69,6 +102,20 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
       {rarity === "secret" && !silhouette && <SecretOverlay id={id} />}
     </svg>
   );
+}
+
+/**
+ * Which file to show. Classified (Mythic/Secret) species only ever expose
+ * their silhouette asset. A silhouette of an opaque image would be a dark
+ * square, so those fall back to the vector silhouette.
+ */
+export function pickImage(a: StageAsset, silhouette: boolean, classified: boolean): { src: string; srcSet?: string } | null {
+  if (silhouette) {
+    if (a.silhouette) return { src: a.silhouette };
+    // Non-classified species may darken their real art with CSS; classified ones never load it.
+    return !classified && a.alpha ? { src: a.thumb } : null;
+  }
+  return { src: a.src, srcSet: `${a.thumb} 384w, ${a.src} 1024w` };
 }
 
 /* ───────────────────────────── defs ───────────────────────────── */

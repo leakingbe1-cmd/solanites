@@ -148,6 +148,14 @@ body {
 .is-animated .sl-bob {
   animation: sl-bob 5s ease-in-out infinite;
 }
+/* Raster creature artwork (art/creatures → public/creatures) */
+.is-animated .sl-creature-img {
+  animation: sl-bob 5s ease-in-out infinite;
+}
+.sl-vignette {
+  -webkit-mask-image: radial-gradient(circle at 50% 48%, #000 52%, transparent 71%);
+  mask-image: radial-gradient(circle at 50% 48%, #000 52%, transparent 71%);
+}
 .is-animated .sl-hover {
   animation: sl-hover 6s ease-in-out infinite;
 }

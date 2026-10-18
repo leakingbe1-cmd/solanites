@@ -1,0 +1,670 @@
+{
+  "version": 1,
+  "stageNames": [
+    "Eggling",
+    "Hatchling",
+    "Evolved",
+    "Ascended"
+  ],
+  "style": {
+    "prompt": "Original fantasy creature character render for a premium creature-collecting game. Stylised but physically convincing 3D character, painterly cinematic finish. Three-quarter view facing slightly left, camera at the creature's eye level. Soft key light from upper left, cool rim light from behind right, soft ambient fill, subtle subsurface scattering on organic skin. Rich, species-appropriate surface detail with natural colour variation and fine imperfections. Elemental light effects are restrained and integrated into the anatomy. Full body in frame, centred, creature occupies about 80% of the frame height with even margin. Isolated on a fully transparent background, no ground, no scenery, no cast shadow, no text, no frame.",
+    "negative": "no text, no watermark, no logo, no border, no background scenery, no ground plane, no cropping of limbs or tail, not a cartoon mascot, not low-poly, not pixel art, not anime, no extra heads, no duplicated limbs, no generic dragon unless specified",
+    "spec": {
+      "size": 1024,
+      "format": "webp",
+      "alpha": true,
+      "maxBytes": 400000,
+      "thumbSize": 384
+    }
+  },
+  "species": {
+    "mossling": {
+      "silhouette": "Low, broad, rounded quadruped with a domed back and branching antlers rising above the head.",
+      "anatomy": "Stocky body, short sturdy legs with three blunt toes, thick neck, short leafy tail.",
+      "face": "Broad muzzle, large dark-green glossy eyes with gentle heavy lids, small nostrils.",
+      "posture": "Calm, grounded, walking slowly forward with its head low and curious.",
+      "materials": "Soft moss over pale bark-like skin, overlapping leaf shingles along the back, wooden antlers with fine grain.",
+      "effects": "Tiny floating green spores and faint bioluminescent veins in the leaves.",
+      "stages": [
+        {
+          "summary": "A tiny, round sprout with soft moss and a single budding leaf on its head. It has only just begun to absorb the world around it.",
+          "brief": "Round, plush baby with an oversized head and huge eyes, stubby nub legs, one or two sprout leaves on top instead of antlers, soft pale-green moss fuzz, no leaf armour yet."
+        },
+        {
+          "summary": "Its form takes shape: small antlers and leaves begin to grow, and its bond with the forest strengthens.",
+          "brief": "Small quadruped, still big-headed, first short branching antlers with a few leaves, first leaf shingles on shoulders, legs now visible, alert sitting pose."
+        },
+        {
+          "summary": "A strong, sturdy body with full antlers and layered foliage, able to harness natural energy.",
+          "brief": "Mature broad body with layered leaf armour covering the back, full branching antlers, bark plating on legs, low powerful walking stance, longer leafy tail."
+        },
+        {
+          "summary": "An ancient form: a living sanctuary with blossoming antlers and a radiant core of verdant energy.",
+          "brief": "Large, majestic, wide antlers like a small tree crown with glowing leaves and blossoms, moss and crystals growing from the back, bioluminescent green veins, slow regal stance, faint spores drifting."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/mossling.webp"
+    },
+    "driftfin": {
+      "silhouette": "Small streamlined fish that grows into a rising, curling sea dragon with flowing fins.",
+      "anatomy": "Legless, streamlined serpentine body tapering to a fan tail; pectoral fins near the head; no limbs.",
+      "face": "Narrow, pointed fish-dragon snout, round curious eyes, a single trailing barbel.",
+      "posture": "Swimming mid-water in a relaxed wave.",
+      "materials": "Smooth wet blue skin with pale belly, translucent membrane fins with fine rays.",
+      "effects": "Small glowing lateral-line dots and drifting bubbles.",
+      "stages": [
+        {
+          "summary": "A tiny tadpole-like swimmer with stubby fins and enormous eyes.",
+          "brief": "Short chubby tadpole body, oversized head and eyes, small rounded fin nubs, short tail, no sail fin yet."
+        },
+        {
+          "summary": "Its body lengthens and the first sail fin unfurls along its back.",
+          "brief": "Elongated juvenile eel, one small translucent sail fin, pectoral fins forming, a few glowing lateral dots."
+        },
+        {
+          "summary": "A fish-dragon with sweeping, flowing fins.",
+          "brief": "Curved fish-dragon with large translucent sweeping fins, long tail curling upward, glowing dots."
+        },
+        {
+          "summary": "A tide-whisperer rising through the current on silken fins.",
+          "brief": "Upright curling sea dragon, flowing silk-like fins and streamers, iridescent scales, swirling water."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/driftfin.webp"
+    },
+    "pallow": {
+      "silhouette": "Floating radiant starburst: a single-eyed pearl core ringed by layered blade-petals.",
+      "anatomy": "Limbless spherical body; feathers grow in uneven layered tiers like a flower opening; three long tail tassels.",
+      "face": "One large serene eye in a pearly face plate, faint tear-like markings.",
+      "posture": "Hovering upright, drifting slowly.",
+      "materials": "Pearl core, layered ivory blade-petals with translucent edges.",
+      "effects": "Soft dawn-coloured glow from within the pearl.",
+      "stages": [
+        {
+          "summary": "A small pearl with a fringe of down, one sleepy eye half open.",
+          "brief": "Small pearl orb, fuzzy down instead of feathers, eye half-closed, two short tassels, no feather fronds."
+        },
+        {
+          "summary": "Its first feathers open in a loose ring around the pearl.",
+          "brief": "Pearl with one uneven ring of short soft feathers, eye fully open, three short tassels."
+        },
+        {
+          "summary": "Layered fronds open like a flower and its tassels lengthen.",
+          "brief": "Two to three tiers of asymmetric layered feathers with translucent tips, long tassels with glowing ends, pearl face plate."
+        },
+        {
+          "summary": "A herald of dawn, its feathers spread in a radiant crown.",
+          "brief": "Large crown of layered sweeping feathers in pearl, cream and pale blue, faint halo of light, very long tassels, ancient serene presence."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/pallow.webp"
+    },
+    "glimmeray": {
+      "silhouette": "Very wide flat manta ray seen from above at a slight angle, with a long whip tail.",
+      "anatomy": "Broad triangular wings with a rippling trailing edge, two curled cephalic lobes, central ridge, whip tail.",
+      "face": "Small round eyes on the sides of the head, gill spiracles behind them.",
+      "posture": "Gliding with wings slightly lifted.",
+      "materials": "Smooth light-blue skin with white spots on top, pale underside.",
+      "effects": "Soft caustic light patterns over its back.",
+      "stages": [
+        {
+          "summary": "A tiny diamond-shaped glider with stubby wings and a short tail.",
+          "brief": "Small rounded diamond body, short wings, short tail, big eyes, a few faint spots."
+        },
+        {
+          "summary": "Its wings widen and its first spot pattern appears.",
+          "brief": "Wider wings, longer tail, cephalic lobes beginning to curl, clear spot pattern."
+        },
+        {
+          "summary": "A graceful manta with broad rippling wings and a long whip tail.",
+          "brief": "Full wide manta wings with rippling edges, long whip tail, fully curled lobes, crisp spot pattern."
+        },
+        {
+          "summary": "A shallows guardian whose wings trail ribbons of light.",
+          "brief": "Very wide elegant wings with translucent trailing ribbons, iridescent spots, long tail with a glowing tip, caustic light across the back."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/glimmeray.webp"
+    },
+    "sproutwyrm": {
+      "silhouette": "Segmented inchworm in a high arch, with a flower-bud head.",
+      "anatomy": "Bark-ringed round segments, small root-like legs on the grounded segments, budding shoots on top.",
+      "face": "Small round eyes beneath a closed tulip-like petal hood, tiny mouth.",
+      "posture": "Arching forward mid-step, inching along.",
+      "materials": "Green bark rings with lichen, waxy petals, root tendrils.",
+      "effects": "Glowing yellow-green buds.",
+      "stages": [
+        {
+          "summary": "A short, plump grub with a single green shoot.",
+          "brief": "Three or four plump segments, tiny root feet, one sprout on top, big eyes, no petal hood."
+        },
+        {
+          "summary": "Its body lengthens and its first buds begin to swell.",
+          "brief": "Six to eight segments in a low arch, small buds on top, petal hood beginning to form."
+        },
+        {
+          "summary": "A long arching wyrm with root legs and a full petal hood.",
+          "brief": "Eleven segments in a high arch, rooted legs, leafy shoots with glowing buds, closed tulip hood framing the face."
+        },
+        {
+          "summary": "Its sprouts become branches and it rises as a leafy wyrm.",
+          "brief": "Large leafy wyrm with a raised head, branching antler-like growth, leaves along a segmented body, small root legs, glowing buds."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/sproutwyrm.webp"
+    },
+    "frostkit": {
+      "silhouette": "Compact low quadruped like a fox carved from ice, with a thick crystal tail.",
+      "anatomy": "Slender legs, angular crystalline plating over a soft frosty coat, tall crystal ears, ice spines along the back.",
+      "face": "Wedge-shaped snout, narrow ice-blue eyes, dark nose.",
+      "posture": "Alert prowl, one paw raised.",
+      "materials": "Frosted white fur with translucent refracting ice crystals.",
+      "effects": "Light refraction through the crystals; a little frost breath.",
+      "stages": [
+        {
+          "summary": "A fluffy white kit with tiny crystal nubs on its ears.",
+          "brief": "Round fluffy kit, big eyes, short legs, small crystal tips on the ears, fluffy tail."
+        },
+        {
+          "summary": "The first ice spines push through its fur.",
+          "brief": "Leaner kit, short ice spines on the back, crystal ears, tail starting to crystallise."
+        },
+        {
+          "summary": "A sleek crystal fox with a thick, faceted ice tail.",
+          "brief": "Elegant crystal-plated fox, tall ice ears, row of spines, thick translucent faceted tail, refracting light."
+        },
+        {
+          "summary": "A glacier spirit trailing frozen light with every step.",
+          "brief": "Large regal ice fox with branching crystal crest, a flowing tail of many crystals, frost aura and snowflakes, prismatic refraction."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/frostkit.webp"
+    },
+    "abyssal-vael": {
+      "silhouette": "Swan-necked ribbon serpent rising vertically out of its own coils.",
+      "anatomy": "Coiled base, long elegant neck, narrow elongated head with a backswept crest, ribbon fins; no wings or legs.",
+      "face": "Long narrow head, slit glowing cyan eyes.",
+      "posture": "Rising and watchful, head angled down.",
+      "materials": "Deep-blue smooth scales, translucent ribbon fins.",
+      "effects": "Bioluminescent cyan veins.",
+      "stages": [
+        {
+          "summary": "A small coiled serpentling with a short neck and a faint crest.",
+          "brief": "Small coil, short neck, large eyes, tiny crest bump, a few faint glowing veins."
+        },
+        {
+          "summary": "Its neck lengthens and its first ribbon fins appear.",
+          "brief": "Neck rising higher, short ribbon fins at the tail, crest growing, clearer vein pattern."
+        },
+        {
+          "summary": "An elegant serpent rising from its coils on a long, swan-like neck.",
+          "brief": "Full vertical S-neck, long backswept crest, trailing ribbon fins, glowing veins along the neck."
+        },
+        {
+          "summary": "A solemn guardian of the trench, crowned with flowing light.",
+          "brief": "Very tall neck, multiple trailing ribbon fins like silk, crown-like crest, intense bioluminescent veins, deep-sea particles."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/abyssal-vael.webp"
+    },
+    "stormquill": {
+      "silhouette": "Crested storm bird with a dramatic crown of quills, growing into a griffin-like storm beast.",
+      "anatomy": "Strong bird body with sturdy legs and talons, broad wings, tail plumes with lightning bars.",
+      "face": "Hooked beak, round fierce eye under a strong brow.",
+      "posture": "Standing tall, chest out, wings half lifted.",
+      "materials": "Violet feathers with electric-cyan barbs, horn-coloured legs.",
+      "effects": "Small static sparks between the quill tips.",
+      "stages": [
+        {
+          "summary": "A fluffy round chick with a tuft of three quills.",
+          "brief": "Fluffy round violet chick, big eyes, three small crest quills, stubby legs."
+        },
+        {
+          "summary": "A crested fledgling with its first quill crown.",
+          "brief": "Juvenile bird, fuller quill crest, small wings, first lightning barring on the tail."
+        },
+        {
+          "summary": "A storm bird with a full crown of quills.",
+          "brief": "Strong storm bird, full spiky crest, broad wings half open, barred tail plumes, sparks between the quills."
+        },
+        {
+          "summary": "Its crown crackles with captive lightning.",
+          "brief": "Majestic griffin-like storm bird, huge crest of long quills, wings spread, arcing lightning around it."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/stormquill.webp"
+    },
+    "duskwing": {
+      "silhouette": "Moth with four broad eye-spotted wings and feathered antennae.",
+      "anatomy": "Furry thorax, segmented abdomen, four wings, feathery antennae, six small legs.",
+      "face": "Two large dark compound eyes, fuzzy face.",
+      "posture": "Hovering, wings open.",
+      "materials": "Velvet violet scales on the wings, fur on the body.",
+      "effects": "Eye-spots glow faintly in the dark.",
+      "stages": [
+        {
+          "summary": "A fuzzy caterpillar-moth with stubby wing buds.",
+          "brief": "Fluffy round larva-moth hybrid, tiny wing buds, short antennae, big eyes."
+        },
+        {
+          "summary": "Its first small wings unfold, still crumpled.",
+          "brief": "Small soft crumpled wings, first eye-spots, longer antennae."
+        },
+        {
+          "summary": "A velvet night moth with four broad eye-spotted wings.",
+          "brief": "Full four-winged moth, crisp eye-spots, feathered antennae, furry thorax."
+        },
+        {
+          "summary": "A twilight sentinel whose wing-eyes watch the dark.",
+          "brief": "Large dramatic wings with long tails on the hindwings, glowing eye-spots, scalloped edges, dusk-coloured gradient, floating dust."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/duskwing.webp"
+    },
+    "cryovant": {
+      "silhouette": "Floating crystal jellyfish: a faceted bell with hanging shard tendrils.",
+      "anatomy": "Faceted glass bell, rim of crystal points, chains of diamond shards, two ribbon arms.",
+      "face": "Two glowing orb eyes under the rim.",
+      "posture": "Drifting upward, tendrils trailing.",
+      "materials": "Clear and blue refractive crystal, frosted edges.",
+      "effects": "Inner glowing core and refracted caustics.",
+      "stages": [
+        {
+          "summary": "A tiny crystal bud with a few hanging shards.",
+          "brief": "Small rounded crystal bell, three short shard tendrils, big glowing eyes."
+        },
+        {
+          "summary": "Its bell grows facets and its tendrils lengthen.",
+          "brief": "Larger faceted bell, five or six shard tendrils, faint core glow."
+        },
+        {
+          "summary": "A crystal jellyfish with an intricate faceted bell.",
+          "brief": "Detailed faceted bell with rim crystals, many long shard chains, ribbon arms, bright core."
+        },
+        {
+          "summary": "A lattice of living ice with a heart of light.",
+          "brief": "Large ornate crystalline bell with frost filigree, cascading shard chains like a chandelier, strong prismatic refraction."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/cryovant.webp"
+    },
+    "emberlisk": {
+      "silhouette": "Spiked lava lizard on four legs, growing a jagged ridge of molten spines.",
+      "anatomy": "Chunky lizard body, sturdy legs with claws, ridge of jagged dorsal spines, thick tail.",
+      "face": "Wide jaw, slit amber eyes, glowing nostrils.",
+      "posture": "Crawling, low to the ground.",
+      "materials": "Dark violet basalt-like armour with molten orange seams, warm glowing belly.",
+      "effects": "Heat shimmer and embers rising from the seams.",
+      "stages": [
+        {
+          "summary": "A small round lizard with warm glowing spots.",
+          "brief": "Small chubby lizard, big eyes, tiny bumps along the back, glowing orange spots."
+        },
+        {
+          "summary": "Its first spines push up along its back.",
+          "brief": "Young lizard with a row of small spines, first lava cracks."
+        },
+        {
+          "summary": "A spiked lava lizard with a molten ridge.",
+          "brief": "Strong lizard, tall jagged spine ridge with molten edges, cracked dark hide."
+        },
+        {
+          "summary": "A kiln-hearted titan whose spines glow like forge iron.",
+          "brief": "Massive lava lizard, huge jagged flaming spines, glowing cracks, embers and heat haze."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/emberlisk.webp"
+    },
+    "neonyx": {
+      "silhouette": "Deep-sea angler-wyrm: rounded body, gaping glowing maw and a lantern lure on a stalk.",
+      "anatomy": "Bulbous body, frilled dorsal fins, fan tail, side fins, lure stalk from the forehead.",
+      "face": "Small glowing eye, huge mouth with neon teeth.",
+      "posture": "Hovering, mouth open.",
+      "materials": "Dark velvet skin with neon photophores.",
+      "effects": "Magenta and cyan lure light.",
+      "stages": [
+        {
+          "summary": "A tiny round fry with a glowing dot on a short stalk.",
+          "brief": "Small round fry, big eye, tiny lure dot, small fins, mouth closed."
+        },
+        {
+          "summary": "Its lure grows and its first photophores light up.",
+          "brief": "Rounder body, longer lure stalk, a few photophores, small teeth."
+        },
+        {
+          "summary": "An angler-wyrm with a gaping neon maw and lantern lure.",
+          "brief": "Full body, frilled fins, open glowing maw, bright lantern lure, rows of photophores."
+        },
+        {
+          "summary": "A living lantern, brighter the longer it is held.",
+          "brief": "Large ornate angler with multiple lures, flowing frills, intricate neon patterns, glowing particles."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/neonyx.webp"
+    },
+    "aurorath": {
+      "silhouette": "Sky whale trailing curtains of aurora beneath its belly.",
+      "anatomy": "Massive whale body, long pectoral fins, flukes, throat grooves.",
+      "face": "Small kind eye, long mouth line.",
+      "posture": "Gliding slowly through the sky.",
+      "materials": "Teal skin with aurora bands, pale throat grooves.",
+      "effects": "Translucent aurora light curtains.",
+      "stages": [
+        {
+          "summary": "A round calf with stubby fins and a faint shimmer.",
+          "brief": "Round whale calf, stubby fins, small faint aurora shimmer, big kind eye."
+        },
+        {
+          "summary": "Its first thin aurora veils begin to trail.",
+          "brief": "Longer calf, two or three thin aurora veils, longer fins."
+        },
+        {
+          "summary": "A sky whale trailing curtains of aurora light.",
+          "brief": "Large whale, full curtains of green and violet aurora hanging below, aurora bands on the back."
+        },
+        {
+          "summary": "Where it passes, the sky remembers colour.",
+          "brief": "Enormous majestic sky whale, flowing aurora curtains and streamers, starlit skin, gentle light rays."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/aurorath.webp"
+    },
+    "zephrax": {
+      "silhouette": "Long Eastern storm dragon whose serpentine body coils through billowing storm clouds.",
+      "anatomy": "Sinuous scaled body with four small clawed legs, flowing mane and whiskers, crystal-blue dorsal spines, cloud-wrapped tail.",
+      "face": "Long horned dragon head, slit yellow eyes, flowing whiskers.",
+      "posture": "Rising in a coil through the clouds, head raised.",
+      "materials": "Pearl-white and storm-blue scales, ice-blue crystal spines, soft volumetric cloud.",
+      "effects": "Small lightning arcs inside the clouds.",
+      "stages": [
+        {
+          "summary": "A small cloud serpent curled in a puff of storm vapour.",
+          "brief": "Short curled serpent with big eyes and tiny horn nubs, wrapped in a small cloud puff, a spark at the tail tip."
+        },
+        {
+          "summary": "Its body lengthens and its first mane and spines grow.",
+          "brief": "Longer S-shaped serpent, short mane, small blue spines, little legs, cloud trailing from the tail."
+        },
+        {
+          "summary": "A storm dragon coiling through billowing clouds.",
+          "brief": "Long coiled dragon among large clouds, full mane and whiskers, crystal spines, lightning flickering in the clouds."
+        },
+        {
+          "summary": "An upright storm dragon rising from the clouds, crackling with lightning.",
+          "brief": "Majestic upright storm dragon rising from a cloud bank, tall crystal spines, long horns, crackling lightning, flowing mane."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/zephrax.webp"
+    },
+    "prismara": {
+      "silhouette": "Tall crowned bird displaying a peacock-like fan of prism shards.",
+      "anatomy": "Slender upright body, thin legs, small crowned head, fan tail of crystal shards.",
+      "face": "Small almond eyes, short beak.",
+      "posture": "Standing tall, displaying.",
+      "materials": "Violet plumage, refractive glass shards.",
+      "effects": "Rainbow refractions from the shards.",
+      "stages": [
+        {
+          "summary": "A small chick with a single shard feather.",
+          "brief": "Small chick, one crystal shard on the tail, tiny crown bump."
+        },
+        {
+          "summary": "Its first shards grow into a small fan.",
+          "brief": "Juvenile with a small fan of five shards, crown forming."
+        },
+        {
+          "summary": "A crowned bird with a full fan of prism shards.",
+          "brief": "Tall slender bird, full fan of crystal shards, three-point crown, refracted light."
+        },
+        {
+          "summary": "Light that enters Prismara never leaves the same colour.",
+          "brief": "Majestic queen with a huge layered shard fan, jewelled crown, spectral rainbow refraction."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/prismara.webp"
+    },
+    "aurelion": {
+      "silhouette": "Winged golden lion-dragon standing on four legs, with great feathered-membrane wings raised.",
+      "anatomy": "Powerful leonine body, clawed paws, long tail with a tuft, large wings, crown of swept horns, mane of golden plates.",
+      "face": "Proud lion-dragon face, fierce almond eyes, short snout.",
+      "posture": "Standing tall on four legs, wings raised.",
+      "materials": "Gold scale armour over a pale-gold coat, filigree on the wings.",
+      "effects": "Soft golden light and drifting motes.",
+      "stages": [
+        {
+          "summary": "A small golden whelp curled up with its wing nubs folded.",
+          "brief": "Small round golden whelp lying curled, big eyes, tiny wing nubs, soft gold fuzz."
+        },
+        {
+          "summary": "A golden cub with small wings and its first horns.",
+          "brief": "Lion-dragon cub standing, small feathered wings, short horns, first scale plates."
+        },
+        {
+          "summary": "A winged golden lion-dragon with a crown of horns.",
+          "brief": "Mature winged lion-dragon on four legs, large raised wings, mane of golden plates, crown of horns."
+        },
+        {
+          "summary": "Sovereign of the Gilded Slot, with vast ornate wings and a towering crown.",
+          "brief": "Huge regal lion-dragon, enormous ornate wings, filigreed gold armour, tall crown, golden light."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/aurelion.webp"
+    },
+    "solvanth": {
+      "silhouette": "Leviathan coiled around a captive sun.",
+      "anatomy": "Long serpentine body wrapping an orb, maned head rising above it, fins along the coil.",
+      "face": "Long maned head, slit red eyes.",
+      "posture": "Coiled protectively around the sun.",
+      "materials": "Gold scales, flame-like mane.",
+      "effects": "Solar corona.",
+      "stages": [
+        {
+          "summary": "A small serpent curled around a glowing ember.",
+          "brief": "Small golden serpent curled around a small ember orb, big eyes."
+        },
+        {
+          "summary": "It grows around a brightening sun-seed.",
+          "brief": "Longer serpent wrapping a brighter orb, short mane."
+        },
+        {
+          "summary": "A leviathan coiled around a captive sun.",
+          "brief": "Large coil around a blazing sun orb, full mane, fins along the coil."
+        },
+        {
+          "summary": "It circles the sun once per epoch.",
+          "brief": "Massive leviathan, multiple coils, radiant corona, flame mane, regal head."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/solvanth.webp"
+    },
+    "pyraurum": {
+      "silhouette": "Golden phoenix in full flight trailing flame streamers.",
+      "anatomy": "Sleek body, raised wings, long flame tail plumes, crested head.",
+      "face": "Sharp beak, almond eyes.",
+      "posture": "Flying upward.",
+      "materials": "Gold and orange feathers with fire edges.",
+      "effects": "Embers and flame trails.",
+      "stages": [
+        {
+          "summary": "A downy golden chick with a single flame feather.",
+          "brief": "Round downy chick, small flame tuft, big eyes."
+        },
+        {
+          "summary": "Its wings grow and its first flame plumes appear.",
+          "brief": "Juvenile phoenix, short wings, two flame tail plumes."
+        },
+        {
+          "summary": "A golden phoenix in flight, trailing fire.",
+          "brief": "Full phoenix in flight, raised wings, long flame streamers, crest."
+        },
+        {
+          "summary": "It burns, falls and rises again, brighter each time.",
+          "brief": "Majestic phoenix with huge flaming wings, flowing fire tail, ember storm, ornate crest."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/pyraurum.webp"
+    },
+    "aurelith": {
+      "silhouette": "Ancient sea turtle carrying a gilded, inlaid shell.",
+      "anatomy": "Domed shell with hex scutes, large front flippers, wise head.",
+      "face": "Beaked head, heavy-lidded kind eyes.",
+      "posture": "Swimming slowly.",
+      "materials": "Gold shell with inlaid glowing patterns, weathered skin.",
+      "effects": "Gentle shimmering water light.",
+      "stages": [
+        {
+          "summary": "A small hatchling turtle with a soft golden shell.",
+          "brief": "Tiny turtle with a soft rounded shell, big eyes, small flippers."
+        },
+        {
+          "summary": "Its shell hardens and its first gold inlay appears.",
+          "brief": "Juvenile turtle, defined scutes, faint gold inlay."
+        },
+        {
+          "summary": "An ancient sea turtle with a gilded shell.",
+          "brief": "Large turtle, ornate gold hex inlay, big flippers, wise face."
+        },
+        {
+          "summary": "Its shadow turns oceans to molten gold.",
+          "brief": "Colossal turtle with a shell like a temple roof, glowing runes, barnacle jewels, slow majestic swim."
+        }
+      ],
+      "reference": "docs/creature-art/reference/species/aurelith.webp"
+    },
+    "astravex": {
+      "silhouette": "Tall platinum stag whose antlers are constellations.",
+      "anatomy": "Long slender legs, elegant neck, flowing mane, wispy tail.",
+      "face": "Long elegant head, glowing orb eyes.",
+      "posture": "Standing tall, head raised.",
+      "materials": "Platinum hide with a star-field window on the flank.",
+      "effects": "Constellation lines and twinkling stars.",
+      "stages": [
+        {
+          "summary": "A wobbly fawn with a few stars in its coat.",
+          "brief": "Small fawn, long wobbly legs, big eyes, a few stars on its back, no antlers."
+        },
+        {
+          "summary": "Its first constellation antlers appear.",
+          "brief": "Young deer, short antler constellations, star-field on the flank."
+        },
+        {
+          "summary": "A platinum stag crowned with constellations.",
+          "brief": "Tall stag, full constellation antlers, flowing mane, star-field flank."
+        },
+        {
+          "summary": "Infinite and calm, older than the genesis slot.",
+          "brief": "Majestic stag with vast branching constellation antlers, nebula mane, cosmic glow."
+        }
+      ],
+      "reference": null
+    },
+    "orbelith": {
+      "silhouette": "Ringed planet-being with orbiting moons and comet tendrils.",
+      "anatomy": "Spherical body, a tilted ring lined with small eyes, trailing comet tendrils.",
+      "face": "A row of small orb eyes along the ring.",
+      "posture": "Slowly rotating.",
+      "materials": "Banded platinum surface with a star-field.",
+      "effects": "Small orbiting moons.",
+      "stages": [
+        {
+          "summary": "A small orb with a single eye and a thin ring.",
+          "brief": "Small orb, one eye, thin faint ring."
+        },
+        {
+          "summary": "Its ring widens and its first moon appears.",
+          "brief": "Larger orb, clear ring with three eyes, one moon."
+        },
+        {
+          "summary": "A ringed planet-being lined with watchful eyes.",
+          "brief": "Full ringed planet, five eyes on the ring, two moons, comet tendrils."
+        },
+        {
+          "summary": "A world that learned to watch.",
+          "brief": "Grand planet with multiple rings, many eyes, three moons, long comet tails, cosmic glow."
+        }
+      ],
+      "reference": null
+    },
+    "eventide": {
+      "silhouette": "Eclipse-headed dragonfly with four long glass wings.",
+      "anatomy": "Eclipse-disc head, small thorax, long segmented tail, four long wings.",
+      "face": "Two tiny glowing eyes in a black eclipse disc with a corona.",
+      "posture": "Hovering.",
+      "materials": "Glass wings with star patterns, dark body.",
+      "effects": "Eclipse corona.",
+      "stages": [
+        {
+          "summary": "A small nymph with wing buds and a dim halo.",
+          "brief": "Small nymph, short tail, tiny wing buds, faint halo around the head."
+        },
+        {
+          "summary": "Its first short glass wings unfold around a half-formed eclipse.",
+          "brief": "Short glass wings, longer tail, partial eclipse ring."
+        },
+        {
+          "summary": "An eclipse-headed dragonfly with four long glass wings.",
+          "brief": "Four long star-patterned wings, full eclipse head with corona, long segmented tail."
+        },
+        {
+          "summary": "It carries the stars that have already burned out.",
+          "brief": "Large ethereal dragonfly, wings full of galaxies, brilliant corona, trailing stardust."
+        }
+      ],
+      "reference": null
+    },
+    "genesis": {
+      "silhouette": "Floating polyhedron construct with a visor eye and orbiting Solana bars.",
+      "anatomy": "Faceted crystal core, visor eye, three orbiting bars.",
+      "face": "A single green visor eye.",
+      "posture": "Levitating, slowly rotating.",
+      "materials": "Obsidian facets with green edge light.",
+      "effects": "Orbiting bars.",
+      "stages": [
+        {
+          "summary": "A tiny glowing seed of geometry.",
+          "brief": "Small simple tetrahedron with one green light, one orbiting bar."
+        },
+        {
+          "summary": "It unfolds new facets and gains a visor.",
+          "brief": "Octahedron core with visor, two orbiting bars."
+        },
+        {
+          "summary": "A floating polyhedron construct with a visor eye.",
+          "brief": "Complex polyhedron, glowing visor, three orbiting bars."
+        },
+        {
+          "summary": "Slot Zero: nested geometry orbiting a single unblinking eye.",
+          "brief": "Elaborate nested polyhedra, many orbiting bars, intense green and violet light."
+        }
+      ],
+      "reference": null
+    },
+    "nullborn": {
+      "silhouette": "Inverted, glitched nine-tailed fox.",
+      "anatomy": "Sitting fox, fox mask face, fanned tails.",
+      "face": "Void-black slit eyes with pink pupils, pink cheek marks.",
+      "posture": "Sitting upright.",
+      "materials": "Inverted white fur with black inner details.",
+      "effects": "Pink glitch.",
+      "stages": [
+        {
+          "summary": "A tiny white kit with one glitched tail.",
+          "brief": "Small sitting kit, one tail, big void eyes, faint glitch."
+        },
+        {
+          "summary": "Its tails multiply to three and pink marks appear on its mask.",
+          "brief": "Juvenile fox, three tails, pink cheek marks."
+        },
+        {
+          "summary": "An inverted fox with a fan of tails.",
+          "brief": "Sitting fox, seven tails fanned out, mask markings."
+        },
+        {
+          "summary": "The Unindexed: nine glowing tails and a halo that should not exist.",
+          "brief": "Majestic nine-tailed fox, glowing tail tips, strong glitch distortion, inverted halo."
+        }
+      ],
+      "reference": null
+    }
+  }
+}

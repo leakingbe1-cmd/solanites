@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { CreatureDetail } from "@/components/creature/CreatureDetail";
+import { discoveryOf } from "@/lib/discovery";
 import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { RarityBadge } from "@/components/ui/RarityBadge";
@@ -13,10 +14,7 @@ import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 
-/** Mythic and Secret entries stay classified until the viewer hatches one. */
-const CLASSIFIED: RarityId[] = ["mythic", "secret"];
 
-type Discovery = "owned" | "catalogued" | "classified";
 
 export default function CollectionPage() {
   const h = useHatchery();
@@ -31,7 +29,7 @@ export default function CollectionPage() {
     return m;
   }, [h.records, h.config]);
 
-  const discovery = (s: Species): Discovery => (h.discovered.includes(s.id) ? "owned" : CLASSIFIED.includes(s.rarity) ? "classified" : "catalogued");
+  const discovery = (s: Species) => discoveryOf(s, h.discovered);
 
   const elements = Array.from(new Set(SPECIES.map((s) => s.element)));
   const list = SPECIES.filter(
@@ -132,8 +130,20 @@ export default function CollectionPage() {
         {list.length === 0 && <p className="mt-16 text-center text-mist">No Solanites match these filters.</p>}
       </div>
 
-      <Modal open={!!open} onClose={() => setOpen(null)} wide label="Solanite details">
-        {open && <CreatureDetail key={open.id} species={open} discovered={discovery(open) !== "classified"} />}
+      <Modal open={!!open} onClose={() => setOpen(null)} xl label="Solanite details">
+        {open &&
+          (() => {
+            const i = list.findIndex((s) => s.id === open.id);
+            return (
+              <CreatureDetail
+                key={open.id}
+                species={open}
+                onSelectSpecies={setOpen}
+                onPrev={i > 0 ? () => setOpen(list[i - 1]) : undefined}
+                onNext={i >= 0 && i < list.length - 1 ? () => setOpen(list[i + 1]) : undefined}
+              />
+            );
+          })()}
       </Modal>
     </div>
   );

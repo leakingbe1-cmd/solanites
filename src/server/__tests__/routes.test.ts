@@ -52,6 +52,25 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
+  it("POST /api/eggs/:id/hatch ignores any species, rarity or seed the client sends and returns the stored result", async () => {
+    const { POST } = await import("@/app/api/eggs/[id]/hatch/route");
+    const rt = await getRuntime();
+    const owner = keypairFromSeed(1003).address; // 10,000,000 fixture holder
+    const egg = (await rt.tracker.holderView(owner)).eggs[2];
+    // Make this test egg ready on the server (test database only).
+    await rt.db.query(`UPDATE eggs SET incubation_started_ms = 0, ready_ms = 0 WHERE id = $1`, [egg.id]);
+    const stored = (await rt.db.query<{ species_id: string }>(`SELECT species_id FROM eggs WHERE id = $1`, [egg.id])).rows[0].species_id;
+    const wanted = stored === "genesis" ? "nullborn" : "genesis";
+    const body = JSON.stringify({ speciesId: wanted, rarity: "secret", seed: 1 });
+    const url = `/api/eggs/${egg.id}/hatch?speciesId=${wanted}&rarity=secret&seed=1`;
+    for (let i = 0; i < 2; i++) {
+      const res = await POST(req(url, { method: "POST", body, headers: { "content-type": "application/json", origin: "http://localhost:3000" } }), { params: Promise.resolve({ id: egg.id }) });
+      expect(res.status).toBe(200);
+      expect((await res.json()).speciesId).toBe(stored);
+    }
+    expect((await rt.db.query<{ species_id: string }>(`SELECT species_id FROM eggs WHERE id = $1`, [egg.id])).rows[0].species_id).toBe(stored);
+  });
+
   it("POST /api/eggs/:id/hatch refuses an egg that is still incubating, by the server clock", async () => {
     const { POST } = await import("@/app/api/eggs/[id]/hatch/route");
     const rt = await getRuntime();

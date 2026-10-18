@@ -85,6 +85,7 @@ export default function HatcheryPage() {
           <div role="note" className="mt-6 flex flex-col gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
               <strong className="font-semibold text-amber-200">Demo.</strong> The balance, eggs and creatures here are simulated and kept only in this browser. Nothing is read from or written to Solana.
+              The two grown creatures are a fixed sample; demo eggs use the same rarity odds as real eggs, rolled in your browser, so they say nothing about real hatch results.
             </p>
             <button onClick={h.disconnect} className="shrink-0 self-start whitespace-nowrap rounded-full border border-amber-300/30 px-4 py-2 text-xs uppercase tracking-[0.15em] text-amber-100 transition hover:bg-amber-300/10 sm:self-auto">
               Find real eggs

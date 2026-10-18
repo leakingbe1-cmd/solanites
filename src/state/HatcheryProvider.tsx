@@ -44,7 +44,7 @@ interface State {
 
 type Action =
   | { type: "hydrate"; state: Partial<State> }
-  | { type: "connect"; wallet: WalletSession; demo: boolean }
+  | { type: "connect"; wallet: WalletSession; demo: boolean; eggSeeds: number[] }
   | { type: "disconnect" }
   | { type: "balance"; value: number; source: "mock" | "rpc"; error?: string | null }
   | { type: "balanceError"; error: string }
@@ -56,7 +56,7 @@ type Action =
   | { type: "rename"; id: string; name: string }
   | { type: "discover"; speciesId: string }
   | { type: "watch"; address: string }
-  | { type: "resetDemo" };
+  | { type: "resetDemo"; eggSeeds: number[] };
 
 const initial: State = {
   hydrated: false,
@@ -79,7 +79,22 @@ function makeId(seed: number) {
 /** Demo balance: backs the five demo records plus a fraction toward the next egg. */
 export const DEMO_BALANCE = 5.2 * gameConfig.token.tokensPerEgg;
 
-function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
+/** Fresh random seeds for the demo's unhatched eggs (generated outside the reducer, which must stay pure). */
+function demoEggSeeds(): number[] {
+  return Array.from({ length: DEMO_UNHATCHED }, () => randomSeed());
+}
+
+/** How many demo eggs are still unhatched, each needing a fresh random seed. */
+export const DEMO_UNHATCHED = 3;
+
+/**
+ * The demo's starting collection. The two hatched creatures are a fixed,
+ * pre-grown sample that shows later forms. The unhatched eggs are rolled with
+ * the same weighted roll as real eggs, from fresh random seeds supplied by the
+ * caller, so each new demo (or reset) gives different species.
+ */
+export function demoRecords(now: number, cfg: GameConfig, eggSeeds: number[]): SolaniteRecord[] {
+  if (eggSeeds.length < DEMO_UNHATCHED) throw new Error(`demoRecords needs ${DEMO_UNHATCHED} egg seeds`);
   // Each demo egg uses the real per-egg schedules for its position (egg 1: 1 min incubation, 1 min growth; …).
   const base = (n: number, seed: number, speciesId: string, ageMs: number, extra: Partial<SolaniteRecord>): SolaniteRecord => ({
     id: makeId(seed),
@@ -99,9 +114,10 @@ function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
     // Pre-grown demo creatures: one well into its Ascension ranks, one fully grown and on its way to Evolved.
     base(1, 9101, "duskwing", d(1) + 3 * TIME.DAY, { incubationMs: d(1), hatchedAt: now - 3 * TIME.DAY, growthMs: 3 * TIME.DAY, nickname: "Nightwarden" }),
     base(2, 4410, "mossling", d(2) + 20 * TIME.MINUTE, { incubationMs: d(2), hatchedAt: now - 20 * TIME.MINUTE, growthMs: 20 * TIME.MINUTE }),
-    base(3, 7777, "aurelion", d(3) + TIME.HOUR, { incubationMs: d(3) }),
-    base(4, 2024, "neonyx", d(4) * 0.82, { incubationMs: d(4) * 0.82 }),
-    base(5, 1337, rollSpecies(1337, cfg), d(5) * 0.46, { incubationMs: d(5) * 0.46 }),
+    // Unhatched eggs: one ready, one stirring, one early on. Species rolled like real eggs.
+    base(3, eggSeeds[0], rollSpecies(eggSeeds[0], cfg), d(3) + TIME.HOUR, { incubationMs: d(3) }),
+    base(4, eggSeeds[1], rollSpecies(eggSeeds[1], cfg), d(4) * 0.82, { incubationMs: d(4) * 0.82 }),
+    base(5, eggSeeds[2], rollSpecies(eggSeeds[2], cfg), d(5) * 0.46, { incubationMs: d(5) * 0.46 }),
   ];
 }
 
@@ -114,7 +130,7 @@ function reducer(state: State, action: Action): State {
       if (action.demo) {
         const now = Date.now();
         const sameDemo = state.wallet?.kind === "demo" && state.records.length > 0;
-        const records = sameDemo ? state.records : demoRecords(now, cfg);
+        const records = sameDemo ? state.records : demoRecords(now, cfg, action.eggSeeds);
         const discovered = Array.from(new Set([...state.discovered, ...records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId)]));
         return { ...state, wallet: action.wallet, balance: DEMO_BALANCE, balanceSource: "mock", balanceError: null, records, simNow: sameDemo ? state.simNow : now, discovered };
       }
@@ -165,7 +181,7 @@ function reducer(state: State, action: Action): State {
       return { ...state, records: state.records.map((r) => (r.id === action.id ? { ...r, nickname: action.name.slice(0, 24) || undefined } : r)) };
     case "resetDemo": {
       const now = Date.now();
-      const records = demoRecords(now, cfg);
+      const records = demoRecords(now, cfg, action.eggSeeds);
       return { ...state, records, balance: DEMO_BALANCE, simNow: now, discovered: records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId) };
     }
     case "discover":
@@ -264,7 +280,7 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
   const connect = useCallback(async (kind: WalletKind) => {
     const adapter = kind === "demo" ? demoWallet : injectedWallet;
     const session = await adapter.connect();
-    dispatch({ type: "connect", wallet: session, demo: kind === "demo" });
+    dispatch({ type: "connect", wallet: session, demo: kind === "demo", eggSeeds: demoEggSeeds() });
   }, []);
 
   const value = useMemo<HatcheryContextValue>(() => {
@@ -288,7 +304,7 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
       warp: (ms) => state.wallet?.kind === "demo" && dispatch({ type: "tick", deltaMs: ms }),
       toggleSound: () => dispatch({ type: "sound", value: !state.sound }),
       rename: (id, name) => dispatch({ type: "rename", id, name }),
-      resetDemo: () => dispatch({ type: "resetDemo" }),
+      resetDemo: () => dispatch({ type: "resetDemo", eggSeeds: demoEggSeeds() }),
       watch: (address) => dispatch({ type: "watch", address }),
       discover: (speciesId) => dispatch({ type: "discover", speciesId }),
     };

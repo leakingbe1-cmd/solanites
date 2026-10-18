@@ -3,7 +3,7 @@ import type { GameConfig, RarityId } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { mulberry32 } from "@/lib/rng";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES, speciesOfRarity } from "@/lib/species";
+import { SPECIES, speciesOfRarity, type Species } from "@/lib/species";
 
 /**
  * Pure progression rules. No React, no storage, no clock — so the exact same
@@ -232,22 +232,50 @@ export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number):
 
 /* ── Rarity roll ────────────────────────────────────────────── */
 
+/**
+ * Picks a rarity with probability proportional to `cfg.rarityWeights`.
+ * Throws if no rarity has a positive weight rather than guessing one.
+ */
 export function rollRarity(rand: () => number, cfg: GameConfig): RarityId {
-  const total = RARITY_ORDER.reduce((s, r) => s + Math.max(0, cfg.rarityWeights[r]), 0);
+  const weights = RARITY_ORDER.map((r) => [r, Math.max(0, cfg.rarityWeights[r] || 0)] as const);
+  const total = weights.reduce((s, [, w]) => s + w, 0);
+  if (!(total > 0)) throw new Error("rarityWeights must give at least one rarity a positive weight");
   let x = rand() * total;
-  for (const r of RARITY_ORDER) {
-    x -= Math.max(0, cfg.rarityWeights[r]);
+  let last: RarityId | null = null;
+  for (const [r, w] of weights) {
+    if (w <= 0) continue;
+    last = r;
+    x -= w;
     if (x < 0) return r;
   }
-  return "common";
+  // Floating-point rounding at the very top of the range: the last rarity that can be rolled.
+  return last!;
 }
 
-export function rollSpecies(seed: number, cfg: GameConfig): string {
+/**
+ * Checks that every rarity with a positive weight has at least one species,
+ * so a roll can never land on an empty tier.
+ */
+export function validateRarityConfig(cfg: GameConfig, catalogue: readonly Species[] = SPECIES): void {
+  const positive = RARITY_ORDER.filter((r) => (cfg.rarityWeights[r] || 0) > 0);
+  if (!positive.length) throw new Error("rarityWeights must give at least one rarity a positive weight");
+  const empty = positive.filter((r) => !catalogue.some((s) => s.rarity === r));
+  if (empty.length) throw new Error(`No species configured for rarity: ${empty.join(", ")}`);
+}
+
+/**
+ * The species for an egg: a weighted rarity roll, then a uniform pick within
+ * that rarity, both from one seeded PRNG so the same seed always gives the same
+ * species. The server supplies a cryptographically random seed when the egg is
+ * issued and stores the result; nothing here reads the clock or the client.
+ * Throws if the rolled rarity has no species (never substitutes another tier).
+ */
+export function rollSpecies(seed: number, cfg: GameConfig, catalogue: readonly Species[] = SPECIES): string {
   const rand = mulberry32(seed);
   const rarity = rollRarity(rand, cfg);
-  const pool = speciesOfRarity(rarity);
-  const list = pool.length ? pool : SPECIES;
-  return list[Math.floor(rand() * list.length)].id;
+  const pool = catalogue === SPECIES ? speciesOfRarity(rarity) : catalogue.filter((s) => s.rarity === rarity);
+  if (!pool.length) throw new Error(`No species configured for rarity: ${rarity}`);
+  return pool[Math.floor(rand() * pool.length)].id;
 }
 
 export function rarityChances(cfg: GameConfig): Record<RarityId, number> {

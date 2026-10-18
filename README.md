@@ -1,6 +1,6 @@
 # Solanites
 
-**Hold Solana. Hatch the extraordinary. The longer you hold, the stronger they grow.**
+**Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.**
 
 A front-end prototype for the Solanites holder experience: holders of the token get eggs, the eggs develop while the balance is held, and each one hatches into a collectible creature that keeps evolving as long as the holder keeps holding.
 

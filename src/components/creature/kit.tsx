@@ -30,6 +30,8 @@ export interface Renderer {
   halo?: [number, number, number];
   /** Extra scale so wide or tall body plans fit the frame. */
   fit?: number;
+  /** Per-stage replacement for `fit`, for species whose four forms have different proportions. */
+  stageFit?: [number, number, number, number];
   /** Ground-shadow half width. */
   shadow?: number;
 }
@@ -171,4 +173,12 @@ export function Constellation({ c, pts }: { c: Ctx; pts: [number, number][] }) {
       <Dots c={c} pts={pts} r={1.8} color="#fff" />
     </g>
   );
+}
+
+type Draw = (c: Ctx) => ReactNode;
+
+/** A species drawn as four separate forms (Eggling, Hatchling, Evolved, Ascended), like Velynx. */
+export function byStage(eggling: Draw, hatchling: Draw, evolved: Draw, ascended: Draw): Draw {
+  const stages = [eggling, hatchling, evolved, ascended];
+  return (c) => stages[c.evo](c);
 }

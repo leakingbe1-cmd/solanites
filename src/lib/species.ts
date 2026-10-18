@@ -398,6 +398,28 @@ export const SPECIES: Species[] = [
     lore: "Light entering Prismara never leaves the same colour. Neither do those who meet her.",
     stats: { power: 52, spirit: 62, agility: 54 },
   },
+  {
+    id: "nyxara",
+    dex: 26,
+    name: "Nyxara",
+    epithet: "The Ribbon of Dusk",
+    rarity: "epic",
+    element: "Shadow",
+    palette: {
+      body: "#2a2350",
+      bodyLight: "#5a4c9a",
+      bodyDark: "#0d0a22",
+      belly: "#c9bff2",
+      wing: "#4b2f9e",
+      wingEdge: "#b69bff",
+      accent: "#a98bff",
+      eye: "#ffd27a",
+      horn: "#7d6ae0",
+    },
+    personality: ["Elusive", "Graceful", "Curious"],
+    lore: "Nyxara slips through the gaps between confirmations, trailing a ribbon of dusk from its tail. Holders say it only lets itself be seen by those who stopped watching the chart.",
+    stats: { power: 58, spirit: 80, agility: 90 },
+  },
 
   // ── LEGENDARY ── golden
   {
@@ -510,6 +532,28 @@ export const SPECIES: Species[] = [
     lore: "Velynx walks between blocks the way a cat walks along a fence, leaving glowing glyphs where its paws have been. It always knows where it is going. It rarely tells you.",
     stats: { power: 72, spirit: 74, agility: 92 },
   },
+  {
+    id: "thalor",
+    dex: 27,
+    name: "Thalor",
+    epithet: "The Deepwarden",
+    rarity: "legendary",
+    element: "Tidal",
+    palette: {
+      body: "#0f4f63",
+      bodyLight: "#2c8ea3",
+      bodyDark: "#04202b",
+      belly: "#9fe3e6",
+      wing: "#0b6f86",
+      wingEdge: "#6af3ff",
+      accent: "#3fe6ff",
+      eye: "#f2fbff",
+      horn: "#c9e8ee",
+    },
+    personality: ["Steadfast", "Protective", "Ancient"],
+    lore: "Thalor patrols the cold trench beneath every ledger, its armoured brow turned toward anything that sinks too fast. It has never surfaced without a reason.",
+    stats: { power: 90, spirit: 78, agility: 60 },
+  },
 
   // ── MYTHIC ── platinum & cosmic
   {
@@ -577,6 +621,28 @@ export const SPECIES: Species[] = [
     personality: ["Silent", "Vast", "Merciful"],
     lore: "Eventide's head is an eclipse; its glass wings hold the stars that have already burned out, so they are not forgotten.",
     stats: { power: 86, spirit: 92, agility: 96 },
+  },
+  {
+    id: "helivane",
+    dex: 28,
+    name: "Helivane",
+    epithet: "The Sunpiercer",
+    rarity: "mythic",
+    element: "Solar",
+    palette: {
+      body: "#c9701c",
+      bodyLight: "#ffb547",
+      bodyDark: "#4a1c06",
+      belly: "#ffe7a8",
+      wing: "#e8891f",
+      wingEdge: "#fff1b8",
+      accent: "#ffd75e",
+      eye: "#ffffff",
+      horn: "#fff3c4",
+    },
+    personality: ["Fierce", "Radiant", "Unyielding"],
+    lore: "Helivane hunts the high orbit where the sun never sets, stooping like a falcon with a corona folded in its wings. Its dive is said to light the sky for a whole epoch.",
+    stats: { power: 94, spirit: 88, agility: 96 },
   },
 
   // ── SECRET ──

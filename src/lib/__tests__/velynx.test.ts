@@ -12,8 +12,9 @@ describe("Velynx joins the catalogue without changing anything else", () => {
     expect(new Set(SPECIES.map((s) => s.dex)).size).toBe(SPECIES.length);
   });
 
-  it("keeps the existing 24 species' dex numbers", () => {
-    expect(SPECIES.filter((s) => s.id !== "velynx").map((s) => s.dex).sort((a, b) => a - b)).toEqual(Array.from({ length: 24 }, (_, i) => i + 1));
+  it("keeps the original 24 species' dex numbers", () => {
+    const later = ["velynx", "nyxara", "thalor", "helivane"];
+    expect(SPECIES.filter((s) => !later.includes(s.id)).map((s) => s.dex).sort((a, b) => a - b)).toEqual(Array.from({ length: 24 }, (_, i) => i + 1));
   });
 
   it("does not change tier odds — only the split inside the Legendary tier", () => {

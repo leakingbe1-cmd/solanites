@@ -1,11 +1,32 @@
 import type { Renderer } from "../kit";
-import { driftfin, frostkit, glimmeray, mossling, pallow, sproutwyrm } from "./common";
-import { cryovant, duskwing, emberlisk, stormquill, vael } from "./rare";
-import { aurorath, neonyx, prismara, zephrax } from "./epic";
-import { aurelion, aurelith, pyraurum, solvanth } from "./legendary";
-import { astravex, eventide, orbelith } from "./mythic";
-import { genesis, nullborn } from "./secret";
+import { astravex } from "./astravex";
+import { aurelion } from "./aurelion";
+import { aurelith } from "./aurelith";
+import { aurorath } from "./aurorath";
+import { cryovant } from "./cryovant";
+import { driftfin } from "./driftfin";
+import { duskwing } from "./duskwing";
+import { emberlisk } from "./emberlisk";
+import { eventide } from "./eventide";
+import { frostkit } from "./frostkit";
+import { genesis } from "./genesis";
+import { glimmeray } from "./glimmeray";
+import { helivane } from "./helivane";
+import { mossling } from "./mossling";
+import { neonyx } from "./neonyx";
+import { nullborn } from "./nullborn";
+import { nyxara } from "./nyxara";
+import { orbelith } from "./orbelith";
+import { pallow } from "./pallow";
+import { prismara } from "./prismara";
+import { pyraurum } from "./pyraurum";
+import { solvanth } from "./solvanth";
+import { sproutwyrm } from "./sproutwyrm";
+import { stormquill } from "./stormquill";
+import { thalor } from "./thalor";
+import { vael } from "./vael";
 import { velynx } from "./velynx";
+import { zephrax } from "./zephrax";
 
 /** One renderer per species id — every Solanite has its own body plan. */
 export const RENDERERS: Record<string, Renderer> = {
@@ -24,14 +45,17 @@ export const RENDERERS: Record<string, Renderer> = {
   aurorath,
   zephrax,
   prismara,
+  nyxara,
   aurelion,
   solvanth,
   pyraurum,
   aurelith,
   velynx,
+  thalor,
   astravex,
   orbelith,
   eventide,
+  helivane,
   genesis,
   nullborn,
 };

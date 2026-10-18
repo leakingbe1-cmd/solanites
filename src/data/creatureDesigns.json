@@ -692,6 +692,84 @@
         }
       ],
       "reference": "docs/creature-art/reference/velynx-inspiration.png"
+    },
+    "nyxara": {
+      "silhouette": "Slender, low-slung fox-like creature with very long upswept ears and a single long ribbon tail that loops through the air behind it.",
+      "anatomy": "Narrow chest, long slim legs, fine pointed muzzle, ear membranes like dusk-coloured silk, and a tail that thins into a flat flowing ribbon rather than a brush.",
+      "face": "Narrow fox face, small dark nose, large golden almond eyes with a calm, sly look.",
+      "posture": "Mid-step and turning its head back over its shoulder, as if it has only just noticed you.",
+      "materials": "Velvety indigo fur grading to violet, pale lavender chest fur, translucent violet ribbon membrane with a soft sheen.",
+      "effects": "Faint dusk-light along the ribbon edge and ear tips; small drifting violet motes. Distinct from Velynx: no glyph circuitry, no upright cat stance, no teal.",
+      "stages": [
+        {
+          "summary": "A tiny curled-up indigo kit with oversized ears and a short stub of ribbon for a tail.",
+          "brief": "A small, round indigo kit lying curled with its oversized soft ears folded back, big golden eyes, short legs tucked under and a short ribbon-stub tail wrapped around its body."
+        },
+        {
+          "summary": "A gangly young fox standing on long legs, ears upright, ribbon tail beginning to flow.",
+          "brief": "A slim juvenile fox standing alert on long thin legs, large upright ears, a ribbon tail as long as its body with a faint glowing edge, and an inquisitive tilted head."
+        },
+        {
+          "summary": "A sleek dusk fox mid-stride, head turned back, its ribbon tail looping through the air.",
+          "brief": "A sleek adult in mid-stride looking back over its shoulder, long upswept ears with silk membranes, a long looping ribbon tail with a glowing edge, lavender chest ruff."
+        },
+        {
+          "summary": "The Ribbon of Dusk: twin ribbon tails, crescent-tipped ears and a veil of drifting twilight.",
+          "brief": "The ascended form: elongated crescent-tipped ears, two long ribbon tails weaving a figure-eight, a pale twilight mane, a crescent mark on the brow and a soft veil of violet motes trailing behind it."
+        }
+      ]
+    },
+    "thalor": {
+      "silhouette": "Massive deep-sea guardian fish-beast with a heavy armoured head shield, layered fan fins and a powerful crescent tail.",
+      "anatomy": "Thick torpedo body, a broad helmet-like head plate with brow ridges, overlapping armour bands along the back, three layered dorsal fins, long pectoral fins and a strong forked tail.",
+      "face": "Deep-set pale eyes under a heavy brow, a broad jaw with short tusks, calm and watchful.",
+      "posture": "Hovering forward with slow authority, head lowered like a shield.",
+      "materials": "Deep teal and ocean-blue hide, pale sea-glass belly, armour plates with a nacre sheen, translucent cyan fin membranes.",
+      "effects": "Bioluminescent cyan lines along the armour seams and fin rays; small rising bubbles. Distinct from Driftfin: heavy, armoured and broad rather than a slender eel.",
+      "stages": [
+        {
+          "summary": "A round armoured fry with a tiny shield of a head plate and stubby fins.",
+          "brief": "A small round fry with a big head wearing a tiny shell-like brow plate, big pale eyes, stubby fan fins and a short tail; a few bioluminescent freckles."
+        },
+        {
+          "summary": "A sturdy young swimmer: the head plate widens and the first dorsal fin rises.",
+          "brief": "A sturdy juvenile with a widening helmet plate, a single dorsal fin, developed pectoral fins, a forked tail and first armour bands along its back."
+        },
+        {
+          "summary": "A deep-sea guardian with a broad helmet, layered fins and glowing armour seams.",
+          "brief": "A powerful adult with a broad armoured head shield, overlapping back plates, three layered dorsal fins, long pectorals, a strong crescent tail and glowing cyan seam lines."
+        },
+        {
+          "summary": "The Deepwarden: crowned helmet, cathedral fins and a tail like a breaking wave.",
+          "brief": "The ascended form: a crowned helmet with swept-back horn ridges, towering layered dorsal fins like cathedral spires, tusks, trailing fin streamers, a huge crescent tail and a slow ring of light around it."
+        }
+      ]
+    },
+    "helivane": {
+      "silhouette": "A raptor fused with a celestial body: hooked-beak falcon head, swept wings and a sun-disc corona behind the shoulders.",
+      "anatomy": "Compact powerful raptor body, broad swept-back wings with long primaries, a fanned tail, strong talons and a ring of solar spines forming a corona.",
+      "face": "Sharp falcon face with a hooked gold beak, fierce white-gold eyes and dark falcon cheek stripes.",
+      "posture": "Wings raised and half-open, talons gripping, head turned in profile like a hunting falcon.",
+      "materials": "Amber and burnished-orange plumage, pale gold breast with fine barring, white-hot feather tips, a polished gold beak.",
+      "effects": "A solar corona disc with radiating rays behind the shoulders, small orbiting sun-motes. Not a phoenix: no fire trails or flame body; it is a raptor carrying a sun.",
+      "stages": [
+        {
+          "summary": "A fluffy amber eyas with a gold beak too big for its face and a tiny sun-spark on its brow.",
+          "brief": "A round fluffy raptor chick of amber down, oversized hooked gold beak, big bright eyes, stubby wings and a single small sun-spark glowing on its brow."
+        },
+        {
+          "summary": "A young falcon with first flight feathers and a faint ring of light behind its head.",
+          "brief": "A juvenile falcon with mixed down and first flight feathers, barred breast, wings half open, strong legs, and a faint thin ring of light behind its head."
+        },
+        {
+          "summary": "A solar raptor with swept wings, barred breast and a blazing corona at its shoulders.",
+          "brief": "A powerful adult raptor with swept-back wings, long primaries with white-hot tips, a barred gold breast, a fanned tail and a radiant corona disc behind its shoulders."
+        },
+        {
+          "summary": "The Sunpiercer: wings raised wide, a full sun disc behind it and orbiting sun-motes.",
+          "brief": "The ascended form: wings raised wide like a crest, a full blazing sun disc with long rays behind it, crown feathers, long streamer tail feathers, and orbiting sun-motes — a falcon carrying a star."
+        }
+      ]
     }
   }
 }

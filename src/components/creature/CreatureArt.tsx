@@ -53,7 +53,7 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
   };
 
   // Floating species scale around their centre; grounded ones around their feet.
-  const scale = [0.74, 0.85, 0.94, 1][evo] * (r.fit ?? 1);
+  const scale = [0.74, 0.85, 0.94, 1][evo] * (r.stageFit?.[evo] ?? r.fit ?? 1);
   const anchor = r.floating ? 210 : 360;
   const shadowW = (r.shadow ?? 95) * scale;
   const label = silhouette ? "Undiscovered Solanite" : `${species.name}, ${RARITIES[rarity].label} ${species.element} Solanite`;

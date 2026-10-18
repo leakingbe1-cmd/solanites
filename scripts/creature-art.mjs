@@ -28,7 +28,7 @@ const STAGES = designs.stageNames.map((s) => s.toLowerCase()); // eggling, hatch
 const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec;
 const MIN_INPUT = 768;
 /** Classified until discovered — they also get a silhouette asset so the full art is never needed to show "???". */
-const CLASSIFIED = new Set(["astravex", "orbelith", "eventide", "genesis", "nullborn"]);
+const CLASSIFIED = new Set(["astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"]);
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
 
 function findSource(id, n) {

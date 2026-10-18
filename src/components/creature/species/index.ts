@@ -5,6 +5,7 @@ import { aurorath, neonyx, prismara, zephrax } from "./epic";
 import { aurelion, aurelith, pyraurum, solvanth } from "./legendary";
 import { astravex, eventide, orbelith } from "./mythic";
 import { genesis, nullborn } from "./secret";
+import { velynx } from "./velynx";
 
 /** One renderer per species id — every Solanite has its own body plan. */
 export const RENDERERS: Record<string, Renderer> = {
@@ -27,6 +28,7 @@ export const RENDERERS: Record<string, Renderer> = {
   solvanth,
   pyraurum,
   aurelith,
+  velynx,
   astravex,
   orbelith,
   eventide,

@@ -665,6 +665,33 @@
         }
       ],
       "reference": null
+    },
+    "velynx": {
+      "silhouette": "Sleek, upright feline with very long swept-back pointed ears and a long tail that curls up behind it in a graceful S-curve.",
+      "anatomy": "Lean agile body, slim digitigrade hind legs, slender forelimbs, narrow waist, cheek tufts, long tapering tail ending in a teal leaf-shaped tip.",
+      "face": "Compact feline face with a small muzzle, large almond eyes with violet irises ringed in turquoise, a knowing half-smile.",
+      "posture": "Standing poised and light on its toes, weight on one leg, head slightly tilted — confident and a little mischievous.",
+      "materials": "Matte charcoal-to-obsidian fur with a subtle satin sheen, smooth teal pads on the paws, inner ears in deep teal.",
+      "effects": "Refined cyan bioluminescent glyph markings that trace the chest, limbs and tail like living circuitry; faint violet energy only in the final form. No emblem or logo on the tail.",
+      "stages": [
+        {
+          "summary": "A small, dark, round kitten with short ears and huge eyes; its first cyan glyphs are only just appearing.",
+          "brief": "A small, dark, round-bodied juvenile with short rounded ears, oversized expressive violet-and-turquoise eyes, tiny teal paws and a short tail. Faint cyan markings are just beginning to appear as a few dots on the chest. Sitting, curious."
+        },
+        {
+          "summary": "A small, agile young feline: its ears grow pointed, its tail lengthens and its cyan glyphs light up.",
+          "brief": "A small agile feline with developing pointed ears, a longer curling tail, visible cyan markings on chest and legs and juvenile proportions (large head, slim limbs). Light, playful standing pose."
+        },
+        {
+          "summary": "Lean and athletic, with long ears, intricate luminous glyphs and a confident stance.",
+          "brief": "A lean, athletic creature with mature proportions, long swept-back ears, intricate cyan glyph markings over chest, arms, legs and tail, a long developed S-curved tail with a teal tip, and a confident upright posture."
+        },
+        {
+          "summary": "The Glyphwalker: elegant extended ears, cyan and violet glyphs and controlled elemental energy.",
+          "brief": "The ultimate legendary form: exceptionally refined anatomy, elegant extended ears with luminous edges, elaborate cyan and violet glyph markings, a sophisticated tail with fin-like vanes and floating glyph rings, and controlled cyan and violet energy around the paws. Regal, poised, mysterious."
+        }
+      ],
+      "reference": "docs/creature-art/reference/velynx-inspiration.png"
     }
   }
 }

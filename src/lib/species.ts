@@ -488,6 +488,28 @@ export const SPECIES: Species[] = [
     lore: "Aurelith's shadow turns oceans to molten gold. Sailors call it a blessing; validators call it uptime.",
     stats: { power: 70, spirit: 78, agility: 74 },
   },
+  {
+    id: "velynx",
+    dex: 25,
+    name: "Velynx",
+    epithet: "The Glyphwalker",
+    rarity: "legendary",
+    element: "Shadow",
+    palette: {
+      body: "#23262f",
+      bodyLight: "#4a5060",
+      bodyDark: "#08090d",
+      belly: "#2c303b",
+      wing: "#0f5a5c",
+      wingEdge: "#3ef2e0",
+      accent: "#2ee8d8",
+      eye: "#9d7bff",
+      horn: "#19b8a8",
+    },
+    personality: ["Confident", "Mysterious", "Mischievous"],
+    lore: "Velynx walks between blocks the way a cat walks along a fence, leaving glowing glyphs where its paws have been. It always knows where it is going. It rarely tells you.",
+    stats: { power: 72, spirit: 74, agility: 92 },
+  },
 
   // ── MYTHIC ── platinum & cosmic
   {

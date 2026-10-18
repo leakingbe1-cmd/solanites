@@ -13,6 +13,7 @@ export function buildSignInMessage(p: { domain: string; address: string; nonce: 
     "",
     "Sign in to check and submit a Solanites launch fee claim. This does not send a transaction, cost a fee or give access to your funds.",
     "",
+    "Action: launch-fee-claim-sign-in",
     `URI: https://${p.domain}`,
     "Version: 1",
     "Chain ID: mainnet",

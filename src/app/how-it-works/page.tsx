@@ -84,13 +84,12 @@ export default function HowItWorksPage() {
             </div>
           </div>
           <div className="rounded-3xl border border-sol-purple/20 bg-sol-purple/[0.04] p-6 sm:p-8">
-            <h3 className="font-display text-xl text-white">Fair &amp; verifiable — by design</h3>
+            <h3 className="font-display text-xl text-white">How the rules are kept</h3>
             <ul className="mt-5 space-y-3 text-sm leading-relaxed text-mist">
-              <li>◇ This prototype runs on <span className="text-white">simulated wallets, balances and timers</span>. Nothing shown is on-chain.</li>
-              <li>◇ In production, eligibility and progression are computed by a server that snapshots on-chain balances — never by browser timers or user-supplied data.</li>
-              <li>◇ Wallet ownership is proven by signing a one-time message, not just by connecting.</li>
-              <li>◇ Rarity is rolled with a commit-reveal scheme so outcomes can&apos;t be predicted or rerolled.</li>
-              <li>◇ Claims are capped server-side at the number of eggs your balance backs.</li>
+              <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
+              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or claims.</li>
+              <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
+              <li>◇ Fee claims, if a refund programme is confirmed, ask your wallet to sign a one-time message. Connecting alone is never enough.</li>
             </ul>
           </div>
         </div>

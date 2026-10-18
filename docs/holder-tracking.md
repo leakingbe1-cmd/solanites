@@ -93,20 +93,33 @@ Each wallet carries a credit: the amount of its tokens that has already earned a
 | `SOLANA_RPC_URL` | Provider endpoint with key (Helius recommended: `getProgramAccounts`, history, webhooks). Server-only. |
 | `DATABASE_URL` | Postgres (Neon via Vercel Marketplace, or Supabase). The schema is created automatically. |
 | `SOLANITES_EXCLUDED_OWNERS` | Treasury, team, LP, reserve, burn and exchange wallets (on-curve ones; off-curve pool PDAs are excluded automatically). |
-| `CRON_SECRET` + a scheduler | Vercel Cron on the **Pro** plan (Hobby runs at most daily), or a GitHub Actions schedule calling `/api/cron/sync` every 5–10 minutes. |
+| `CRON_SECRET` | Bearer secret for `/api/cron/sync` and for the detailed `/api/health` view. |
 | `SOLANITES_WEBHOOK_SECRET` | For a Helius (or similar) webhook on the mint pointing to `/api/webhooks/solana`. |
 | `SOLANITES_LAUNCH_AT`, `SIWS_DOMAIN`, `SOLANITES_SESSION_SECRET` | Claims timing and sign-in. |
+| `SOLANITES_EXCLUDE_PROGRAM_OWNERS` | Optional; `false` lets off-curve (program-owned) wallets earn. Default excludes them. |
 
-No `vercel.json` cron was added: on the Hobby plan a sub-daily cron fails the deploy. Example GitHub Actions schedule:
+Set these in Vercel → Project → Settings → Environment Variables, separately for **Preview** (staging database, devnet or staging mint) and **Production**. Never paste them into chat, commit them, or prefix them with `NEXT_PUBLIC_`.
 
-```yaml
-on: { schedule: [{ cron: "*/10 * * * *" }] }
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - run: curl -fsS -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://solanites.vercel.app/api/cron/sync
-```
+### Scheduler
+
+Two schedulers are in the repo, and both call the same idempotent endpoint (a lease stops overlapping runs):
+
+- **`vercel.json`**: a daily Vercel Cron at 03:17 UTC. This is the most the Hobby plan allows, so it is only a safety net.
+- **`.github/workflows/tracker-sync.yml`**: every 10 minutes (plus manual `workflow_dispatch`). It needs the repository **variable** `SOLANITES_SYNC_URL` (e.g. `https://<deployment>/api/cron/sync`) and the repository **secret** `CRON_SECRET`. If either is unset the job skips without failing. GitHub may delay or drop scheduled runs under load; the webhook covers the gaps.
+
+On Vercel Pro you can replace the GitHub schedule with a `*/10 * * * *` Vercel Cron.
+
+### Checking that tracking is alive
+
+- `GET /api/health` (public) returns only `status`, `source` and `lastSuccessfulSyncAt`.
+- With `Authorization: Bearer $CRON_SECRET` it also returns the last run (finish time, status `ok`/`partial`/`failed`/`skipped`, owners synced, eggs issued), whether the sync is stale (>30 min), tracked holders, holders awaiting sync, whether the on-chain supply matches the configured 1,000,000,000, and which settings are present (booleans only, never values).
+- Server logs are JSON lines (`sync.finished`, `sync.partial`, `sync.failed`, `mint.supply_mismatch`, `webhook.duplicate_ignored`, `rate_limit.store_unavailable`, `route.unexpected_error`). Secrets, signatures and URL credentials are redacted.
+
+### Shared protections
+
+- **Rate limits** are stored in Postgres (`rate_limits`), so they hold across serverless instances. IP addresses are stored only as SHA-256 hashes. If the database is unreachable, each instance falls back to an in-memory limit and logs it.
+- **Claim budget**: a claim is recorded only if it fits the period's `budgetBase`, checked atomically in the database (`claim_periods`, with a `CHECK` constraint). Excess claims are rejected with `BUDGET_EXHAUSTED`.
+- **Audit records**: sign-ins, quotes, rejections and recorded claims are written to `audit_log`.
 
 **Go-live checklist**
 
@@ -116,14 +129,24 @@ jobs:
 4. Point the webhook at the mint.
 5. Verify a known wallet's balance against Solscan.
 
+### Staging verification plan (do this on a Preview deployment first)
+
+1. Create a separate staging Postgres and set Preview-only variables, with a devnet or test mint (never the production database).
+2. Deploy the branch; open `/api/health` and confirm `source` is not `demo`/`fixtures`.
+3. Trigger `/api/cron/sync` with the Bearer secret; confirm health shows a recent `ok` run and the supply check matches.
+4. From a test wallet, buy or transfer exactly 1,000,000 test tokens; confirm one egg after the next sync with no wallet connection, ready 5 minutes later.
+5. Transfer tokens to a second wallet; confirm no extra eggs appear (credit moves with the tokens).
+6. Hatch; confirm a second hatch request returns the same creature, and that evolution reaches Hatchling/Evolved/Ascended at 5 min / 30 min / 2 h of qualifying holding.
+7. Sell below the threshold; confirm growth pauses.
+8. Send a webhook twice; confirm it is applied once (`webhook.duplicate_ignored`).
+9. Check `/claims` before and after `SOLANITES_LAUNCH_AT + 6h`; with no approved policy it must say nothing can be claimed.
+10. Check the homepage, collection and creature pages on phone, tablet and desktop widths.
+
 ## 4. Testing
 
-`npm test` runs 103 tests:
-- Phase 2: 40.
-- Tracker: 37.
-- Claims: 12.
-- Routes: 9.
-- Progression: 5.
+`npm test` runs the whole suite (see the README for the current count), including tracker, claims, routes, remediation (Token-2022, wrong mint, egg boundaries, evolution boundaries, concurrent hatch, database failure, RPC 429, shared rate limits, artwork rendering) and progression tests.
+
+`TEST_DATABASE_URL=postgres://… npm test` also runs `postgres.integration.test.ts` against a real PostgreSQL server: clean migration (applied twice), tracking with concurrent syncs and hatches, and concurrent claims within a budget. It is skipped when the variable is unset.
 
 They run against an embedded Postgres (PGlite, the same SQL as production) and a fixture chain that answers the same RPC methods and shapes. Time-based behaviour uses a simulated clock. They cover your list:
 
@@ -155,7 +178,8 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 - **Program-controlled wallets are excluded.** This includes multisig vaults (e.g. Squads). Set `SOLANITES_EXCLUDE_PROGRAM_OWNERS=false` if they should earn; pool addresses must then be listed explicitly.
 - **Out-of-order processing.** Within one wallet, transactions are applied in slot order. Across wallets, a webhook can occasionally apply a later transaction before an earlier one is seen. Awards then wait for the next sync (they never over-award), and reconciliation catches up.
 - **Very active wallets.** If a wallet has more than 500 new signatures per account in one sync, its award is postponed and the sync retries. A provider with enhanced history makes this rarer.
-- **Rate limits are per server instance** (in-memory). Use a shared store for hard limits.
+- **Rate limits fall back to per-instance memory** only while the database is unreachable.
+- **Rarity is sealed on the server, not provable.** The species is rolled with a server-generated seed when the egg is earned and cannot be rerolled, but holders cannot verify the roll independently. A commit-reveal scheme (publish a hash of the seed when the egg is issued, reveal it at hatch) would make it verifiable; it needs your approval.
 - **Creature evolution** counts qualifying holding since hatching from the recorded on-chain balance history: the k-th hatched creature (oldest first) grows only while the balance is at least k × 1,000,000. A sale is applied once its transaction is ingested; until then the creature may briefly show more growth, which is corrected on the next view.
 - **Claim payouts are not implemented**, and no refund policy exists. Nothing on the site describes a refund as automatic or guaranteed.
 
@@ -173,4 +197,8 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
    - claim once or repeatedly;
    - payout approval process.
 4. **Payout execution** (explicit authorisation required): a dedicated, limited-funds wallet with multisig-approved batches. Signing keys stay off Vercel and out of the frontend. Payout signatures are recorded on the claim (`payout_signature`, unique).
-5. **Hosting:** Vercel Pro for frequent cron, or an external scheduler.
+5. **Hosting:** keep the GitHub Actions schedule (Hobby), or move to Vercel Pro for a 10-minute Vercel Cron.
+6. **Tokenomics confirmation:** 1,000,000 SOLITE per egg and 1,000,000,000 supply, as configured.
+7. **Ascension ranks** after Ascended (8 h, 24 h, 3 d, 7 d, 30 d) are a proposal.
+8. **Holder rewards**, if any, are a separate programme from fee refunds and need their own rules.
+9. **Rarity verifiability:** whether to add the commit-reveal scheme above.

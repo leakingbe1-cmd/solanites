@@ -5,7 +5,6 @@ import { CreatureArt } from "./CreatureArt";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { gameConfig } from "@/config/gameConfig";
-import { stageAsset } from "@/lib/creatureAssets";
 import { designOf } from "@/lib/creatureDesigns";
 import { discoveryOf, type Discovery } from "@/lib/discovery";
 import { formatDuration, formatSpan } from "@/lib/format";
@@ -168,9 +167,6 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
           <div className="absolute inset-0 mx-auto max-w-[520px]">
             <CreatureArt species={species} stage={selected} silhouette={selLocked} />
           </div>
-          {!selLocked && !stageAsset(species.id, selected) && (
-            <span className="absolute bottom-3 left-3 rounded-full bg-black/50 px-2.5 py-1 font-mono text-[9px] uppercase tracking-wider text-mist/70">Placeholder art</span>
-          )}
         </div>
         <div className="flex min-w-0 flex-col p-5 sm:p-7">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">Stage {selected + 1} of 4</p>

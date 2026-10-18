@@ -1,6 +1,6 @@
 import "server-only";
 import { sessionCookie } from "@/server/claimsHttp";
-import { fail, failFromError, noStore, rateLimit, sameOrigin } from "@/server/http";
+import { fail, failFromError, noStore, rateLimit, readJson, sameOrigin } from "@/server/http";
 import { getRuntime } from "@/server/runtime";
 
 export const runtime = "nodejs";
@@ -9,9 +9,11 @@ export const dynamic = "force-dynamic";
 /** POST /api/claims/session {address, nonce, signature} — verifies wallet ownership and starts a short claim session. */
 export async function POST(req: Request) {
   if (!sameOrigin(req)) return fail(403, "UNAUTHORIZED", "Cross-site request refused.");
-  const limited = rateLimit(req, "claim-session", 10, 60_000);
+  const limited = await rateLimit(req, "claim-session", 10, 60_000);
   if (limited) return limited;
-  const body = await req.json().catch(() => null);
+  const parsed = await readJson(req, 4096);
+  if (!parsed.ok) return parsed.response;
+  const body = parsed.body as { address?: unknown; nonce?: unknown; signature?: unknown } | null;
   if (typeof body?.nonce !== "string" || typeof body?.signature !== "string") return fail(400, "INVALID_SIGNATURE", "Missing nonce or signature.");
   try {
     const s = await (await getRuntime()).claims.signIn(body.address, body.nonce, body.signature);

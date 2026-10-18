@@ -30,6 +30,8 @@ export interface FeeRefundPolicy {
   payoutDecimals: number;
   /** Claims close at this time, or never (null). */
   closesAtMs: number | null;
+  /** Total that may ever be claimed in this period, in payout base units. Enforced atomically. */
+  budgetBase: bigint;
   quote(ctx: ClaimContext): FeeQuote | Promise<FeeQuote>;
 }
 
@@ -41,6 +43,7 @@ export const REQUIRED_DECISIONS = [
   "The total refund budget, and what happens if claims exceed it.",
   "The holding requirement: minimum balance, minimum holding time, and whether selling forfeits the refund.",
   "Which transactions count (e.g. only buys in the first six hours) and the claim deadline.",
+  "Holder rewards (if any) are a separate programme from fee refunds and need their own approved rules.",
   "Whether a wallet can claim once or repeatedly.",
   "How payouts are executed and approved (e.g. a multisig-approved batch from a dedicated, limited-funds wallet).",
 ] as const;

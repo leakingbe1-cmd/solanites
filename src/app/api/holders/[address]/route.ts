@@ -1,5 +1,6 @@
 import "server-only";
 import { fail, failFromError, noStore, rateLimit } from "@/server/http";
+import { log } from "@/server/log";
 import { getRuntime } from "@/server/runtime";
 import { checkSolanaAddress } from "@/server/solana/address";
 
@@ -17,17 +18,21 @@ const REFRESH_AFTER_MS = 60_000;
 export async function GET(req: Request, { params }: { params: Promise<{ address: string }> }) {
   const check = checkSolanaAddress(decodeURIComponent((await params).address));
   if (!check.ok) return fail(400, "INVALID_ADDRESS", check.reason);
+  const limited = await rateLimit(req, "holder-view", 60, 60_000);
+  if (limited) return limited;
   try {
     const rt = await getRuntime();
     let view = await rt.tracker.holderView(check.address);
     const stale = !view.tracked || view.sync.pending || (view.sync.lastSyncedAt ?? 0) < view.serverNow - REFRESH_AFTER_MS;
-    if (stale && !view.holdings.excluded && !rateLimit(req, "holder-refresh", 10, 60_000)) {
+    // A refresh costs RPC calls: at most 10 per client and 1 per address per minute, shared across instances.
+    const mayRefresh = stale && !view.holdings.excluded && !(await rateLimit(req, "holder-refresh-ip", 10, 60_000)) && !(await rateLimit(req, "holder-refresh-addr", 1, 60_000, check.address));
+    if (mayRefresh) {
       try {
         await rt.tracker.syncOwner(check.address);
         view = await rt.tracker.holderView(check.address);
       } catch (e) {
         // Serve what is recorded; the scheduled sync will catch up.
-        console.error("[holders] refresh failed:", (e as Error).message);
+        log.warn("holders.refresh_failed", { error: (e as Error).message });
       }
     }
     return Response.json(view, { headers: noStore });

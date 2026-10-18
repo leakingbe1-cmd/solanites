@@ -24,6 +24,7 @@ const TEST_POLICY: FeeRefundPolicy = {
   payoutAsset: "TEST",
   payoutDecimals: 0,
   closesAtMs: null,
+  budgetBase: 10_000_000n,
   quote: (ctx) =>
     ctx.verifiedBalance.amountBase > 0n
       ? { eligible: true, amountBase: ctx.verifiedBalance.amountBase / 10n ** BigInt(ctx.verifiedBalance.decimals), lines: [{ label: "Test rule", value: "1 per token" }] }
@@ -182,5 +183,65 @@ describe("claims (test 14)", () => {
     const insert = () => db.query(`INSERT INTO fee_claims (id, claimant, period_id, amount_base, payout_asset, calculation, status, created_ms, updated_ms) VALUES ($1, 'w', 'launch', 1, 'T', '{}', 'pending_payout', 0, 0)`, [`c${Math.random()}`]);
     await insert();
     await expect(insert()).rejects.toThrow();
+  });
+});
+
+describe("claim budget, audit trail and message binding", () => {
+  it("never records more than the period budget, even with concurrent claims", async () => {
+    const { claims, clock, balances, db } = await setup({ policy: { ...TEST_POLICY, budgetBase: 5_000_000n } });
+    clock.t = LAUNCH + 7 * HOUR;
+    const a = await signIn(claims, 20);
+    const b = await signIn(claims, 21);
+    const c = await signIn(claims, 22);
+    balances.set(a.kp.address, 3_000_000n * 1_000_000n);
+    balances.set(b.kp.address, 2_000_000n * 1_000_000n);
+    balances.set(c.kp.address, 1n * 1_000_000n);
+    await claims.submit(a.token);
+    const results = await Promise.allSettled([claims.submit(b.token), claims.submit(c.token)]);
+    const ok = results.filter((r) => r.status === "fulfilled").length;
+    expect(ok).toBe(1); // 3M + 2M fills the 5M budget exactly; the 1-unit claim no longer fits
+    const rejected = results.find((r) => r.status === "rejected") as PromiseRejectedResult;
+    expect(rejected.reason).toMatchObject({ code: "BUDGET_EXHAUSTED" });
+    const total = await db.query<{ claimed: string; budget: string }>(`SELECT claimed_base AS claimed, budget_base AS budget FROM claim_periods WHERE period_id = 'launch'`);
+    expect(total.rows[0]).toEqual({ claimed: "5000000", budget: "5000000" });
+    const n = await db.query<{ n: number }>(`SELECT count(*)::int AS n FROM fee_claims`);
+    expect(n.rows[0].n).toBe(2); // the over-budget claim was not recorded at all
+  });
+
+  it("writes every eligibility decision to the audit log", async () => {
+    const { claims, clock, balances, db } = await setup();
+    clock.t = LAUNCH + 7 * HOUR;
+    const s = await signIn(claims, 23);
+    await claims.quote(s.token);
+    balances.set(s.kp.address, 5n * 1_000_000n);
+    await claims.quote(s.token);
+    const rows = await db.query<{ action: string; details: string }>(`SELECT action, details FROM audit_log WHERE actor = $1 ORDER BY id`, [s.kp.address]);
+    expect(rows.rows.map((r) => r.action)).toEqual(["claim_sign_in", "claim_quote", "claim_quote"]);
+    expect(JSON.parse(rows.rows[1].details)).toMatchObject({ eligible: false });
+    expect(JSON.parse(rows.rows[2].details)).toMatchObject({ eligible: true, amountBase: "5" });
+  });
+
+  it("binds the signed message to the domain, wallet, nonce, expiry and action", async () => {
+    const { claims, clock } = await setup();
+    clock.t = LAUNCH + 7 * HOUR;
+    const kp = keypairFromSeed(24);
+    const { message, nonce, expiresAt } = await claims.issueNonce(kp.address);
+    expect(message).toContain("solanites.test wants you to sign in");
+    expect(message).toContain(kp.address);
+    expect(message).toContain(`Nonce: ${nonce}`);
+    expect(message).toContain(`Expiration Time: ${new Date(expiresAt).toISOString()}`);
+    expect(message).toContain("Action: launch-fee-claim-sign-in");
+    // A signature over a different message (e.g. another domain) is rejected.
+    const forged = encodeBase58(kp.sign(new TextEncoder().encode(message.replace("solanites.test", "evil.test"))));
+    await expect(claims.signIn(kp.address, nonce, forged)).rejects.toMatchObject({ code: "INVALID_SIGNATURE" });
+  });
+
+  it("recording a claim never marks it paid", async () => {
+    const { claims, clock, balances } = await setup();
+    clock.t = LAUNCH + 7 * HOUR;
+    const s = await signIn(claims, 25);
+    balances.set(s.kp.address, 3n * 1_000_000n);
+    const { claim } = await claims.submit(s.token);
+    expect(claim).toMatchObject({ status: "pending_payout", payoutSignature: null });
   });
 });

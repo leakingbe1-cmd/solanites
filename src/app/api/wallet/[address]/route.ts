@@ -1,6 +1,7 @@
 import "server-only";
 import { ConfigError, readServerConfig } from "@/server/config";
-import { createMemoryRateLimiter, type RateLimiter } from "@/server/rateLimit";
+import { rateLimit } from "@/server/http";
+import { log } from "@/server/log";
 import { checkSolanaAddress } from "@/server/solana/address";
 import { createRpcClient, RpcUnavailableError } from "@/server/solana/rpc";
 import { MintError } from "@/server/solana/token";
@@ -10,14 +11,14 @@ import type { WalletLookupError } from "@/shared/walletLookup";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-let service: { lookup: ReturnType<typeof createWalletLookup>; limiter: RateLimiter } | null = null;
+let service: { lookup: ReturnType<typeof createWalletLookup>; limit: { max: number; windowMs: number } } | null = null;
 
 function getService() {
   if (!service) {
     const config = readServerConfig();
     service = {
       lookup: createWalletLookup({ rpc: createRpcClient({ url: config.rpcUrl }), config }),
-      limiter: createMemoryRateLimiter(config.lookupRateLimit.max, config.lookupRateLimit.windowMs),
+      limit: config.lookupRateLimit,
     };
   }
   return service;
@@ -41,9 +42,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ address:
     throw e;
   }
 
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown";
-  const rl = svc.limiter.take(ip);
-  if (!rl.allowed) return fail(429, "RATE_LIMITED", "Too many lookups. Please wait a moment.", { "retry-after": String(Math.ceil(rl.retryAfterMs / 1000)) });
+  // Shared across instances when the database is configured; per-instance otherwise.
+  const limited = await rateLimit(req, "wallet-lookup", svc.limit.max, svc.limit.windowMs);
+  if (limited) return limited;
 
   try {
     const result = await svc.lookup(check.address);
@@ -51,10 +52,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ address:
   } catch (e) {
     if (e instanceof RpcUnavailableError) return fail(503, "RPC_UNAVAILABLE", "Solana data is temporarily unavailable. No balance is shown rather than a possibly wrong one — please retry shortly.");
     if (e instanceof MintError) {
-      console.error("[wallet-lookup] mint misconfigured:", e.message);
+      log.error("mint.invalid", { route: "wallet-lookup", error: e.message });
       return fail(503, "NOT_CONFIGURED", "The configured token mint could not be verified on-chain.");
     }
-    console.error("[wallet-lookup] upstream error:", (e as Error).message);
+    log.error("route.unexpected_error", { route: "wallet-lookup", error: (e as Error).message });
     return fail(502, "UPSTREAM_ERROR", "The Solana data provider returned an unexpected response.");
   }
 }

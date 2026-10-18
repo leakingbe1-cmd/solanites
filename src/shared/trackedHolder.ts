@@ -53,6 +53,8 @@ export interface TrackedEgg {
   growthMs: number | null;
   /** Whether that time is still accruing (the balance currently backs this creature). */
   growing: boolean;
+  /** Evolution decided by the server from `growthMs` at `serverNow` (authoritative; the page only counts down between refreshes). */
+  evolution: { stage: number; label: string } | null;
 }
 
 export interface HatchResult {

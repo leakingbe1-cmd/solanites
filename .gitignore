@@ -9,3 +9,17 @@ preview/dist
 # Creature artwork source masters (large); optimised outputs live in public/creatures
 art/creatures/*
 !art/creatures/README.md
+
+# Secrets and local environment (templates like .env.example stay tracked)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*-keypair.json
+id.json
+# Local databases (PGlite / Postgres data directories)
+*.db
+pgdata/
+.pglite/

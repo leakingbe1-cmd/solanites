@@ -19,7 +19,7 @@ export interface SolaniteRecord {
   durationMs?: number;
   /**
    * Species rolled when the egg was granted. Hidden from the UI until hatch.
-   * Production: commit-reveal on the server so the client can't peek or reroll.
+   * Tracked eggs: rolled and sealed on the server when the egg is earned, so it cannot be rerolled.
    */
   speciesId: string;
   hatchedAt: number | null;

@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * same creature. Readiness is checked against the server clock.
  */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const limited = rateLimit(req, "hatch", 30, 60_000);
+  const limited = await rateLimit(req, "hatch", 30, 60_000);
   if (limited) return limited;
   const id = decodeURIComponent((await params).id);
   if (!/^egg_[1-9A-HJ-NP-Za-km-z]{32,44}_\d{1,6}$/.test(id)) return fail(400, "NOT_FOUND", "Unknown egg.");

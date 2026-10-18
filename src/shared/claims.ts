@@ -38,5 +38,5 @@ export interface FeeClaimRecord {
 }
 
 export interface ClaimsApiError {
-  error: { code: "NOT_OPEN" | "NOT_CONFIGURED" | "INVALID_ADDRESS" | "INVALID_SIGNATURE" | "NONCE_INVALID" | "UNAUTHORIZED" | "NOT_ELIGIBLE" | "RPC_UNAVAILABLE" | "RATE_LIMITED"; message: string };
+  error: { code: "NOT_OPEN" | "NOT_CONFIGURED" | "INVALID_ADDRESS" | "INVALID_SIGNATURE" | "NONCE_INVALID" | "UNAUTHORIZED" | "NOT_ELIGIBLE" | "BUDGET_EXHAUSTED" | "RPC_UNAVAILABLE" | "RATE_LIMITED"; message: string };
 }

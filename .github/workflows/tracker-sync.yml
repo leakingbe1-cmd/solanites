@@ -1,0 +1,42 @@
+# Runs the Solanites holder-tracking pass every 10 minutes by calling the
+# deployed /api/cron/sync endpoint. Vercel's own cron (vercel.json) runs it
+# once a day as a backstop, which is all the Hobby plan allows.
+#
+# Setup (GitHub → Settings → Secrets and variables → Actions):
+#   variable SOLANITES_SYNC_URL = https://solanites.vercel.app/api/cron/sync
+#   secret   CRON_SECRET        = the same value as CRON_SECRET in Vercel
+# Until both exist, the job skips with a notice. Scheduled workflows only run
+# from the default branch (main). GitHub may delay scheduled runs at busy times.
+name: Tracker sync
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: tracker-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call the sync endpoint
+        env:
+          SYNC_URL: ${{ vars.SOLANITES_SYNC_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$SYNC_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "::notice::Tracker sync is not set up yet (needs variable SOLANITES_SYNC_URL and secret CRON_SECRET). Skipping."
+            exit 0
+          fi
+          code=$(curl -sS -o response.json -w '%{http_code}' --max-time 90 -H "Authorization: Bearer $CRON_SECRET" "$SYNC_URL" || echo "000")
+          echo "HTTP $code"; cat response.json 2>/dev/null; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Tracker sync failed with HTTP $code. Check /api/health and the Vercel function logs (event sync.failed)."
+            exit 1
+          fi

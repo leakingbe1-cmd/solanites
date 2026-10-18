@@ -8,7 +8,7 @@ import type { SolaniteRecord } from "@/lib/progression";
  *   1. authenticates the wallet with a signed nonce (Sign-In With Solana),
  *   2. snapshots on-chain balances on a fixed cadence / indexes transfers,
  *   3. runs `advance()` from lib/progression.ts server-side,
- *   4. rolls species with commit-reveal so results can't be predicted or rerolled,
+ *   4. rolls species on the server when the egg is earned and seals it until hatch (not independently verifiable; see docs/holder-tracking.md),
  *   5. enforces maxEggsPerWallet and tokensPerEgg when claiming.
  */
 export interface SolaniteRegistry {

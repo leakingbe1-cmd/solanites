@@ -1,6 +1,6 @@
 import { eggProgression, eggStatusAt, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { rollSpecies } from "@/lib/progression";
+import { evolutionOf, rollSpecies } from "@/lib/progression";
 import { hashString } from "@/lib/rng";
 import type { HatchResult, TrackedEgg, TrackedHolderView } from "@/shared/trackedHolder";
 import { formatBaseUnits, wholeTokensToBase } from "../amounts";
@@ -9,6 +9,8 @@ import { isOnCurve } from "../solana/curve";
 import { fetchMintTokenAccounts, fetchSignaturesSince, fetchTransactionEffect, TransactionNotAvailableError, type SignatureInfo } from "../solana/history";
 import { RpcUnavailableError, type Commitment, type RpcClient } from "../solana/rpc";
 import { fetchMintInfo, fetchOwnerBalance, type MintInfo } from "../solana/token";
+import { log } from "../log";
+import { pruneRateLimits } from "../rateLimitShared";
 import { qualifyingMs } from "./growth";
 import { applyTransferCredit, eggsToAward } from "./ledger";
 
@@ -45,7 +47,8 @@ export interface SyncOwnerResult {
 }
 
 export interface SyncRunResult {
-  status: "ok" | "failed" | "skipped";
+  /** "partial": the pass completed but some wallets failed and will be retried next run. */
+  status: "ok" | "partial" | "failed" | "skipped";
   discovered: boolean;
   ownersSynced: number;
   eggsIssued: number;
@@ -95,6 +98,10 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const info = await fetchMintInfo(rpc, config.mint, COMMITMENT);
     mintCache = { info, at: now() };
     await setState("mint_decimals", String(info.decimals));
+    // The configured supply is display-only, but a mismatch usually means the wrong mint or wrong figures.
+    const expected = wholeTokensToBase(config.progression.totalSupply, info.decimals);
+    await setState("mint_supply_matches_config", String(info.supply === expected));
+    if (info.supply !== expected) log.warn("mint.supply_mismatch", { configuredWholeTokens: config.progression.totalSupply, onChainBase: info.supply.toString(), decimals: info.decimals });
     return info;
   }
 
@@ -310,7 +317,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const maxOwners = opts.maxOwners ?? 50;
     const reverify = opts.reverify ?? 10;
     if (!(await takeLease(5 * 60_000))) return { status: "skipped", discovered: false, ownersSynced: 0, eggsIssued: 0, errors: ["Another sync is running."] };
-    const run = await db.query<{ id: string }>(`INSERT INTO sync_runs (kind, started_ms, status) VALUES ('scheduled', $1, 'running') RETURNING id`, [now()]);
+    const startedMs = now();
+    const run = await db.query<{ id: string }>(`INSERT INTO sync_runs (kind, started_ms, status) VALUES ('scheduled', $1, 'running') RETURNING id`, [startedMs]);
     const runId = run.rows[0].id;
     const result: SyncRunResult = { status: "ok", discovered: false, ownersSynced: 0, eggsIssued: 0, errors: [] };
     let slot: number | null = null;
@@ -333,6 +341,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
           await db.query(`UPDATE holders SET last_sync_error = $2 WHERE owner = $1`, [owner, (e as Error).message.slice(0, 300)]);
         }
       }
+      if (result.errors.length) result.status = "partial";
     } catch (e) {
       result.status = "failed";
       result.errors.push((e as Error).message);
@@ -347,6 +356,11 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         result.errors.join("; ").slice(0, 1000) || null,
       ]);
       await db.query(`UPDATE tracker_state SET value = '0' WHERE key = 'sync_lease'`);
+      await pruneRateLimits(db, now()).catch(() => {});
+      const fields = { runId, status: result.status, discovered: result.discovered, ownersSynced: result.ownersSynced, eggsIssued: result.eggsIssued, durationMs: now() - startedMs, errors: result.errors.length, firstError: result.errors[0] };
+      if (result.status === "ok") log.info("sync.finished", fields);
+      else if (result.status === "partial") log.warn("sync.partial", fields);
+      else log.error("sync.failed", fields);
     }
     return result;
   }
@@ -360,6 +374,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       try {
         const r = await processTransaction(sig);
         if (r.applied) processed++;
+        else log.info("webhook.duplicate_ignored", { reason: "already processed" });
         r.owners.forEach((o) => owners.add(o));
       } catch (e) {
         if (e instanceof RpcUnavailableError) throw e;
@@ -402,6 +417,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       speciesId: showSpecies ? r.species_id : null,
       growthMs: null,
       growing: false,
+      evolution: null,
     };
   }
 
@@ -428,6 +444,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         const g = qualifyingMs(e.hatchedAt!, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
         e.growing = g.growing;
+        const evo = evolutionOf(g.ms, gameConfig);
+        e.evolution = { stage: evo.stage, label: evo.label };
       });
     }
     const uncredited = balance > credit ? balance - credit : 0n;
@@ -476,7 +494,26 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     });
   }
 
-  return { discover, processTransaction, syncOwner, runSync, ingestSignatures, holderView, hatch, isExcluded, mint };
+  /** Operational status for /api/health. No configuration values, addresses or secrets. */
+  async function health(staleAfterMs = 30 * 60_000) {
+    const last = (await db.query<{ finished_ms: string | null; status: string; owners_synced: number; eggs_issued: number; error: string | null }>(
+      `SELECT finished_ms, status, owners_synced, eggs_issued, error FROM sync_runs WHERE finished_ms IS NOT NULL ORDER BY id DESC LIMIT 1`,
+    )).rows[0];
+    const ok = (await db.query<{ finished_ms: string }>(`SELECT finished_ms FROM sync_runs WHERE status = 'ok' ORDER BY id DESC LIMIT 1`)).rows[0];
+    const holders = (await db.query<{ n: number; pending: number }>(`SELECT count(*)::int AS n, count(*) FILTER (WHERE needs_sync)::int AS pending FROM holders WHERE NOT excluded`)).rows[0];
+    const supply = await getState("mint_supply_matches_config");
+    const lastOkAt = ok ? Number(ok.finished_ms) : null;
+    return {
+      lastRun: last ? { finishedAt: Number(last.finished_ms), status: last.status, ownersSynced: last.owners_synced, eggsIssued: last.eggs_issued, failed: last.status !== "ok" } : null,
+      lastSuccessfulSyncAt: lastOkAt,
+      syncStale: lastOkAt === null || now() - lastOkAt > staleAfterMs,
+      trackedHolders: holders.n,
+      holdersAwaitingSync: holders.pending,
+      mintSupplyMatchesConfig: supply === null ? null : supply === "true",
+    };
+  }
+
+  return { discover, processTransaction, syncOwner, runSync, ingestSignatures, holderView, hatch, isExcluded, mint, health };
 }
 
 export type Tracker = ReturnType<typeof createTracker>;

@@ -91,3 +91,41 @@ describe("runtime safety", () => {
     await expect(buildRuntime({ DATABASE_URL: "postgres://localhost/x" })).rejects.toMatchObject({ missing: ["SOLANITES_MINT", "SOLANA_RPC_URL"] });
   });
 });
+
+describe("operations, demo isolation and request limits", () => {
+  it("GET /api/health is public but reveals only status; details need the scheduler secret", async () => {
+    const { GET } = await import("@/app/api/health/route");
+    const pub = await (await GET(req("/api/health"))).json();
+    expect(Object.keys(pub).sort()).toEqual(["lastSuccessfulSyncAt", "source", "status"]);
+    expect(pub.source).toBe("fixture");
+    const detailed = await (await GET(req("/api/health", { headers: { authorization: "Bearer cron-secret-for-tests" } }))).json();
+    expect(detailed.settingsPresent).toMatchObject({ cronSecret: true, webhookSecret: true });
+    expect(JSON.stringify(detailed)).not.toContain("cron-secret-for-tests");
+  });
+
+  it("a balance supplied by the browser is ignored: only the server's verified data counts", async () => {
+    const { GET } = await import("@/app/api/holders/[address]/route");
+    const a = keypairFromSeed(1004).address; // 999,999 fixture holder: no eggs
+    const plain = (await (await GET(req(`/api/holders/${a}`), { params: Promise.resolve({ address: a }) })).json()) as TrackedHolderView;
+    const spoofed = (await (await GET(req(`/api/holders/${a}?balance=999999999999&eggs=50`, { headers: { "x-balance": "999999999999" } }), { params: Promise.resolve({ address: a }) })).json()) as TrackedHolderView;
+    expect(spoofed.holdings).toEqual(plain.holdings);
+    expect(spoofed.counts.earned).toBe(0);
+  });
+
+  it("a duplicated webhook delivery is applied once", async () => {
+    const rt = await getRuntime();
+    const chain = rt.fixtureChain!;
+    const sig = chain.transfer(keypairFromSeed(1003).address, keypairFromSeed(1007).address, chain.tokens(1));
+    const hook = await import("@/app/api/webhooks/solana/route");
+    const deliver = () => hook.POST(req("/api/webhooks/solana", { method: "POST", headers: { authorization: "webhook-secret-for-tests" }, body: JSON.stringify([{ signature: sig }]) }));
+    expect(await (await deliver()).json()).toMatchObject({ processed: 1 });
+    expect(await (await deliver()).json()).toMatchObject({ processed: 0 });
+  });
+
+  it("rejects oversized request bodies", async () => {
+    const hook = await import("@/app/api/webhooks/solana/route");
+    const big = JSON.stringify({ signatures: ["x".repeat(1_100_000)] });
+    const res = await hook.POST(req("/api/webhooks/solana", { method: "POST", headers: { authorization: "webhook-secret-for-tests" }, body: big }));
+    expect(res.status).toBe(413);
+  });
+});

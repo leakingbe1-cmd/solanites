@@ -125,6 +125,23 @@ const STATEMENTS = [
     UNIQUE (claimant, period_id)
   )`,
 
+  // Shared rate-limit counters (fixed windows), so limits hold across serverless instances.
+  `CREATE TABLE IF NOT EXISTS rate_limits (
+    bucket text NOT NULL,
+    key text NOT NULL,
+    window_start bigint NOT NULL,
+    count int NOT NULL,
+    PRIMARY KEY (bucket, key, window_start)
+  )`,
+
+  // Budget per claim period: claimed_base can never exceed budget_base.
+  `CREATE TABLE IF NOT EXISTS claim_periods (
+    period_id text PRIMARY KEY,
+    budget_base numeric(40,0) NOT NULL CHECK (budget_base >= 0),
+    claimed_base numeric(40,0) NOT NULL DEFAULT 0,
+    CHECK (claimed_base <= budget_base)
+  )`,
+
   `CREATE TABLE IF NOT EXISTS audit_log (
     id bigserial PRIMARY KEY,
     at_ms bigint NOT NULL,

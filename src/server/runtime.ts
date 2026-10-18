@@ -21,6 +21,8 @@ export interface Runtime {
   tracker: Tracker;
   claims: Claims;
   fixtureWallets?: { label: string; address: string }[];
+  /** Fixture mode only: the in-memory chain (tests and local development). */
+  fixtureChain?: ReturnType<typeof createLedgerChain>;
 }
 
 let runtime: Promise<Runtime> | null = null;
@@ -68,7 +70,7 @@ export async function buildRuntime(env: Record<string, string | undefined>): Pro
       policy: ACTIVE_FEE_POLICY,
       verifiedBalance: async (a) => ({ amountBase: chain.balanceOf(a), decimals: chain.decimals, slot: chain.state.slot }),
     });
-    return { source: "fixture", db, rpc: chain.rpc, tracker, claims, fixtureWallets: wallets.map((w) => ({ label: w.label, address: w.address })) };
+    return { source: "fixture", db, rpc: chain.rpc, tracker, claims, fixtureWallets: wallets.map((w) => ({ label: w.label, address: w.address })), fixtureChain: chain };
   }
 
   const databaseUrl = env.DATABASE_URL?.trim();

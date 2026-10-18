@@ -4,13 +4,13 @@
 
 | | |
 |---|---|
-| Species in the catalogue | 24 (names, ids, rarities, elements unchanged) |
+| Species in the catalogue | 28 (names, ids, rarities, elements unchanged) |
 | Stages per species | 4: Eggling, Hatchling, Evolved, Ascended |
-| Stage assets required | **96** |
+| Optional raster slots | **112** (28 species × 4 stages) |
 | Stage assets delivered | **0**. See [`checklist.md`](checklist.md), which is regenerated on every build |
-| What the site shows meanwhile | The procedural vector art, labelled **"Placeholder art"** in the creature detail view |
+| What the site shows | The hand-built four-stage vector drawings for every species. These are the shipped artwork; raster images are an optional painted upgrade |
 
-Every stage of every species has a written design, a generation prompt, a validated slot in the asset manifest, and a place in the UI. What is missing is the artwork itself. It could not be produced in this development environment: there is no image-generation tool, API key or GPU, and outbound image APIs are blocked. **No placeholder is reported as finished art.**
+Every stage of every species is drawn as vector art and rendered by `CreatureArt`. Each stage also has a written design, a generation prompt and a validated slot in the asset manifest for an optional painted (raster) version. No painted raster art has been produced: it could not be made in this development environment (no image-generation tool, API key or GPU). **The manifest marks a raster slot complete only when a real file exists and passes validation.**
 
 ## 1. Audit
 
@@ -46,7 +46,7 @@ The per-species designs (silhouette, anatomy, face, posture, materials, effects,
 
 ## 3. Producing the art
 
-1. **Generate.** Open [`prompts.md`](prompts.md). It has one complete prompt per species and stage (96). Generate each image separately in your image tool, using the matching strip in `reference/species/` as the style reference.
+1. **Generate.** Open [`prompts.md`](prompts.md). It has one complete prompt per species and stage (112). Generate each image separately in your image tool, using the matching strip in `reference/species/` as the style reference.
 2. **Save the source master** as `art/creatures/<species-id>/<n>-<stage>.png`, for example:
    ```
    art/creatures/mossling/1-eggling.png
@@ -61,7 +61,7 @@ The per-species designs (silhouette, anatomy, face, posture, materials, effects,
    - fits it to 1024 × 1024 and writes an optimised WebP plus a 384 px thumbnail to `public/creatures/<id>/`;
    - writes a **silhouette-only** version for Mythic and Secret species, so the "???" view never downloads the real art;
    - regenerates `src/data/creatureAssets.json` (the manifest the site reads) and `checklist.md`.
-4. **Review** the site (`npm run dev`). Stages with real art show it; the rest keep the vector placeholder.
+4. **Review** the site (`npm run dev`). Stages with a supplied raster show it; the rest keep the vector drawing.
 5. **Commit** `public/creatures/`, `src/data/creatureAssets.json` and `docs/creature-art/checklist.md`. The source masters in `art/creatures/` are git-ignored because they're large; keep them somewhere safe.
 
 `npm run art:check` runs the same validation without writing anything. It exits with an error if any supplied file is invalid, so it can run in CI.
@@ -70,7 +70,7 @@ Alternatively, send me the images in a session and I'll place them, build and ve
 
 ## 4. How the site uses the art
 
-- `CreatureArt` (used by every page: collection, Hatchery cards, hatch reveal, landing, leaderboard) shows the asset for the creature's **actual stage** when one exists. Otherwise it shows the vector placeholder. Pages need no changes as art arrives.
+- `CreatureArt` (used by every page: collection, Hatchery cards, hatch reveal, landing, leaderboard) shows the asset for the creature's **actual stage** when one exists. Otherwise it shows the vector drawing. Pages need no changes as art arrives.
 - **Detail view:**
   - the four stages side by side, with names and descriptions from the design bible;
   - the current stage highlighted;

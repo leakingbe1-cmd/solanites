@@ -100,10 +100,10 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 - **Eggs (no wallet connection):** the server tracks every holder from Solana (`/api/cron/sync`, `/api/webhooks/solana`), issues eggs into Postgres and serves them at `GET /api/holders/:address`. The Hatchery's **Find my eggs** takes a public address.
 - **Fee claims:** `/claims` opens 6 hours after `SOLANITES_LAUNCH_AT`. The wallet signs a message, verified on the server; one claim per wallet per period. **No refund policy is defined yet, so no amount is quoted, and payouts are not implemented.**
 
-Architecture, audit, configuration, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
+Architecture, audit, configuration (env checklist, scheduler, `/api/health`), staging plan, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 
 ```bash
-npm test               # 103 tests: tracker, claims, routes, eligibility, progression (embedded Postgres + fixture chain)
+npm test               # 155 tests (+3 real-Postgres tests when TEST_DATABASE_URL is set): tracker, claims, routes, remediation, progression
 npm run dev:fixtures   # the site with local fixture holders (labelled as fixture data; refused in production)
 ```
 

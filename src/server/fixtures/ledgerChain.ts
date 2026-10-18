@@ -156,6 +156,8 @@ export function createLedgerChain(opts: { mint?: string; decimals?: number; prog
       const ctx = { slot: Math.min(state.slot, state.finalizedSlot) };
       switch (method) {
         case "getAccountInfo":
+          // Only this ledger's own mint exists; any other address has no account.
+          if ((params as [string])[0] !== mint) return { context: ctx, value: null } as T;
           return {
             context: ctx,
             value: { owner: program, data: { program: "spl-token", parsed: { type: "mint", info: { decimals, supply: (1_000_000_000n * unit).toString(), isInitialized: true } } } },

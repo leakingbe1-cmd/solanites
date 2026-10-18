@@ -20,7 +20,7 @@ export interface ClaimsConfig {
 
 export class ClaimError extends Error {
   constructor(
-    readonly code: "NOT_OPEN" | "NOT_CONFIGURED" | "INVALID_ADDRESS" | "INVALID_SIGNATURE" | "NONCE_INVALID" | "UNAUTHORIZED" | "NOT_ELIGIBLE",
+    readonly code: "NOT_OPEN" | "NOT_CONFIGURED" | "INVALID_ADDRESS" | "INVALID_SIGNATURE" | "NONCE_INVALID" | "UNAUTHORIZED" | "NOT_ELIGIBLE" | "BUDGET_EXHAUSTED",
     message: string,
   ) {
     super(message);
@@ -138,6 +138,7 @@ export function createClaims({ db, config, policy, verifiedBalance, now = Date.n
     if (!policy) throw new ClaimError("NOT_CONFIGURED", "Claim amounts are not available: the refund rules have not been confirmed yet.");
     const ctx = await context(address);
     const q = await policy.quote(ctx);
+    await audit(address, "claim_quote", q.eligible ? { eligible: true, amountBase: q.amountBase.toString(), slot: ctx.verifiedBalance.slot } : { eligible: false, reason: q.reason, slot: ctx.verifiedBalance.slot });
     const verifiedAt = { slot: ctx.verifiedBalance.slot, balance: formatBaseUnits(ctx.verifiedBalance.amountBase, ctx.verifiedBalance.decimals) };
     if (!q.eligible) return { address, eligible: false, reason: q.reason, lines: [], verifiedAt };
     return { address, eligible: true, amount: formatBaseUnits(q.amountBase, policy.payoutDecimals), payoutAsset: policy.payoutAsset, lines: q.lines, verifiedAt };
@@ -169,7 +170,10 @@ export function createClaims({ db, config, policy, verifiedBalance, now = Date.n
     if (existing.rows.length) return { claim: toRecord(existing.rows[0]), duplicate: true };
     const ctx = await context(address);
     const q = await policy.quote(ctx);
-    if (!q.eligible) throw new ClaimError("NOT_ELIGIBLE", q.reason);
+    if (!q.eligible) {
+      await audit(address, "claim_rejected", { reason: q.reason, slot: ctx.verifiedBalance.slot });
+      throw new ClaimError("NOT_ELIGIBLE", q.reason);
+    }
     const t = now();
     const id = `claim_${policy.periodId}_${address}`;
     return db.tx(async (sql) => {
@@ -182,9 +186,23 @@ export function createClaims({ db, config, policy, verifiedBalance, now = Date.n
         const r = await sql.query<Parameters<typeof toRecord>[0]>(`SELECT * FROM fee_claims WHERE claimant = $1 AND period_id = $2`, [address, policy.periodId]);
         return { claim: toRecord(r.rows[0]), duplicate: true };
       }
+      // Reserve the amount against the period budget in the same transaction; if it doesn't fit, nothing is recorded.
+      await sql.query(
+        `INSERT INTO claim_periods (period_id, budget_base) VALUES ($1, $2) ON CONFLICT (period_id) DO UPDATE SET budget_base = EXCLUDED.budget_base`,
+        [policy.periodId, policy.budgetBase.toString()],
+      );
+      const reserved = await sql.query(
+        `UPDATE claim_periods SET claimed_base = claimed_base + $2 WHERE period_id = $1 AND claimed_base + $2 <= budget_base RETURNING period_id`,
+        [policy.periodId, q.amountBase.toString()],
+      );
+      if (!reserved.rows.length) throw new ClaimError("BUDGET_EXHAUSTED", "The claim budget for this period has been used up.");
       await sql.query(`INSERT INTO audit_log (at_ms, actor, action, details) VALUES ($1, $2, 'claim_recorded', $3)`, [t, address, JSON.stringify({ id, amountBase: q.amountBase.toString() })]);
       return { claim: toRecord(ins.rows[0]), duplicate: false };
     });
+  }
+
+  async function audit(actor: string, action: string, details: Record<string, unknown>) {
+    await db.query(`INSERT INTO audit_log (at_ms, actor, action, details) VALUES ($1, $2, $3, $4)`, [now(), actor, action, JSON.stringify(details)]);
   }
 
   async function myClaims(token: string | undefined | null): Promise<FeeClaimRecord[]> {

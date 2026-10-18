@@ -23,7 +23,21 @@ export default function HatcheryPage() {
   const [inspect, setInspect] = useState<string | null>(null);
   const [hatching, setHatching] = useState<string | null>(null);
 
-  if (!h.hydrated) return <div className="min-h-screen" />;
+  if (!h.hydrated)
+    return (
+      <div className="relative min-h-screen pt-24 lg:pt-28" aria-busy="true">
+        <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Loading your Hatchery…</p>
+          <div className="mt-4 h-12 w-64 animate-pulse rounded-2xl bg-white/[0.04]" />
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div key={i} className="h-24 animate-pulse rounded-2xl bg-white/[0.03]" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   if (!h.wallet) return <ConnectGate />;
   if (h.wallet.kind === "watch") return <TrackedHatchery key={h.wallet.address} address={h.wallet.address} />;
 
@@ -53,14 +67,30 @@ export default function HatcheryPage() {
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">{h.isDemo ? "Demo session · simulated data" : "Experimental live session"}</p>
             <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Hatchery</h1>
           </div>
-          <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green" />
             </span>
             Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · ×{formatNumber(h.speed)}
+            {h.isDemo && (
+              <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-white">
+                Exit demo
+              </button>
+            )}
           </div>
         </div>
+
+        {h.isDemo && (
+          <div role="note" className="mt-6 flex flex-col gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              <strong className="font-semibold text-amber-200">Demo.</strong> The balance, eggs and creatures here are simulated and kept only in this browser. Nothing is read from or written to Solana.
+            </p>
+            <button onClick={h.disconnect} className="shrink-0 self-start whitespace-nowrap rounded-full border border-amber-300/30 px-4 py-2 text-xs uppercase tracking-[0.15em] text-amber-100 transition hover:bg-amber-300/10 sm:self-auto">
+              Find real eggs
+            </button>
+          </div>
+        )}
 
         {/* status */}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

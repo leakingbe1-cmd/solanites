@@ -492,3 +492,76 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .sl-hero-float { animation: none; }
 }
+
+/* ── First-visit intro ─────────────────────────────────────
+   Pre-paint cover: set on <html> by the inline boot script for a visit that
+   is due an intro, so the page never flashes first. It fades away on its own
+   after a few seconds in case the app fails to start. */
+html[data-sl-intro] body {
+  overflow: hidden;
+}
+html[data-sl-intro]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: #05040a;
+  animation: sl-intro-failsafe 0.4s ease 4s forwards;
+}
+@keyframes sl-intro-failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* opaque from the first frame on a first visit (no flash of the page); a replay fades in over the page */
+.sl-intro.is-replay { animation: sl-fade-in 0.5s ease both; }
+.sl-intro.is-leaving { animation: sl-intro-out 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; pointer-events: none; }
+@keyframes sl-intro-out { to { opacity: 0; transform: scale(1.03); filter: blur(4px); } }
+
+.sl-intro-light { animation: sl-fade-in 1.6s ease 0.1s both; }
+.sl-intro-actions { animation: sl-fade-in 0.5s ease 0.15s both; }
+.sl-intro-mark { animation: sl-intro-reveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both; }
+.sl-intro-letter { animation: sl-intro-letter 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.sl-intro-rise { animation: sl-intro-reveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes sl-intro-reveal {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes sl-intro-letter {
+  from { opacity: 0; transform: translateY(0.4em); filter: blur(8px); letter-spacing: 0.3em; }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* egg: emerges, wakes (glow builds), then gives way to light */
+.sl-intro-egg { animation: sl-intro-egg 4.1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both; }
+@keyframes sl-intro-egg {
+  0% { opacity: 0; transform: translateY(18px) scale(0.92); filter: brightness(0.6); }
+  30% { opacity: 1; transform: none; filter: brightness(0.9); }
+  70% { opacity: 1; transform: scale(1.02); filter: brightness(1.25) drop-shadow(0 0 30px rgba(153, 69, 255, 0.6)); }
+  86% { opacity: 1; transform: scale(1.05); filter: brightness(2.2) drop-shadow(0 0 60px rgba(255, 255, 255, 0.8)); }
+  100% { opacity: 0; transform: scale(1.12); filter: brightness(3); }
+}
+.sl-intro-flash {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(160, 120, 255, 0.5) 30%, transparent 62%);
+  animation: sl-intro-flash 1.3s ease-out 3.75s both;
+}
+@keyframes sl-intro-flash {
+  0% { opacity: 0; transform: scale(0.3); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+.sl-intro-creature { animation: sl-intro-creature 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) 3.95s both; }
+@keyframes sl-intro-creature {
+  from { opacity: 0; transform: translateY(16px) scale(0.86); filter: brightness(2.2) blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.sl-intro-halo { animation: sl-intro-halo 2s ease 3.9s both; }
+@keyframes sl-intro-halo {
+  from { opacity: 0; transform: scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+
+/* reduced motion: the finished frame at once (no egg sequence, no delays) */
+@media (prefers-reduced-motion: reduce) {
+  .sl-intro *, .sl-intro { animation-delay: 0s !important; }
+  .sl-intro-egg, .sl-intro-flash { display: none; }
+}

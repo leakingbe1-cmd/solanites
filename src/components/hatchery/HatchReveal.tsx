@@ -46,6 +46,14 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Once revealed (the hatch is already recorded), Escape returns to the Hatchery.
+  useEffect(() => {
+    if (phase !== "reveal") return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [phase, onClose]);
+
   const colors = species.rarity === "secret" ? ["#14f195", "#9945ff", "#ff3df2", "#00c2ff", "#ffffff"] : [meta.color, meta.color2, "#ffffff"];
 
   return createPortal(

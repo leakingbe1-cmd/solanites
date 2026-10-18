@@ -53,6 +53,13 @@ The full audit and species design matrix are in [`docs/creature-design.md`](docs
 
 Eggs (`src/components/egg/EggArt.tsx`) have three shell patterns and five hue sets, chosen by each egg's seed. Cracks appear progressively, the core pulses like a heartbeat, the creature's silhouette shows inside from Stage 3, and each stage has its own animation.
 
+## First-visit intro
+
+A short, skippable intro (`src/components/intro/`) plays on a first visit that lands on `/` or `/hatchery`. Deep links to other pages never show it. Entering or skipping stores a non-sensitive `solanites:intro:v1` flag in localStorage, so later visits go straight in. It respects reduced motion and has no audio.
+
+- Replay: **Replay intro** in the footer or on the Hatchery.
+- Review on any deployment: add `?intro=1` to the URL (or `?intro=0` to suppress it).
+
 ## Project structure
 
 ```

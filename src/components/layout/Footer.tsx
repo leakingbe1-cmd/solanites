@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 
 export function Footer() {
   return (
@@ -26,6 +27,7 @@ export function Footer() {
           <ul className="mt-4 space-y-2.5 text-mist">
             <li><Link className="hover:text-white" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-white" href="/how-it-works#rules">Gameplay Rules</Link></li>
+            <li><ReplayIntroButton className="hover:text-white" /></li>
           </ul>
         </div>
       </div>

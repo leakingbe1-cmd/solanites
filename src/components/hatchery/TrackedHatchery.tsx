@@ -88,7 +88,18 @@ export function TrackedHatchery({ address }: { address: string }) {
   }
 
   if (load.kind === "loading") return <Shell address={address} onExit={h.disconnect} />;
-  if (load.kind === "error") return <Shell address={address} onExit={h.disconnect} error={load} />;
+  if (load.kind === "error")
+    return (
+      <Shell
+        address={address}
+        onExit={h.disconnect}
+        error={load}
+        onRetry={() => {
+          setLoad({ kind: "loading" });
+          refresh();
+        }}
+      />
+    );
 
   const { view } = load;
   const now = Date.now() + load.offset;
@@ -249,7 +260,7 @@ function FixtureBanner() {
   );
 }
 
-function Shell({ address, onExit, error }: { address: string; onExit(): void; error?: { code: string; message: string } }) {
+function Shell({ address, onExit, onRetry, error }: { address: string; onExit(): void; onRetry?: () => void; error?: { code: string; message: string } }) {
   const notLive = error?.code === "NOT_CONFIGURED";
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
@@ -259,7 +270,10 @@ function Shell({ address, onExit, error }: { address: string; onExit(): void; er
         <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white">The Hatchery</h1>
         <p className="mt-3 break-all font-mono text-xs text-mist">{shortAddress(address)}</p>
         {!error ? (
-          <div className="mt-10 h-40 animate-pulse rounded-3xl bg-white/[0.03]" />
+          <div className="mt-10" aria-busy="true">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-mist/70">Reading this address from Solana…</p>
+            <div className="mt-4 h-40 animate-pulse rounded-3xl bg-white/[0.03]" />
+          </div>
         ) : (
           <div role="alert" className="mt-10 rounded-3xl border border-amber-400/25 bg-amber-400/[0.06] p-6 text-amber-100/90">
             <p className="font-display text-lg text-amber-200">{notLive ? "Automatic tracking isn't switched on yet" : "Couldn't load this address"}</p>
@@ -268,9 +282,21 @@ function Shell({ address, onExit, error }: { address: string; onExit(): void; er
             </p>
           </div>
         )}
-        <button onClick={onExit} className="mt-6 rounded-full border border-white/15 px-6 py-3 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
-          Back
-        </button>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {error && !notLive && onRetry && (
+            <button onClick={onRetry} className="sl-btn-primary rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+              Try again
+            </button>
+          )}
+          <button onClick={onExit} className="rounded-full border border-white/15 px-6 py-3 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+            {error ? "Use another address" : "Back"}
+          </button>
+        </div>
+        {notLive && (
+          <p className="mt-6 text-sm leading-relaxed text-mist">
+            Meanwhile, the demo shows how incubation, hatching and evolution work with simulated data. Use another address, then choose <span className="text-white">Explore the demo</span>.
+          </p>
+        )}
       </div>
     </div>
   );

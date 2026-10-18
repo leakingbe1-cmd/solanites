@@ -4,7 +4,7 @@
 
 A front-end prototype for the Solanites holder experience: holders of the token get eggs, the eggs develop while the balance is held, and each one hatches into a collectible creature that keeps evolving as long as the holder keeps holding.
 
-> ⚠️ **Prototype:** wallets, balances, timers and leaderboard data are **simulated mock data**. In the default demo mode nothing is read from or written to Solana, and no tokens, NFTs or on-chain records are created.
+> ⚠️ **Eggs are tracked automatically from on-chain data** once the server is configured (mint, RPC, database). See [`docs/holder-tracking.md`](docs/holder-tracking.md). The demo wallet and leaderboard are **simulated mock data**, and no tokens, NFTs or on-chain records are ever created.
 
 ## Run locally
 
@@ -17,7 +17,7 @@ npm run dev          # http://localhost:3000
 npm run build && npm start
 ```
 
-Open **The Hatchery** → **Enter with Demo Wallet**. The demo wallet starts with a mock balance of 52,000 tokens and a pre-grown collection:
+Open **The Hatchery** → **Explore the demo**. The demo wallet starts with a mock balance of 5,200,000 tokens and a pre-grown collection:
 
 | Slot | State |
 |---|---|
@@ -27,7 +27,7 @@ Open **The Hatchery** → **Enter with Demo Wallet**. The demo wallet starts wit
 | 4 | Egg in Stage 3 (stirring) |
 | 5 | Egg in Stage 2 (awakening, cracks showing) |
 
-The **Prototype simulation controls** at the bottom of the Hatchery let you change time speed (real time up to 1 day/second), skip ahead, reset the demo, and drag the mock balance to see what happens when it falls below the threshold or qualifies for another egg. The default speed is 1 hour/second, so the 7-day incubation takes about 3 minutes.
+The **Prototype simulation controls** at the bottom of the Hatchery let you change time speed (real time up to 1 day/second), skip ahead, reset the demo, and drag the mock balance to see what happens when it falls below the threshold or qualifies for another egg. Demo eggs follow the real per-egg schedule (5 min, 6 h, 24 h, 48 h, then 72 h).
 
 Sound is off by default; turn it on with the speaker button in the nav. All sounds are synthesized with Web Audio, so there are no audio files.
 
@@ -79,42 +79,32 @@ src/
 
 Stack: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, self-hosted fonts (Unbounded, Inter, JetBrains Mono).
 
-## Gameplay rules (prototype assumptions)
+## Gameplay rules
 
-All rules are in `src/config/gameConfig.ts`. The How It Works page reads them directly, so it updates when the config changes.
+Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolution, stage thresholds) is in `src/config/gameConfig.ts`. The How It Works page reads both, so it updates when the config changes.
 
-| Rule | Prototype value |
+| Rule | Value |
 |---|---|
-| Total supply | 10,000,000 |
-| Tokens per egg | 10,000 (0.1% of supply) |
-| Max eggs per wallet | 6 |
-| Incubation | 7 days of qualifying hold. Stage 2 at 35%, Stage 3 at 70% |
-| Evolution | Hatchling → Fledgling at 14 days → Ascendant at 45 days → Apex at 120 days (holding time after hatching) |
+| Total supply | 1,000,000,000 SOLITE |
+| Tokens per egg | 1,000,000 (0.1% of supply). Eggs = verified balance ÷ 1,000,000, rounded down |
+| Max eggs per wallet | No cap |
+| Incubation | Egg 1: 5 min · egg 2: 6 h · egg 3: 24 h · egg 4: 48 h · egg 5 onwards: 72 h. One at a time (`sequential`), on the server clock |
+| Balance drops | Earned eggs are kept and keep incubating; new eggs need tokens that haven't earned one |
+| Transfers | Tokens that earned an egg carry that "credit" to the receiving wallet, so they can't earn it twice |
+| Evolution | Hatchling → Fledgling at 14 days → Ascendant at 45 days → Apex at 120 days |
 | Rarity weights | Common 60 · Rare 25 · Epic 10 · Legendary 3.8 · Mythic 1 · Secret 0.2 |
-| Balance below threshold | `pause`: progress freezes and resumes when the balance is restored. Options: `pause` \| `reset` \| `continue` |
-| Which eggs lose backing | The newest first. The oldest N records stay backed when the balance covers N |
-| Claim cap | Eggs + creatures owned ≤ ⌊balance / tokensPerEgg⌋ (and ≤ max) |
-| Hatching | Manual: the holder triggers the reveal. `manualHatch: false` hatches automatically |
-| Egg transfer | `locked` (descriptive only; no transfer flow exists in the prototype) |
-| Creature transfer | `transferable-resets-progress` (descriptive only) |
-| Rarity | Rolled from a seed when the egg is granted, hidden until it hatches |
+| Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
+| Launch fee claims | Open 6 hours after launch; the only place a wallet is connected |
 
-## On-chain holder tracking
+## Holder tracking, eggs and fee claims
 
-The Hatchery's **Check a wallet** panel calls `GET /api/wallet/:address`. That endpoint reads a public address's real balance of the official token on the server and works out egg eligibility, with no wallet connection. It needs `SOLANITES_MINT` and `SOLANA_RPC_URL` (see `.env.example`). Without them it answers "not configured" instead of guessing.
+- **Eggs (no wallet connection):** the server tracks every holder from Solana (`/api/cron/sync`, `/api/webhooks/solana`), issues eggs into Postgres and serves them at `GET /api/holders/:address`. The Hatchery's **Find my eggs** takes a public address.
+- **Fee claims:** `/claims` opens 6 hours after `SOLANITES_LAUNCH_AT`. The wallet signs a message, verified on the server; one claim per wallet per period. **No refund policy is defined yet, so no amount is quoted, and payouts are not implemented.**
 
-The audit, architecture, data model, holding policy and remaining phases (history tracking, rewards in dry-run mode, ownership verification, gated distribution) are in [`docs/holder-tracking.md`](docs/holder-tracking.md).
+Architecture, audit, configuration, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 
 ```bash
-npm test             # server tests (address validation, precision, eligibility, RPC failures, API route)
+npm test               # 103 tests: tracker, claims, routes, eligibility, progression (embedded Postgres + fixture chain)
+npm run dev:fixtures   # the site with local fixture holders (labelled as fixture data; refused in production)
 ```
 
-### Production security requirements
-
-The client must never be trusted for eligibility or progression. A production backend should:
-
-- Authenticate wallets with a **signed nonce** (Sign-In With Solana), not just a connection.
-- **Snapshot balances on a fixed schedule** (or index token transfers) and run `advance()` from `lib/progression.ts` on the server. The module is pure and has no browser dependencies, so it can be reused there.
-- Enforce `tokensPerEgg` and `maxEggsPerWallet` on claims, atomically.
-- Roll rarity with **commit-reveal** (or VRF) so results can't be predicted, peeked at or rerolled. The prototype stores `speciesId` on the client, which is acceptable only for a demo.
-- Treat `localStorage` and the simulated clock as prototype-only. They are trivial to tamper with.

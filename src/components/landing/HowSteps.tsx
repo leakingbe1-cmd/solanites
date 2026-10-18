@@ -1,12 +1,13 @@
+import { describeSchedule } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { formatDays, formatNumber } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 
 export function HowSteps() {
   const steps = [
     {
       n: "1",
       title: "Hold the qualifying amount",
-      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} in your wallet backs one egg — up to ${gameConfig.eggs.maxEggsPerWallet} per wallet.`,
+      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} you hold earns one egg. Holdings are tracked automatically from the blockchain, with no wallet connection needed.`,
       icon: (
         <path d="M12 3l7 4v6c0 4-3 7-7 8-4-1-7-4-7-8V7l7-4z M9 12l2 2 4-4" />
       ),
@@ -14,7 +15,7 @@ export function HowSteps() {
     {
       n: "2",
       title: "Receive an egg & watch it develop",
-      text: `Your egg incubates while you hold — glowing, cracking and stirring over roughly ${formatDays(gameConfig.eggs.incubationMs)}.`,
+      text: `Each egg incubates on the server clock, even while you are away: ${describeSchedule()}. It glows, cracks and stirs as it goes.`,
       icon: <path d="M12 3c4 0 7 6 7 11a7 7 0 0 1-14 0c0-5 3-11 7-11z M10 10l2 2-1 3" />,
     },
     {

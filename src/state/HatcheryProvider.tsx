@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
+import { incubationMsFor } from "@/config/eggProgression";
 import { gameConfig, TIME, type GameConfig } from "@/config/gameConfig";
 import { advance, eggsAllowed, phaseOf, rollSpecies, type SolaniteRecord } from "@/lib/progression";
 import { randomSeed } from "@/lib/rng";
@@ -53,6 +54,8 @@ type Action =
   | { type: "speed"; value: number }
   | { type: "sound"; value: boolean }
   | { type: "rename"; id: string; name: string }
+  | { type: "discover"; speciesId: string }
+  | { type: "watch"; address: string }
   | { type: "resetDemo" };
 
 const initial: State = {
@@ -73,25 +76,30 @@ function makeId(seed: number) {
 }
 
 /** Pre-built demo collection so the Hatchery is alive on first visit. */
+/** Demo balance: backs the five demo records plus a fraction toward the next egg. */
+export const DEMO_BALANCE = 5.2 * gameConfig.token.tokensPerEgg;
+
 function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
-  const inc = cfg.eggs.incubationMs;
-  const base = (seed: number, speciesId: string, ageMs: number, extra: Partial<SolaniteRecord>): SolaniteRecord => ({
+  // Each demo egg uses the real per-egg schedule for its position (egg 1 = 5 min, egg 2 = 6 h, …).
+  const base = (n: number, seed: number, speciesId: string, ageMs: number, extra: Partial<SolaniteRecord>): SolaniteRecord => ({
     id: makeId(seed),
     seed,
     acquiredAt: now - ageMs,
     incubationMs: 0,
+    durationMs: incubationMsFor(n),
     speciesId,
     hatchedAt: null,
     growthMs: 0,
     backed: true,
     ...extra,
   });
+  const d = (n: number) => incubationMsFor(n);
   return [
-    base(9101, "duskwing", inc + 52 * TIME.DAY, { incubationMs: inc, hatchedAt: now - 52 * TIME.DAY, growthMs: 52 * TIME.DAY, nickname: "Nightwarden" }),
-    base(4410, "mossling", inc + 9 * TIME.DAY, { incubationMs: inc, hatchedAt: now - 9 * TIME.DAY, growthMs: 9 * TIME.DAY }),
-    base(7777, "aurelion", inc + TIME.HOUR, { incubationMs: inc }),
-    base(2024, "neonyx", inc * 0.82, { incubationMs: inc * 0.82 }),
-    base(1337, rollSpecies(1337, cfg), inc * 0.46, { incubationMs: inc * 0.46 }),
+    base(1, 9101, "duskwing", d(1) + 52 * TIME.DAY, { incubationMs: d(1), hatchedAt: now - 52 * TIME.DAY, growthMs: 52 * TIME.DAY, nickname: "Nightwarden" }),
+    base(2, 4410, "mossling", d(2) + 9 * TIME.DAY, { incubationMs: d(2), hatchedAt: now - 9 * TIME.DAY, growthMs: 9 * TIME.DAY }),
+    base(3, 7777, "aurelion", d(3) + TIME.HOUR, { incubationMs: d(3) }),
+    base(4, 2024, "neonyx", d(4) * 0.82, { incubationMs: d(4) * 0.82 }),
+    base(5, 1337, rollSpecies(1337, cfg), d(5) * 0.46, { incubationMs: d(5) * 0.46 }),
   ];
 }
 
@@ -106,7 +114,7 @@ function reducer(state: State, action: Action): State {
         const sameDemo = state.wallet?.kind === "demo" && state.records.length > 0;
         const records = sameDemo ? state.records : demoRecords(now, cfg);
         const discovered = Array.from(new Set([...state.discovered, ...records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId)]));
-        return { ...state, wallet: action.wallet, balance: 52_000, balanceSource: "mock", balanceError: null, records, simNow: sameDemo ? state.simNow : now, discovered };
+        return { ...state, wallet: action.wallet, balance: DEMO_BALANCE, balanceSource: "mock", balanceError: null, records, simNow: sameDemo ? state.simNow : now, discovered };
       }
       return { ...state, wallet: action.wallet, balance: 0, balanceSource: "rpc", records: [], simNow: Date.now(), speed: 1 };
     }
@@ -118,7 +126,7 @@ function reducer(state: State, action: Action): State {
       // Keep the last known balance rather than inventing a zero.
       return { ...state, balanceError: action.error };
     case "tick": {
-      if (!state.wallet || action.deltaMs <= 0) return state;
+      if (!state.wallet || state.wallet.kind === "watch" || action.deltaMs <= 0) return state;
       return { ...state, simNow: state.simNow + action.deltaMs, records: advance(state.records, action.deltaMs, state.balance, cfg) };
     }
     case "claim": {
@@ -129,6 +137,7 @@ function reducer(state: State, action: Action): State {
         seed: action.seed,
         acquiredAt: state.simNow,
         incubationMs: 0,
+        durationMs: incubationMsFor(state.records.length + 1),
         speciesId: rollSpecies(action.seed, cfg),
         hatchedAt: null,
         growthMs: 0,
@@ -154,8 +163,13 @@ function reducer(state: State, action: Action): State {
     case "resetDemo": {
       const now = Date.now();
       const records = demoRecords(now, cfg);
-      return { ...state, records, balance: 52_000, simNow: now, discovered: records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId) };
+      return { ...state, records, balance: DEMO_BALANCE, simNow: now, discovered: records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId) };
     }
+    case "discover":
+      return state.discovered.includes(action.speciesId) ? state : { ...state, discovered: [...state.discovered, action.speciesId] };
+    case "watch":
+      // Read-only: follow an address's automatically tracked eggs. No connection, no signature, no local records.
+      return { ...state, wallet: { kind: "watch", address: action.address, label: "Tracked address" }, records: [], balance: 0, balanceSource: "rpc", balanceError: null };
   }
 }
 
@@ -175,6 +189,10 @@ interface HatcheryContextValue extends State {
   toggleSound(): void;
   rename(id: string, name: string): void;
   resetDemo(): void;
+  /** Follow a public address's tracked eggs. No wallet connection. */
+  watch(address: string): void;
+  /** Mark a species as discovered (after a tracked hatch). */
+  discover(speciesId: string): void;
 }
 
 const Ctx = createContext<HatcheryContextValue | null>(null);
@@ -208,9 +226,9 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => setSoundEnabled(state.sound), [state.sound]);
 
-  // Simulated clock.
+  // Simulated clock (demo only; tracked eggs use the server clock).
   useEffect(() => {
-    if (!state.wallet) return;
+    if (!state.wallet || state.wallet.kind === "watch") return;
     lastReal.current = performance.now();
     const t = setInterval(() => {
       const now = performance.now();
@@ -268,6 +286,8 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
       toggleSound: () => dispatch({ type: "sound", value: !state.sound }),
       rename: (id, name) => dispatch({ type: "rename", id, name }),
       resetDemo: () => dispatch({ type: "resetDemo" }),
+      watch: (address) => dispatch({ type: "watch", address }),
+      discover: (speciesId) => dispatch({ type: "discover", speciesId }),
     };
   }, [state, connect]);
 

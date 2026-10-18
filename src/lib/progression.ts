@@ -15,6 +15,8 @@ export interface SolaniteRecord {
   acquiredAt: number;
   /** Qualifying holding time accumulated toward hatching. */
   incubationMs: number;
+  /** This egg's own incubation length (the per-egg schedule). Falls back to `cfg.eggs.incubationMs`. */
+  durationMs?: number;
   /**
    * Species rolled when the egg was granted. Hidden from the UI until hatch.
    * Production: commit-reveal on the server so the client can't peek or reroll.
@@ -30,21 +32,27 @@ export interface SolaniteRecord {
 
 export type Phase = "egg" | "ready" | "creature";
 
+/** Incubation an egg needs before it can hatch. */
+export function incubationTarget(r: SolaniteRecord, cfg: GameConfig): number {
+  return r.durationMs ?? cfg.eggs.incubationMs;
+}
+
 export function phaseOf(r: SolaniteRecord, cfg: GameConfig): Phase {
   if (r.hatchedAt !== null) return "creature";
-  return r.incubationMs >= cfg.eggs.incubationMs ? "ready" : "egg";
+  return r.incubationMs >= incubationTarget(r, cfg) ? "ready" : "egg";
 }
 
 /** How many eggs a balance can back. */
 export function eggsAllowed(balance: number, cfg: GameConfig): number {
   if (cfg.token.tokensPerEgg <= 0) return 0;
-  return Math.max(0, Math.min(cfg.eggs.maxEggsPerWallet, Math.floor(balance / cfg.token.tokensPerEgg)));
+  const n = Math.max(0, Math.floor(balance / cfg.token.tokensPerEgg));
+  return cfg.eggs.maxEggsPerWallet === null ? n : Math.min(cfg.eggs.maxEggsPerWallet, n);
 }
 
-/** Tokens still needed to qualify for the next egg (0 if at max). */
+/** Tokens still needed to qualify for the next egg (0 if at the cap). */
 export function tokensToNextEgg(balance: number, cfg: GameConfig): number {
   const allowed = eggsAllowed(balance, cfg);
-  if (allowed >= cfg.eggs.maxEggsPerWallet) return 0;
+  if (cfg.eggs.maxEggsPerWallet !== null && allowed >= cfg.eggs.maxEggsPerWallet) return 0;
   return (allowed + 1) * cfg.token.tokensPerEgg - balance;
 }
 
@@ -67,10 +75,11 @@ export function advance(records: SolaniteRecord[], deltaMs: number, balance: num
       return r.hatchedAt === null ? { ...next, incubationMs: 0 } : { ...next, growthMs: 0 };
     }
     if (r.hatchedAt === null) {
-      next.incubationMs = Math.min(cfg.eggs.incubationMs, r.incubationMs + deltaMs);
+      const target = incubationTarget(r, cfg);
+      next.incubationMs = Math.min(target, r.incubationMs + deltaMs);
       // When hatching is automatic, overflow time flows straight into growth.
-      if (!cfg.policies.manualHatch && next.incubationMs >= cfg.eggs.incubationMs) {
-        next.hatchedAt = r.acquiredAt + cfg.eggs.incubationMs;
+      if (!cfg.policies.manualHatch && next.incubationMs >= target) {
+        next.hatchedAt = r.acquiredAt + target;
       }
     } else {
       next.growthMs = r.growthMs + deltaMs;
@@ -84,7 +93,7 @@ export function advance(records: SolaniteRecord[], deltaMs: number, balance: num
 export const EGG_STAGE_NAMES = ["", "Dormant", "Awakening", "Stirring", "Ready to Hatch"] as const;
 
 export function eggStage(r: SolaniteRecord, cfg: GameConfig): 1 | 2 | 3 | 4 {
-  const f = r.incubationMs / cfg.eggs.incubationMs;
+  const f = r.incubationMs / incubationTarget(r, cfg);
   if (f >= 1) return 4;
   if (f >= cfg.eggs.stirringAt) return 3;
   if (f >= cfg.eggs.crackingAt) return 2;
@@ -92,7 +101,7 @@ export function eggStage(r: SolaniteRecord, cfg: GameConfig): 1 | 2 | 3 | 4 {
 }
 
 export function incubationProgress(r: SolaniteRecord, cfg: GameConfig): number {
-  return Math.min(1, r.incubationMs / cfg.eggs.incubationMs);
+  return Math.min(1, r.incubationMs / incubationTarget(r, cfg));
 }
 
 /** Progress within the current egg stage, 0..1 (drives crack count etc). */
@@ -107,7 +116,7 @@ export function stageProgress(r: SolaniteRecord, cfg: GameConfig): number {
 }
 
 export function timeToHatch(r: SolaniteRecord, cfg: GameConfig): number {
-  return Math.max(0, cfg.eggs.incubationMs - r.incubationMs);
+  return Math.max(0, incubationTarget(r, cfg) - r.incubationMs);
 }
 
 /* ── Evolution ──────────────────────────────────────────────── */

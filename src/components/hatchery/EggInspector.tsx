@@ -15,7 +15,18 @@ const STAGE_COPY = [
   "The shell can no longer hold it. Your Solanite is ready to meet you.",
 ];
 
-export function EggInspector({ record, simNow, onHatch }: { record: SolaniteRecord; simNow: number; onHatch(): void }) {
+export function EggInspector({
+  record,
+  simNow,
+  onHatch,
+  tracked,
+}: {
+  record: SolaniteRecord;
+  simNow: number;
+  onHatch(): void;
+  /** Automatically tracked egg: timers run on the server clock, independent of balance changes. */
+  tracked?: { sequence: number; startsInMs: number };
+}) {
   const cfg = gameConfig;
   const stage = eggStage(record, cfg);
   const progress = incubationProgress(record, cfg);
@@ -51,16 +62,16 @@ export function EggInspector({ record, simNow, onHatch }: { record: SolaniteReco
           </ProgressRing>
           <dl className="grid flex-1 gap-3 text-sm">
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
-              <dt className="text-mist">Qualifying hold</dt>
+              <dt className="text-mist">{tracked ? "Incubated" : "Qualifying hold"}</dt>
               <dd className="font-mono text-white">{formatDuration(record.incubationMs)}</dd>
             </div>
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
-              <dt className="text-mist">Est. to hatch</dt>
-              <dd className="font-mono text-white">{ready ? "Now" : formatDuration(timeToHatch(record, cfg))}</dd>
+              <dt className="text-mist">{tracked ? "Ready in" : "Est. to hatch"}</dt>
+              <dd className="font-mono text-white">{ready ? "Now" : formatDuration(timeToHatch(record, cfg) + (tracked?.startsInMs ?? 0))}</dd>
             </div>
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
-              <dt className="text-mist">Egg age</dt>
-              <dd className="font-mono text-white">{formatDuration(simNow - record.acquiredAt)}</dd>
+              <dt className="text-mist">{tracked ? `Egg #${tracked.sequence} earned` : "Egg age"}</dt>
+              <dd className="font-mono text-white">{tracked ? `${formatDuration(simNow - record.acquiredAt)} ago` : formatDuration(simNow - record.acquiredAt)}</dd>
             </div>
             <div className="flex justify-between gap-2">
               <dt className="text-mist">Rarity</dt>
@@ -69,6 +80,11 @@ export function EggInspector({ record, simNow, onHatch }: { record: SolaniteReco
           </dl>
         </div>
 
+        {tracked && tracked.startsInMs > 0 && (
+          <p className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-mist">
+            Queued: eggs incubate one at a time. This one starts in {formatDuration(tracked.startsInMs)}, when the egg before it is ready.
+          </p>
+        )}
         {!record.backed && (
           <p className="mt-6 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm leading-relaxed text-amber-200/90">
             This egg isn&apos;t backed by your current balance. {policyText}
@@ -80,7 +96,9 @@ export function EggInspector({ record, simNow, onHatch }: { record: SolaniteReco
           </button>
         ) : (
           <p className="mt-7 text-xs leading-relaxed text-mist/70">
-            Estimates assume your balance stays at or above {cfg.token.tokensPerEgg.toLocaleString()} tokens per egg. Rarity is sealed when the egg is granted and revealed at hatch.
+            {tracked
+              ? "Incubation runs on the Solanites server clock and continues while you are away. Earned eggs are never taken back. Rarity is sealed when the egg is earned and revealed at hatch."
+              : `Estimates assume your balance stays at or above ${cfg.token.tokensPerEgg.toLocaleString()} tokens per egg. Rarity is sealed when the egg is granted and revealed at hatch.`}
           </p>
         )}
       </div>

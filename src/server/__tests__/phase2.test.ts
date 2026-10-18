@@ -91,6 +91,8 @@ describe("egg eligibility (scenarios 1–4)", () => {
 
   it("caps at the per-wallet maximum", () => {
     expect(e(1_000_000n * T)).toMatchObject({ eggs: 6, toNextEggBase: 0n });
+    // With no cap (the live rule), eggs keep counting per full unit.
+    expect(computeEggEligibility(10_500_000n * T, DECIMALS, { tokensPerEgg: 1_000_000, maxEggsPerWallet: null })).toMatchObject({ eggs: 10, toNextEggBase: 500_000n * T });
   });
 });
 
@@ -207,14 +209,14 @@ describe("wallet lookup service", () => {
     const { rpc } = fakeChain();
     const r = await createWalletLookup({ rpc, config: config() })(WALLET);
     expect(r.balance).toMatchObject({ amountBase: "0", amount: "0", tokenAccounts: [] });
-    expect(r.eggs).toMatchObject({ meetsThreshold: false, eligibleEggs: 0, toNextEgg: "10000" });
+    expect(r.eggs).toMatchObject({ meetsThreshold: false, eligibleEggs: 0, toNextEgg: "1000000" });
     expect(r.holding.status).toBe("not_tracked");
     expect(r.rewards.status).toBe("not_available");
   });
 
   it("reports slot, commitment and live source; then marks repeat lookups as cached", async () => {
     let now = 1_000_000;
-    const chain = fakeChain({ accounts: [{ pubkey: addr(10), owner: WALLET, amount: 25_000n * T }], slot: 123 });
+    const chain = fakeChain({ accounts: [{ pubkey: addr(10), owner: WALLET, amount: 2_500_000n * T }], slot: 123 });
     const lookup = createWalletLookup({ rpc: chain.rpc, config: config(), now: () => now });
     const first = await lookup(WALLET);
     expect(first.source).toMatchObject({ kind: "live-rpc", commitment: "confirmed", slot: 123, cached: false });
@@ -297,14 +299,14 @@ describe("GET /api/wallet/[address]", () => {
     process.env.SOLANITES_MINT = MINT;
     process.env.SOLANA_RPC_URL = "https://rpc.example";
     process.env.LOOKUP_RATE_LIMIT_MAX = "2";
-    const chain = fakeChain({ accounts: [{ pubkey: addr(10), owner: WALLET, amount: 10_000n * T }] });
+    const chain = fakeChain({ accounts: [{ pubkey: addr(10), owner: WALLET, amount: 1_000_000n * T }] });
     vi.stubGlobal("fetch", async (_: unknown, init: RequestInit) => {
       const { method, params } = JSON.parse(String(init.body));
       return new Response(JSON.stringify({ jsonrpc: "2.0", id: 1, result: await chain.rpc.call(method, params) }));
     });
     const ok = await call(WALLET);
     expect(ok.status).toBe(200);
-    expect(await ok.json()).toMatchObject({ balance: { amount: "10000" }, eggs: { eligibleEggs: 1, meetsThreshold: true } });
+    expect(await ok.json()).toMatchObject({ balance: { amount: "1000000" }, eggs: { eligibleEggs: 1, meetsThreshold: true } });
     expect((await call(WALLET)).status).toBe(200);
     const limited = await call(WALLET);
     expect(limited.status).toBe(429);

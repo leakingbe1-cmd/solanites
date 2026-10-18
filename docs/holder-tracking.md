@@ -1,120 +1,176 @@
-# Holder tracking and rewards: audit, architecture and plan
+# Holder tracking, egg progression and launch fee claims
 
-Status: **Phase 1 (audit) done; Phase 2 (read-only lookup with live balance verification) implemented.** Phases 3–7 are planned below and **not built yet**.
+Status: **implemented and tested against a fixture chain and an embedded Postgres. Not yet run against Solana mainnet**, because the token mint, RPC provider and database are not configured. Nothing here is production-ready until the go-live checklist below is done.
 
-## 1. Audit of the existing project (Phase 1)
+There are two separate workflows, and neither depends on the other:
 
-| Area | What exists | Real or simulated |
+| | Workflow A: eggs | Workflow B: fee claims |
 |---|---|---|
-| Framework | Next.js 15 (App Router), React 19, TypeScript, Tailwind 4 | Real |
-| Hosting | Vercel (`solanites.vercel.app`) deploys `main`; all pages are static | Real |
-| Backend / API routes | None before this change | — |
-| Database | None | — |
-| Scheduler / worker | None | — |
-| Token mint | **Not configured anywhere.** Not in code, env template, or repo history | **Missing — needed from you** |
-| Wallet | Demo wallet (fake address, mock 52,000 balance); experimental browser-extension connect | Demo is simulated; extension connect is real but unverified |
-| Balances | Mock slider; experimental path read RPC **from the browser** using `NEXT_PUBLIC_SOLANA_RPC_URL` | Simulated / insecure (see below) |
-| Eggs, incubation, evolution, rarity | `lib/progression.ts` + `localStorage` + simulated clock | Simulated |
-| Leaderboard | Deterministic fake data | Simulated |
+| Who starts it | The server, on a schedule and from webhooks | The holder, voluntarily |
+| Wallet connection | **Never** | Required: the wallet signs a message to prove ownership |
+| Timing | Continuous, before, during and after launch | Opens 6 hours after launch |
+| Path | chain → verified balance → egg entitlement → incubation → existing hatch | launch + 6h → connect → sign → verify → quote → submit → payout (not built) |
 
-**Problems found and fixed in Phase 2**
+## 1. Audit of the existing project
 
-- The experimental wallet path called Solana RPC from the browser using a `NEXT_PUBLIC_` URL. Any RPC API key put there would have been shipped to every visitor. It also used floating-point `uiAmount`, and showed a balance of 0 when the RPC failed. It now goes through the server endpoint below, and the public RPC/mint variables have been removed.
+| Area | Found | Files |
+|---|---|---|
+| Wallet integration | Demo wallet (simulated); browser-extension connect (address only, never verified) | `src/services/wallet/*` |
+| Balance sources | Mock slider; Phase 2 read-only server lookup at `confirmed` commitment | `src/server/walletLookup.ts`, `src/app/api/wallet/[address]` |
+| Egg data and entitlement | Client-side records in `localStorage`; 10,000 tokens per egg, maximum 6 | `src/lib/progression.ts`, `src/state/HatcheryProvider.tsx` |
+| Incubation | Simulated clock in the browser; one fixed 7-day incubation | same |
+| Creature collection and rarity | Pure functions (`rollSpecies`, `rarityChances`) with a seeded roll; discovery list in `localStorage` | `src/lib/progression.ts`, `src/lib/rarity.ts` |
+| Hatch experience | `HatchReveal` modal, egg cards, inspector, creature detail | `src/components/hatchery/*` |
+| Backend and database | Next.js route handlers only; **no database, no scheduler** | — |
+| Fee tracking or payouts | **None** | — |
+| Token mint | **Not configured anywhere** | — |
 
-**What I need from you**
+The old rules (10,000 per egg, cap of 6, 7-day incubation) are replaced by the new central configuration below. Rarity weights, the species roll, art and the reveal are unchanged.
 
-1. **The official token mint address.** I won't guess it from a symbol or name. Until it is set, lookups answer "not configured".
-2. **An RPC provider account** (Helius recommended, see §3) and its HTTPS endpoint with key.
-3. **Addresses to exclude** from eggs and rewards: treasury, team, liquidity pool(s), the rewards reserve, burn address, known exchange wallets.
-4. Later phases: a Postgres database, a scheduler decision (§3), and the policy decisions in §5.
+## 2. What was built
 
-## 2. What Phase 2 does
+### Configuration (one place)
 
-`GET /api/wallet/:address` reads one wallet's balance from Solana on the server, with no wallet connection. The Hatchery entry screen has a **Check a wallet** panel that uses it.
+`src/config/eggProgression.ts`:
 
-- **Address validation.** The address must be base58 and decode to exactly 32 bytes. Program-derived addresses are accepted, because they can own tokens too.
-- **Mint verification.** The configured mint is read from chain and must be owned by the **SPL Token or Token-2022** program; the program is detected, not assumed. Decimals are read from the mint.
-- **Balance.** `getTokenAccountsByOwner`, filtered by the mint's own program, then by mint. Every account returned is re-checked (mint, owner, program, decimals) and de-duplicated, so a faulty provider can't inflate a balance. All of a wallet's token accounts are summed.
-- **Precision.** All amounts are `bigint` base units. Decimal strings are produced only for display, and there are no floats in anything authoritative.
-- **Frozen accounts** are shown but not counted toward eligibility.
-- **Egg eligibility.** `min(6, floor(balance / 10,000 tokens))`, using the existing game config. Addresses on the excluded list get no eggs.
-- **Source labelling.** Every response gives the commitment level, the slot it was read at, the time, and whether it came from the 15-second cache. Holding duration and rewards are reported as `not_tracked` / `not_available`, never estimated.
-- **Failure handling.** On an RPC outage the client retries with backoff, then returns **503** with no balance at all; it never shows a fabricated zero. An invalid address gives 400, a missing mint 503, and too many requests 429.
-- **Secrets.** The RPC URL is never logged and never sent to the browser.
+- `tokensPerEgg: 1_000_000`, `totalSupply: 1_000_000_000`, `maxEggsPerWallet: null` (no cap).
+- `incubationScheduleMs: [5 min, 6 h, 24 h, 48 h, 72 h]`: the last value repeats for egg 5 onwards.
+- `incubationMode: "sequential"`: eggs incubate one at a time. Egg *n* starts when egg *n−1* is ready (or when earned, if later). Switch to `"parallel"` to start every egg as soon as it is earned. **Please confirm which you intend; see §6.**
 
-### Known limits of Phase 2
+`src/config/launch.ts`: `CLAIMS_OPEN_AFTER_MS = 6 h`.
 
-- **Rate limiting is per server instance** (in-memory). It stops casual abuse; use a shared store (Upstash Redis) for a hard limit.
-- **Lookups use `confirmed` commitment.** Phase 3 snapshots should use `finalized`.
-- **The game is still simulated.** The rest of the Hatchery (eggs, incubation, evolution) still runs on the demo wallet. The lookup shows real eligibility but doesn't drive the simulation.
-- **Not tested against real Solana.** It was tested against a scripted fake RPC that returns the same `jsonParsed` shapes. The development sandbox blocks outbound RPC, so it has not yet been run against mainnet. Do that first, once the mint and RPC are configured.
+### Workflow A: automatic tracking (`src/server/tracker/`)
 
-## 3. Target architecture
+1. **Discovery and reconciliation.** `getProgramAccounts` on the token program, filtered by the mint, lists every token account and its owner at `finalized` commitment. Accounts that changed, opened, closed or changed owner mark their wallets for a sync.
+2. **Per-wallet sync.** The tracker reads the wallet's balance at `finalized`, at slot *S*, summing all its token accounts once and excluding frozen ones. It then reads each token account's signature history since its last cursor, processes every transaction up to *S* in slot order, and only then awards eggs, all for the same slot. If history is incomplete (indexing delay, too many signatures), nothing is awarded that round.
+3. **Transaction ingestion.** Each transaction is read with `getTransaction` and its pre/post token balances for the mint. The signature is recorded in the same database transaction as its effects, so replays, retries and duplicate webhooks are no-ops.
+4. **Webhooks.** `POST /api/webhooks/solana` accepts signatures from an indexer (e.g. a Helius webhook on the mint). Payload contents are never trusted: every transaction is re-read from the RPC.
+5. **Schedule.** `GET|POST /api/cron/sync` (Bearer `CRON_SECRET`) runs one pass: a snapshot when due (every 10 minutes), then wallets marked for sync, then re-verification of the least recently checked holders. A lease stops overlapping runs from doing the same work twice; correctness never depends on it.
+6. **Egg issuance.** In one database transaction the tracker locks the holder row, works out new eggs, inserts them with fixed `incubation_started_ms`, `incubation_ms` and `ready_ms`, and updates the holder. Each egg gets a server-generated random seed, and its species is rolled with the existing `rollSpecies`.
 
-```
-                 ┌───────────────── Vercel (Next.js) ───────────────────┐
- Browser ──────► │ pages (static)                                         │
-                 │ GET /api/wallet/:address   read-only lookup (Phase 2)  │
-                 │ POST /api/cron/sync        snapshot job  (Phase 3)     │──► Solana RPC / indexer
-                 │ POST /api/webhooks/helius  transfer events (Phase 3)   │      (Helius etc.)
-                 │ POST /api/auth/siws/*      ownership proof (Phase 6)   │
-                 └──────────────┬─────────────────────────────────────────┘
-                                │
-                         Postgres (Neon / Supabase)
-                                │
-             Distribution signer (Phase 7) — separate, NOT on Vercel,
-             holds no keys in env; Squads multisig approves each batch
-```
+### Rules applied to eggs
 
-- **RPC / indexer.** Helius is recommended: `getTokenAccounts` by mint (paginated, works for Token-2022) for holder discovery, and enhanced transaction history plus webhooks for transfers. Holder discovery needs `getProgramAccounts`-class queries, which the public RPC does not serve reliably. The code keeps the provider behind a small interface, so another provider can be swapped in.
-- **Database.** Postgres via the Vercel Marketplace (Neon) or Supabase. Phase 3 needs it.
-- **Scheduler.** A serverless frontend can't run continuous monitoring. The smallest reliable setup:
-  - **Vercel Cron**, calling `/api/cron/sync` every 10–15 minutes (needs the **Pro plan**; Hobby cron runs at most once a day).
-  - A **provider webhook** for near-real-time transfers.
-  - A **daily `finalized` reconciliation** that re-reads every tracked holder.
-  
-  If you stay on Hobby, a GitHub Actions schedule calling the same endpoint with `CRON_SECRET` works. Its timing is best-effort.
+- **Qualifying units** = verified balance ÷ 1,000,000, rounded down (exact integer base units; no floats).
+- **Earned eggs are never removed.** If the balance drops, earned eggs keep incubating and stay in the collection.
+- **Future eggs** come only from tokens that have not already earned an egg ("egg credit", below).
+- **Statuses:** `queued` (waiting for the previous egg), `incubating`, `ready`, `hatched`. They are derived from stored timestamps and the server clock, so timers keep running offline and survive restarts and device changes. `hatched_ms` is persisted when hatched.
+- **Hatching** (`POST /api/eggs/:id/hatch`) checks readiness against the server clock and is idempotent. The outcome was sealed at issuance, so anyone viewing the address can press Hatch and no signature is needed. The existing `HatchReveal` shows the result, and the species is added to the visitor's discovered list.
+- **Sealed outcome.** The API never returns the seed (a display seed is derived from the egg id). The species is shown only from the "stirring" stage onward, as a silhouette, matching the existing egg design, and in full after hatch.
+- **Excluded wallets** never earn: configured treasury, team, pool, reserve and exchange addresses, and every program-controlled (off-curve) owner such as pool authorities and vaults.
 
-## 4. Planned data model (Phase 3+)
+### Anti-duplication ("egg credit", `src/server/tracker/ledger.ts`)
 
-- `wallets(address PK, first_seen_at, excluded bool)`
-- `token_accounts(address PK, owner, mint, program, opened_slot, closed_slot)`: tracks open, close and reopen.
-- `sync_runs(id, kind, started_at, finished_at, status, slot, error)`: monitoring and outage detection.
-- `balance_snapshots(owner, slot, observed_at, amount_base numeric(40,0), commitment, sync_run_id, UNIQUE(owner, sync_run_id))`
-- `transfer_events(signature, ix_index, slot, block_time, from_owner, to_owner, amount_base, UNIQUE(signature, ix_index))`: replays are no-ops.
-- `holding_periods(owner, started_at, started_slot, ended_at, ended_slot, min_amount_base, verification enum('tracked','reconstructed','unverified'))`
-- `reward_periods(id, starts_at, ends_at, budget_base, rules_json, status enum('draft','calculated','approved','distributed'), UNIQUE(starts_at, ends_at))`
-- `reward_allocations(period_id, owner, weight, amount_base, UNIQUE(period_id, owner))`, plus `distribution_records(period_id, owner, tx_signature UNIQUE, status)`
-- `siws_nonces(nonce PK, address, domain, issued_at, expires_at, used_at)`: single use.
-- `audit_log(id, at, actor, action, details_json)`
+Each wallet carries a credit: the amount of its tokens that has already earned an egg. New eggs are earned only on tokens above that credit.
 
-Calculations run inside database transactions. A period is claimed with `SELECT … FOR UPDATE` or a status compare-and-swap, so two concurrent runs can't both process it.
+- Moving tokens to another wallet moves the credit with them. A spends uncredited tokens first, so credit only leaves when the remaining balance can't cover it. A → B → C with the same million gives one egg in total.
+- Credit is never sent to an excluded address. It stays with the seller, so selling into a pool and buying back does not earn the same egg again. Buyers from a pool get fresh, uncredited tokens.
+- Multi-leg transactions (routers) split moved credit pro rata among recipients, never more than each received.
+- Database constraints back all of this up: `eggs UNIQUE(owner, sequence)`, `processed_transactions` keyed by signature, `holders.credit_base >= 0`.
 
-## 5. Holding policy: proposed defaults (you decide)
+### Workflow B: launch fee claims (`src/server/claims/`, `/claims`)
 
-These are configurable. Nothing is final until you approve them.
+1. `GET /api/claims/status` reports the opening time from `SOLANITES_LAUNCH_AT` + 6 h, by the server clock. Before that, every claim endpoint refuses (403 `NOT_OPEN`).
+2. `POST /api/claims/nonce` returns a Sign-In With Solana message containing the domain, address and a single-use nonce that expires after 5 minutes.
+3. The wallet signs it (`signMessage`: free, no transaction). `POST /api/claims/session` verifies the ed25519 signature on the server. The nonce is spent whether or not the signature is valid. A 15-minute HMAC session is set in an httpOnly, SameSite=Strict cookie.
+4. `GET /api/claims/quote` builds the claim context on the server: a live `finalized` balance plus the wallet's tracked history. It runs the refund policy. Nothing from the browser (balance, time, amount) is trusted.
+5. `POST /api/claims` recalculates the amount and records one claim per wallet per period (`UNIQUE(claimant, period_id)`). Its status starts as `pending_payout`.
+6. **No payout is executed.** Payout is a separate, explicitly authorised step that is not built (see §6).
 
-| Question | Proposed default |
+**No refund policy is active.** The project doesn't define the refund percentage, eligible fees, currency, budget, window or formula. So `ACTIVE_FEE_POLICY` is `null`, the page says amounts aren't available, and quotes and submissions answer `NOT_CONFIGURED`.
+
+### Interface
+
+- **Hatchery entry:** "Find my eggs" takes a public address (no connection) and opens the tracked view. The demo is still available. The experimental wallet connect was removed from the Hatchery, and the old lookup panel was replaced.
+- **Tracked view** (`TrackedHatchery`): qualifying holdings, eggs earned, incubating/queued/ready, hatched, next-egg progress. It shows a countdown per egg and uses the existing `EggCard`, `EggInspector`, `HatchReveal`, `CreatureCard` and `CreatureDetail`. It polls every 20 s and counts down from the server clock between polls.
+- **Claims page** (`/claims`, in the nav and footer): countdown before opening, then connect → sign → quote → submit → status.
+- **Nav button:** "Find my eggs" instead of "Connect".
+
+## 3. Configuration needed to go live
+
+| Variable | What |
 |---|---|
-| Start of history | Tracking starts when Phase 3 goes live. Earlier holding counts only if it can be reconstructed from indexed transfer history, and is labelled **reconstructed**. Otherwise the wallet is **unverified before tracking start**. |
-| What counts as held | The **minimum** balance seen across consecutive finalized snapshots (and transfers, if indexed). A partial sale lowers only the counted quantity; it does not reset everything. |
-| Drop below 10,000 | The qualifying streak ends. A new streak starts at the next qualifying observation. |
-| Sell, then buy back | Treated as a new streak, never stitched to the old one. |
-| Gaps (provider outage) | A gap longer than 2× the sync interval is marked **unverified** and is not counted as held. Nothing is fabricated to fill it. |
-| Several token accounts | Summed per owner, as in Phase 2. |
-| Transfers between your own wallets | Treated as separate wallets (they can't be linked without proof). This can be revisited with signed wallet linking in Phase 6. |
-| Excluded addresses | Never eligible. |
+| `SOLANITES_MINT` | The official SOLITE mint. **Not invented: you must provide it.** |
+| `SOLANA_RPC_URL` | Provider endpoint with key (Helius recommended: `getProgramAccounts`, history, webhooks). Server-only. |
+| `DATABASE_URL` | Postgres (Neon via Vercel Marketplace, or Supabase). The schema is created automatically. |
+| `SOLANITES_EXCLUDED_OWNERS` | Treasury, team, LP, reserve, burn and exchange wallets (on-curve ones; off-curve pool PDAs are excluded automatically). |
+| `CRON_SECRET` + a scheduler | Vercel Cron on the **Pro** plan (Hobby runs at most daily), or a GitHub Actions schedule calling `/api/cron/sync` every 5–10 minutes. |
+| `SOLANITES_WEBHOOK_SECRET` | For a Helius (or similar) webhook on the mint pointing to `/api/webhooks/solana`. |
+| `SOLANITES_LAUNCH_AT`, `SIWS_DOMAIN`, `SOLANITES_SESSION_SECRET` | Claims timing and sign-in. |
 
-**Reward weight (Phase 5, dry run only).** `weight = counted_balance × multiplier(qualifying_days)`. The multiplier is a configurable step table. The budget (proposed 500,000 tokens, 5% of supply) is split proportionally in integer base units. Remainders go to the reserve, so the total never exceeds the budget. Every run is recorded for audit, and there are no transfers until Phase 7 is approved.
+No `vercel.json` cron was added: on the Hobby plan a sub-daily cron fails the deploy. Example GitHub Actions schedule:
 
-## 6. Remaining phases
+```yaml
+on: { schedule: [{ cron: "*/10 * * * *" }] }
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" https://solanites.vercel.app/api/cron/sync
+```
 
-| Phase | Builds | Needs from you |
-|---|---|---|
-| 3 | DB schema and migrations, cron sync, finalized snapshots, transfer ingestion (idempotent), holding periods, sync monitoring | Mint, RPC/indexer, Postgres, scheduler choice, §5 policy |
-| 4 | Hatchery shows verified holding duration and real egg progress for a looked-up address, clearly separated from the demo | Phase 3 |
-| 5 | Reward engine (dry run), auditable calculations, concurrency-safe period locking | Multiplier table, period length, budget |
-| 6 | Wallet adapter, Sign-In With Solana (nonce, expiry, domain), server-side ed25519 verification, replay protection | Domain |
-| 7 | Gated distribution: multisig-approved batches, dedicated reward wallet with limited funding, signature recording | Your explicit approval of funding and rules |
+**Go-live checklist**
 
-The rewards model is a **possible** allocation from a developer-funded reserve. It is not a promise of returns or value, and it does not change the token's mechanics (no taxes or transfer hooks).
+1. Set the variables above.
+2. Run the first sync once and review the holders and eggs it creates.
+3. Check the excluded list against the top holders (pool, treasury).
+4. Point the webhook at the mint.
+5. Verify a known wallet's balance against Solscan.
+
+## 4. Testing
+
+`npm test` runs 103 tests:
+- Phase 2: 40.
+- Tracker: 37.
+- Claims: 12.
+- Routes: 9.
+- Progression: 5.
+
+They run against an embedded Postgres (PGlite, the same SQL as production) and a fixture chain that answers the same RPC methods and shapes. Time-based behaviour uses a simulated clock. They cover your list:
+
+1. Reaching 1,000,000 without a connection.
+2. Automatic detection.
+3. Multiple token accounts.
+4. Below and above each million.
+5. The 5-minute first egg.
+6. The 6-hour second egg.
+7. 24 h / 48 h / 72 h.
+8. Restarts.
+9. Duplicate events and concurrent workers.
+10. Transfers, splits, sell-and-rebuy and multi-leg transactions.
+11. Claims closed for 6 h.
+12. Claims opening at 6 h.
+13. Ownership verification (wrong wallet, replayed, expired and mismatched nonces, forged sessions).
+14. Duplicate claims, including concurrent ones and a constraint check.
+15. Existing rarity, roll and hatch rules.
+
+They also cover RPC outages, delayed indexing, missed webhooks, closed accounts, frozen accounts and exclusions.
+
+`npm run dev:fixtures` runs the site locally against fixture holders, with a "Fixture data" banner. It refuses to start in production.
+
+## 5. Limitations (honest)
+
+- **Never run against mainnet.** The fixture chain mirrors the RPC shapes, but real providers differ in pagination limits, rate limits and `getProgramAccounts` support. Do the go-live checklist on a staging deployment first.
+- **People are not wallets.** On-chain data can't tell whether two wallets belong to one person. Credit stops the *same tokens* earning twice through transfers. But someone can sell into a pool from one wallet and buy from another, and that looks exactly like a new buyer. Only identity checks (out of scope) could close this.
+- **History starts when tracking starts.** Transfers before the first snapshot are not replayed. Holders at that moment start with no credit.
+- **Program-controlled wallets are excluded.** This includes multisig vaults (e.g. Squads). Set `SOLANITES_EXCLUDE_PROGRAM_OWNERS=false` if they should earn; pool addresses must then be listed explicitly.
+- **Out-of-order processing.** Within one wallet, transactions are applied in slot order. Across wallets, a webhook can occasionally apply a later transaction before an earlier one is seen. Awards then wait for the next sync (they never over-award), and reconciliation catches up.
+- **Very active wallets.** If a wallet has more than 500 new signatures per account in one sync, its award is postponed and the sync retries. A provider with enhanced history makes this rarer.
+- **Rate limits are per server instance** (in-memory). Use a shared store for hard limits.
+- **Creature evolution** after hatch uses time since hatching. It is not tied to balance in tracked mode.
+- **Claim payouts are not implemented**, and no refund policy exists. Nothing on the site describes a refund as automatic or guaranteed.
+
+## 6. Decisions needed from you
+
+1. **The official mint address** and the **excluded addresses**.
+2. **Incubation mode:** sequential (implemented default) or parallel. In sequential mode, a 10M holder's eggs arrive over about 21 days; in parallel mode, all within 72 hours.
+3. **Fee refund policy** (all currently undefined):
+   - which fees are refunded and how they are measured;
+   - rate or formula and per-wallet cap;
+   - payout currency and source wallet;
+   - total budget, and what happens if claims exceed it;
+   - holding requirement and whether selling forfeits the refund;
+   - eligible window and claim deadline;
+   - claim once or repeatedly;
+   - payout approval process.
+4. **Payout execution** (explicit authorisation required): a dedicated, limited-funds wallet with multisig-approved batches. Signing keys stay off Vercel and out of the frontend. Payout signatures are recorded on the claim (`payout_signature`, unique).
+5. **Hosting:** Vercel Pro for frequent cron, or an external scheduler.

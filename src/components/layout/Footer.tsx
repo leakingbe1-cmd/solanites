@@ -9,7 +9,7 @@ export function Footer() {
           <Logo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist">Hold Solana. Hatch the extraordinary. A creature-collection universe where conviction is the only currency that matters.</p>
           <p className="mt-6 max-w-sm rounded-xl border border-amber-400/15 bg-amber-400/5 p-3 text-xs leading-relaxed text-amber-200/80">
-            Prototype build. Wallets, balances, timers and leaderboards shown here are simulated mock data. No tokens, NFTs or on-chain records are created.
+            Eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet and the leaderboard use simulated data. Solanites never asks for a seed phrase or private key.
           </p>
         </div>
         <div className="text-sm">
@@ -18,6 +18,7 @@ export function Footer() {
             <li><Link className="hover:text-white" href="/hatchery">Hatchery</Link></li>
             <li><Link className="hover:text-white" href="/collection">Collection</Link></li>
             <li><Link className="hover:text-white" href="/leaderboard">Leaderboard</Link></li>
+            <li><Link className="hover:text-white" href="/claims">Fee Claims</Link></li>
           </ul>
         </div>
         <div className="text-sm">

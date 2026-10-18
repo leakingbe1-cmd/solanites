@@ -5,12 +5,12 @@ import { formatDays } from "@/lib/format";
 import { SPECIES_BY_ID } from "@/lib/species";
 
 export function StageTimeline() {
-  const inc = gameConfig.eggs.incubationMs;
+  const pct = (f: number) => `${Math.round(f * 100)}% incubated`;
   const stages = [
-    { n: "01", title: "Acquired", text: "A dormant egg bonds to your wallet the moment you qualify.", when: "Day 0", visual: <EggArt stage={1} seed={1} /> },
-    { n: "02", title: "Awakening", text: "The shell begins to glow. Hairline cracks leak light.", when: formatDays(inc * gameConfig.eggs.crackingAt), visual: <EggArt stage={2} progress={0.6} seed={1} /> },
-    { n: "03", title: "Stirring", text: "Energy surges. A silhouette moves behind the shell.", when: formatDays(inc * gameConfig.eggs.stirringAt), visual: <EggArt stage={3} progress={0.5} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
-    { n: "04", title: "Hatch", text: "A dramatic reveal. Rarity is unveiled in light and particles.", when: formatDays(inc), visual: <EggArt stage={4} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
+    { n: "01", title: "Acquired", text: "A dormant egg appears the moment your holdings qualify. No sign-up, no connection.", when: "Earned", visual: <EggArt stage={1} seed={1} /> },
+    { n: "02", title: "Awakening", text: "The shell begins to glow. Hairline cracks leak light.", when: pct(gameConfig.eggs.crackingAt), visual: <EggArt stage={2} progress={0.6} seed={1} /> },
+    { n: "03", title: "Stirring", text: "Energy surges. A silhouette moves behind the shell.", when: pct(gameConfig.eggs.stirringAt), visual: <EggArt stage={3} progress={0.5} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
+    { n: "04", title: "Hatch", text: "A dramatic reveal. Rarity is unveiled in light and particles.", when: "Ready", visual: <EggArt stage={4} seed={1} inside={SPECIES_BY_ID["stormquill"]} /> },
     { n: "05", title: "Evolve", text: "Keep holding. Your Solanite grows through four forms to Apex.", when: `+${formatDays(gameConfig.evolution.thresholdsMs.at(-1)!)}`, visual: <CreatureArt species={SPECIES_BY_ID["stormquill"]} stage={3} /> },
   ];
   return (

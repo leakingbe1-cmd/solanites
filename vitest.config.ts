@@ -9,5 +9,6 @@ export default defineConfig({
       "server-only": path.resolve(__dirname, "src/server/__tests__/serverOnlyStub.ts"),
     },
   },
-  test: { include: ["src/**/*.test.ts"], environment: "node" },
+  // The embedded Postgres takes a few seconds to start; allow for a busy machine.
+  test: { include: ["src/**/*.test.ts"], environment: "node", testTimeout: 30_000, hookTimeout: 30_000 },
 });

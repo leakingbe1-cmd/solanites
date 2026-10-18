@@ -18,7 +18,8 @@ export interface WalletLookupResult {
   };
   eggs: {
     tokensPerEgg: number;
-    maxEggsPerWallet: number;
+    /** null = no cap. */
+    maxEggsPerWallet: number | null;
     meetsThreshold: boolean;
     eligibleEggs: number;
     toNextEgg: string;

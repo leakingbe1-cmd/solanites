@@ -15,6 +15,8 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { formatNumber } from "@/lib/format";
 import { phaseOf, tokensToNextEgg } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
+import { SectionTitle, Stat } from "@/components/hatchery/HatcheryUi";
+import { TrackedHatchery } from "@/components/hatchery/TrackedHatchery";
 
 export default function HatcheryPage() {
   const h = useHatchery();
@@ -23,6 +25,7 @@ export default function HatcheryPage() {
 
   if (!h.hydrated) return <div className="min-h-screen" />;
   if (!h.wallet) return <ConnectGate />;
+  if (h.wallet.kind === "watch") return <TrackedHatchery key={h.wallet.address} address={h.wallet.address} />;
 
   const cfg = h.config;
   const ordered = [...h.records].sort((a, b) => a.acquiredAt - b.acquiredAt);
@@ -30,7 +33,8 @@ export default function HatcheryPage() {
   const creatures = ordered.filter((r) => phaseOf(r, cfg) === "creature");
   const unbacked = h.records.filter((r) => !r.backed).length;
   const eligible = h.allowedEggs > 0;
-  const lockedSlots = Math.max(0, cfg.eggs.maxEggsPerWallet - Math.max(h.allowedEggs, h.records.length));
+  // With no cap, show just the next locked slot as a goal.
+  const lockedSlots = cfg.eggs.maxEggsPerWallet === null ? 1 : Math.max(0, cfg.eggs.maxEggsPerWallet - Math.max(h.allowedEggs, h.records.length));
   const toNext = tokensToNextEgg(h.balance, cfg);
   const inspected = h.records.find((r) => r.id === inspect);
   const hatchRec = h.records.find((r) => r.id === hatching);
@@ -67,7 +71,7 @@ export default function HatcheryPage() {
             sub={eligible ? `${h.allowedEggs} egg${h.allowedEggs === 1 ? "" : "s"} backed` : `Need ${formatNumber(cfg.token.tokensPerEgg)} per egg`}
             accent={eligible ? "#14f195" : "#ffb84d"}
           />
-          <Stat label="Collection" value={`${h.records.length} / ${cfg.eggs.maxEggsPerWallet}`} sub={`${eggs.length} incubating · ${creatures.length} hatched`} />
+          <Stat label="Collection" value={cfg.eggs.maxEggsPerWallet === null ? String(h.records.length) : `${h.records.length} / ${cfg.eggs.maxEggsPerWallet}`} sub={`${eggs.length} incubating · ${creatures.length} hatched`} />
           <div className="sl-glass rounded-2xl p-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Next egg</p>
             {toNext === 0 ? (
@@ -164,28 +168,6 @@ export default function HatcheryPage() {
           }}
         />
       )}
-    </div>
-  );
-}
-
-function Stat({ label, value, sub, accent }: { label: string; value: string; sub: string; accent?: string }) {
-  return (
-    <div className="sl-glass rounded-2xl p-4">
-      <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">{label}</p>
-      <p className="mt-2 font-display text-xl text-white" style={accent ? { color: accent } : undefined}>
-        {value}
-      </p>
-      <p className="mt-1 text-xs text-mist">{sub}</p>
-    </div>
-  );
-}
-
-function SectionTitle({ title, count }: { title: string; count: number }) {
-  return (
-    <div className="mb-5 mt-14 flex items-center gap-4">
-      <h2 className="font-display text-xl text-white sm:text-2xl">{title}</h2>
-      <span className="rounded-full bg-white/5 px-2.5 py-0.5 font-mono text-xs text-mist">{count}</span>
-      <span className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
     </div>
   );
 }

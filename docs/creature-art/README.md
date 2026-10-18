@@ -19,7 +19,7 @@ Every stage of every species has a written design, a generation prompt, a valida
 | Creature rendering | Hand-written SVG drawn in code (`src/components/creature/species/*.tsx`), one renderer per species. There were no raster or 3D assets. |
 | Evolution | One drawing per species, with stage-dependent proportions (bigger horns, wings and so on), plus a halo at the top stage. That counts as "scaling one design", which the new direction rules out. |
 | Can it reach the reference? | **No.** The reference (`reference/`) is painterly, 3D-rendered character art with fur, moss, refraction and subsurface light. Hand-coded SVG can't reach that, and adding more gradients wouldn't change it. **The pipeline has to switch to raster artwork per stage**, which is what this change sets up. |
-| Data | `src/lib/species.ts`: 24 species with id, name, rarity, element, palette, lore and stats. Untouched. |
+| Data | `src/lib/species.ts`: 28 species with id, name, rarity, element, palette, lore and stats. Untouched. |
 | Discovery | Mythic and Secret species are classified until hatched; the rule is now shared in `src/lib/discovery.ts`. |
 | Stage names | Renamed in `gameConfig.evolution.names` to Eggling, Hatchling, Evolved, Ascended. The time thresholds are unchanged. |
 | Checkpoint | Local tags `checkpoint/pre-art-overhaul-main` and `checkpoint/pre-art-overhaul-species`. The proxy refused to push tags. The `main` and `species-redesign` branches on GitHub are unchanged and serve as restore points. |

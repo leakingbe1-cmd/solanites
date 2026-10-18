@@ -8,6 +8,7 @@ import { HowSteps } from "@/components/landing/HowSteps";
 import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber } from "@/lib/format";
+import { SPECIES } from "@/lib/species";
 
 export default function Home() {
   const pctSupply = (gameConfig.token.tokensPerEgg / gameConfig.token.totalSupply) * 100;
@@ -42,7 +43,7 @@ export default function Home() {
             <dl className="sl-fade-up mx-auto mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-white/5 pt-8 lg:mx-0" style={{ animationDelay: "0.7s" }}>
               {[
                 [formatNumber(gameConfig.token.tokensPerEgg), "tokens per egg"],
-                ["24", "species to find"],
+                [String(SPECIES.length), "species to find"],
                 ["6", "rarity tiers"],
               ].map(([v, l]) => (
                 <div key={l}>

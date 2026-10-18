@@ -36,7 +36,7 @@ Sound is off by default; turn it on with the speaker button in the nav. All soun
 - **Landing page**: hero egg with pointer parallax and particles, a strip of creatures, a showcase of the six rarities with live hatch rates, the five-stage lifecycle and the three-step explanation.
 - **Hatchery**: wallet and eligibility status, egg cards with live progress, time held and time left. Click an egg for the stage stepper, progress ring, timers and sealed rarity. Also: claiming eggs (capped by balance), dormant and paused states, the hatch reveal sequence, creature cards with evolution progress, and renaming creatures.
 - **Hatch reveal**: a charge-up that lasts longer for rarer creatures, cracking sounds, a flash and particle burst, then the rarity reveal. Epic and above get light rays, Mythic gets a nebula, and Secret gets prism rays and a glitch effect. Each rarity has its own chord.
-- **Collection**: all 24 species with rarity, element and discovery filters, plus a detail view with all four evolution forms, stats, personality and lore. Mythic and Secret species stay hidden until you hatch one.
+- **Collection**: all 28 species with rarity, element and discovery filters, plus a detail view with all four evolution forms, stats, personality and lore. Mythic and Secret species stay hidden until you hatch one.
 - **How It Works**: the three steps, the lifecycle, a **live rules table generated from the config**, the hatch probabilities, and notes on how a production version would be secured.
 - **Leaderboard**: Most Evolved, Longest Holders and Rarest Discoveries, with a podium. Uses deterministic simulated data.
 
@@ -62,7 +62,7 @@ src/
     chain.ts             ← token mint + RPC URL from env vars
   lib/
     progression.ts       ← pure rules engine: advance(), eggStage(), evolutionOf(), rollSpecies()
-    species.ts           ← the 24 species (palette, archetype, lore, stats)
+    species.ts           ← the 28 species (palette, archetype, lore, stats)
     rarity.ts, rng.ts, format.ts, sound.ts
   services/
     wallet/              ← WalletAdapter interface, demoWallet, injectedWallet (experimental)

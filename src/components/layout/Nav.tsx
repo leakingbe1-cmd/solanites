@@ -35,11 +35,11 @@ export function Nav() {
         <Link href="/" aria-label="Solanites home">
           <Logo />
         </Link>
-        <div className="hidden items-center gap-1 md:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {LINKS.map((l) => {
             const active = path.startsWith(l.href);
             return (
-              <Link key={l.href} href={l.href} className={`relative rounded-full px-4 py-2 text-[13px] tracking-wide transition ${active ? "text-white" : "text-mist hover:text-white"}`}>
+              <Link key={l.href} href={l.href} className={`relative whitespace-nowrap rounded-full px-4 py-2 text-[13px] tracking-wide transition ${active ? "text-white" : "text-mist hover:text-white"}`}>
                 {l.label}
                 {active && <span className="absolute inset-x-4 -bottom-0.5 h-px bg-gradient-to-r from-sol-purple via-sol-blue to-sol-green" />}
               </Link>
@@ -60,7 +60,7 @@ export function Nav() {
             )}
           </button>
           <WalletButton compact />
-          <button onClick={() => setMenu((m) => !m)} className="sl-glass grid h-10 w-10 place-items-center rounded-full md:hidden" aria-label="Menu">
+          <button onClick={() => setMenu((m) => !m)} className="sl-glass grid h-10 w-10 place-items-center rounded-full lg:hidden" aria-label="Menu">
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
               {menu ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 8h16M4 16h16" />}
             </svg>
@@ -68,7 +68,7 @@ export function Nav() {
         </div>
       </nav>
       {menu && (
-        <div className="sl-fade-in border-t border-white/5 px-4 pb-6 pt-2 md:hidden">
+        <div className="sl-fade-in border-t border-white/5 px-4 pb-6 pt-2 lg:hidden">
           {LINKS.map((l) => (
             <Link key={l.href} href={l.href} className={`block border-b border-white/5 py-4 font-display text-lg ${path.startsWith(l.href) ? "text-white" : "text-mist"}`}>
               {l.label}

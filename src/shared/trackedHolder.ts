@@ -46,6 +46,13 @@ export interface TrackedEgg {
   displaySeed: number;
   /** Revealed at hatch. Before that, only shown as the silhouette once the egg is stirring. */
   speciesId: string | null;
+  /**
+   * Hatched creatures: qualifying holding time since hatching, as of `serverNow`
+   * (drives evolution). Null for eggs.
+   */
+  growthMs: number | null;
+  /** Whether that time is still accruing (the balance currently backs this creature). */
+  growing: boolean;
 }
 
 export interface HatchResult {

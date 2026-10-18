@@ -5,7 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { describeSchedule, eggProgression } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { CLAIMS_OPEN_AFTER_MS } from "@/config/launch";
-import { formatDays, formatNumber } from "@/lib/format";
+import { formatNumber, formatSpan } from "@/lib/format";
 import { rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 
@@ -23,7 +23,12 @@ export default function HowItWorksPage() {
     ["Incubation", describeSchedule(prog), prog.incubationMode === "sequential" ? "One egg incubates at a time. Timers run on the server clock, including while you are offline" : "Every egg starts incubating when earned, on the server clock"],
     ["If your balance drops", "Earned eggs are kept", "They keep incubating. New eggs need tokens that have not already earned one"],
     ["Moving tokens to another wallet", "No new egg for the same tokens", "Tokens that already earned an egg carry that with them, so a transfer can't earn the same egg twice"],
-    ["Evolution schedule", cfg.evolution.names.map((n, i) => (i ? `${n} ${formatDays(cfg.evolution.thresholdsMs[i])}` : n)).join(" · "), "Time after hatching"],
+    ["Evolution schedule", cfg.evolution.names.map((n, i) => (i ? `${n} at ${formatSpan(cfg.evolution.thresholdsMs[i])}` : `${n} at hatch`)).join(" · "), "Cumulative qualifying holding time since hatching"],
+    [
+      "After Ascended",
+      cfg.evolution.ascensionRanksMs.map((ms, i) => `${["II", "III", "IV", "V", "VI", "VII"][i] ?? i + 2} at ${formatSpan(ms)}`).join(" · "),
+      "Ascension ranks: each milestone takes longer than the one before",
+    ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
     ["Launch fee claims", `Open ${CLAIMS_OPEN_AFTER_MS / 3_600_000} hours after launch`, "Separate from eggs: only claims ask you to connect a wallet"],
   ];
@@ -91,7 +96,7 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="mt-20 text-center">
-          <Link href="/hatchery" className="sl-btn-primary inline-flex items-center gap-3 rounded-full px-9 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
+          <Link href="/hatchery" className="sl-btn-primary inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] text-white sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

@@ -52,7 +52,7 @@ export async function buildRuntime(env: Record<string, string | undefined>): Pro
     if (env.NODE_ENV === "production") throw new ConfigError(["SOLANITES_FIXTURES must not be enabled in production"]);
     const db = await createPgliteDb();
     await migrate(db);
-    const chain = createLedgerChain();
+    const chain = createLedgerChain({ now: Date.now });
     const { wallets } = seedFixtureChain(chain);
     const tracker = createTracker({
       db,

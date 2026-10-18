@@ -9,6 +9,7 @@ import { isOnCurve } from "../solana/curve";
 import { fetchMintTokenAccounts, fetchSignaturesSince, fetchTransactionEffect, TransactionNotAvailableError, type SignatureInfo } from "../solana/history";
 import { RpcUnavailableError, type Commitment, type RpcClient } from "../solana/rpc";
 import { fetchMintInfo, fetchOwnerBalance, type MintInfo } from "../solana/token";
+import { qualifyingMs } from "./growth";
 import { applyTransferCredit, eggsToAward } from "./ledger";
 
 /** Eggs and holding history only ever use finalized data, so a rolled-back block can't award an egg. */
@@ -399,6 +400,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       hatchedAt: egg.hatchedAt,
       displaySeed: hashString(r.id),
       speciesId: showSpecies ? r.species_id : null,
+      growthMs: null,
+      growing: false,
     };
   }
 
@@ -411,6 +414,22 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const unitBase = wholeTokensToBase(config.progression.tokensPerEgg, decimals);
     const balance = row ? BigInt(row.balance_base) : 0n;
     const credit = row ? BigInt(row.credit_base) : 0n;
+    // Evolution: qualifying holding since hatching. The k-th hatched creature (oldest first)
+    // grows while the recorded balance is at least k × tokensPerEgg.
+    const hatched = eggs.filter((e) => e.hatchedAt !== null);
+    if (hatched.length) {
+      const changes = (
+        await db.query<{ pre_base: string; post_base: string; block_time_ms: string | null; processed_ms: string }>(
+          `SELECT hc.pre_base, hc.post_base, pt.block_time_ms, pt.processed_ms FROM holder_changes hc JOIN processed_transactions pt ON pt.signature = hc.signature WHERE hc.owner = $1 ORDER BY hc.slot`,
+          [address],
+        )
+      ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }));
+      hatched.forEach((e, k) => {
+        const g = qualifyingMs(e.hatchedAt!, t, unitBase * BigInt(k + 1), changes, balance);
+        e.growthMs = g.ms;
+        e.growing = g.growing;
+      });
+    }
     const uncredited = balance > credit ? balance - credit : 0n;
     const heldCredit = credit < balance ? credit : balance;
     const ownCredit = unitBase * BigInt(row?.eggs_earned ?? 0);

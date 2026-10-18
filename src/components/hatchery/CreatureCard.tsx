@@ -26,7 +26,7 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
       <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-30 blur-3xl transition group-hover:opacity-60" style={{ background: meta.color }} />
       <div className="relative flex items-center justify-between">
         <RarityBadge rarity={s.rarity} />
-        <span className="font-mono text-[10px] uppercase tracking-wider text-mist/70">{record.backed ? evo.name : "Dormant"}</span>
+        <span className="font-mono text-[10px] uppercase tracking-wider text-mist/70">{record.backed ? evo.label : "Dormant"}</span>
       </div>
       <div className="sl-art-host relative mx-auto mt-1 aspect-square w-full max-w-[240px]" style={{ "--sl-glow": meta.glow } as React.CSSProperties}>
         <CreatureArt species={s} stage={evo.stage} />
@@ -35,10 +35,10 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
       <p className="relative text-xs text-mist">{record.nickname ? s.name : s.epithet}</p>
       <div className="relative mt-4">
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider text-mist/70">
-          <span>{evo.isMax ? "Ascended form" : `→ ${evo.nextName}`}</span>
-          <span>{evo.isMax ? "MAX" : formatDuration(evo.remainingMs)}</span>
+          <span>{evo.isFinal ? "Final rank" : `→ ${evo.nextLabel}`}</span>
+          <span>{evo.isFinal ? "MAX" : formatDuration(evo.toNextMs)}</span>
         </div>
-        <ProgressBar value={evo.progress} className="mt-2" colors={[meta.color2, meta.color]} />
+        <ProgressBar value={evo.toNextProgress} className="mt-2" colors={[meta.color2, meta.color]} />
       </div>
     </button>
   );

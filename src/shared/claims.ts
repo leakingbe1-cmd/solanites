@@ -2,6 +2,8 @@
 
 export interface ClaimsStatus {
   serverNow: number;
+  /** False until the server's database and chain settings are configured. */
+  serviceReady: boolean;
   /** Launch time from server configuration, or null if not scheduled. */
   launchAt: number | null;
   opensAt: number | null;

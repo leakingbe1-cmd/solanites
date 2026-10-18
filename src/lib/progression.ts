@@ -122,30 +122,67 @@ export function timeToHatch(r: SolaniteRecord, cfg: GameConfig): number {
 /* ── Evolution ──────────────────────────────────────────────── */
 
 export interface EvolutionInfo {
+  /** Form index (0 = first form). */
   stage: number;
   name: string;
-  /** 0..1 progress toward the next form (1 at max). */
+  /** 0..1 progress toward the next form (1 at the final form). */
   progress: number;
-  /** Holding time left until the next form (0 at max). */
+  /** Holding time left until the next form (0 at the final form). */
   remainingMs: number;
+  /** True at the final form. */
   isMax: boolean;
   nextName: string | null;
+  /** Ascension rank once the final form is reached (1 = just ascended, 2 = "II", …); 0 before. */
+  rank: number;
+  /** Form name, with the rank once ascended: "Evolved", "Ascended", "Ascended III". */
+  label: string;
+  /** The next milestone (form or rank), or null when every milestone is reached. */
+  nextLabel: string | null;
+  /** Holding time left until the next milestone (0 when none is left). */
+  toNextMs: number;
+  /** 0..1 progress toward the next milestone (1 when none is left). */
+  toNextProgress: number;
+  isFinal: boolean;
 }
 
+const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+
+/**
+ * Evolution from cumulative qualifying holding time since hatching. A form
+ * is reached exactly at its threshold (>=), never before.
+ */
 export function evolutionOf(growthMs: number, cfg: GameConfig): EvolutionInfo {
+  const g = Math.max(0, growthMs);
   const t = cfg.evolution.thresholdsMs;
+  const names = cfg.evolution.names;
   let stage = 0;
-  for (let i = 0; i < t.length; i++) if (growthMs >= t[i]) stage = i;
+  for (let i = 0; i < t.length; i++) if (g >= t[i]) stage = i;
   const isMax = stage >= t.length - 1;
-  const lo = t[stage];
-  const hi = isMax ? lo : t[stage + 1];
+
+  // Every milestone in order: the forms, then the Ascension ranks.
+  const ranks = cfg.evolution.ascensionRanksMs;
+  const milestones: { at: number; label: string }[] = [
+    ...t.map((at, i) => ({ at, label: names[i] })),
+    ...ranks.map((at, i) => ({ at, label: `${names[names.length - 1]} ${ROMAN[i + 2] ?? i + 2}` })),
+  ];
+  let m = 0;
+  for (let i = 0; i < milestones.length; i++) if (g >= milestones[i].at) m = i;
+  const next = milestones[m + 1] ?? null;
+  const rank = isMax ? m - (t.length - 1) + 1 : 0;
+
   return {
     stage,
-    name: cfg.evolution.names[stage],
-    progress: isMax ? 1 : (growthMs - lo) / (hi - lo),
-    remainingMs: isMax ? 0 : hi - growthMs,
+    name: names[stage],
+    progress: isMax ? 1 : (g - t[stage]) / (t[stage + 1] - t[stage]),
+    remainingMs: isMax ? 0 : t[stage + 1] - g,
     isMax,
-    nextName: isMax ? null : cfg.evolution.names[stage + 1],
+    nextName: isMax ? null : names[stage + 1],
+    rank,
+    label: milestones[m].label,
+    nextLabel: next?.label ?? null,
+    toNextMs: next ? next.at - g : 0,
+    toNextProgress: next ? (g - milestones[m].at) / (next.at - milestones[m].at) : 1,
+    isFinal: !next,
   };
 }
 

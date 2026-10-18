@@ -156,7 +156,7 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 - **Out-of-order processing.** Within one wallet, transactions are applied in slot order. Across wallets, a webhook can occasionally apply a later transaction before an earlier one is seen. Awards then wait for the next sync (they never over-award), and reconciliation catches up.
 - **Very active wallets.** If a wallet has more than 500 new signatures per account in one sync, its award is postponed and the sync retries. A provider with enhanced history makes this rarer.
 - **Rate limits are per server instance** (in-memory). Use a shared store for hard limits.
-- **Creature evolution** after hatch uses time since hatching. It is not tied to balance in tracked mode.
+- **Creature evolution** counts qualifying holding since hatching from the recorded on-chain balance history: the k-th hatched creature (oldest first) grows only while the balance is at least k × 1,000,000. A sale is applied once its transaction is ingested; until then the creature may briefly show more growth, which is corrected on the next view.
 - **Claim payouts are not implemented**, and no refund policy exists. Nothing on the site describes a refund as automatic or guaranteed.
 
 ## 6. Decisions needed from you

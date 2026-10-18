@@ -480,3 +480,15 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* Homepage hero creature: a slow, small float. */
+@keyframes sl-hero-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5%); }
+}
+.sl-hero-float {
+  animation: sl-hero-float 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-hero-float { animation: none; }
+}

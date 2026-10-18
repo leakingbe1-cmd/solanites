@@ -7,6 +7,7 @@ import type { Db } from "../db/types";
 import { keypairFromSeed } from "../fixtures/keys";
 import { createLedgerChain, programAddress } from "../fixtures/ledgerChain";
 import { isOnCurve } from "../solana/curve";
+import { qualifyingMs } from "../tracker/growth";
 import { applyTransferCredit, eggsToAward } from "../tracker/ledger";
 import { createTracker } from "../tracker/service";
 
@@ -21,11 +22,11 @@ afterEach(async () => {
 });
 
 async function setup() {
-  const chain = createLedgerChain();
+  const clock = { t: T0, now: () => clock.t, advance: (ms: number) => (clock.t += ms) };
+  const chain = createLedgerChain({ now: clock.now });
   const db = await createPgliteDb();
   open.push(db);
   await migrate(db);
-  const clock = { t: T0, now: () => clock.t, advance: (ms: number) => (clock.t += ms) };
   const pool = programAddress("pool");
   const treasury = W(9000);
   chain.mintTo(pool, chain.tokens(900_000_000));
@@ -485,5 +486,38 @@ describe("credit ledger unit rules", () => {
       ["B", 3n],
       ["C", 7n],
     ]);
+  });
+});
+
+describe("evolution of tracked creatures uses verified holding only", () => {
+  it("qualifyingMs counts only time at or above the threshold", () => {
+    const changes = [
+      { at: 100, preBase: 10n, postBase: 0n },
+      { at: 300, preBase: 0n, postBase: 10n },
+    ];
+    expect(qualifyingMs(0, 500, 10n, changes, 10n)).toEqual({ ms: 100 + 200, growing: true });
+    expect(qualifyingMs(150, 250, 10n, changes, 10n)).toEqual({ ms: 0, growing: false });
+    expect(qualifyingMs(0, 500, 10n, [], 9n)).toEqual({ ms: 0, growing: false });
+  });
+
+  it("a hatched creature reaches Hatchling at 5 min, then pauses while the holder has sold", async () => {
+    const { tracker, buy, chain, pool, clock } = await setup();
+    const h = W(60);
+    buy(h, 1_000_000);
+    await tracker.runSync({ force: true });
+    clock.advance(5 * MIN);
+    const id = (await tracker.holderView(h)).eggs[0].id;
+    expect((await tracker.hatch(id)).ok).toBe(true);
+    clock.advance(5 * MIN);
+    let c = (await tracker.holderView(h)).eggs[0];
+    expect(c).toMatchObject({ status: "hatched", growthMs: 5 * MIN, growing: true });
+
+    // Sell everything: the sale is recorded at its block time and growth stops there.
+    chain.transfer(h, pool, chain.tokens(1_000_000));
+    await tracker.runSync({ force: true });
+    clock.advance(60 * MIN);
+    c = (await tracker.holderView(h)).eggs[0];
+    expect(c.growing).toBe(false);
+    expect(c.growthMs).toBe(5 * MIN); // the hour after selling does not count
   });
 });

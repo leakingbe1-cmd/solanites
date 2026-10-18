@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HeroEgg } from "@/components/landing/HeroEgg";
+import { HeroCreature } from "@/components/landing/HeroCreature";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { ParticleField } from "@/components/ui/ParticleField";
@@ -8,6 +8,7 @@ import { HowSteps } from "@/components/landing/HowSteps";
 import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber } from "@/lib/format";
+import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES } from "@/lib/species";
 
 export default function Home() {
@@ -31,30 +32,34 @@ export default function Home() {
             <p className="sl-fade-up mx-auto mt-7 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
               Hold Solana. Hatch the extraordinary. <span className="text-white">The longer you hold, the stronger they grow.</span>
             </p>
-            <div className="sl-fade-up mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
-              <Link href="/hatchery" className="sl-btn-primary group inline-flex items-center gap-3 rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
+            <div className="sl-fade-up mt-10 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
+              <Link href="/hatchery" className="sl-btn-primary group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
                 ENTER THE HATCHERY
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
-              <Link href="/collection" className="rounded-full border border-white/10 px-7 py-4 text-sm tracking-wider text-mist transition hover:border-white/25 hover:text-white">
+              <Link href="/collection" className="whitespace-nowrap rounded-full border border-white/10 px-7 py-4 text-sm tracking-wider text-mist transition hover:border-white/25 hover:text-white">
                 Explore the Collection
               </Link>
             </div>
-            <dl className="sl-fade-up mx-auto mt-14 grid max-w-lg grid-cols-3 gap-6 border-t border-white/5 pt-8 lg:mx-0" style={{ animationDelay: "0.7s" }}>
+            {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
+            <dl
+              className="sl-fade-up mx-auto mt-14 grid max-w-xl grid-cols-2 gap-3 border-t border-white/5 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
+              style={{ animationDelay: "0.7s" }}
+            >
               {[
-                [formatNumber(gameConfig.token.tokensPerEgg), "tokens per egg"],
-                [String(SPECIES.length), "species to find"],
-                ["6", "rarity tiers"],
-              ].map(([v, l]) => (
-                <div key={l}>
-                  <dt className="font-display text-2xl font-semibold text-white sm:text-3xl">{v}</dt>
-                  <dd className="mt-1 text-xs uppercase tracking-widest text-mist/70">{l}</dd>
+                { value: formatNumber(gameConfig.token.tokensPerEgg), label: `${gameConfig.token.symbol} per egg` },
+                { value: String(SPECIES.length), label: "species to find" },
+                { value: String(RARITY_ORDER.length), label: "rarity tiers" },
+              ].map((stat, i) => (
+                <div key={stat.label} className={`flex min-w-0 flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5 text-center lg:text-left ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
+                  <dt className="mt-1 text-[10px] uppercase leading-snug tracking-[0.18em] text-mist/70">{stat.label}</dt>
+                  <dd className="order-first whitespace-nowrap font-display text-2xl font-semibold tabular-nums text-white">{stat.value}</dd>
                 </div>
               ))}
             </dl>
           </div>
           <div className="order-1 lg:order-2">
-            <HeroEgg />
+            <HeroCreature />
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-void" />
@@ -111,7 +116,7 @@ export default function Home() {
             Something is <span className="sl-gradient-text">stirring</span>.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg text-mist">Your egg is already warm. Step inside, check on it daily, and be there the moment it opens.</p>
-          <Link href="/hatchery" className="sl-btn-primary mt-10 inline-flex items-center gap-3 rounded-full px-9 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
+          <Link href="/hatchery" className="sl-btn-primary mt-10 inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] text-white sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

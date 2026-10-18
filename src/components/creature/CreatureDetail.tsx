@@ -8,7 +8,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { stageAsset } from "@/lib/creatureAssets";
 import { designOf } from "@/lib/creatureDesigns";
 import { discoveryOf, type Discovery } from "@/lib/discovery";
-import { formatDays, formatDuration } from "@/lib/format";
+import { formatDuration, formatSpan } from "@/lib/format";
 import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, SPECIES, statsAt, type Species } from "@/lib/species";
@@ -152,7 +152,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-mist/60">Stage {i + 1}</p>
                     <p className="mt-0.5 font-display text-base text-white">{n}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-mist">
-                      {hidden ? "Undiscovered." : isLocked ? `Unlocks after ${formatDays(gameConfig.evolution.thresholdsMs[i])} bonded.` : (design?.stages[i]?.summary ?? "")}
+                      {hidden ? "Undiscovered." : isLocked ? `Unlocks after ${formatSpan(gameConfig.evolution.thresholdsMs[i])} bonded.` : (design?.stages[i]?.summary ?? "")}
                     </p>
                   </div>
                 </button>
@@ -179,7 +179,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
             <p className="mt-3 text-sm leading-relaxed text-mist">Its form is unknown until you discover it.</p>
           ) : (
             <>
-              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. This form unlocks after ${formatDays(gameConfig.evolution.thresholdsMs[selected])} of qualifying hold since hatching.` : design?.stages[selected]?.summary}</p>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. This form unlocks after ${formatSpan(gameConfig.evolution.thresholdsMs[selected])} of qualifying hold since hatching.` : design?.stages[selected]?.summary}</p>
               {design && !selLocked && (
                 <dl className="mt-4 space-y-2 text-xs leading-relaxed">
                   {[
@@ -217,10 +217,10 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
           {record && evoInfo && (
             <div className="mt-auto pt-5">
               <div className="flex items-baseline justify-between text-sm">
-                <span className="text-white">{evoInfo.isMax ? "Ascended" : `Evolving to ${evoInfo.nextName}`}</span>
-                <span className="font-mono text-xs text-mist">{evoInfo.isMax ? "MAX" : formatDuration(evoInfo.remainingMs)}</span>
+                <span className="text-white">{evoInfo.isFinal ? evoInfo.label : `${evoInfo.label} → ${evoInfo.nextLabel}`}</span>
+                <span className="font-mono text-xs text-mist">{evoInfo.isFinal ? "MAX" : formatDuration(evoInfo.toNextMs)}</span>
               </div>
-              <ProgressBar value={evoInfo.progress} className="mt-2.5" colors={[meta.color2, meta.color]} />
+              <ProgressBar value={evoInfo.toNextProgress} className="mt-2.5" colors={[meta.color2, meta.color]} />
               <p className="mt-2 text-xs text-mist/70">
                 Bonded for {formatDuration(record.growthMs)} since hatching{!record.backed && " · growth paused (balance below threshold)"}
               </p>

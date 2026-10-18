@@ -23,7 +23,7 @@ type Load = { kind: "loading" } | { kind: "error"; code: string; message: string
 const POLL_MS = 20_000;
 
 /** A tracked egg in the shape the existing egg and creature components expect. */
-function toRecord(e: TrackedEgg, now: number): SolaniteRecord {
+function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord {
   const elapsed = Math.max(0, now - e.incubationStartedAt);
   return {
     id: e.id,
@@ -33,8 +33,9 @@ function toRecord(e: TrackedEgg, now: number): SolaniteRecord {
     durationMs: e.incubationMs,
     speciesId: e.speciesId ?? "",
     hatchedAt: e.hatchedAt,
-    growthMs: e.hatchedAt !== null ? Math.max(0, now - e.hatchedAt) : 0,
-    backed: true,
+    // Server-verified qualifying hold, counted forward only while the balance still backs it.
+    growthMs: e.growthMs === null ? 0 : e.growthMs + (e.growing ? Math.max(0, now - serverNow) : 0),
+    backed: e.hatchedAt === null || e.growing,
   };
 }
 
@@ -93,7 +94,7 @@ export function TrackedHatchery({ address }: { address: string }) {
   const now = Date.now() + load.offset;
   const eggs = view.eggs.filter((e) => e.status !== "hatched");
   const creatures = view.eggs.filter((e) => e.status === "hatched");
-  const recordOf = (e: TrackedEgg) => toRecord(e, now);
+  const recordOf = (e: TrackedEgg) => toRecord(e, now, view.serverNow);
   const inspected = view.eggs.find((e) => e.id === inspect);
   const unit = view.rules.tokensPerEgg;
   const toNext = Number(view.holdings.toNextEgg);

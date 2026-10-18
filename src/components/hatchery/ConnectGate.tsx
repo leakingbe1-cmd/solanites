@@ -15,8 +15,9 @@ export function ConnectGate() {
   const [error, setError] = useState<string | null>(null);
   const [fixtures, setFixtures] = useState<{ label: string; address: string }[]>([]);
 
-  // Local fixture mode only: offers the fixture wallets. The endpoint is 404 everywhere else.
+  // Local fixture mode only: offers the fixture wallets. Never requested in production builds.
   useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
     fetch("/api/dev/fixtures")
       .then(async (r) => ({ ok: r.ok, body: await r.json().catch(() => null) }))
       .then(({ ok, body }) => ok && body?.wallets && setFixtures(body.wallets))

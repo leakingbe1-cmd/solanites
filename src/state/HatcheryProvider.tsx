@@ -95,8 +95,9 @@ function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
   });
   const d = (n: number) => incubationMsFor(n);
   return [
-    base(1, 9101, "duskwing", d(1) + 52 * TIME.DAY, { incubationMs: d(1), hatchedAt: now - 52 * TIME.DAY, growthMs: 52 * TIME.DAY, nickname: "Nightwarden" }),
-    base(2, 4410, "mossling", d(2) + 9 * TIME.DAY, { incubationMs: d(2), hatchedAt: now - 9 * TIME.DAY, growthMs: 9 * TIME.DAY }),
+    // Pre-grown demo creatures: one well into its Ascension ranks, one just past Hatchling.
+    base(1, 9101, "duskwing", d(1) + 3 * TIME.DAY, { incubationMs: d(1), hatchedAt: now - 3 * TIME.DAY, growthMs: 3 * TIME.DAY, nickname: "Nightwarden" }),
+    base(2, 4410, "mossling", d(2) + 20 * TIME.MINUTE, { incubationMs: d(2), hatchedAt: now - 20 * TIME.MINUTE, growthMs: 20 * TIME.MINUTE }),
     base(3, 7777, "aurelion", d(3) + TIME.HOUR, { incubationMs: d(3) }),
     base(4, 2024, "neonyx", d(4) * 0.82, { incubationMs: d(4) * 0.82 }),
     base(5, 1337, rollSpecies(1337, cfg), d(5) * 0.46, { incubationMs: d(5) * 0.46 }),

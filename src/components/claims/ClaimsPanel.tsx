@@ -86,6 +86,8 @@ export function ClaimsPanel() {
 
   const { s, offset } = status;
   const now = Date.now() + offset;
+  if (!s.serviceReady)
+    return <Panel tone="warn" title="Claims aren't available on this site yet">Fee claims need the site&apos;s Solana and database settings, which haven&apos;t been switched on yet. Nothing can be claimed until then.</Panel>;
   if (s.launchAt === null) return <Panel title="Not scheduled yet">The launch time hasn&apos;t been announced. Claims open six hours after launch; this page will show a countdown once it is set.</Panel>;
   if (!s.open && s.opensAt !== null && now < s.opensAt)
     return (

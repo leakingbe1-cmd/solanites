@@ -58,6 +58,7 @@ export function createClaims({ db, config, policy, verifiedBalance, now = Date.n
     const closesAt = policy?.closesAtMs ?? null;
     return {
       serverNow: t,
+      serviceReady: true,
       launchAt: config.launchAtMs,
       opensAt,
       open: opensAt !== null && t >= opensAt && (closesAt === null || t < closesAt),

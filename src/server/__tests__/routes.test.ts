@@ -68,7 +68,7 @@ describe("scheduler and webhook endpoints", () => {
 describe("Workflow B routes", () => {
   it("claims stay unscheduled without a configured launch time, and nonces are refused", async () => {
     const status = await import("@/app/api/claims/status/route");
-    expect(await (await status.GET()).json()).toMatchObject({ launchAt: null, open: false, policyConfigured: false });
+    expect(await (await status.GET()).json()).toMatchObject({ serviceReady: true, launchAt: null, open: false, policyConfigured: false });
     const nonce = await import("@/app/api/claims/nonce/route");
     const res = await nonce.POST(req("/api/claims/nonce", { method: "POST", body: JSON.stringify({ address: keypairFromSeed(1).address }) }));
     expect(res.status).toBe(403);

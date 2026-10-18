@@ -33,3 +33,10 @@ export function shortAddress(a: string): string {
 export function pct(x: number): string {
   return `${Math.round(Math.max(0, Math.min(1, x)) * 100)}%`;
 }
+
+/** Short milestone length: "5 min", "30 min", "2 h", "24 h", "3 days". */
+export function formatSpan(ms: number): string {
+  if (ms < HOUR) return `${Math.round(ms / MIN)} min`;
+  if (ms <= DAY) return `${+(ms / HOUR).toFixed(1)} h`;
+  return `${+(ms / DAY).toFixed(1)} days`;
+}

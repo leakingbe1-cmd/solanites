@@ -48,11 +48,16 @@ export interface GameConfig {
   };
   evolution: {
     /**
-     * Cumulative post-hatch holding time (ms) required to reach each evolution
-     * form. Index 0 is the hatchling (reached at hatch, so 0 ms).
+     * Cumulative qualifying holding time since hatching (ms) needed for each
+     * form. Index 0 is the first form, reached at hatch (0 ms).
      */
     thresholdsMs: number[];
     names: string[];
+    /**
+     * After the final form: cumulative qualifying holding time since hatching
+     * for each further Ascension rank (II, III, …). Gaps grow each time.
+     */
+    ascensionRanksMs: number[];
   };
   /** Relative weights. They are normalised, so they don't need to sum to 100. */
   rarityWeights: Record<RarityId, number>;
@@ -65,7 +70,8 @@ export interface GameConfig {
   };
 }
 
-const HOUR = 60 * 60 * 1000;
+const MINUTE = 60 * 1000;
+const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
 
 export const gameConfig: GameConfig = {
@@ -82,8 +88,11 @@ export const gameConfig: GameConfig = {
     stirringAt: 0.7,
   },
   evolution: {
-    thresholdsMs: [0, 14 * DAY, 45 * DAY, 120 * DAY],
+    // Eggling at hatch → Hatchling at 5 min → Evolved at 30 min → Ascended at 2 h (cumulative).
+    thresholdsMs: [0, 5 * MINUTE, 30 * MINUTE, 2 * HOUR],
     names: ["Eggling", "Hatchling", "Evolved", "Ascended"],
+    // Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (cumulative).
+    ascensionRanksMs: [8 * HOUR, 24 * HOUR, 3 * DAY, 7 * DAY, 30 * DAY],
   },
   rarityWeights: {
     common: 60,
@@ -101,4 +110,4 @@ export const gameConfig: GameConfig = {
   },
 };
 
-export const TIME = { HOUR, DAY };
+export const TIME = { MINUTE, HOUR, DAY };

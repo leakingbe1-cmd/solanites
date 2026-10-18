@@ -47,7 +47,7 @@ export function programAddress(tag = "pda"): string {
   return fakeAddress(tag, true);
 }
 
-export function createLedgerChain(opts: { mint?: string; decimals?: number; program?: string; slot?: number } = {}) {
+export function createLedgerChain(opts: { mint?: string; decimals?: number; program?: string; slot?: number; now?: () => number } = {}) {
   const mint = opts.mint ?? fakeAddress("mint", false);
   const decimals = opts.decimals ?? 6;
   const program = opts.program ?? TOKEN_PROGRAM_ID;
@@ -99,7 +99,7 @@ export function createLedgerChain(opts: { mint?: string; decimals?: number; prog
     }
     const post = touched.map((a, i) => ({ accountIndex: i + 1, owner: a.owner, amount: a.amount }));
     const signature = encodeBase58(new Uint8Array(64).map((_, i) => (sigCounter * 31 + i * 17 + 3) & 0xff)) + (sigCounter++).toString(36);
-    txs.set(signature, { signature, slot: state.slot, blockTime: 1_800_000_000 + state.slot, failed, keys: ["FeePayer11111111111111111111111111111111111", ...touched.map((a) => a.address)], pre, post });
+    txs.set(signature, { signature, slot: state.slot, blockTime: opts.now ? Math.floor(opts.now() / 1000) : 1_800_000_000 + state.slot, failed, keys: ["FeePayer11111111111111111111111111111111111", ...touched.map((a) => a.address)], pre, post });
     for (const a of touched) history.set(a.address, [...(history.get(a.address) ?? []), signature]);
     return signature;
   }

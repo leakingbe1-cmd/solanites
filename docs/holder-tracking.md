@@ -92,7 +92,7 @@ Each wallet carries a credit: the amount of its tokens that has already earned a
 
 | Variable | What |
 |---|---|
-| `SOLANITES_MINT` | The official SOLITE mint. **Not invented: you must provide it.** |
+| `SOLANITES_MINT` | The official $SLNT mint. **Not invented: you must provide it.** |
 | `SOLANA_RPC_URL` | Provider endpoint with key (Helius recommended: `getProgramAccounts`, history, webhooks). Server-only. |
 | `DATABASE_URL` | Postgres (Neon via Vercel Marketplace, or Supabase). The schema is created automatically. |
 | `SOLANITES_EXCLUDED_OWNERS` | Treasury, team, LP, reserve, burn and exchange wallets (on-curve ones; off-curve pool PDAs are excluded automatically). |
@@ -201,9 +201,9 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
    - payout approval process.
 4. **Payout execution** (explicit authorisation required): a dedicated, limited-funds wallet with multisig-approved batches. Signing keys stay off Vercel and out of the frontend. Payout signatures are recorded on the claim (`payout_signature`, unique).
 5. **Hosting:** keep the GitHub Actions schedule (Hobby), or move to Vercel Pro for a 10-minute Vercel Cron.
-6. **Tokenomics confirmation:** 1,000,000 SOLITE per egg and 1,000,000,000 supply, as configured.
+6. **Tokenomics confirmation:** 1,000,000 $SLNT per egg and 1,000,000,000 supply, as configured.
 7. **Ascension ranks** after Ascended (8 h, 24 h, 3 d, 7 d, 30 d) are a proposal.
 8. **Holder rewards**, if any, are a separate programme from fee refunds and need their own rules.
 9. **Rarity verifiability:** whether to add the commit-reveal scheme above.
-10. **Token ticker:** the site displays `$SOLITE` (`gameConfig.token.symbol`). If the official ticker is `$SLNT`, change that one value; tracking never uses the name, only `SOLANITES_MINT`.
+10. **Token ticker:** confirmed as `$SLNT` (`gameConfig.token.symbol`, display only). Tracking never uses the name, only `SOLANITES_MINT`; the mint address itself is still to be provided.
 11. **Early progression:** confirm the incubation (1 min → 12 h) and growing-up (1 min → 6 h) schedules, and that Evolved/Ascended and the Ascension ranks should count from maturity.

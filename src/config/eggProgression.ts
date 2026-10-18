@@ -19,9 +19,9 @@ export type IncubationMode =
   | "parallel";
 
 export interface EggProgressionConfig {
-  /** Whole SOLITE that back one egg entitlement. */
+  /** Whole $SLNT tokens that back one egg entitlement. */
   tokensPerEgg: number;
-  /** Total SOLITE supply, for display and sanity checks. */
+  /** Total $SLNT supply, for display and sanity checks. */
   totalSupply: number;
   /** Upper bound on eggs per wallet, or null for no cap. */
   maxEggsPerWallet: number | null;

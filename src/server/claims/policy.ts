@@ -39,7 +39,7 @@ export interface FeeRefundPolicy {
 export const REQUIRED_DECISIONS = [
   "Which fees are refunded (e.g. a token transfer tax, swap/LP fees, or another fee), and how each wallet's paid fees are measured from chain data.",
   "The refund rate or formula, and any per-wallet cap.",
-  "The payout currency (SOL, SOLITE or another token) and its source wallet.",
+  "The payout currency (SOL, $SLNT or another token) and its source wallet.",
   "The total refund budget, and what happens if claims exceed it.",
   "The holding requirement: minimum balance, minimum holding time, and whether selling forfeits the refund.",
   "Which transactions count (e.g. only buys in the first six hours) and the claim deadline.",

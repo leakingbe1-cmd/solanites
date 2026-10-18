@@ -91,7 +91,7 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 
 | Rule | Value |
 |---|---|
-| Total supply | 1,000,000,000 SOLITE |
+| Total supply | 1,000,000,000 $SLNT |
 | Tokens per egg | 1,000,000 (0.1% of supply). Eggs = verified balance ÷ 1,000,000, rounded down |
 | Max eggs per wallet | No cap |
 | Incubation | Egg 1: 1 min · egg 2: 5 min · egg 3: 15 min · egg 4: 1 h · egg 5: 6 h · egg 6 onwards: 12 h. One at a time (`sequential`), on the server clock (`eggProgression.incubationScheduleMs`) |

@@ -82,7 +82,8 @@ const DAY = 24 * HOUR;
 
 export const gameConfig: GameConfig = {
   token: {
-    symbol: "$SOLITE",
+    // Official public ticker. Display only: tracking identifies the token by SOLANITES_MINT, never by name.
+    symbol: "$SLNT",
     totalSupply: eggProgression.totalSupply,
     tokensPerEgg: eggProgression.tokensPerEgg,
     decimals: 6,

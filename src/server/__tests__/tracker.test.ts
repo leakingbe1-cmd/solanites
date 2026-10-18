@@ -45,7 +45,7 @@ async function setup() {
   return { chain, db, clock, pool, treasury, tracker, make, buy };
 }
 
-describe("egg rule: 1,000,000 SOLITE = 1 egg", () => {
+describe("egg rule: 1,000,000 $SLNT = 1 egg", () => {
   it("is configured centrally", () => {
     expect(eggProgression.tokensPerEgg).toBe(1_000_000);
     expect(eggProgression.totalSupply).toBe(1_000_000_000);
@@ -54,7 +54,7 @@ describe("egg rule: 1,000,000 SOLITE = 1 egg", () => {
 
   it.each([
     [0n, 0],
-    [999_999_999_999n, 0], // 999,999.999999 SOLITE
+    [999_999_999_999n, 0], // 999,999.999999 $SLNT
     [1_000_000_000_000n, 1],
     [1_999_999_999_999n, 1],
     [2_000_000_000_000n, 2],
@@ -67,7 +67,7 @@ describe("egg rule: 1,000,000 SOLITE = 1 egg", () => {
 });
 
 describe("Workflow A: automatic tracking, no wallet connection (tests 1, 2, 4)", () => {
-  it("detects a holder reaching 1,000,000 SOLITE and issues the first egg on its own", async () => {
+  it("detects a holder reaching 1,000,000 $SLNT and issues the first egg on its own", async () => {
     const { tracker, buy, clock } = await setup();
     const holder = W(1);
     buy(holder, 1_000_000);

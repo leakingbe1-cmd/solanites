@@ -8,7 +8,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr] lg:px-8">
         <div>
           <Logo />
-          <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist">Hold Solana. Hatch the extraordinary. A creature-collection universe where conviction is the only currency that matters.</p>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist">Discover your creature. Hatch the extraordinary. A creature-collecting universe where Solanites grow stronger through their evolution.</p>
           <p className="mt-6 max-w-sm rounded-xl border border-amber-400/15 bg-amber-400/5 p-3 text-xs leading-relaxed text-amber-200/80">
             Eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet and the leaderboard use simulated data. Solanites never asks for a seed phrase or private key.
           </p>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { EggArt } from "@/components/egg/EggArt";
-import { HeroCreature } from "@/components/landing/HeroCreature";
+import { HeroLifecycle } from "@/components/landing/HeroLifecycle";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { ParticleField } from "@/components/ui/ParticleField";
@@ -21,8 +21,8 @@ export default function Home() {
       <section className="sl-atmosphere relative flex min-h-[100svh] items-center overflow-hidden pt-20">
         <div className="sl-grid absolute inset-0" />
         <ParticleField density={0.00016} />
-        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-6 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8">
-          <div className="order-2 text-center lg:order-1 lg:text-left">
+        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-x-6 gap-y-10 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-y-0 lg:px-8">
+          <div className="text-center lg:col-start-1 lg:row-start-1 lg:self-end lg:text-left">
             <p className="sl-fade-up font-mono text-[11px] uppercase tracking-[0.4em] text-sol-green/80" style={{ animationDelay: "0.1s" }}>
               ◇ Genesis Hatchery · Season 0
             </p>
@@ -32,9 +32,22 @@ export default function Home() {
               IS WAITING.
             </h1>
             <p className="sl-fade-up mx-auto mt-7 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              Hold Solana. Hatch the extraordinary. <span className="text-white">The longer you hold, the stronger they grow.</span>
+              Discover your creature. Hatch the extraordinary. <span className="text-white">Watch your Solanite grow stronger through its evolution.</span>
             </p>
-            <div className="sl-fade-up mt-10 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
+            {/* walletless exploration: true for everything except launch fee claims (the only wallet sign-in on the site) */}
+            <div className="sl-fade-up mx-auto mt-7 max-w-lg lg:mx-0" style={{ animationDelay: "0.48s" }}>
+              <p className="sl-glass inline-flex items-center gap-2.5 rounded-full py-2 pl-3 pr-4 text-sm font-medium text-white">
+                <span className="relative flex h-2 w-2" aria-hidden>
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-50" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" />
+                </span>
+                No wallet needed to explore.
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-mist/90">
+                Discover creatures, watch them evolve, and explore the Solanites universe. Connect your wallet only when a feature requires it.
+              </p>
+            </div>
+            <div className="sl-fade-up mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
               <Link href="/hatchery" className="sl-btn-primary group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
                 ENTER THE HATCHERY
                 <span className="transition-transform group-hover:translate-x-1">→</span>
@@ -43,9 +56,15 @@ export default function Home() {
                 Explore the Collection
               </Link>
             </div>
-            {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
+          </div>
+          {/* phones and tablets: copy and CTAs, then the showcase, then the stats; desktop: copy and stats left, showcase right */}
+          <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-4">
+            <HeroLifecycle />
+          </div>
+          {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
+          <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
             <dl
-              className="sl-fade-up mx-auto mt-14 grid max-w-xl grid-cols-2 gap-3 border-t border-white/5 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
+              className="sl-fade-up mx-auto grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/5 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0 lg:mt-4"
               style={{ animationDelay: "0.7s" }}
             >
               {[
@@ -59,9 +78,6 @@ export default function Home() {
                 </div>
               ))}
             </dl>
-          </div>
-          <div className="order-1 lg:order-2">
-            <HeroCreature />
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-void" />

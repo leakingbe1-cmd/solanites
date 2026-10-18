@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EggArt } from "@/components/egg/EggArt";
 import { HeroCreature } from "@/components/landing/HeroCreature";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
@@ -10,7 +11,7 @@ import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES } from "@/lib/species";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 
 export default function Home() {
   const pctSupply = (gameConfig.token.tokensPerEgg / gameConfig.token.totalSupply) * 100;
@@ -125,6 +126,11 @@ export default function Home() {
         <div className="absolute left-1/2 top-1/2 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sol-purple/15 blur-[120px]" />
         <ParticleField density={0.0001} />
         <div className="relative mx-auto max-w-3xl px-4 text-center">
+          {/* a stirring egg with a classified silhouette inside; still under reduced motion (global rule) */}
+          <div className="relative mx-auto mb-8 h-44 w-36 sm:h-56 sm:w-44" aria-hidden>
+            <div className="absolute inset-x-2 bottom-3 top-6 rounded-full bg-sol-green/20 blur-3xl" />
+            <EggArt stage={3} progress={0.9} seed={9} inside={SPECIES_BY_ID["genesis"]} className="relative h-full w-full" />
+          </div>
           <h2 className="font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl">
             Something is <span className="sl-gradient-text">stirring</span>.
           </h2>

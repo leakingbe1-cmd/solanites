@@ -108,144 +108,141 @@ const evolved: Renderer = {
   },
 };
 
-/** Eggling: a round golden whelp lying curled, with tiny wing nubs and its tail tucked round. */
+/** Eggling: a plump baby dragon sitting upright, front-on like the adult, with wing buds and horn nubs. */
 function eggling(c: Ctx) {
   const { p, u } = c;
   return (
     <g>
-      {/* tail curled round the front, ending in a soft tuft */}
-      <path d="M292,334 C322,340 326,358 298,360 C254,364 196,364 150,358" fill="none" stroke={p.bodyDark} strokeWidth="17" strokeLinecap="round" strokeOpacity="0.55" />
-      <path d="M292,334 C322,340 326,358 298,360 C254,364 196,364 150,358" fill="none" stroke={p.body} strokeWidth="13" strokeLinecap="round" />
-      <g className="sl-sway" style={{ transformOrigin: "150px 358px" }}>
-        {[-170, -150, 170].map((a) => (
-          <path key={a} d={blade(18, 7)} transform={`translate(152 358) rotate(${a})`} fill={p.bodyLight} {...rim(c, 1)} />
-        ))}
+      {/* short tail curling out to the side */}
+      <g className="sl-sway" style={{ transformOrigin: "244px 336px" }}>
+        <path d="M240,336 C270,350 304,344 312,322 C316,310 310,300 300,302" fill="none" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="17" strokeLinecap="round" />
+        <path d="M240,336 C270,350 304,344 312,322 C316,310 310,300 300,302" fill="none" stroke={p.body} strokeWidth="13" strokeLinecap="round" />
+        <path d="M300,302 C296,292 298,284 304,280 C306,288 312,292 318,292 C314,298 308,302 300,302 Z" fill={p.horn} />
       </g>
-      {/* lying body */}
-      <path d="M170,330 C170,296 200,278 240,278 C282,278 308,300 308,326 C308,346 292,354 264,354 L196,354 C180,354 170,346 170,330 Z" fill={u("body")} {...rim(c)} />
-      <path d="M186,340 C214,352 270,352 298,340 C290,352 278,356 264,356 L198,356 C190,354 188,348 186,340 Z" fill={p.belly} opacity="0.6" />
-      <g fill={p.bodyLight} opacity="0.65">
-        {[
-          [214, 288, 5],
-          [236, 282, 6],
-          [282, 292, 4.5],
-        ].map(([x, y, r]) => (
-          <circle key={x} cx={x} cy={y} r={r} />
-        ))}
-      </g>
-      <Spec x={246} y={292} rx={34} ry={6} rot={-4} o={0.22} />
-      {/* folded wing nub */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "244px 298px" }}>
-        <path d="M234,300 C238,278 254,266 274,264 C270,274 272,282 280,288 C266,290 254,294 246,304 Z" fill={u("wing")} {...rim(c, 1)} />
-        <path d="M244,296 C252,284 262,276 272,270" fill="none" stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="1.2" />
-      </g>
-      {/* tucked forepaws */}
-      {[
-        [138, 350],
-        [170, 352],
-      ].map(([x, y]) => (
-        <g key={x}>
-          <ellipse cx={x} cy={y - 4} rx="16" ry="9" fill={u("body")} {...rim(c, 1)} />
-          {[-6, 0, 6].map((d) => (
-            <path key={d} d={`M${x - 12 + d},${y + 2} l-2,4`} stroke={p.horn} strokeWidth="2" strokeLinecap="round" />
-          ))}
+      {/* tiny membrane wing buds */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <g className="sl-flap" style={{ transformOrigin: "160px 250px" }}>
+            <path d="M162,252 C150,236 140,224 126,216 C128,228 124,238 116,244 C126,246 132,252 134,260 C142,256 152,258 160,264 Z" fill={u("wing")} {...rim(c, 1)} />
+            <path d="M162,252 C150,238 140,226 126,216" fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="2.4" strokeLinecap="round" />
+          </g>
         </g>
       ))}
-      {/* big head */}
-      <circle cx="132" cy="252" r="12" fill={u("body")} {...rim(c, 1)} />
-      <circle cx="132" cy="252" r="6" fill={p.belly} opacity="0.7" />
-      <circle cx="150" cy="300" r="46" fill={u("body")} {...rim(c)} />
-      <circle cx="178" cy="262" r="11" fill={u("body")} {...rim(c, 1)} />
-      <circle cx="178" cy="262" r="5" fill={p.belly} opacity="0.7" />
-      {/* horn nubs */}
-      <path d="M156,258 C158,248 162,242 168,240 C166,248 166,254 164,260 Z" fill={u("horn")} {...rim(c, 1)} />
-      <ellipse cx="120" cy="318" rx="22" ry="15" fill={p.belly} />
-      <ellipse cx="104" cy="312" rx="4" ry="3" fill={p.bodyDark} />
-      <path d="M106,326 C112,330 122,330 128,326" fill="none" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.5" strokeLinecap="round" />
-      <ellipse cx="166" cy="318" rx="9" ry="5" fill={p.accent} opacity="0.35" />
-      <Spec x={146} y={268} rx={22} ry={8} o={0.3} />
-      <Eye c={c} x={138} y={296} r={11} kind="round" />
-      <Gem c={c} x={152} y={270} s={0.42} />
+      {/* plump body */}
+      <path d="M200,226 C246,226 268,268 268,306 C268,336 244,354 200,354 C156,354 132,336 132,306 C132,268 154,226 200,226 Z" fill={u("body")} {...rim(c)} />
+      <path d="M200,250 C226,250 238,276 238,302 C238,326 222,342 200,344 C178,342 162,326 162,302 C162,276 174,250 200,250 Z" fill={p.belly} {...rim(c, 1)} />
+      {[272, 292, 312, 330].map((y, i) => {
+        const w = 30 - Math.abs(i - 1.5) * 4;
+        return <path key={y} d={`M${200 - w},${y} C${200 - w * 0.5},${y + 6} ${200 + w * 0.5},${y + 6} ${200 + w},${y}`} fill="none" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1.3" />;
+      })}
+      <Spec x={176} y={250} rx={10} ry={26} rot={14} o={0.2} />
+      {/* feet and little forepaws */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <ellipse cx="160" cy="346" rx="22" ry="11" fill={u("body")} {...rim(c, 1)} />
+          {[148, 158, 168].map((x) => (
+            <path key={x} d={`M${x - 2},354 C${x - 1},358 ${x + 2},359 ${x + 3},355`} fill={p.horn} />
+          ))}
+          <path d="M166,266 C154,276 152,292 162,300 C170,304 178,300 180,294 C172,290 170,280 176,272 Z" fill={u("body")} {...rim(c, 1)} />
+        </g>
+      ))}
+      {/* horn nubs and ear frills */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <path d="M140,164 C128,158 118,148 114,136 C126,140 138,144 146,152 Z" fill={u("wing")} {...rim(c, 1)} />
+          <path d="M168,124 C164,112 166,102 172,94 C178,104 182,114 182,124 Z" fill={u("horn")} {...rim(c, 1)} />
+        </g>
+      ))}
+      {/* big head with a rounded dragon snout */}
+      <path d="M200,112 C240,112 266,138 266,172 C266,204 240,226 200,226 C160,226 134,204 134,172 C134,138 160,112 200,112 Z" fill={u("body")} {...rim(c)} />
+      <path d="M200,182 C224,182 236,194 236,206 C236,220 220,228 200,228 C180,228 164,220 164,206 C164,194 176,182 200,182 Z" fill={p.belly} {...rim(c, 1)} />
+      <ellipse cx="190" cy="198" rx="3.2" ry="2.4" fill={p.bodyDark} />
+      <ellipse cx="210" cy="198" rx="3.2" ry="2.4" fill={p.bodyDark} />
+      <path d="M186,214 C194,220 206,220 214,214" fill="none" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.6" strokeLinecap="round" />
+      <ellipse cx="156" cy="196" rx="9" ry="5" fill={p.accent} opacity="0.35" />
+      <ellipse cx="244" cy="196" rx="9" ry="5" fill={p.accent} opacity="0.35" />
+      <Spec x={188} y={124} rx={22} ry={7} o={0.32} />
+      <Eye c={c} x={172} y={164} r={11} kind="round" />
+      <Eye c={c} x={228} y={164} r={11} kind="round" />
+      <Gem c={c} x={200} y={136} s={0.42} />
     </g>
   );
 }
 
-/** Hatchling: a lion-dragon cub on four legs, with small feathered wings, short horns and a first mane. */
+/** Hatchling: a young dragon sitting up on its haunches, slim-necked, membrane wings half open. */
 function hatchling(c: Ctx) {
   const { p, u } = c;
-  const leg = (x: number, near: boolean, back: boolean) => (
-    <g key={`${x}${near}`}>
-      {back && <ellipse cx={x + 4} cy="276" rx="26" ry="24" fill={near ? u("body") : p.bodyDark} {...(near ? rim(c) : {})} />}
-      <path
-        d={`M${x - 10},282 C${x - 12},304 ${x - 11},324 ${x - 12},340 C${x - 18},343 ${x - 18},352 ${x - 8},352 L${x + 10},352 C${x + 16},352 ${x + 14},344 ${x + 9},341 C${x + 9},324 ${x + 11},304 ${x + 11},282 Z`}
-        fill={near ? u("body") : p.bodyDark}
-        {...(near ? rim(c, 1) : {})}
-      />
-      {near && [-8, -2, 4].map((d) => <path key={d} d={`M${x + d - 4},352 l-2,4`} stroke={p.horn} strokeWidth="2.2" strokeLinecap="round" />)}
-    </g>
-  );
-  // Small feathered wing: a fan of rounded flight feathers from the shoulder.
-  const wing = (near: boolean) => (
-    <g transform={near ? undefined : "translate(16 -6)"} opacity={near ? 1 : 0.7}>
-      <g className="sl-flap" style={{ transformOrigin: "212px 238px" }}>
-        {[
-          [-118, 40],
-          [-96, 50],
-          [-74, 54],
-          [-52, 48],
-          [-32, 38],
-        ].map(([a, l]) => (
-          <path key={a} d={blade(l, 10, 0.7)} transform={`translate(212 238) rotate(${a})`} fill={near ? u("feather") : p.bodyDark} stroke={near ? p.wingEdge : p.bodyDark} strokeOpacity="0.7" strokeWidth="1" />
-        ))}
-        <ellipse cx="214" cy="234" rx="14" ry="10" fill={near ? u("wing") : p.bodyDark} {...rim(c, 1)} />
+  const wing = (
+    <g className="sl-flap" style={{ transformOrigin: "180px 230px" }}>
+      <path d="M182,232 C164,210 144,190 124,160 C112,166 98,170 84,168 C94,180 96,194 90,206 C104,204 116,212 118,226 C134,222 148,228 154,244 C164,240 174,242 182,250 Z" fill={u("wing")} {...rim(c)} />
+      <g fill="none" stroke={p.bodyDark} strokeOpacity="0.65" strokeLinecap="round">
+        <path d="M182,232 C164,210 144,190 124,160" strokeWidth="4" />
+        <path d="M124,160 C110,184 100,196 90,206 M136,180 C128,198 122,212 118,226" strokeWidth="2" />
       </g>
+      <path d="M124,160 l-4,-10 l9,5 Z" fill={p.horn} />
     </g>
   );
   return (
     <g>
-      {leg(160, false, false)}
-      {leg(262, false, true)}
       {/* long tail with a tuft */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "296px 262px" }}>
-        <path d="M292,262 C322,268 336,250 340,226 C342,212 350,204 358,204" fill="none" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="13" strokeLinecap="round" />
-        <path d="M292,262 C322,268 336,250 340,226 C342,212 350,204 358,204" fill="none" stroke={p.body} strokeWidth="9" strokeLinecap="round" />
-        {[-80, -50, -20].map((a) => (
-          <path key={a} d={blade(22, 7)} transform={`translate(356 206) rotate(${a})`} fill={p.bodyLight} {...rim(c, 1)} />
+      <g className="sl-sway-slow" style={{ transformOrigin: "232px 330px" }}>
+        <path d="M228,330 C266,350 318,344 340,312 C352,294 348,274 334,270" fill="none" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="15" strokeLinecap="round" />
+        <path d="M228,330 C266,350 318,344 340,312 C352,294 348,274 334,270" fill="none" stroke={p.body} strokeWidth="11" strokeLinecap="round" />
+        {[-160, -130, -100].map((a) => (
+          <path key={a} d={blade(22, 7)} transform={`translate(334 270) rotate(${a})`} fill={p.horn} {...rim(c, 1)} />
         ))}
       </g>
-      {wing(false)}
-      <path d="M140,262 C140,236 170,226 214,226 C254,226 292,232 300,258 C306,280 292,298 264,298 L170,298 C150,296 140,284 140,262 Z" fill={u("body")} {...rim(c)} />
-      <path d="M156,290 C190,300 250,300 290,288 C282,298 270,302 260,302 L172,302 C164,300 158,296 156,290 Z" fill={p.belly} opacity="0.7" />
-      {/* first scale plates along the back */}
-      {[184, 208, 232, 256].map((x, i) => (
-        <path key={x} d={`M${x - 10},${232 - (i === 1 ? 2 : 0)} C${x - 6},${222 - i * 0} ${x + 6},${222} ${x + 10},${232}`} fill="none" stroke={p.bodyLight} strokeOpacity="0.7" strokeWidth="2" strokeLinecap="round" />
+      {wing}
+      <g transform={MIRROR}>{wing}</g>
+      {/* haunches and clawed hind feet */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <path d="M172,286 C152,290 142,308 144,328 C146,342 158,350 172,350 C186,350 194,340 192,326 C190,308 184,296 172,286 Z" fill={u("body")} {...rim(c)} />
+          <path d="M150,346 C150,340 160,338 172,340 C182,342 186,348 182,353 L154,353 C151,352 150,349 150,346 Z" fill={u("body")} {...rim(c, 1)} />
+          {[156, 166, 176].map((x) => (
+            <path key={x} d={`M${x - 3},352 C${x - 2},357 ${x + 1},358 ${x + 3},353`} fill={p.horn} />
+          ))}
+        </g>
       ))}
-      <Spec x={222} y={236} rx={44} ry={6} rot={-2} o={0.26} />
-      {wing(true)}
-      {leg(172, true, false)}
-      {leg(276, true, true)}
-      {/* first mane: a soft collar of tufts */}
-      {[
-        [150, 214, -30],
-        [158, 234, 0],
-        [156, 256, 30],
-        [146, 274, 60],
-      ].map(([x, y, a]) => (
-        <path key={y} d={blade(26, 11)} transform={`translate(${x - 12} ${y}) rotate(${a})`} fill={p.wing} {...rim(c, 1)} />
+      {/* slim torso with cream belly plate */}
+      <path d="M200,206 C226,208 240,238 242,270 C244,302 232,330 200,346 C168,330 156,302 158,270 C160,238 174,208 200,206 Z" fill={u("body")} {...rim(c)} />
+      <path d="M200,226 C216,228 224,252 224,276 C224,302 214,322 200,334 C186,322 176,302 176,276 C176,252 184,228 200,226 Z" fill={p.belly} {...rim(c, 1)} />
+      {[246, 264, 282, 300, 316].map((y, i) => {
+        const w = 22 - Math.abs(i - 1.6) * 3;
+        return <path key={y} d={`M${200 - w},${y} C${200 - w * 0.5},${y + 6} ${200 + w * 0.5},${y + 6} ${200 + w},${y}`} fill="none" stroke={p.bodyDark} strokeOpacity="0.32" strokeWidth="1.3" />;
+      })}
+      <Spec x={186} y={236} rx={8} ry={30} rot={8} o={0.2} />
+      {/* slim forelimbs with clawed paws */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <path d="M180,232 C164,242 160,264 164,284 C166,294 172,300 180,302 C186,302 190,298 190,294 C184,290 180,282 180,272 C180,258 184,246 192,238 Z" fill={u("body")} {...rim(c, 1)} />
+          {[174, 181, 188].map((x) => (
+            <path key={x} d={`M${x - 2},300 C${x - 1},305 ${x + 2},307 ${x + 3},301`} fill={p.horn} />
+          ))}
+        </g>
       ))}
-      {/* head */}
-      <path d="M90,226 C88,204 104,188 124,188 C146,188 160,204 160,224 C160,246 146,262 126,264 C108,266 92,250 90,226 Z" fill={u("body")} {...rim(c)} />
-      <path d="M66,236 C66,222 80,216 96,218 C110,220 114,234 112,246 C108,258 92,262 80,258 C70,254 66,246 66,236 Z" fill={p.belly} />
-      <ellipse cx="72" cy="230" rx="4" ry="3" fill={p.bodyDark} />
-      <path d="M72,248 C80,252 92,251 100,247" fill="none" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.5" strokeLinecap="round" />
-      {/* short swept-back horns and a rounded ear */}
-      <path d="M136,196 C146,184 160,178 176,176 C166,186 158,194 148,204 Z" fill={u("horn")} {...rim(c, 1)} />
-      <path d="M124,192 C130,180 142,172 156,168 C148,178 142,186 136,196 Z" fill={u("horn")} {...rim(c, 1)} opacity="0.85" />
-      <ellipse cx="146" cy="214" rx="10" ry="12" fill={u("body")} {...rim(c, 1)} />
-      <ellipse cx="146" cy="215" rx="5" ry="6.5" fill={p.belly} opacity="0.8" />
-      <Spec x={116} y={198} rx={16} ry={5} o={0.32} />
-      <Eye c={c} x={112} y={222} r={8.5} kind="round" />
-      <Gem c={c} x={126} y={200} s={0.46} />
+      {/* slim neck */}
+      <path d="M190,216 C188,192 190,170 194,148 L206,148 C210,170 212,192 210,216 C206,222 194,222 190,216 Z" fill={u("body")} {...rim(c)} />
+      {[164, 180, 196].map((y) => (
+        <path key={y} d={`M194,${y} C197,${y + 3} 203,${y + 3} 206,${y}`} fill="none" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1.2" />
+      ))}
+      {/* playful tilted head */}
+      <g transform="translate(0 14) rotate(-8 200 150) translate(200 150) scale(1.22) translate(-200 -150)">
+        {[0, 1].map((m) => (
+          <g key={m} transform={m ? MIRROR : undefined}>
+            <path d="M184,92 C178,78 170,68 158,60 C162,74 166,88 174,100 Z" fill={u("horn")} {...rim(c, 1)} />
+            <path d="M170,118 C160,114 152,116 146,122 C156,124 162,126 170,130 Z" fill={u("wing")} {...rim(c, 1)} />
+          </g>
+        ))}
+        <path d="M200,82 C220,82 234,96 234,114 C234,128 226,138 218,146 C212,154 206,160 200,162 C194,160 188,154 182,146 C174,138 166,128 166,114 C166,96 180,82 200,82 Z" fill={u("body")} {...rim(c)} />
+        <path d="M186,134 C192,126 208,126 214,134 C218,148 208,156 200,162 C192,156 182,148 186,134 Z" fill={p.belly} />
+        <path d="M193,142 l-2,3 M207,142 l2,3" stroke={p.bodyDark} strokeWidth="2.2" strokeLinecap="round" />
+        <path d="M190,152 C196,156 204,156 210,152" fill="none" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.3" strokeLinecap="round" />
+        <Spec x={192} y={92} rx={14} ry={5} o={0.36} />
+        <Eye c={c} x={185} y={112} r={6.8} kind="almond" angle={10} flip />
+        <Eye c={c} x={215} y={112} r={6.8} kind="almond" angle={-10} />
+        <Gem c={c} x={200} y={96} s={0.44} />
+      </g>
     </g>
   );
 }
@@ -404,6 +401,6 @@ function ascended(c: Ctx) {
 export const aurelion: Renderer = {
   ...evolved,
   halo: [200, 22, 30],
-  stageFit: [1.25, 1.1, 1, 0.94],
+  stageFit: [1.15, 1.08, 1, 0.94],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

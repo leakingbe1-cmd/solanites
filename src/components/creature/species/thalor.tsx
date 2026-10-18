@@ -32,9 +32,9 @@ function Seam({ c, d, w = 1.8 }: { c: Ctx; d: string; w?: number }) {
   return <path d={d} fill="none" stroke={c.p.accent} strokeWidth={w} strokeLinecap="round" filter={c.u("glow")} className="sl-rune-pulse" opacity={0.55 + 0.45 * c.mark} />;
 }
 
-/** Nacre armour bands across the back, clipped to the body outline. */
-function Bands({ c, clip, body, xs, top, bottom, lean = 10 }: { c: Ctx; clip: string; body: string; xs: number[]; top: number; bottom: number; lean?: number }) {
-  const { p } = c;
+/** Overlapping armour scales (rounded edge toward the tail), clipped to the body outline. Listed tail-first so front scales overlap. */
+function Scales({ c, clip, body, plates }: { c: Ctx; clip: string; body: string; plates: [number, number, number, number][] }) {
+  const { p, u } = c;
   return (
     <>
       <defs>
@@ -43,11 +43,11 @@ function Bands({ c, clip, body, xs, top, bottom, lean = 10 }: { c: Ctx; clip: st
         </clipPath>
       </defs>
       <g clipPath={`url(#${clip})`}>
-        {xs.map((x, i) => (
-          <g key={x}>
-            <path d={`M${x},${top} C${x + lean + 6},${top + 30} ${x + lean + 6},${bottom - 24} ${x + lean},${bottom} L${x + lean + 30},${bottom} C${x + lean + 36},${bottom - 24} ${x + lean + 36},${top + 30} ${x + 30},${top} Z`} fill={i % 2 ? p.bodyLight : p.horn} opacity={i % 2 ? 0.16 : 0.1} />
-            <path d={`M${x},${top} C${x + lean + 6},${top + 30} ${x + lean + 6},${bottom - 24} ${x + lean},${bottom}`} fill="none" stroke={p.bodyDark} strokeOpacity="0.4" strokeWidth="2" />
-            <Seam c={c} d={`M${x + 3},${top} C${x + lean + 9},${top + 30} ${x + lean + 9},${bottom - 24} ${x + lean + 3},${bottom}`} w={1.3} />
+        {plates.map(([x, y, a, k]) => (
+          <g key={`${x}${y}`} transform={`translate(${x} ${y}) rotate(${a}) scale(${k})`}>
+            <path d="M-4,-17 C18,-17 28,-8 28,0 C28,8 18,17 -4,17 Z" fill={u("body")} stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.6" />
+            <path d="M6,-13 C18,-12 24,-6 24,0 C24,6 18,12 6,13" fill="none" stroke={p.horn} strokeOpacity="0.55" strokeWidth="1.4" />
+            <path d="M10,-9 C17,-8 21,-4 21,0" fill="none" stroke={p.accent} strokeWidth="1.2" filter={u("glow")} opacity={0.4 + 0.4 * c.mark} className="sl-rune-pulse" />
           </g>
         ))}
       </g>
@@ -107,7 +107,7 @@ function hatchling(c: Ctx) {
       </g>
       <path d={body} fill={u("body")} {...rim(c)} />
       <path d="M100,234 C130,254 210,258 262,230 C244,248 208,260 170,260 C134,260 108,250 100,234 Z" fill={p.belly} opacity="0.6" />
-      <Bands c={c} clip={`${id}-th1`} body={body} xs={[184, 218]} top={150} bottom={206} />
+      <Scales c={c} clip={`${id}-th1`} body={body} plates={[[226, 186, 8, 0.85], [196, 178, 4, 0.9], [210, 208, 6, 0.8]]} />
       <Spec x={200} y={172} rx={40} ry={6} rot={-4} o={0.22} />
       {/* helmet plate */}
       <path d="M90,202 C90,176 112,160 142,158 C162,156 178,162 186,172 C172,180 164,194 162,210 C140,202 112,200 90,202 Z" fill={u("horn")} fillOpacity="0.68" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.3" />
@@ -149,7 +149,7 @@ function evolved(c: Ctx) {
       <Fin c={c} a={[232, 258]} t={[282, 286]} b={[276, 240]} rays={2} o={0.85} />
       <path d={body} fill={u("body")} {...rim(c)} />
       <path d="M76,236 C110,268 220,276 300,226 C276,254 222,274 162,274 C112,274 84,258 76,236 Z" fill={p.belly} opacity="0.6" />
-      <Bands c={c} clip={`${id}-th2`} body={body} xs={[176, 210, 244]} top={140} bottom={210} />
+      <Scales c={c} clip={`${id}-th2`} body={body} plates={[[268, 194, 14, 0.85], [236, 176, 6, 1], [246, 210, 10, 0.9], [200, 168, 2, 1.05], [210, 202, 6, 1], [176, 196, 2, 0.95]]} />
       <Spec x={214} y={164} rx={58} ry={7} rot={-3} o={0.22} />
       {/* broad helmet shield */}
       <path d="M64,200 C62,170 86,148 124,144 C150,141 172,148 184,160 C168,170 160,190 158,214 C128,204 94,200 64,200 Z" fill={u("horn")} fillOpacity="0.66" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="1.4" />
@@ -171,66 +171,103 @@ function evolved(c: Ctx) {
   );
 }
 
-/** Ascended: the Deepwarden — crowned helmet, cathedral fins, tusks, streamers and a vast crescent tail. */
+/** Ascended: the Deepwarden — surging up in a diagonal arc under a crowned helmet, cathedral fins and a vast ornate tail. */
 function ascended(c: Ctx) {
   const { p, u, id } = c;
-  const body = "M58,206 C56,162 98,136 158,134 C226,132 282,156 310,188 C320,200 318,214 306,224 C276,252 220,276 160,278 C102,280 60,256 58,206 Z";
+  // Heavy arched body: head high at upper left, curving down to the tail root at lower right.
+  const body = "M62,140 C62,104 94,80 132,80 C192,80 248,118 282,170 C304,206 318,250 324,288 C326,300 314,308 304,300 C286,272 256,250 216,238 C170,224 120,208 90,188 C72,176 62,160 62,140 Z";
+  const crown: [Pt, Pt, Pt][] = [
+    [[150, 84], [174, 96], [206, 44]],
+    [[128, 79], [152, 84], [180, 22]],
+    [[106, 80], [130, 79], [150, 14]],
+    [[86, 88], [108, 80], [118, 28]],
+  ];
   return (
-    <g transform="rotate(8 200 210)">
-      {/* trailing streamers */}
-      <g fill="none" strokeLinecap="round" className="sl-undulate" style={{ transformOrigin: "330px 210px" }}>
-        <path d="M352,118 C366,96 380,92 392,98" stroke={p.wingEdge} strokeOpacity="0.55" strokeWidth="2.2" />
-        <path d="M354,302 C368,326 382,330 392,322" stroke={p.wingEdge} strokeOpacity="0.55" strokeWidth="2.2" />
-        <path d="M232,318 C246,342 266,350 286,344" stroke={p.wingEdge} strokeOpacity="0.5" strokeWidth="2" />
-        <path d="M212,312 C220,336 236,350 254,354" stroke={p.wingEdge} strokeOpacity="0.4" strokeWidth="1.6" />
+    <g>
+      {/* tail streamers */}
+      <g fill="none" strokeLinecap="round" className="sl-undulate" style={{ transformOrigin: "330px 320px" }}>
+        <path d="M386,240 C396,224 392,206 380,198" stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="2.2" />
+        <path d="M378,252 C394,256 398,272 390,284" stroke={p.wingEdge} strokeOpacity="0.45" strokeWidth="1.6" />
+        <path d="M288,386 C268,396 250,392 242,380" stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="2.2" />
+        <path d="M300,380 C304,394 292,400 280,398" stroke={p.wingEdge} strokeOpacity="0.45" strokeWidth="1.6" />
       </g>
-      {/* vast crescent tail */}
-      <g className="sl-sway" style={{ transformOrigin: "304px 206px" }}>
-        <path d="M300,206 C328,190 346,156 352,112 C356,102 368,104 368,116 C366,160 358,188 354,206 C358,226 366,256 368,298 C368,310 356,312 352,302 C344,258 328,222 300,206 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.75" strokeWidth="1.4" />
-        <path d="M314,200 L356,122 M318,206 L354,206 M314,212 L356,292 M326,192 L346,158 M326,220 L346,256" stroke={p.wingEdge} strokeOpacity="0.45" strokeWidth="1.1" />
-        <Seam c={c} d="M352,112 C356,150 352,186 354,206 C356,232 364,264 368,298" w={1.2} />
+      {/* huge ornate crescent tail sweeping down and back */}
+      <g className="sl-sway" style={{ transformOrigin: "316px 298px" }}>
+        <path d="M312,296 C336,286 362,266 386,240 C392,236 396,242 392,248 C376,272 362,296 354,318 C340,336 312,360 290,386 C284,392 278,386 282,380 C296,354 308,326 312,296 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.8" strokeWidth="1.5" />
+        <path d="M354,318 C346,306 336,300 326,300 C334,312 340,324 342,334 Z" fill={p.wing} opacity="0.55" />
+        {[[386, 244], [368, 270], [354, 300], [320, 350], [300, 374], [288, 384]].map(([x, y]) => (
+          <path key={x} d={`M316,300 L${round(316 + (x - 316) * 0.92)},${round(300 + (y - 300) * 0.92)}`} stroke={p.wingEdge} strokeOpacity="0.45" strokeWidth="1.1" />
+        ))}
+        <Seam c={c} d="M386,240 C372,262 360,290 354,318 C340,336 312,360 290,386" w={1.3} />
+        <Dots c={c} pts={[[372, 258], [358, 286], [326, 346], [306, 368]]} r={1.7} />
       </g>
-      {/* towering cathedral dorsal fins: two layers, back to front */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "214px 140px" }}>
-        <Fin c={c} a={[246, 150]} t={[294, 86]} b={[302, 182]} rays={3} o={0.8} />
-        <Fin c={c} a={[206, 140]} t={[258, 50]} b={[276, 156]} rays={5} o={0.9} />
-        <Fin c={c} a={[162, 136]} t={[214, 36]} b={[236, 142]} rays={5} />
-        <Fin c={c} a={[214, 142]} t={[240, 92]} b={[256, 150]} rays={2} o={0.75} />
+      {/* back row of cathedral dorsal fins */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "240px 140px" }}>
+        <Fin c={c} a={[184, 92]} t={[240, 16]} b={[228, 116]} rays={5} o={0.75} />
+        <Fin c={c} a={[228, 116]} t={[296, 50]} b={[264, 150]} rays={5} o={0.75} />
+        <Fin c={c} a={[264, 150]} t={[340, 104]} b={[292, 190]} rays={4} o={0.75} />
       </g>
-      <Fin c={c} a={[230, 262]} t={[290, 300]} b={[284, 236]} rays={3} o={0.85} />
+      {/* far pectoral wing, spread down and back */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "176px 212px" }}>
+        <Fin c={c} a={[168, 206]} t={[244, 330]} b={[214, 228]} rays={5} o={0.8} />
+      </g>
       <path d={body} fill={u("body")} {...rim(c)} />
-      <path d="M72,236 C110,272 224,282 304,222 C278,254 224,280 162,280 C108,280 80,262 72,236 Z" fill={p.belly} opacity="0.6" />
-      <Bands c={c} clip={`${id}-th3`} body={body} xs={[176, 206, 236, 266]} top={126} bottom={212} />
-      <Spec x={222} y={150} rx={62} ry={7} rot={-4} o={0.22} />
-      {/* swept-back horn ridges of the crown */}
-      {[
-        "M150,146 C170,120 200,104 236,100 C206,114 184,132 168,154 Z",
-        "M128,140 C140,108 164,84 196,72 C174,96 160,120 150,146 Z",
-        "M104,142 C108,112 122,88 144,72 C134,98 128,122 128,144 Z",
-      ].map((d) => (
-        <g key={d}>
-          <path d={d} fill={u("horn")} fillOpacity="0.85" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="1.3" />
-        </g>
-      ))}
-      <Seam c={c} d="M140,140 C150,116 168,96 192,78" w={1.3} />
-      {/* crowned helmet shield */}
-      <path d="M58,196 C56,164 82,140 122,134 C150,130 176,138 190,152 C172,164 164,186 162,212 C128,200 92,196 58,196 Z" fill={u("horn")} fillOpacity="0.66" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="1.5" />
-      <path d="M74,172 C90,152 120,144 154,146" fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth="2" strokeLinecap="round" />
-      <path d="M86,176 C100,166 120,164 134,170" fill="none" stroke={p.bodyDark} strokeOpacity="0.7" strokeWidth="4.4" strokeLinecap="round" />
-      <path d="M108,150 C116,166 120,182 120,196 M142,144 C146,162 146,182 144,200" fill="none" stroke={p.bodyDark} strokeOpacity="0.25" strokeWidth="1.4" />
-      <Seam c={c} d="M60,196 C96,194 128,200 162,212" w={2} />
-      {/* jaw & tusks */}
-      <path d="M62,226 C78,240 104,248 130,244" fill="none" stroke={p.bodyDark} strokeOpacity="0.7" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M74,234 C64,220 64,204 72,192 C74,206 78,220 84,236 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.45" />
-      <path d="M96,242 C90,230 90,218 96,208 C98,220 100,232 104,244 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.45" />
-      {/* great layered pectoral fins */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "160px 236px" }}>
-        <Fin c={c} a={[170, 236]} t={[262, 300]} b={[206, 246]} rays={3} o={0.8} />
-        <Fin c={c} a={[148, 232]} t={[226, 320]} b={[188, 244]} rays={4} />
+      <path d="M86,186 C122,212 176,226 220,240 C258,252 290,276 306,302 C290,284 264,262 224,250 C176,236 120,222 86,186 Z" fill={p.belly} opacity="0.55" />
+      <Scales
+        c={c}
+        clip={`${id}-th3`}
+        body={body}
+        plates={[
+          [282, 236, 66, 0.9],
+          [258, 196, 56, 1],
+          [270, 222, 62, 0.85],
+          [230, 158, 44, 1.05],
+          [240, 188, 50, 1],
+          [196, 130, 30, 1.1],
+          [204, 164, 36, 1],
+          [166, 118, 18, 1.05],
+        ]}
+      />
+      <Spec x={196} y={102} rx={46} ry={6} rot={26} o={0.2} />
+      {/* front row of dorsal fins */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "240px 140px" }}>
+        <Fin c={c} a={[196, 98]} t={[230, 46]} b={[222, 112]} rays={3} />
+        <Fin c={c} a={[236, 124]} t={[282, 84]} b={[256, 146]} rays={3} />
+        <Fin c={c} a={[270, 160]} t={[318, 140]} b={[286, 184]} rays={3} />
       </g>
-      <Eye c={c} x={104} y={190} r={9.5} kind="almond" flip />
-      <Dots c={c} pts={[[174, 238], [196, 244], [218, 246], [240, 242], [262, 234], [284, 222], [300, 212]]} r={2} />
-      <Gem c={c} x={124} y={156} s={0.62} />
+      {/* crown: swept-back horn ridges, back to front */}
+      {crown.map(([b0, b1, t]) => {
+        const k1: Pt = [round(b0[0] + (t[0] - b0[0]) * 0.15), round(b0[1] + (t[1] - b0[1]) * 0.7)];
+        const k2: Pt = [round(b1[0] + (t[0] - b1[0]) * 0.55), round(b1[1] + (t[1] - b1[1]) * 0.3)];
+        return (
+          <g key={t[0]}>
+            <path d={`M${b0} Q${k1} ${t} Q${k2} ${b1} Z`} fill={p.wing} stroke={p.bodyDark} strokeOpacity="0.7" strokeWidth="1.4" />
+            <path d={`M${b0} Q${k1} ${t} Q${k2} ${b1} Z`} fill={u("horn")} opacity="0.35" />
+            <path d={`M${b0} Q${k1} ${t} Q${k2} ${b1}`} fill="none" stroke={p.horn} strokeOpacity="0.8" strokeWidth="1.6" strokeLinejoin="round" />
+            <circle cx={t[0]} cy={t[1]} r="2.6" fill={p.accent} filter={u("glow")} className="sl-twinkle" />
+          </g>
+        );
+      })}
+      <Seam c={c} d="M120,80 C128,58 138,34 148,18" w={1.2} />
+      {/* dark crowned helmet with a nacre edge */}
+      <path d="M62,134 C60,104 86,82 122,78 C150,75 172,84 186,100 C166,110 154,128 150,152 C120,142 90,136 62,134 Z" fill={u("body")} stroke={p.horn} strokeOpacity="0.85" strokeWidth="2.4" />
+      <path d="M62,134 C60,104 86,82 122,78 C150,75 172,84 186,100 C166,110 154,128 150,152 C120,142 90,136 62,134 Z" fill={p.bodyDark} opacity="0.45" />
+      <path d="M74,116 C88,96 114,86 146,86" fill="none" stroke={p.horn} strokeOpacity="0.6" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M110,88 C118,104 122,120 122,138 M144,84 C146,104 146,124 144,146" fill="none" stroke={p.horn} strokeOpacity="0.25" strokeWidth="1.3" />
+      <path d="M84,120 C96,110 116,108 130,114" fill="none" stroke={p.bodyDark} strokeOpacity="0.8" strokeWidth="4.6" strokeLinecap="round" />
+      <Seam c={c} d="M64,134 C94,136 124,142 150,152" w={2} />
+      {/* jaw & tusks */}
+      <path d="M64,158 C80,170 104,176 130,172" fill="none" stroke={p.bodyDark} strokeOpacity="0.75" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="M76,166 C64,152 62,136 68,122 C72,138 78,152 88,166 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" />
+      <path d="M100,174 C92,162 90,150 94,138 C98,150 102,162 110,174 Z" fill={u("horn")} stroke={p.bodyDark} strokeOpacity="0.5" />
+      {/* near pectoral wing, spread wide forward and down */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "150px 196px" }}>
+        <Fin c={c} a={[176, 212]} t={[54, 292]} b={[138, 194]} rays={5} />
+        <path d="M54,292 C40,302 36,318 46,330" fill="none" stroke={p.wingEdge} strokeOpacity="0.55" strokeWidth="1.8" strokeLinecap="round" className="sl-undulate" />
+      </g>
+      <Eye c={c} x={102} y={126} r={9.5} kind="almond" flip angle={20} />
+      <Dots c={c} pts={[[160, 196], [188, 208], [216, 222], [242, 236], [264, 254], [284, 274]]} r={2} />
+      <Gem c={c} x={124} y={96} s={0.62} />
     </g>
   );
 }
@@ -238,7 +275,7 @@ function ascended(c: Ctx) {
 export const thalor: Renderer = {
   floating: true,
   shadow: 120,
-  halo: [176, 22, 30],
+  halo: [150, -4, 30],
   stageFit: [1.3, 1.12, 1, 0.88],
   render: byStage(eggling, hatchling, evolved, ascended),
 };

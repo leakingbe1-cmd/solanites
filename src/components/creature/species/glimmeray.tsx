@@ -130,77 +130,78 @@ function hatchling(c: Ctx) {
   );
 }
 
-/** Ascended: rising with wings arched high, trailing ribbons of light and caustic light on its back. */
+/** Ascended: a majestic manta in a gliding swoop — one wingtip lifted, one lowered, light streaming behind. */
 function ascended(c: Ctx) {
   const { p, u } = c;
-  // A wing arching up and out, drawn for the left side and mirrored.
-  const wing = "M196,196 C160,176 110,150 70,118 C52,104 36,98 22,100 C24,140 36,190 70,226 C100,254 140,258 170,250 C182,240 190,226 196,214 Z";
-  const ribbons = [
-    ["M70,226 C48,246 56,272 34,292 C22,304 22,320 12,330", 0],
-    ["M124,254 C108,276 122,300 98,324 C90,332 88,342 80,350", 0.6],
-  ] as const;
-  const spots: [number, number][] = [[150, 200], [120, 186], [92, 166], [64, 144], [136, 226], [100, 208], [62, 184], [40, 132]];
+  // One continuous S-waved outline: lifted left wing, broad head, lowered right wing.
+  const outline =
+    "M200,152 C150,150 96,128 40,98 C20,88 2,86 -10,92 C-4,120 20,146 44,166 C70,188 74,214 110,232 C134,244 156,250 174,262 C184,270 192,272 200,274 C210,272 218,268 228,264 C252,272 280,274 306,268 C336,262 362,258 386,256 C400,255 410,252 414,244 C392,224 366,206 336,190 C300,172 252,154 200,152 Z";
+  const trailing = "M-10,92 C-4,120 20,146 44,166 C70,188 74,214 110,232 C134,244 156,250 174,262 M228,264 C252,272 280,274 306,268 C336,262 362,258 386,256 C400,255 410,252 414,244";
+  const streamers = [
+    { d: "M-6,96 C2,140 34,150 46,190 C58,230 96,226 116,262 C134,294 150,300 166,330 C174,346 184,356 188,374", delay: 0 },
+    { d: "M410,248 C396,276 366,272 342,292 C318,312 300,300 278,322 C258,342 250,352 238,366 C232,374 228,380 224,388", delay: 0.7 },
+  ];
+  const stars: [number, number][] = [[60, 134], [96, 150], [132, 178], [96, 196], [150, 214], [252, 206], [292, 222], [336, 214], [306, 246], [372, 238]];
   return (
     <g>
-      {/* long whip tail with a glowing tip */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "200px 262px" }}>
-        <path d="M200,258 C210,292 240,312 230,350 C226,366 214,376 202,384" fill="none" stroke={p.bodyDark} strokeWidth="7" strokeLinecap="round" />
-        <path d="M200,258 C210,292 240,312 230,350 C226,366 214,376 202,384" fill="none" stroke={p.body} strokeWidth="4" strokeLinecap="round" />
-        <circle cx="202" cy="384" r="5" fill={p.accent} filter={u("glow")} className="sl-core" />
-      </g>
-      {[false, true].map((m) => (
-        <g key={String(m)} transform={m ? MIRROR : undefined}>
-          {/* translucent light ribbons trailing from the wing edge */}
-          <g className="sl-sway" style={{ transformOrigin: "70px 226px" }}>
-            {ribbons.map(([d, delay]) => (
-              <g key={d}>
-                <path d={d} fill="none" stroke={p.wingEdge} strokeOpacity="0.22" strokeWidth="6" strokeLinecap="round" />
-                <path d={d} fill="none" stroke={p.accent} strokeWidth="1.6" filter={u("glow")} className="sl-twinkle" style={{ animationDelay: `${delay}s` }} />
-              </g>
-            ))}
-          </g>
-          <g className="sl-glide" style={{ transformOrigin: "196px 210px" }}>
-            <path d={wing} fill={u("body")} {...rim(c)} />
-            {/* pale underside visible where the wing arches up */}
-            <path d="M22,100 C24,140 36,190 70,226 C100,254 140,258 170,250 C124,240 84,214 58,176 C40,150 30,124 22,100 Z" fill={p.belly} opacity="0.45" />
-            <path d="M22,100 C24,140 36,190 70,226 C100,254 140,258 170,250" fill="none" stroke={p.wingEdge} strokeWidth="3" strokeOpacity="0.8" />
-            <path d="M190,194 C150,172 104,146 64,120" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="3" strokeLinecap="round" />
-            {/* iridescent spots */}
-            <g opacity={c.mark}>
-              {spots.map(([x, y], i) => (
-                <circle key={i} cx={x} cy={y} r={i % 2 ? 3 : 4} fill={i % 3 ? p.belly : p.accent} opacity="0.85" />
-              ))}
-            </g>
-          </g>
+      {/* streamers trail behind from each wingtip, alongside the tail */}
+      {streamers.map(({ d, delay }) => (
+        <g key={d} className="sl-sway-slow" style={{ transformOrigin: "200px 260px", animationDelay: `${delay}s` }}>
+          {/* a silky ribbon: a soft translucent band with fine strands of light */}
+          <path d={d} fill="none" stroke={p.wingEdge} strokeOpacity="0.1" strokeWidth="16" strokeLinecap="round" />
+          <path d={d} transform="translate(-4 2)" fill="none" stroke={p.accent} strokeOpacity="0.4" strokeWidth="1.2" strokeLinecap="round" />
+          <path d={d} transform="translate(4 -2)" fill="none" stroke={p.accent} strokeOpacity="0.3" strokeWidth="1" strokeLinecap="round" />
+          <path d={d} fill="none" stroke={p.accent} strokeOpacity="0.85" strokeWidth="1.6" strokeLinecap="round" filter={u("glow")} className="sl-twinkle" />
         </g>
       ))}
-      {/* body with caustic light */}
-      <ellipse cx="200" cy="216" rx="34" ry="58" fill={u("body")} {...rim(c, 1)} />
-      <ellipse cx="200" cy="216" rx="34" ry="58" fill={u("shade")} />
-      <g fill="none" stroke={p.bodyLight} strokeOpacity="0.55" strokeWidth="1.4" className="sl-shimmer-facet">
-        <path d="M180,206 C188,200 196,204 200,212 C206,204 214,202 220,208 M186,230 C192,224 200,226 204,234 C208,228 214,228 218,232 M190,250 C196,246 204,248 206,254" />
+      {/* long whip tail with a glowing tip */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "200px 270px" }}>
+        <path d="M200,270 C206,300 230,318 224,350 C220,366 210,378 204,390" fill="none" stroke={p.bodyDark} strokeWidth="7" strokeLinecap="round" />
+        <path d="M200,270 C206,300 230,318 224,350 C220,366 210,378 204,390" fill="none" stroke={p.body} strokeWidth="4" strokeLinecap="round" />
+        <circle cx="204" cy="390" r="5" fill={p.accent} filter={u("glow")} className="sl-core" />
       </g>
-      <Spec x={190} y={186} rx={10} ry={22} rot={0} o={0.32} />
-      {/* fully curled lobes */}
-      <path d="M184,160 C166,150 160,128 172,110 C182,106 186,116 180,124 C184,138 192,148 198,156 Z" fill={u("body")} {...rim(c, 1)} />
-      <path d="M184,160 C166,150 160,128 172,110 C182,106 186,116 180,124 C184,138 192,148 198,156 Z" transform={MIRROR} fill={u("body")} {...rim(c, 1)} />
-      {/* crown of light between the lobes */}
-      <g filter={u("glow")} className="sl-twinkle">
-        <path d="M200,148 L196,128 L200,112 L204,128 Z" fill={p.accent} />
-        <circle cx="186" cy="118" r="2.4" fill={p.wingEdge} />
-        <circle cx="214" cy="118" r="2.4" fill={p.wingEdge} />
+      <g className="sl-glide" style={{ transformOrigin: "200px 210px" }}>
+        <path d={outline} fill={u("body")} {...rim(c)} />
+        {/* underside of the lifted left wing, turned toward us near the tip */}
+        <path d="M-10,92 C-4,120 20,146 44,166 C40,140 30,116 40,98 C20,88 2,86 -10,92 Z" fill={p.belly} opacity="0.55" />
+        {/* underside of the lowered right wing along its trailing edge */}
+        <path d="M228,264 C252,272 280,274 306,268 C336,262 362,258 386,256 C400,255 410,252 414,244 C380,250 330,252 290,258 C266,262 244,262 228,264 Z" fill={p.belly} opacity="0.5" />
+        <path d={trailing} fill="none" stroke={p.wingEdge} strokeWidth="3" strokeOpacity="0.8" />
+        <path d="M196,160 C150,158 96,136 34,102 M204,160 C254,162 304,180 352,206" fill="none" stroke="#fff" strokeOpacity="0.22" strokeWidth="3" strokeLinecap="round" />
+        {/* caustic light rippling over the wings */}
+        <g fill="none" stroke={p.bodyLight} strokeOpacity="0.4" strokeWidth="1.3" className="sl-shimmer-facet">
+          <path d="M60,124 C74,118 84,130 98,124 C112,118 120,132 136,128 M70,170 C84,162 96,176 112,170 C124,166 132,178 146,176" />
+          <path d="M250,184 C264,178 274,192 290,186 C304,180 314,194 330,190 M256,236 C270,228 282,242 298,236 C312,230 324,242 340,238" />
+        </g>
+        {/* glowing constellation across the wings */}
+        <g opacity={c.mark}>
+          <polyline points={stars.slice(0, 5).map(([x, y]) => `${x},${y}`).join(" ")} fill="none" stroke="#fff" strokeOpacity="0.35" strokeWidth="0.8" />
+          <polyline points={stars.slice(5).map(([x, y]) => `${x},${y}`).join(" ")} fill="none" stroke="#fff" strokeOpacity="0.35" strokeWidth="0.8" />
+          <Dots c={c} pts={stars} r={2.6} color={p.accent} />
+        </g>
       </g>
-      <Eye c={c} x={176} y={168} r={6} kind="almond" angle={-8} />
-      <Eye c={c} x={224} y={168} r={6} kind="almond" angle={8} flip />
-      <Dots c={c} pts={[[200, 262], [194, 276], [206, 290]]} r={1.8} />
-      <Gem c={c} x={200} y={212} s={0.8} />
+      {/* broad head and body ridge */}
+      <path d="M148,180 C148,164 170,156 200,156 C230,156 252,164 252,180 C254,216 238,252 200,268 C162,252 146,216 148,180 Z" fill={u("body")} {...rim(c, 1)} />
+      <path d="M148,180 C148,164 170,156 200,156 C230,156 252,164 252,180 C254,216 238,252 200,268 C162,252 146,216 148,180 Z" fill={u("shade")} />
+      <path d="M168,162 C184,158 216,158 232,162" fill="none" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M166,168 C184,164 216,164 234,168" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" />
+      <Spec x={188} y={186} rx={10} ry={22} rot={0} o={0.3} />
+      {/* elegant cephalic lobes, spiralling inward */}
+      <g className="sl-sway-slow" style={{ transformOrigin: "200px 156px" }}>
+        <path d="M152,170 C142,160 142,142 154,134 C166,128 178,136 176,146 C174,154 164,154 164,146 C158,152 160,164 170,170 Z" fill={u("body")} {...rim(c, 1)} />
+        <path d="M152,170 C142,160 142,142 154,134 C166,128 178,136 176,146 C174,154 164,154 164,146 C158,152 160,164 170,170 Z" transform={MIRROR} fill={u("body")} {...rim(c, 1)} />
+      </g>
+      <Eye c={c} x={164} y={178} r={6.5} kind="almond" angle={-10} />
+      <Eye c={c} x={236} y={178} r={6.5} kind="almond" angle={10} flip />
+      <path d="M182,192 L186,196 M218,192 L214,196" stroke={p.bodyDark} strokeOpacity="0.5" strokeWidth="1.6" strokeLinecap="round" />
+      <Gem c={c} x={200} y={214} s={0.85} />
     </g>
   );
 }
 
 export const glimmeray: Renderer = {
   ...evolved,
-  halo: [200, 92, 26],
-  stageFit: [1.35, 1.15, 1, 0.98],
+  halo: [200, 108, 26],
+  stageFit: [1.35, 1.15, 1, 0.88],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

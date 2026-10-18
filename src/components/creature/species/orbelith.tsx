@@ -54,7 +54,7 @@ function Comet({ c, p0, p1, p2, p3, w, delay = 0, nucleus = 3 }: { c: Ctx; p0: P
   return (
     <g className="sl-sway-slow" style={{ transformOrigin: `${p0[0]}px ${p0[1]}px`, animationDelay: `${delay}s` }}>
       <path d={taper(p0, p1, p2, p3, w * 1.8)} fill={p.accent} opacity="0.18" filter={u("glow")} />
-      <path d={taper(p0, p1, p2, p3, w)} fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.35" strokeWidth="0.8" />
+      <path d={taper(p0, p1, p2, p3, w)} fill={u("fin")} opacity="0.7" stroke={p.wingEdge} strokeOpacity="0.35" strokeWidth="0.8" />
       <path d={core} fill="none" stroke="#fff" strokeOpacity="0.55" strokeWidth={round(Math.max(1, w * 0.12))} strokeLinecap="round" strokeDasharray="1 6" />
       <circle cx={p3[0]} cy={p3[1]} r={round(nucleus * 2.4)} fill={p.eye} opacity="0.45" filter={u("glow")} className="sl-twinkle" />
       <circle cx={p3[0]} cy={p3[1]} r={nucleus} fill="#fff" />
@@ -98,7 +98,7 @@ function Orb({ c, sid, cx, cy, r, tilt, bands, storm = false, stars = 0.6 }: { c
         </g>
         <rect x={round(cx - r)} y={round(cy - r)} width={r * 2} height={r * 2} fill={u("stars")} opacity={stars} className="sl-twinkle" />
         {/* night side */}
-        <circle cx={round(cx + r * 0.45)} cy={round(cy + r * 0.5)} r={round(r * 1.05)} fill={p.belly} opacity="0.32" />
+        <circle cx={round(cx + r * 0.5)} cy={round(cy + r * 0.55)} r={round(r * 0.95)} fill={p.belly} opacity="0.45" filter={u("blur20")} />
       </g>
       <circle cx={cx} cy={cy} r={r} fill={u("shade")} {...rim(c)} />
       {/* atmospheric limb on the lit side */}
@@ -207,8 +207,8 @@ function eggling(c: Ctx) {
   return (
     <g>
       {/* two stubby comet wisps, just budding */}
-      <Comet c={c} p0={[184, 258]} p1={[180, 278]} p2={[170, 290]} p3={[160, 300]} w={10} nucleus={2.2} />
-      <Comet c={c} p0={[216, 258]} p1={[222, 276]} p2={[232, 286]} p3={[242, 292]} w={9} delay={0.7} nucleus={2} />
+      <Comet c={c} p0={[156, 240]} p1={[144, 256]} p2={[130, 258]} p3={[118, 270]} w={10} delay={0.0} nucleus={2.2} />
+      <Comet c={c} p0={[176, 260]} p1={[170, 276]} p2={[158, 284]} p3={[150, 296]} w={9} delay={0.5} nucleus={2} />
       <Coil c={c} cx={cx} cy={232} a={104} b={20} rot={-8} w={3} near={false} />
       <Orb c={c} sid="egg" cx={cx} cy={cy} r={R} tilt={-8} stars={0.35} bands={[[0.38, 0.12, "dark"], [0.62, 0.2, "belly"], [-0.5, 0.08, "light"]]} />
       {/* soft cheeks and a tiny smile */}
@@ -219,7 +219,7 @@ function eggling(c: Ctx) {
       <ellipse cx="200" cy="202" rx="25" ry="24" fill={p.bodyDark} opacity="0.35" />
       <Eye c={c} x={200} y={200} r={19} kind="round" />
       <path d="M178,184 C188,172 212,172 222,184" fill="none" stroke={p.bodyLight} strokeOpacity="0.7" strokeWidth="1.6" strokeLinecap="round" />
-      <Gem c={c} x={200} y={160} s={0.48} />
+      <Gem c={c} x={200} y={162} s={0.6} />
       {/* thin faint ring in front */}
       <Coil c={c} cx={cx} cy={232} a={104} b={20} rot={-8} w={3} near />
       <g opacity="0.85">
@@ -240,12 +240,15 @@ function hatchling(c: Ctx) {
   const ring = { cx, cy: 218, a: 128, b: 30, rot: -12 };
   return (
     <g>
-      <Comet c={c} p0={[176, 252]} p1={[166, 282]} p2={[150, 300]} p3={[132, 316]} w={14} nucleus={2.6} />
-      <Comet c={c} p0={[206, 262]} p1={[208, 290]} p2={[200, 306]} p3={[190, 322]} w={13} delay={0.5} nucleus={2.4} />
-      <Comet c={c} p0={[232, 252]} p1={[244, 276]} p2={[258, 290]} p3={[272, 298]} w={11} delay={1} nucleus={2.2} />
+      <Comet c={c} p0={[152, 224]} p1={[132, 246]} p2={[106, 248]} p3={[84, 268]} w={12} delay={0.0} nucleus={2.6} />
+      <Comet c={c} p0={[166, 248]} p1={[150, 276]} p2={[124, 286]} p3={[108, 310]} w={12} delay={0.5} nucleus={2.4} />
+      <Comet c={c} p0={[190, 262]} p1={[182, 292]} p2={[160, 304]} p3={[148, 326]} w={10} delay={1.0} nucleus={2.2} />
       <Coil c={c} {...ring} w={8} near={false} />
       <Orb c={c} sid="hatch" cx={cx} cy={cy} r={R} tilt={-12} stars={0.5} bands={[[-0.55, 0.1, "light"], [0.18, 0.1, "dark"], [0.42, 0.14, "belly"], [0.7, 0.08, "dark"]]} />
-      <Gem c={c} x={200} y={186} s={0.7} />
+      {/* the baby eye, now drowsy and sinking as the ring-eyes take over */}
+      <ellipse cx="200" cy="214" rx="15" ry="11" fill={p.bodyDark} opacity="0.3" />
+      <Eye c={c} x={200} y={213} r={10} kind="lidded" />
+      <Gem c={c} x={200} y={176} s={0.66} />
       <Coil c={c} {...ring} w={8} near segs={9} />
       <CoilEyes c={c} {...ring} ts={[48, 90, 132]} r={5.6} bezel={1.6} />
       <Orbiting c={c} cx={cx} cy={cy} at={[316, 122]} r={9} />
@@ -260,9 +263,9 @@ function evolved(c: Ctx) {
   const ring = { cx: 200, cy: 210, a: 150, b: 38, rot: -14 };
   return (
     <g>
-      <Comet c={c} p0={[166, 250]} p1={[148, 290]} p2={[118, 318]} p3={[84, 344]} w={18} nucleus={3} />
-      <Comet c={c} p0={[198, 264]} p1={[198, 300]} p2={[184, 330]} p3={[166, 356]} w={17} delay={0.6} nucleus={2.8} />
-      <Comet c={c} p0={[232, 254]} p1={[248, 288]} p2={[248, 316]} p3={[240, 344]} w={14} delay={1.2} nucleus={2.6} />
+      <Comet c={c} p0={[150, 214]} p1={[120, 236]} p2={[86, 236]} p3={[54, 262]} w={14} delay={0.0} nucleus={3} />
+      <Comet c={c} p0={[160, 240]} p1={[134, 276]} p2={[100, 282]} p3={[72, 312]} w={14} delay={0.5} nucleus={2.8} />
+      <Comet c={c} p0={[182, 258]} p1={[166, 300]} p2={[132, 316]} p3={[112, 348]} w={12} delay={1.0} nucleus={2.6} />
       <Coil c={c} {...ring} w={13} near={false} sheet={16} segs={11} />
       <Orb c={c} sid="evo" cx={200} cy={200} r={70} tilt={-14} storm stars={0.7} bands={[[-0.66, 0.08, "light"], [-0.3, 0.1, "dark"], [0.06, 0.14, "belly"], [0.36, 0.08, "light"], [0.58, 0.12, "dark"]]} />
       <Gem c={c} x={200} y={180} s={0.85} />
@@ -282,8 +285,8 @@ function ascended(c: Ctx) {
   const cx = 200;
   const cy = 196;
   const main = { cx, cy: 204, a: 164, b: 44, rot: -20 };
-  const cross = { cx, cy: 194, a: 120, b: 30, rot: 34 };
-  const rays = [-70, -50, -30, -10, 10, 30, 50, 70];
+  const cross = { cx, cy: 196, a: 112, b: 24, rot: 58 };
+  const rays = [-60, -40, -20, 0, 20, 40, 60];
   return (
     <g>
       <defs>
@@ -298,9 +301,9 @@ function ascended(c: Ctx) {
       <g opacity="0.85">
         {rays.map((a, i) => {
           const r0 = 78;
-          const r1 = i % 2 ? 112 : 124;
+          const r1 = i % 2 ? 106 : 122;
           const t = ((a - 90) * Math.PI) / 180;
-          const s = 0.06;
+          const s = 0.045;
           const x0 = round(cx + Math.cos(t - s) * r0);
           const y0 = round(cy + Math.sin(t - s) * r0);
           const x1 = round(cx + Math.cos(t) * r1);
@@ -316,11 +319,11 @@ function ascended(c: Ctx) {
         })}
       </g>
       {/* long spiralling comet tails */}
-      <Comet c={c} p0={[150, 236]} p1={[110, 272]} p2={[66, 286]} p3={[40, 318]} w={20} nucleus={3.2} />
-      <Comet c={c} p0={[176, 260]} p1={[160, 306]} p2={[124, 334]} p3={[96, 364]} w={20} delay={0.5} nucleus={3.2} />
-      <Comet c={c} p0={[208, 268]} p1={[214, 314]} p2={[196, 344]} p3={[180, 376]} w={18} delay={1} nucleus={3} />
-      <Comet c={c} p0={[238, 258]} p1={[262, 296]} p2={[274, 330]} p3={[266, 364]} w={16} delay={1.5} nucleus={2.8} />
-      <Comet c={c} p0={[258, 240]} p1={[296, 266]} p2={[326, 296]} p3={[346, 330]} w={13} delay={2} nucleus={2.6} />
+      <Comet c={c} p0={[140, 208]} p1={[104, 224]} p2={[70, 216]} p3={[36, 236]} w={13} delay={0.0} nucleus={3} />
+      <Comet c={c} p0={[146, 236]} p1={[110, 268]} p2={[74, 266]} p3={[44, 296]} w={15} delay={0.5} nucleus={3.2} />
+      <Comet c={c} p0={[160, 258]} p1={[136, 298]} p2={[98, 306]} p3={[72, 340]} w={15} delay={1.0} nucleus={3.2} />
+      <Comet c={c} p0={[184, 268]} p1={[172, 316]} p2={[136, 334]} p3={[116, 368]} w={13} delay={1.5} nucleus={3} />
+      <Comet c={c} p0={[210, 272]} p1={[212, 320]} p2={[188, 346]} p3={[170, 374]} w={11} delay={2.0} nucleus={2.6} />
       <Coil c={c} {...main} w={15} near={false} sheet={22} segs={12} />
       <Coil c={c} {...cross} w={9} near={false} segs={9} />
       <Orb c={c} sid="asc" cx={cx} cy={cy} r={76} tilt={-20} storm stars={0.85} bands={[[-0.72, 0.07, "light"], [-0.44, 0.1, "dark"], [-0.12, 0.06, "light"], [0.04, 0.16, "belly"], [0.34, 0.08, "light"], [0.54, 0.12, "dark"], [0.78, 0.1, "belly"]]} />

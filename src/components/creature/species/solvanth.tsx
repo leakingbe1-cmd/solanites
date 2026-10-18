@@ -50,20 +50,31 @@ function bez(a: [number, number], b: [number, number], c: [number, number], d: [
 
 const line = (pts: [number, number][]) => pts.map(([x, y], i) => `${i ? "L" : "M"}${round(x)},${round(y)}`).join(" ");
 
-/** Unit normal at sample i, flipped to point away from the sun (the dorsal side). */
+const normals = new WeakMap<P[], [number, number][]>();
+
+/**
+ * Unit normal at sample i. The first one points away from the sun (the
+ * dorsal side); the rest follow on continuously so the body never twists.
+ */
 function normal(pts: P[], i: number, sun: [number, number]): [number, number] {
-  const a = pts[Math.max(0, i - 1)];
-  const b = pts[Math.min(pts.length - 1, i + 1)];
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  const l = Math.hypot(dx, dy) || 1;
-  let nx = -dy / l;
-  let ny = dx / l;
-  if (nx * (pts[i].x - sun[0]) + ny * (pts[i].y - sun[1]) < 0) {
-    nx = -nx;
-    ny = -ny;
+  let ns = normals.get(pts);
+  if (!ns) {
+    ns = [];
+    for (let j = 0; j < pts.length; j++) {
+      const a = pts[Math.max(0, j - 1)];
+      const b = pts[Math.min(pts.length - 1, j + 1)];
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      const l = Math.hypot(dx, dy) || 1;
+      let n: [number, number] = [-dy / l, dx / l];
+      const prev = ns[j - 1];
+      const flip = prev ? n[0] * prev[0] + n[1] * prev[1] < 0 : n[0] * (pts[j].x - sun[0]) + n[1] * (pts[j].y - sun[1]) < 0;
+      if (flip) n = [-n[0], -n[1]];
+      ns.push(n);
+    }
+    normals.set(pts, ns);
   }
-  return [nx, ny];
+  return ns[i];
 }
 
 /** Offset of the centreline by s (−1 inner/belly … +1 outer/back) of the half-width. */
@@ -76,17 +87,64 @@ const side = (pts: P[], s: number, sun: [number, number], from = 0, to = pts.len
 /**
  * A band along the body offset toward the light (screen-up) by `s` of the
  * half-width, `h` thick. The offset fades to zero where the body runs
- * vertically, so the band never jumps from one flank to the other.
+ * vertically (and the band pinches out there), so it never jumps from one flank to the other.
  */
 function shadeBand(pts: P[], sun: [number, number], a: number, b: number, s: number, h: number) {
   const edge = (k: number) =>
     pts.slice(a, b + 1).map((q, j) => {
       const [nx, ny] = normal(pts, a + j, sun);
       const g = -ny;
-      const o = (Math.sign(g) * Math.pow(Math.abs(g), 0.6) * s + k * h) * q.w;
+      const o = Math.sign(g) * Math.pow(Math.abs(g), 0.6) * s * q.w + k * h * Math.pow(Math.abs(g), 0.5) * q.w;
       return [round(q.x + nx * o), round(q.y + ny * o)] as [number, number];
     });
   return `${line(edge(1))} ${line(edge(-1).reverse()).replace("M", "L")} Z`;
+}
+
+/** True where side `sg` (±1) of sample i is on the inside of a bend tighter than the body is wide (its offset edge would fold over). */
+function folds(pts: P[], i: number, sg: number, sun: [number, number]) {
+  const a = pts[Math.max(0, i - 1)];
+  const q = pts[i];
+  const b = pts[Math.min(pts.length - 1, i + 1)];
+  const d1x = q.x - a.x;
+  const d1y = q.y - a.y;
+  const d2x = b.x - q.x;
+  const d2y = b.y - q.y;
+  const l = (Math.hypot(d1x, d1y) + Math.hypot(d2x, d2y)) / 2 || 1;
+  const turn = Math.abs(Math.atan2(d1x * d2y - d1y * d2x, d1x * d2x + d1y * d2y));
+  const [nx, ny] = normal(pts, i, sun);
+  const concave = (d2x / (Math.hypot(d2x, d2y) || 1) - d1x / (Math.hypot(d1x, d1y) || 1)) * nx * sg + (d2y / (Math.hypot(d2x, d2y) || 1) - d1y / (Math.hypot(d1x, d1y) || 1)) * ny * sg > 0;
+  return concave && turn > 0 && l / turn < q.w * 1.1;
+}
+
+/** Outline of one flank, broken where it would fold over itself. */
+function edge(pts: P[], sg: number, sun: [number, number], a: number, b: number) {
+  const off = side(pts, sg, sun, a, b);
+  let d = "";
+  let pen = false;
+  off.forEach(([x, y], j) => {
+    if (folds(pts, a + j, sg, sun)) {
+      pen = false;
+      return;
+    }
+    d += `${pen ? "L" : " M"}${x},${y}`;
+    pen = true;
+  });
+  return d.trim();
+}
+
+/**
+ * Body fill as a union of per-segment quads, each wound the same way, so a
+ * tight bend can never punch a hole through the coil.
+ */
+function hull(outer: [number, number][], inner: [number, number][]) {
+  const parts: string[] = [];
+  for (let j = 0; j < outer.length - 1; j++) {
+    let q = [outer[j], outer[j + 1], inner[j + 1], inner[j]];
+    const area = q.reduce((s, [x, y], k) => s + x * q[(k + 1) % 4][1] - q[(k + 1) % 4][0] * y, 0);
+    if (area < 0) q = q.reverse();
+    parts.push(`${line(q)} Z`);
+  }
+  return parts.join(" ");
 }
 
 interface Fin {
@@ -121,7 +179,7 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
     const b = Math.min(pts.length - 1, r.b + (r.f ? 2 : 1));
     const outer = side(pts, 1, sun, a, b);
     const inner = side(pts, -1, sun, a, b);
-    const body = `${line(outer)} ${line([...inner].reverse()).replace("M", "L")} Z`;
+    const body = hull(outer, inner);
     const cid = `${c.id}-${k}-${key}`;
     // Belly plates show only where the underside faces the viewer.
     const bellies: ReactNode[] = [];
@@ -170,6 +228,8 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
         if (i % fin.every !== 0 || i < (fin.from ?? 0) || i > (fin.to ?? pts.length)) continue;
         const pt = pts[i];
         const [nx, ny] = normal(pts, i, sun);
+        // Near-side coils would hang their fins downward; only the far coils, tail and neck show them.
+        if (r.f && ny > 0.35 && !(fin.mane !== undefined && i >= fin.mane)) continue;
         // Fins lean back along the body toward the tail.
         const prev = pts[Math.max(0, i - 2)];
         const back = Math.atan2(prev.y - pt.y, prev.x - pt.x);
@@ -213,8 +273,8 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
           <path d={shadeBand(pts, sun, a, b, 0.42, 0.24)} fill={p.bodyLight} opacity="0.55" />
           <path d={shadeBand(pts, sun, a, b, 0.6, 0.07)} fill="#fff" opacity="0.4" />
         </g>
-        <path d={line(outer)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
-        <path d={line(inner)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
+        <path d={edge(pts, 1, sun, a, b)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
+        <path d={edge(pts, -1, sun, a, b)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
       </g>
     );
   };
@@ -321,8 +381,8 @@ function eggling(c: Ctx) {
       <g transform="translate(236 206)">
         {/* frill buds: the first hint of the flame mane */}
         <g className="sl-sway" style={{ transformOrigin: "10px -14px" }}>
-          {[-70, -36, -4, 28].map((a, i) => (
-            <path key={a} d={flame(22 - Math.abs(i - 1.5) * 3, 5)} transform={`translate(10 -14) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
+          {[-64, -34, -4, 26].map((a, i) => (
+            <path key={a} d={flame(28 - Math.abs(i - 1.5) * 3, 5.6)} transform={`translate(12 -16) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
           ))}
         </g>
         {/* nub horns */}
@@ -354,9 +414,9 @@ function hatchling(c: Ctx) {
   const body = [
     ...coil({
       cx: 196,
-      cy: 270,
+      cy: 272,
       rx: 88,
-      ry: 30,
+      ry: 34,
       tilt: -8,
       t0: 0.22 * Math.PI,
       t1: 2 * Math.PI + 0.1,
@@ -378,8 +438,8 @@ function hatchling(c: Ctx) {
       {/* head: snout lengthening, eyes still big */}
       <g transform="translate(272 138) rotate(6)">
         <g className="sl-sway" style={{ transformOrigin: "6px -6px" }}>
-          {[-80, -50, -20, 10, 40].map((a, i) => (
-            <path key={a} d={flame(24 - Math.abs(i - 2) * 4, 5.4)} transform={`translate(6 -6) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
+          {[-76, -48, -20, 8, 36].map((a, i) => (
+            <path key={a} d={flame(34 - Math.abs(i - 2) * 4, 6.4)} transform={`translate(8 -8) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
           ))}
         </g>
         <path d="M-8,-26 C-2,-38 8,-42 18,-42 C10,-36 6,-28 2,-20 Z" fill={u("horn")} {...rim(c, 0.8)} />
@@ -433,7 +493,7 @@ function adultHead(c: Ctx, mane: number, regal = false) {
       {/* cheek fin */}
       <path d={blade(32, 9, 0.6)} transform="translate(-4 12) rotate(30)" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.8" />
       <path d="M-2,13 L24,28" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1" />
-      <Spec x={-38} y={-24} rx={22} ry={4.4} rot={-6} o={0.4} />
+      <Spec x={-40} y={-22} rx={18} ry={3.6} rot={-8} o={0.3} />
       <Eye c={c} x={-36} y={-12} r={6.6} kind="slit" flip angle={-6} />
     </g>
   );
@@ -446,23 +506,12 @@ const evolved: Renderer = {
   render: (c) => {
     const { p, u } = c;
     const sun: [number, number] = [196, 234];
-    const body = [
-      ...bez([70, 334], [70, 314], [76, 290], [82, 270], 2, 13, true, 14),
-      ...coil({
-        cx: 196,
-        cy: 272,
-        rx: 116,
-        ry: 36,
-        tilt: -6,
-        t0: Math.PI - 0.06,
-        t1: 4 * Math.PI,
-        drift: -64,
-        grow: 0.04,
-        w: (t) => 13 + 7 * Math.sin(Math.min(1, t * 1.4) * Math.PI * 0.8),
-        n: 120,
-      }).slice(1),
-      ...bez([312, 204], [340, 170], [338, 126], [300, 102], 17, 14).slice(1),
+    const coiled = [
+      ...bez([70, 336], [70, 316], [74, 292], [80, 272], 2, 13, true, 14),
+      ...coil({ cx: 196, cy: 276, rx: 118, ry: 46, tilt: -6, t0: Math.PI - 0.06, t1: 4 * Math.PI, drift: -76, grow: 0.04, w: (t) => 13 + 7 * Math.sin(Math.min(1, t * 1.4) * Math.PI * 0.8), n: 120 }).slice(1),
     ];
+    const end = coiled[coiled.length - 1];
+    const body = [...coiled, ...bez([end.x, end.y], [round(end.x + 28), round(end.y - 34)], [338, 126], [300, 102], 17, 14).slice(1)];
     const s = serpent(c, "evo", body, sun, { every: 5, len: 22, wid: 6, from: 16, to: 160, mane: 138 });
     return (
       <g>
@@ -494,14 +543,22 @@ function ascended(c: Ctx) {
   const sun: [number, number] = [200, 228];
   const body = [
     ...bez([40, 358], [46, 338], [56, 318], [68, 304], 2, 14, true, 14),
-    ...coil({ cx: 200, cy: 322, rx: 136, ry: 30, tilt: -4, t0: Math.PI - 0.06, t1: 6 * Math.PI, drift: -150, grow: -0.26, w: (t) => 14 + 8 * Math.sin(Math.min(1, t * 1.3) * Math.PI * 0.8), n: 200 }).slice(1),
+    ...coil({ cx: 200, cy: 330, rx: 138, ry: 42, tilt: -4, t0: Math.PI - 0.06, t1: 6 * Math.PI, drift: -176, grow: -0.3, w: (t) => 14 + 8 * Math.sin(Math.min(1, t * 1.3) * Math.PI * 0.8), n: 200 }).slice(1),
   ];
   const last = body[body.length - 1];
-  const all = [...body, ...bez([last.x, last.y], [round(last.x + 36), round(last.y - 30)], [350, 96], [306, 78], 19, 15).slice(1)];
-  const s = serpent(c, "asc", all, sun, { every: 6, len: 22, wid: 6.5, from: 16, to: 240, mane: 214 });
+  const all = [...body, ...bez([last.x, last.y], [round(last.x + 36), round(last.y - 30)], [352, 88], [306, 66], 19, 15).slice(1)];
+  const s = serpent(c, "asc", all, sun, { every: 6, len: 22, wid: 6.5, from: 34, to: 240, mane: 214 });
   return (
     <g>
       <Sun c={c} k="asc" x={sun[0]} y={sun[1]} r={64} rays={20} flare={1.35} part="glow" />
+      {/* great corona: long faint streamers reaching out past the coils */}
+      <g className="sl-spin-slow" style={{ transformOrigin: `${sun[0]}px ${sun[1]}px` }} filter={u("glow")} opacity="0.55">
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = i * 30 + 8;
+          const [bx, by] = polar(sun[0], sun[1], 70, a);
+          return <path key={i} d={flame(i % 2 ? 66 : 92, 7)} transform={`translate(${bx} ${by}) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} />;
+        })}
+      </g>
       {/* outer corona ring */}
       <g className="sl-spin-rev" style={{ transformOrigin: `${sun[0]}px ${sun[1]}px` }} filter={u("glow")}>
         {Array.from({ length: 16 }).map((_, i) => {
@@ -520,7 +577,7 @@ function ascended(c: Ctx) {
         <path d={flame(12, 3)} transform="translate(-24 34) rotate(115)" fill={p.accent} opacity="0.85" filter={u("glow")} />
       </g>
       {/* reared, crowned head looking out over the sun */}
-      <g transform="translate(306 78) rotate(-8) scale(1.18)">
+      <g transform="translate(306 66) rotate(-8) scale(1.18)">
         <g className="sl-sway" style={{ transformOrigin: "4px 0px" }}>
           {[-124, -98, -72, -46, -20, 6, 32, 58].map((a, i) => (
             <path key={a} d={flame(60 - Math.abs(i - 3.5) * 6, 10)} transform={`translate(4 0) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.7" filter={u("glow")} />
@@ -537,11 +594,13 @@ function ascended(c: Ctx) {
         ))}
         {/* trailing barbels */}
         <g className="sl-sway-slow" style={{ transformOrigin: "-90px 4px" }}>
-          <g fill="none" stroke={p.wingEdge} strokeLinecap="round" opacity="0.9">
-            <path d="M-90,4 C-102,22 -96,42 -80,52 C-72,58 -72,68 -78,76" strokeWidth="2" />
-            <path d="M-60,16 C-64,32 -58,44 -46,52" strokeWidth="1.5" />
+          <g fill="none" strokeLinecap="round">
+            <path d="M-90,4 C-104,18 -102,38 -88,48 C-80,54 -80,62 -84,68" stroke={p.bodyDark} strokeWidth="3.6" strokeOpacity="0.6" />
+            <path d="M-90,4 C-104,18 -102,38 -88,48 C-80,54 -80,62 -84,68" stroke={p.horn} strokeWidth="2.2" />
+            <path d="M-58,16 C-64,30 -58,40 -48,46" stroke={p.horn} strokeWidth="1.6" opacity="0.85" />
           </g>
-          <circle cx="-78" cy="76" r="2.4" fill={p.accent} filter={u("glow")} />
+          <path d={flame(14, 3.4)} transform="translate(-84 68) rotate(100)" fill={p.eye} filter={u("glow")} />
+          <path d={flame(10, 2.6)} transform="translate(-48 46) rotate(40)" fill={p.accent} filter={u("glow")} />
         </g>
         <Gem c={c} x={-22} y={-19} s={0.5} />
       </g>
@@ -551,7 +610,7 @@ function ascended(c: Ctx) {
 
 export const solvanth: Renderer = {
   ...evolved,
-  halo: [276, 4, 28],
-  stageFit: [1.4, 1.12, 1, 0.9],
+  halo: [276, -6, 28],
+  stageFit: [1.4, 1.12, 1, 0.88],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

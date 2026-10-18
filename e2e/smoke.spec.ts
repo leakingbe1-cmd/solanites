@@ -67,6 +67,19 @@ test("demo wallet journey: enter hatchery and hatch an egg", async ({ page }) =>
   expect(errors).toEqual([]);
 });
 
+test("unhatched eggs keep their species sealed and are keyboard operable", async ({ page }) => {
+  await page.goto("/hatchery");
+  await page.getByRole("button", { name: /enter with demo wallet/i }).click();
+  const eggs = page.getByRole("img", { name: /^Solanite egg, stage \d$/ });
+  await expect(eggs.first()).toBeVisible();
+  for (const egg of await eggs.all()) await expect(egg.getByRole("img")).toHaveCount(0);
+
+  const inspect = page.getByRole("button", { name: "Inspect egg #04" });
+  await inspect.focus();
+  await page.keyboard.press("Space");
+  await expect(page.getByRole("dialog", { name: "Inspect" })).toBeVisible();
+});
+
 test("collection filters narrow the species list", async ({ page }) => {
   const errors = trackErrors(page);
   await page.goto("/collection");

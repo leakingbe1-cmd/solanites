@@ -15,18 +15,21 @@ export function EggCard({ record, index, onOpen, onHatch }: { record: SolaniteRe
   const paused = !record.backed;
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={() => {
-        sfx.click();
-        onOpen();
-      }}
-      onKeyDown={(e) => e.key === "Enter" && onOpen()}
       onMouseEnter={() => sfx.hover()}
-      className={`sl-card-hover group relative cursor-pointer overflow-hidden rounded-3xl border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 outline-none focus-visible:ring-2 focus-visible:ring-sol-purple ${
+      className={`sl-card-hover group relative cursor-pointer overflow-hidden rounded-3xl border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-sol-purple ${
         ready ? "border-sol-green/40 shadow-[0_0_60px_-20px_rgba(20,241,149,0.6)]" : "border-white/[0.07] hover:border-white/15"
       }`}
     >
+      {/* Full-card hit area, kept as a sibling of HATCH NOW so the buttons don't nest. */}
+      <button
+        type="button"
+        aria-label={`Inspect egg #${String(index + 1).padStart(2, "0")}`}
+        onClick={() => {
+          sfx.click();
+          onOpen();
+        }}
+        className="absolute inset-0 z-10 rounded-3xl outline-none"
+      />
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Egg #{String(index + 1).padStart(2, "0")}</span>
         <span
@@ -50,11 +53,9 @@ export function EggCard({ record, index, onOpen, onHatch }: { record: SolaniteRe
       </div>
       {ready && (
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onHatch();
-          }}
-          className="sl-btn-primary mt-4 w-full rounded-2xl py-3 font-display text-xs font-semibold tracking-[0.25em] text-white"
+          type="button"
+          onClick={onHatch}
+          className="sl-btn-primary relative z-20 mt-4 w-full rounded-2xl py-3 font-display text-xs font-semibold tracking-[0.25em] text-white"
         >
           HATCH NOW
         </button>

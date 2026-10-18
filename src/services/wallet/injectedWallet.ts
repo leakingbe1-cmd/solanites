@@ -1,18 +1,19 @@
 import type { WalletAdapter, WalletSession } from "./types";
 
 /**
- * EXPERIMENTAL: connects to an injected Solana provider (Phantom, Solflare,
- * Backpack…) through the de-facto `window.solana`-style API.
+ * Connects to an injected Solana provider (Phantom, Solflare, Backpack…)
+ * through the de-facto `window.solana`-style API. Used only for launch-fee
+ * claims; egg tracking never needs a wallet connection.
  *
- * Connecting only proves the browser *claims* an address. A production build
- * must additionally ask the wallet to sign a server-issued nonce (SIWS) and
- * verify that signature server-side before trusting the address.
+ * Connecting only proves the browser *claims* an address. Claims also ask the
+ * wallet to sign a server-issued message, verified on the server.
  */
 
 interface InjectedProvider {
   isPhantom?: boolean;
   connect(): Promise<{ publicKey: { toString(): string } }>;
   disconnect(): Promise<void>;
+  signMessage?(message: Uint8Array, display?: "utf8"): Promise<{ signature: Uint8Array } | Uint8Array>;
 }
 
 function getProvider(): InjectedProvider | null {
@@ -42,5 +43,11 @@ export const injectedWallet: WalletAdapter = {
   },
   async disconnect() {
     await getProvider()?.disconnect();
+  },
+  async signMessage(message: string) {
+    const provider = getProvider();
+    if (!provider?.signMessage) throw new Error("This wallet can't sign messages. Try Phantom, Solflare or Backpack.");
+    const res = await provider.signMessage(new TextEncoder().encode(message), "utf8");
+    return res instanceof Uint8Array ? res : res.signature;
   },
 };

@@ -9,6 +9,8 @@
  * of truth for eligibility, hatching or evolution.
  */
 
+import { eggProgression } from "./eggProgression";
+
 export type RarityId = "common" | "rare" | "epic" | "legendary" | "mythic" | "secret";
 
 /** What happens to an egg/creature's progress while the wallet does not hold enough tokens to back it. */
@@ -32,8 +34,12 @@ export interface GameConfig {
     decimals: number;
   };
   eggs: {
-    maxEggsPerWallet: number;
-    /** Holding time (ms) an egg needs before it can hatch. */
+    /** Upper bound on eggs per wallet, or null for no cap. */
+    maxEggsPerWallet: number | null;
+    /**
+     * Default incubation for prototype records without their own duration.
+     * Tracked eggs use the per-egg schedule in `eggProgression`.
+     */
     incubationMs: number;
     /** Fraction of incubation at which the shell starts glowing / cracking (Stage 2). */
     crackingAt: number;
@@ -65,12 +71,12 @@ const DAY = 24 * HOUR;
 export const gameConfig: GameConfig = {
   token: {
     symbol: "$SOLITE",
-    totalSupply: 10_000_000,
-    tokensPerEgg: 10_000,
+    totalSupply: eggProgression.totalSupply,
+    tokensPerEgg: eggProgression.tokensPerEgg,
     decimals: 6,
   },
   eggs: {
-    maxEggsPerWallet: 6,
+    maxEggsPerWallet: eggProgression.maxEggsPerWallet,
     incubationMs: 7 * DAY,
     crackingAt: 0.35,
     stirringAt: 0.7,

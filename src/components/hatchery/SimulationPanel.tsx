@@ -9,7 +9,8 @@ import { formatNumber } from "@/lib/format";
 export function SimulationPanel() {
   const h = useHatchery();
   const [open, setOpen] = useState(true);
-  const max = h.config.token.tokensPerEgg * (h.config.eggs.maxEggsPerWallet + 1);
+  // No cap on eggs, so the slider stops at a demo-sized ten eggs.
+  const max = h.config.token.tokensPerEgg * ((h.config.eggs.maxEggsPerWallet ?? 9) + 1);
 
   return (
     <section className="rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[0.03] p-5 sm:p-6">
@@ -62,7 +63,7 @@ export function SimulationPanel() {
               type="range"
               min={0}
               max={max}
-              step={1000}
+              step={h.config.token.tokensPerEgg / 100}
               value={h.balance}
               disabled={!h.isDemo}
               onChange={(e) => h.setDemoBalance(Number(e.target.value))}

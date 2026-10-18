@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { gameConfig } from "@/config/gameConfig";
 import { RARITIES } from "@/lib/rarity";
@@ -16,25 +16,34 @@ import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
 const HERO_SPECIES = "pyraurum";
 const HERO_STAGE = gameConfig.evolution.names.length - 1;
 
+/** Fixed ember paths (no randomness, so server and client render identically). */
+const EMBERS = [
+  { left: 22, size: 3, dur: 7.5, delay: 0, drift: 14 },
+  { left: 31, size: 2, dur: 9, delay: 2.4, drift: -10 },
+  { left: 38, size: 4, dur: 8, delay: 5.1, drift: 8 },
+  { left: 45, size: 2, dur: 10, delay: 1.2, drift: -16 },
+  { left: 52, size: 3, dur: 7, delay: 3.8, drift: 12 },
+  { left: 58, size: 2, dur: 9.5, delay: 6.3, drift: -6 },
+  { left: 64, size: 3, dur: 8.5, delay: 0.7, drift: 18 },
+  { left: 71, size: 2, dur: 11, delay: 4.5, drift: -12 },
+  { left: 77, size: 3, dur: 9, delay: 7.4, drift: 6 },
+];
+
 export function HeroCreature() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const species = SPECIES_BY_ID[HERO_SPECIES];
   const rarity = RARITIES[species.rarity];
 
   return (
-    <div
-      ref={ref}
-      className="relative mx-auto aspect-square w-full max-w-[min(92vw,600px)]"
-      onPointerMove={(e) => {
-        const r = ref.current!.getBoundingClientRect();
-        setTilt({ x: ((e.clientX - r.left) / r.width - 0.5) * 2, y: ((e.clientY - r.top) / r.height - 0.5) * 2 });
-      }}
-      onPointerLeave={() => setTilt({ x: 0, y: 0 })}
-    >
+    <div className="relative mx-auto aspect-square w-full max-w-[min(92vw,600px)]">
       {/* restrained backlight in the creature's own colours */}
       <div className="absolute inset-[14%] rounded-full blur-[90px]" style={{ background: `${rarity.color2}33` }} />
       <div className="absolute inset-[30%] rounded-full blur-[70px]" style={{ background: `${rarity.color}22` }} />
+      {/* warm breathing glow: a plain gradient, so only its opacity and scale animate */}
+      <div
+        className="sl-hero-glow absolute inset-[12%] rounded-full"
+        style={{ background: `radial-gradient(circle, ${rarity.color}38 0%, ${rarity.color2}14 42%, transparent 68%)` }}
+        aria-hidden="true"
+      />
 
       {/* orbit rings, as before */}
       <svg viewBox="0 0 500 500" className="absolute inset-0 h-full w-full" aria-hidden>
@@ -55,14 +64,22 @@ export function HeroCreature() {
         </g>
       </svg>
 
-      {/* the creature: vector art, so it stays crisp at any size; gentle float + pointer parallax */}
-      <div
-        className="absolute inset-[2%] transition-transform duration-300 ease-out"
-        style={{ transform: `perspective(900px) rotateY(${tilt.x * 8}deg) rotateX(${-tilt.y * 6}deg) translate(${tilt.x * 8}px, ${tilt.y * 8}px)` }}
-      >
+      {/* the creature: vector art, so it stays crisp at any size; gentle float + pointer parallax (--hx/--hy from HeroStage) */}
+      <div className="sl-hero-tilt absolute inset-[2%]">
         <div className="sl-hero-float h-full w-full">
           <CreatureArt species={species} stage={HERO_STAGE} />
         </div>
+      </div>
+
+      {/* embers drifting up past the phoenix */}
+      <div className="pointer-events-none absolute inset-x-[8%] bottom-[18%] top-[6%]" aria-hidden="true">
+        {EMBERS.map((e) => (
+          <span
+            key={e.left}
+            className="sl-hero-ember"
+            style={{ left: `${e.left}%`, width: e.size, height: e.size, animationDuration: `${e.dur}s`, animationDelay: `${e.delay}s`, "--drift": `${e.drift}px`, "--ember": rarity.color } as CSSProperties}
+          />
+        ))}
       </div>
 
       {/* name plates */}

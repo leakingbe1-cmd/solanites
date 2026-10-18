@@ -492,3 +492,121 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .sl-hero-float { animation: none; }
 }
+
+/* Homepage hero atmosphere. Every layer animates transform or opacity only, so the
+   compositor does the work and the SVG phoenix is never repainted by the backdrop.
+   HeroStage sets --hx / --hy (-1…1) from the mouse and data-offscreen when scrolled away. */
+.sl-hero-stage[data-offscreen] * {
+  animation-play-state: paused !important;
+}
+@keyframes sl-hero-pushin {
+  from { transform: scale(1.05); opacity: 0.6; }
+  to { transform: scale(1); opacity: 1; }
+}
+.sl-hero-pushin {
+  animation: sl-hero-pushin 2.4s cubic-bezier(0.16, 0.84, 0.3, 1) both;
+}
+@keyframes sl-hero-breathe {
+  from { opacity: 0.45; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.06); }
+}
+.sl-hero-nebula {
+  background:
+    radial-gradient(38% 34% at 72% 44%, rgba(153, 69, 255, 0.16), transparent 70%),
+    radial-gradient(30% 28% at 84% 22%, rgba(0, 194, 255, 0.1), transparent 70%),
+    radial-gradient(34% 30% at 18% 70%, rgba(110, 70, 255, 0.09), transparent 70%);
+  animation: sl-hero-breathe 16s ease-in-out infinite alternate;
+}
+.sl-hero-depth-far,
+.sl-hero-depth-near {
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sl-hero-depth-far {
+  transform: translate3d(calc(var(--hx, 0) * -6px), calc(var(--hy, 0) * -6px), 0);
+}
+.sl-hero-depth-near {
+  transform: translate3d(calc(var(--hx, 0) * -14px), calc(var(--hy, 0) * -14px), 0);
+}
+/* Star tiles drift upward by exactly one tile per loop, so the seam never shows. */
+.sl-hero-stars {
+  position: absolute;
+  inset: 0 0 -420px 0;
+  will-change: transform;
+}
+.sl-hero-stars-far {
+  bottom: -260px;
+  background-size: 260px 260px;
+  background-image:
+    radial-gradient(1px 1px at 18px 32px, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 92px 120px, rgba(200, 190, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 160px 48px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 230px 190px, rgba(170, 220, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 60px 220px, rgba(255, 255, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 132px 238px, rgba(220, 200, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 204px 96px, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 248px 14px, rgba(190, 230, 255, 0.4), transparent);
+  animation: sl-hero-drift-far 140s linear infinite;
+}
+.sl-hero-stars-near {
+  background-size: 420px 420px;
+  background-image:
+    radial-gradient(1.5px 1.5px at 40px 60px, rgba(255, 255, 255, 0.75), transparent),
+    radial-gradient(1.5px 1.5px at 210px 150px, rgba(210, 190, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 330px 40px, rgba(180, 225, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 120px 300px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 380px 270px, rgba(255, 236, 200, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 280px 390px, rgba(255, 255, 255, 0.55), transparent);
+  animation: sl-hero-drift-near 90s linear infinite;
+}
+@keyframes sl-hero-drift-far {
+  to { transform: translate3d(0, -260px, 0); }
+}
+@keyframes sl-hero-drift-near {
+  to { transform: translate3d(0, -420px, 0); }
+}
+/* A few brighter stars that twinkle on their own slow rhythm. */
+.sl-hero-glints {
+  background-image:
+    radial-gradient(2px 2px at 14% 22%, rgba(255, 255, 255, 0.95), transparent),
+    radial-gradient(2px 2px at 86% 16%, rgba(220, 205, 255, 0.9), transparent),
+    radial-gradient(2px 2px at 63% 78%, rgba(200, 235, 255, 0.85), transparent),
+    radial-gradient(2px 2px at 33% 88%, rgba(255, 240, 210, 0.8), transparent);
+  animation: sl-hero-glint 5.5s ease-in-out infinite alternate;
+}
+@keyframes sl-hero-glint {
+  0%, 55% { opacity: 0.25; }
+  100% { opacity: 1; }
+}
+@keyframes sl-hero-glow {
+  from { opacity: 0.5; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1.04); }
+}
+.sl-hero-glow {
+  animation: sl-hero-glow 6s ease-in-out infinite alternate;
+}
+.sl-hero-tilt {
+  transform: perspective(900px) rotateY(calc(var(--hx, 0) * 6deg)) rotateX(calc(var(--hy, 0) * -4deg))
+    translate3d(calc(var(--hx, 0) * 10px), calc(var(--hy, 0) * 10px), 0);
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.sl-hero-ember {
+  position: absolute;
+  bottom: 0;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #fff6d8 0%, var(--ember) 45%, transparent 75%);
+  opacity: 0;
+  animation-name: sl-hero-ember;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+@keyframes sl-hero-ember {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(1); }
+  15% { opacity: 0.9; }
+  70% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate3d(var(--drift), -300px, 0) scale(0.4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-hero-ember { display: none; }
+  .sl-hero-tilt { transform: none; }
+}

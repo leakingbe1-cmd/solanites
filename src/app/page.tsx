@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroCreature } from "@/components/landing/HeroCreature";
+import { HeroStage } from "@/components/landing/HeroStage";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { ParticleField } from "@/components/ui/ParticleField";
@@ -18,7 +19,18 @@ export default function Home() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="sl-atmosphere relative flex min-h-[100svh] items-center overflow-hidden pt-20">
+      <HeroStage className="sl-atmosphere sl-hero-stage relative flex min-h-[100svh] items-center overflow-hidden pt-20">
+        {/* living backdrop: breathing nebula and two star layers at different depths (transform/opacity only) */}
+        <div className="sl-hero-pushin pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="sl-hero-nebula absolute -inset-[10%]" />
+          <div className="sl-hero-depth-far absolute inset-0">
+            <div className="sl-hero-stars sl-hero-stars-far" />
+          </div>
+          <div className="sl-hero-depth-near absolute inset-0">
+            <div className="sl-hero-stars sl-hero-stars-near" />
+            <div className="sl-hero-glints absolute inset-0" />
+          </div>
+        </div>
         <div className="sl-grid absolute inset-0" />
         <ParticleField density={0.00016} />
         <div className="relative mx-auto grid w-full max-w-7xl items-center gap-6 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:px-8">
@@ -69,7 +81,7 @@ export default function Home() {
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
-      </section>
+      </HeroStage>
 
       <CreatureMarquee />
 

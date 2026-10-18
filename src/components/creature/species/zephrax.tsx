@@ -77,6 +77,7 @@ function Serpent({ c, B, from = 0, to }: { c: Ctx; B: Body; from?: number; to?: 
   return (
     <g strokeLinejoin="round">
       <path d={band(B, 0.5, -0.5, from, i1)} fill={p.body} />
+      <path d={band(B, 0.5, -0.1, from, i1)} fill={p.bodyLight} opacity="0.4" />
       <path d={band(B, -0.06, -0.5, from, i1)} fill={p.bodyDark} opacity="0.55" />
       <path d={band(B, -0.2, -0.47, from, i1)} fill={p.horn} opacity="0.82" />
       <g stroke={p.bodyDark} strokeOpacity="0.45" strokeWidth="1.1">
@@ -88,13 +89,14 @@ function Serpent({ c, B, from = 0, to }: { c: Ctx; B: Body; from?: number; to?: 
             return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} />;
           })}
       </g>
-      <path d={band(B, 0.44, 0.1, from, i1)} fill={p.bodyLight} opacity="0.5" />
+      <path d={band(B, 0.4, 0.12, from, i1)} fill={p.bodyLight} opacity="0.6" />
       {/* scale rows */}
       <path d={line(r.map((i) => off(B, i, 0.18)))} fill="none" stroke={p.bodyLight} strokeOpacity="0.45" strokeWidth="2.4" strokeDasharray="2 4" strokeLinecap="round" />
       <path d={line(r.map((i) => off(B, i, -0.02)))} fill="none" stroke={p.bodyLight} strokeOpacity="0.25" strokeWidth="2" strokeDasharray="2 5" strokeLinecap="round" />
       <path d={line(r.map((i) => off(B, i, 0.32)))} fill="none" stroke="#fff" strokeOpacity="0.3" strokeWidth="1.4" strokeLinecap="round" />
       {/* rim on both flanks only, so pieces join without seams */}
       <path d={line(r.map((i) => off(B, i, 0.5)))} fill="none" {...rim(c)} strokeOpacity="0.7" />
+      <path d={line(r.map((i) => off(B, i, 0.46)))} fill="none" stroke={p.accent} strokeOpacity="0.55" strokeWidth="1.2" />
       <path d={line(r.map((i) => off(B, i, -0.5)))} fill="none" {...rim(c)} strokeOpacity="0.7" />
     </g>
   );
@@ -300,18 +302,21 @@ function DragonHead({ c, x, y, s = 1, rot = 0, stage }: { c: Ctx; x: number; y: 
       <path d={juv ? "M-54,4 C-40,8 -18,10 2,12" : "M-74,4 C-58,7 -30,8 2,12"} stroke={p.horn} strokeOpacity="0.55" strokeWidth="3" fill="none" strokeLinecap="round" />
       {/* bridge scales and brow ridge */}
       <path d={juv ? "M-52,-8 C-42,-14 -30,-20 -20,-24" : "M-70,-10 C-58,-14 -44,-16 -32,-22"} stroke={p.bodyLight} strokeOpacity="0.5" strokeWidth="2.4" strokeDasharray="2 4" fill="none" strokeLinecap="round" />
-      <path d="M-34,-18 C-28,-26 -14,-28 -2,-22 C-10,-20 -22,-18 -34,-14 Z" fill={p.bodyLight} opacity="0.55" />
+      <path d="M-34,-18 C-28,-25 -14,-27 -2,-22 C-10,-20 -22,-18 -34,-14 Z" fill={p.bodyLight} opacity="0.4" />
       <ellipse cx={snout + 6} cy="-5" rx="3.2" ry="1.7" fill={p.bodyDark} transform={`rotate(-20 ${snout + 6} -5)`} />
-      <Spec x={juv ? -34 : -48} y={-17} rx={juv ? 12 : 18} ry={3.4} rot={-8} o={0.32} />
+      <Spec x={juv ? -36 : -52} y={-14} rx={juv ? 10 : 14} ry={3} rot={-8} o={0.22} />
       {/* cheek frill */}
       <g transform="translate(8 6) rotate(28)">
         <path d={blade(juv ? 14 : asc ? 30 : 22, juv ? 5 : 7)} fill={u("wing")} stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="0.8" />
       </g>
       {/* near horn, forked on the apex form */}
       <path d={horn} fill={u("horn")} {...rim(c, 1)} />
-      {asc && <path d={blade(20, 4)} transform={`translate(${hx(24)} ${hy(-46)}) rotate(-70)`} fill={u("horn")} {...rim(c, 1)} />}
+      {asc &&
+        [[-30, -24, -104, 16], [-20, -27, -96, 20], [-9, -27, -86, 16]].map(([cx, cy, a, l]) => (
+          <path key={cx} d={blade(l, 3.6)} transform={`translate(${cx} ${cy}) rotate(${a})`} fill={`url(#${c.id}ascended-crys)`} stroke={p.bodyDark} strokeOpacity="0.4" strokeWidth="0.8" />
+        ))}
       <path d={`M-4,-20 C${hx(8)},${hy(-36)} ${hx(28)},${hy(-50)} ${hx(52)},${hy(-56)}`} stroke="#fff" strokeOpacity="0.5" strokeWidth="1" fill="none" />
-      <Eye c={c} x={juv ? -20 : -18} y={-12} r={juv ? 6.6 : 5.6} kind="almond" angle={-6} flip />
+      <Eye c={c} x={juv ? -20 : -18} y={-12} r={juv ? 7.6 : 5.6} kind="almond" angle={-6} flip />
       <Gem c={c} x={juv ? -30 : -38} y={-24} s={juv ? 0.36 : 0.4} angle={-20} />
       {/* whiskers stream back in the wind */}
       <g className="sl-sway" style={{ transformOrigin: `${snout + 4}px 2px` }}>
@@ -348,8 +353,6 @@ function eggling(c: Ctx): ReactNode {
         <circle r="9" fill={p.accent} opacity="0.35" filter={u("blur8")} className="sl-core" />
         <Bolt c={c} d="M-6,-12 L0,-3 L-4,-2 L4,10" w={2} />
       </g>
-      {/* tiny tucked forepaw */}
-      <Leg c={c} x={242} y={236} rot={-10} s={0.5} />
       {/* the cloud wraps around in front */}
       <Cloud c={c} defs={d} x={204} y={318} w={176} h={30} seed={4} flat />
       <Cloud c={c} defs={d} x={110} y={300} w={50} h={22} seed={2} o={0.9} />
@@ -383,11 +386,11 @@ function hatchling(c: Ctx): ReactNode {
   const { p, u } = c;
   const d = `${c.id}hatchling`;
   const B = body(
-    chain(136, 160, [
-      [152, 186, 156, 214, 176, 234],
-      [198, 256, 232, 262, 254, 246],
-      [276, 230, 296, 214, 318, 226],
-      [338, 238, 344, 260, 362, 266],
+    chain(138, 162, [
+      [150, 186, 152, 210, 170, 228],
+      [190, 248, 222, 256, 244, 242],
+      [266, 228, 286, 214, 306, 222],
+      [326, 230, 332, 250, 350, 256],
     ]),
     taper(40, 0.16),
   );
@@ -396,20 +399,20 @@ function hatchling(c: Ctx): ReactNode {
       <Defs c={c} s="hatchling" />
       <Wind c={c} d="M44,214 C90,196 120,206 150,232" o={0.3} />
       <Wind c={c} d="M210,198 C246,184 280,184 306,196" o={0.25} />
-      <Cloud c={c} defs={d} x={336} y={284} w={96} h={34} seed={2} />
+      <Cloud c={c} defs={d} x={326} y={274} w={92} h={32} seed={2} />
       <Cloud c={c} defs={d} x={214} y={302} w={120} h={26} seed={5} o={0.85} flat />
       {/* far legs */}
-      <Leg c={c} x={196} y={252} rot={6} s={0.72} near={false} />
-      <Leg c={c} x={302} y={234} rot={-6} s={0.68} near={false} />
+      <Leg c={c} x={188} y={250} rot={6} s={0.74} near={false} />
+      <Leg c={c} x={292} y={232} rot={-6} s={0.7} near={false} />
       <Serpent c={c} B={B} />
       <Spines c={c} B={B} at={[18, 24, 30, 36, 42, 48]} h={(k) => [7, 9, 10, 9, 7, 5][k]} defs={d} />
       <Mane c={c} B={B} at={[2, 5, 8, 11]} len={(k) => [18, 20, 17, 13][k]} wide={5} />
       {/* near legs */}
-      <Leg c={c} x={178} y={250} rot={4} s={0.76} />
-      <Leg c={c} x={288} y={242} rot={-8} s={0.72} />
+      <Leg c={c} x={172} y={246} rot={4} s={0.78} />
+      <Leg c={c} x={278} y={238} rot={-8} s={0.74} />
       {/* cloud streaming off the tail */}
-      <Cloud c={c} defs={d} x={368} y={276} w={44} h={22} seed={3} />
-      <DragonHead c={c} x={132} y={156} s={0.86} rot={8} stage={1} />
+      <Cloud c={c} defs={d} x={358} y={266} w={44} h={22} seed={3} />
+      <DragonHead c={c} x={134} y={154} s={1.08} rot={8} stage={1} />
     </g>
   );
 }
@@ -441,7 +444,7 @@ function evolvedDraw(c: Ctx): ReactNode {
       <Leg c={c} x={196} y={206} rot={0} s={0.72} near={false} />
       <Leg c={c} x={318} y={250} rot={-50} s={0.66} near={false} />
       <Serpent c={c} B={B} />
-      <Spines c={c} B={B} at={[18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62]} h={(k) => round(16 - Math.abs(k - 3) * 1.2)} defs={d} />
+      <Spines c={c} B={B} at={[18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62]} h={(k) => round(21 - Math.abs(k - 3) * 1.3)} defs={d} />
       <Mane c={c} B={B} at={[2, 5, 8, 11, 14]} len={(k) => [26, 30, 28, 22, 16][k]} />
       {/* near legs */}
       <Leg c={c} x={174} y={206} rot={6} s={0.92} />
@@ -487,13 +490,13 @@ function ascended(c: Ctx): ReactNode {
       <Bolt c={c} d="M70,176 L80,190 L74,192 L86,212 L80,214 L92,232" w={1.8} />
       <Bolt c={c} d="M346,110 L336,126 L342,128 L330,148" w={1.6} />
       {/* far legs */}
-      <Leg c={c} x={178} y={206} rot={70} s={0.8} near={false} open />
+      <Leg c={c} x={off(B, 25, -0.3)[0]} y={off(B, 25, -0.3)[1]} rot={62} s={1.05} near={false} open />
       <Leg c={c} x={272} y={286} rot={-30} s={0.74} near={false} />
       <Serpent c={c} B={B} />
       <Spines c={c} B={B} at={[14, 18, 22, 26, 30, 34, 38, 42, 46, 50, 54, 58, 62, 66]} h={(k) => round(26 - Math.abs(k - 4) * 1.5)} defs={d} glow />
       <Mane c={c} B={B} at={[1, 4, 7, 10, 13, 16]} len={(k) => [44, 48, 44, 38, 30, 22][k]} wide={8} />
       {/* near legs: one forelimb raised, talons spread */}
-      <Leg c={c} x={204} y={228} rot={40} s={1.05} open />
+      <Leg c={c} x={off(B, 22, -0.36)[0]} y={off(B, 22, -0.36)[1]} rot={78} s={1.2} open />
       <Leg c={c} x={258} y={300} rot={-34} s={0.8} />
       {/* bolt-tipped tail */}
       <g transform={`translate(${B.pts[n][0]} ${B.pts[n][1]})`}>

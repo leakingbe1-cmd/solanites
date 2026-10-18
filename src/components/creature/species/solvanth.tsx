@@ -21,7 +21,13 @@ function coil(o: { cx: number; cy: number; rx: number; ry: number; tilt: number;
     const x = o.rx * k * Math.cos(t);
     const y = o.ry * k * Math.sin(t);
     const cy = o.cy + (o.drift ?? 0) * u;
-    return { x: round(o.cx + x * Math.cos(tl) - y * Math.sin(tl)), y: round(cy + x * Math.sin(tl) + y * Math.cos(tl)), w: round(o.w(u)), f: Math.sin(t) >= 0, b: Math.sin(t) < 0.25 };
+    return {
+      x: round(o.cx + x * Math.cos(tl) - y * Math.sin(tl)),
+      y: round(cy + x * Math.sin(tl) + y * Math.cos(tl)),
+      w: round(o.w(u)),
+      f: Math.sin(t) >= 0,
+      b: Math.sin(t) < 0.25,
+    };
   });
 }
 
@@ -32,7 +38,13 @@ function bez(a: [number, number], b: [number, number], c: [number, number], d: [
     const m = 1 - t;
     const x = m * m * m * a[0] + 3 * m * m * t * b[0] + 3 * m * t * t * c[0] + t * t * t * d[0];
     const y = m * m * m * a[1] + 3 * m * m * t * b[1] + 3 * m * t * t * c[1] + t * t * t * d[1];
-    return { x: round(x), y: round(y), w: round(w0 + (w1 - w0) * t), f, b: true };
+    return {
+      x: round(x),
+      y: round(y),
+      w: round(w0 + (w1 - w0) * t),
+      f,
+      b: true,
+    };
   });
 }
 
@@ -61,6 +73,22 @@ const side = (pts: P[], s: number, sun: [number, number], from = 0, to = pts.len
     return [round(p.x + nx * p.w * s), round(p.y + ny * p.w * s)] as [number, number];
   });
 
+/**
+ * A band along the body offset toward the light (screen-up) by `s` of the
+ * half-width, `h` thick. The offset fades to zero where the body runs
+ * vertically, so the band never jumps from one flank to the other.
+ */
+function shadeBand(pts: P[], sun: [number, number], a: number, b: number, s: number, h: number) {
+  const edge = (k: number) =>
+    pts.slice(a, b + 1).map((q, j) => {
+      const [nx, ny] = normal(pts, a + j, sun);
+      const g = -ny;
+      const o = (Math.sign(g) * Math.pow(Math.abs(g), 0.6) * s + k * h) * q.w;
+      return [round(q.x + nx * o), round(q.y + ny * o)] as [number, number];
+    });
+  return `${line(edge(1))} ${line(edge(-1).reverse()).replace("M", "L")} Z`;
+}
+
 interface Fin {
   /** Every n-th sample carries a fin. */
   every: number;
@@ -69,6 +97,8 @@ interface Fin {
   /** Skip fins before / after these sample indices. */
   from?: number;
   to?: number;
+  /** From this sample on, fins become flame-mane tongues (the neck). */
+  mane?: number;
 }
 
 /**
@@ -92,8 +122,6 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
     const outer = side(pts, 1, sun, a, b);
     const inner = side(pts, -1, sun, a, b);
     const body = `${line(outer)} ${line([...inner].reverse()).replace("M", "L")} Z`;
-    const mid = pts.slice(a, b + 1).reduce((m, q) => Math.max(m, q.w), 0);
-    const centre = line(pts.slice(a, b + 1).map((q) => [q.x, q.y]));
     const cid = `${c.id}-${k}-${key}`;
     // Belly plates show only where the underside faces the viewer.
     const bellies: ReactNode[] = [];
@@ -153,11 +181,19 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
         const sc = pt.w / 14;
         const bx = round(pt.x + nx * pt.w * 0.55);
         const by = round(pt.y + ny * pt.w * 0.55);
+        const m = fin.mane !== undefined && i >= fin.mane;
         fins.push(
-          <g key={i} transform={`translate(${bx} ${by}) rotate(${ang})`}>
-            <path d={flame(fin.len * sc, fin.wid * sc)} fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.8" strokeWidth="1" />
-            <path d={`M2,0 L${round(fin.len * sc * 0.7)},0`} stroke={p.eye} strokeOpacity="0.45" strokeWidth="1" />
-          </g>,
+          m ? (
+            <g key={i} transform={`translate(${bx} ${by}) rotate(${ang})`}>
+              <path d={flame(fin.len * sc * 1.5, fin.wid * sc * 1.5)} fill={i % 2 ? p.eye : p.accent} opacity="0.88" filter={u("glow")} />
+              <path d={flame(fin.len * sc * 0.9, fin.wid * sc * 0.7)} fill="#fff6c7" opacity="0.8" />
+            </g>
+          ) : (
+            <g key={i} transform={`translate(${bx} ${by}) rotate(${ang})`}>
+              <path d={flame(fin.len * sc, fin.wid * sc)} fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.8" strokeWidth="1" />
+              <path d={`M2,0 L${round(fin.len * sc * 0.7)},0`} stroke={p.eye} strokeOpacity="0.45" strokeWidth="1" />
+            </g>
+          ),
         );
       }
     }
@@ -171,11 +207,11 @@ function serpent(c: Ctx, k: string, pts: P[], sun: [number, number], fin?: Fin):
         {fins}
         <path d={body} fill={p.body} />
         <g clipPath={`url(#${cid})`} fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d={centre} stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth={round(mid * 1.1)} transform={`translate(0 ${round(mid * 0.95)})`} />
+          <path d={shadeBand(pts, sun, a, b, -0.62, 0.42)} fill={p.bodyDark} opacity="0.5" />
           {bellies}
           <path d={scales.join(" ")} stroke={p.bodyDark} strokeOpacity="0.22" strokeWidth="1" />
-          <path d={centre} stroke={p.bodyLight} strokeOpacity="0.55" strokeWidth={round(mid * 0.55)} transform={`translate(0 ${round(-mid * 0.45)})`} />
-          <path d={centre} stroke="#fff" strokeOpacity="0.4" strokeWidth={round(Math.max(1.2, mid * 0.12))} transform={`translate(${round(-mid * 0.08)} ${round(-mid * 0.62)})`} />
+          <path d={shadeBand(pts, sun, a, b, 0.42, 0.24)} fill={p.bodyLight} opacity="0.55" />
+          <path d={shadeBand(pts, sun, a, b, 0.6, 0.07)} fill="#fff" opacity="0.4" />
         </g>
         <path d={line(outer)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
         <path d={line(inner)} fill="none" stroke={p.bodyDark} strokeOpacity="0.6" strokeWidth="1.3" />
@@ -196,9 +232,28 @@ function flame(l: number, w: number) {
 }
 
 /** The captive sun: a white-hot core under a red-orange limb, so the gold coil reads against it. */
-function Sun({ c, k, x, y, r, rays, flare = 1 }: { c: Ctx; k: string; x: number; y: number; r: number; rays: number; flare?: number }) {
+function Sun({ c, k, x, y, r, rays, flare = 1, part }: { c: Ctx; k: string; x: number; y: number; r: number; rays: number; flare?: number; part: "glow" | "disc" }) {
   const { p, u } = c;
   const id = `${c.id}-${k}-sun`;
+  // The glow and flares sit behind the whole serpent; only the disc is sandwiched between its far and near coils.
+  if (part === "glow")
+    return (
+      <g>
+        <circle cx={x} cy={y} r={round(r * 1.5)} fill={p.eye} opacity="0.28" filter={u("blur20")} className="sl-aura-pulse" style={{ transformOrigin: `${x}px ${y}px` }} />
+        {rays > 0 && (
+          <g className="sl-spin-slow" style={{ transformOrigin: `${x}px ${y}px` }}>
+            <g filter={u("glow")}>
+              {Array.from({ length: rays }).map((_, i) => {
+                const a = (360 / rays) * i;
+                const long = i % 2 === 0;
+                const [bx, by] = polar(x, y, r * 0.9, a);
+                return <path key={i} d={flame(r * (long ? 0.5 : 0.32) * flare, r * 0.11)} transform={`translate(${bx} ${by}) rotate(${round(a)})`} fill={long ? p.accent : p.eye} opacity={long ? 0.9 : 0.75} />;
+              })}
+            </g>
+          </g>
+        )}
+      </g>
+    );
   return (
     <g>
       <defs>
@@ -209,19 +264,6 @@ function Sun({ c, k, x, y, r, rays, flare = 1 }: { c: Ctx; k: string; x: number;
           <stop offset="1" stopColor={p.eye} />
         </radialGradient>
       </defs>
-      <circle cx={x} cy={y} r={round(r * 1.5)} fill={p.eye} opacity="0.28" filter={u("blur20")} className="sl-aura-pulse" style={{ transformOrigin: `${x}px ${y}px` }} />
-      {rays > 0 && (
-        <g className="sl-spin-slow" style={{ transformOrigin: `${x}px ${y}px` }}>
-          <g filter={u("glow")}>
-            {Array.from({ length: rays }).map((_, i) => {
-              const a = (360 / rays) * i;
-              const long = i % 2 === 0;
-              const [bx, by] = polar(x, y, r * 0.9, a);
-              return <path key={i} d={flame(r * (long ? 0.5 : 0.32) * flare, r * 0.11)} transform={`translate(${bx} ${by}) rotate(${round(a)})`} fill={long ? p.accent : p.eye} opacity={long ? 0.9 : 0.75} />;
-            })}
-          </g>
-        </g>
-      )}
       <circle cx={x} cy={y} r={r} fill={`url(#${id})`} filter={u("glow")} />
       <circle cx={x} cy={y} r={r} fill={`url(#${id})`} />
       <circle cx={x} cy={y} r={round(r * 0.97)} fill="none" stroke={p.eye} strokeOpacity="0.55" strokeWidth={round(r * 0.06)} />
@@ -243,14 +285,26 @@ function eggling(c: Ctx) {
   const { p, u } = c;
   const sun: [number, number] = [198, 262];
   const body = [
-    ...coil({ cx: 198, cy: 276, rx: 58, ry: 24, tilt: -4, t0: 0.32 * Math.PI, t1: 2 * Math.PI + 0.05, drift: -6, w: (t) => 4 + 13 * Math.min(1, t * 2.4), n: 56 }),
+    ...coil({
+      cx: 198,
+      cy: 276,
+      rx: 58,
+      ry: 24,
+      tilt: -4,
+      t0: 0.32 * Math.PI,
+      t1: 2 * Math.PI + 0.05,
+      drift: -6,
+      w: (t) => 4 + 13 * Math.min(1, t * 2.4),
+      n: 56,
+    }),
     ...bez([256, 266], [266, 248], [258, 222], [238, 208], 17, 15).slice(1),
   ];
   const s = serpent(c, "egg", body, sun);
   return (
     <g>
+      <Sun c={c} k="egg" x={sun[0]} y={sun[1]} r={30} rays={0} part="glow" />
       {s.back}
-      <Sun c={c} k="egg" x={sun[0]} y={sun[1]} r={30} rays={0} />
+      <Sun c={c} k="egg" x={sun[0]} y={sun[1]} r={30} rays={0} part="disc" />
       <g filter={u("glow")} className="sl-twinkle">
         {[
           [160, 238, 2.2],
@@ -266,9 +320,9 @@ function eggling(c: Ctx) {
       {/* big round head, chin resting on the ember */}
       <g transform="translate(236 206)">
         {/* frill buds: the first hint of the flame mane */}
-        <g className="sl-sway" style={{ transformOrigin: "244px 196px" }}>
+        <g className="sl-sway" style={{ transformOrigin: "10px -14px" }}>
           {[-70, -36, -4, 28].map((a, i) => (
-            <path key={a} d={flame(15 - Math.abs(i - 1.5) * 2, 4.4)} transform={`translate(8 -10) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
+            <path key={a} d={flame(22 - Math.abs(i - 1.5) * 3, 5)} transform={`translate(10 -14) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
           ))}
         </g>
         {/* nub horns */}
@@ -298,20 +352,32 @@ function hatchling(c: Ctx) {
   const { p, u } = c;
   const sun: [number, number] = [196, 250];
   const body = [
-    ...coil({ cx: 196, cy: 270, rx: 88, ry: 30, tilt: -8, t0: 0.22 * Math.PI, t1: 2 * Math.PI + 0.1, drift: -14, w: (t) => 2 + 11 * Math.min(1, t * 2), n: 64 }),
+    ...coil({
+      cx: 196,
+      cy: 270,
+      rx: 88,
+      ry: 30,
+      tilt: -8,
+      t0: 0.22 * Math.PI,
+      t1: 2 * Math.PI + 0.1,
+      drift: -14,
+      w: (t) => 2 + 11 * Math.min(1, t * 2),
+      n: 64,
+    }),
     ...bez([280, 226], [306, 194], [302, 160], [272, 138], 13, 11).slice(1),
   ];
-  const s = serpent(c, "hatch", body, sun, { every: 6, len: 12, wid: 3.4, from: 14, to: 70 });
+  const s = serpent(c, "hatch", body, sun, { every: 4, len: 12, wid: 3.4, from: 14, to: 90, mane: 66 });
   return (
     <g>
+      <Sun c={c} k="hatch" x={sun[0]} y={sun[1]} r={42} rays={10} flare={0.8} part="glow" />
       {s.back}
-      <Sun c={c} k="hatch" x={sun[0]} y={sun[1]} r={42} rays={10} flare={0.8} />
+      <Sun c={c} k="hatch" x={sun[0]} y={sun[1]} r={42} rays={10} flare={0.8} part="disc" />
       {s.front}
       {/* small tail fluke */}
       <path d={flame(18, 6)} transform="translate(244 296) rotate(160)" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.8" />
       {/* head: snout lengthening, eyes still big */}
       <g transform="translate(272 138) rotate(6)">
-        <g className="sl-sway" style={{ transformOrigin: "278px 132px" }}>
+        <g className="sl-sway" style={{ transformOrigin: "6px -6px" }}>
           {[-80, -50, -20, 10, 40].map((a, i) => (
             <path key={a} d={flame(24 - Math.abs(i - 2) * 4, 5.4)} transform={`translate(6 -6) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.92" filter={u("glow")} />
           ))}
@@ -353,7 +419,9 @@ function adultHead(c: Ctx, mane: number, regal = false) {
       <path d="M-24,-26 C-12,-42 6,-52 28,-56 C14,-46 2,-34 -8,-22 Z" fill={u("horn")} {...rim(c, 1)} />
       <path d="M-8,-24 C4,-36 20,-42 40,-42 C26,-34 14,-26 4,-16 Z" fill={u("horn")} {...rim(c, 1)} />
       {/* lower jaw */}
-      <path d="M-88,6 C-70,9 -50,11 -34,12 C-20,13 -8,16 0,19 C-12,25 -38,23 -58,19 C-72,16 -84,12 -88,6 Z" fill={u("body")} {...rim(c)} />
+      <path d="M-82,6 C-66,9 -50,10 -34,11 C-20,12 -8,15 0,18 C-12,23 -38,21 -56,17 C-70,14 -80,10 -82,6 Z" fill={p.bodyDark} {...rim(c)} />
+      <path d="M-78,8 C-60,12 -36,15 -8,17" fill="none" stroke={p.belly} strokeOpacity="0.6" strokeWidth="2" strokeLinecap="round" />
+      <path d="M-80,6 L-77,12 L-75,7 Z M-66,8 L-64,13 L-62,8 Z" fill="#fff8e0" />
       {regal && <path d="M-84,7 C-66,10 -48,12 -32,13" fill="none" stroke={p.eye} strokeWidth="3" strokeLinecap="round" filter={u("glow")} className="sl-core" />}
       {/* skull */}
       <path d="M14,-6 C12,-22 -6,-30 -28,-29 C-44,-28 -58,-21 -74,-14 C-86,-9 -96,-5 -96,1 C-96,5 -90,7 -82,7 L-46,9 C-30,9 -16,11 -2,15 C8,12 14,6 14,-6 Z" fill={u("body")} {...rim(c)} />
@@ -380,14 +448,27 @@ const evolved: Renderer = {
     const sun: [number, number] = [196, 234];
     const body = [
       ...bez([70, 334], [70, 314], [76, 290], [82, 270], 2, 13, true, 14),
-      ...coil({ cx: 196, cy: 272, rx: 116, ry: 36, tilt: -6, t0: Math.PI - 0.06, t1: 4 * Math.PI, drift: -64, grow: 0.04, w: (t) => 13 + 7 * Math.sin(Math.min(1, t * 1.4) * Math.PI * 0.8), n: 120 }).slice(1),
+      ...coil({
+        cx: 196,
+        cy: 272,
+        rx: 116,
+        ry: 36,
+        tilt: -6,
+        t0: Math.PI - 0.06,
+        t1: 4 * Math.PI,
+        drift: -64,
+        grow: 0.04,
+        w: (t) => 13 + 7 * Math.sin(Math.min(1, t * 1.4) * Math.PI * 0.8),
+        n: 120,
+      }).slice(1),
       ...bez([312, 204], [340, 170], [338, 126], [300, 102], 17, 14).slice(1),
     ];
-    const s = serpent(c, "evo", body, sun, { every: 5, len: 22, wid: 6, from: 16, to: 130 });
+    const s = serpent(c, "evo", body, sun, { every: 5, len: 22, wid: 6, from: 16, to: 160, mane: 138 });
     return (
       <g>
+        <Sun c={c} k="evo" x={sun[0]} y={sun[1]} r={58} rays={16} part="glow" />
         {s.back}
-        <Sun c={c} k="evo" x={sun[0]} y={sun[1]} r={58} rays={16} />
+        <Sun c={c} k="evo" x={sun[0]} y={sun[1]} r={58} rays={16} part="disc" />
         {s.front}
         {/* tail fluke */}
         <g transform="translate(70 334) rotate(-4)">
@@ -407,69 +488,62 @@ const evolved: Renderer = {
 /* Ascended                                                            */
 /* ------------------------------------------------------------------ */
 
-/** Ascended: a vast leviathan spiralling two and a half times up a blazing sun, neck reared high, crowned head, flame mane, barbels and fin-wings. */
+/** Ascended: a vast leviathan spiralling two and a half times up a blazing sun, neck reared high, crowned head, flame mane and long barbels. */
 function ascended(c: Ctx) {
   const { p, u } = c;
-  const sun: [number, number] = [200, 232];
+  const sun: [number, number] = [200, 228];
   const body = [
-    ...bez([44, 360], [50, 340], [60, 318], [72, 302], 2, 14, true, 14),
-    ...coil({ cx: 200, cy: 322, rx: 130, ry: 30, tilt: -4, t0: Math.PI - 0.06, t1: 6 * Math.PI, drift: -156, grow: -0.12, w: (t) => 14 + 8 * Math.sin(Math.min(1, t * 1.3) * Math.PI * 0.8), n: 200 }).slice(1),
+    ...bez([40, 358], [46, 338], [56, 318], [68, 304], 2, 14, true, 14),
+    ...coil({ cx: 200, cy: 322, rx: 136, ry: 30, tilt: -4, t0: Math.PI - 0.06, t1: 6 * Math.PI, drift: -150, grow: -0.26, w: (t) => 14 + 8 * Math.sin(Math.min(1, t * 1.3) * Math.PI * 0.8), n: 200 }).slice(1),
   ];
   const last = body[body.length - 1];
-  const all = [...body, ...bez([last.x, last.y], [round(last.x + 34), round(last.y - 34)], [354, 96], [306, 72], 19, 15).slice(1)];
-  const s = serpent(c, "asc", all, sun, { every: 5, len: 24, wid: 6.5, from: 16, to: 214 });
+  const all = [...body, ...bez([last.x, last.y], [round(last.x + 36), round(last.y - 30)], [350, 96], [306, 78], 19, 15).slice(1)];
+  const s = serpent(c, "asc", all, sun, { every: 6, len: 22, wid: 6.5, from: 16, to: 240, mane: 214 });
   return (
     <g>
-      {/* great pectoral fin-wings fanning out behind the reared neck */}
-      <g className="sl-sway-slow" style={{ transformOrigin: "336px 150px" }}>
-        {[-58, -34, -10, 14].map((a, i) => (
-          <g key={a} transform={`translate(336 150) rotate(${a})`}>
-            <path d={blade(70 - i * 8, 13, 0.6)} fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.85" />
-            <path d={`M4,0 L${62 - i * 8},0`} stroke={p.eye} strokeOpacity="0.4" strokeWidth="1" />
-          </g>
-        ))}
-      </g>
-      {s.back}
-      <Sun c={c} k="asc" x={sun[0]} y={sun[1]} r={62} rays={20} flare={1.3} />
+      <Sun c={c} k="asc" x={sun[0]} y={sun[1]} r={64} rays={20} flare={1.35} part="glow" />
       {/* outer corona ring */}
-      <g className="sl-spin-rev" style={{ transformOrigin: "200px 232px" }} filter={u("glow")}>
-        {Array.from({ length: 12 }).map((_, i) => {
-          const [x, y] = polar(200, 232, 104, i * 30 + 15);
-          return <circle key={i} cx={x} cy={y} r={i % 2 ? 2 : 3} fill={i % 2 ? p.eye : p.accent} opacity="0.85" />;
+      <g className="sl-spin-rev" style={{ transformOrigin: `${sun[0]}px ${sun[1]}px` }} filter={u("glow")}>
+        {Array.from({ length: 16 }).map((_, i) => {
+          const [x, y] = polar(sun[0], sun[1], 122, i * 22.5 + 11);
+          return <circle key={i} cx={x} cy={y} r={i % 2 ? 1.8 : 2.8} fill={i % 2 ? p.eye : p.accent} opacity="0.85" />;
         })}
       </g>
+      {s.back}
+      <Sun c={c} k="asc" x={sun[0]} y={sun[1]} r={64} rays={20} flare={1.35} part="disc" />
       {s.front}
       {/* ornate tail fluke with flame edges */}
-      <g transform="translate(44 360) rotate(10)">
-        <path d="M0,0 C-14,-14 -34,-16 -48,-8 C-34,-2 -24,2 -16,8 C-26,16 -30,28 -26,38 C-12,28 -2,14 0,0 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.85" />
-        <path d={flame(16, 3)} transform="translate(-44 -8) rotate(175)" fill={p.eye} opacity="0.85" filter={u("glow")} />
-        <path d={flame(14, 3)} transform="translate(-26 34) rotate(115)" fill={p.accent} opacity="0.85" filter={u("glow")} />
+      <g transform="translate(40 358) rotate(4)">
+        <path d="M0,0 C-12,-14 -30,-18 -44,-12 C-32,-4 -22,0 -14,6 C-24,14 -28,26 -24,36 C-12,26 -2,14 0,0 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.85" />
+        <path d="M-4,1 L-34,-11 M-4,3 L-20,30" stroke={p.eye} strokeOpacity="0.35" strokeWidth="1" />
+        <path d={flame(14, 3)} transform="translate(-42 -12) rotate(190)" fill={p.eye} opacity="0.85" filter={u("glow")} />
+        <path d={flame(12, 3)} transform="translate(-24 34) rotate(115)" fill={p.accent} opacity="0.85" filter={u("glow")} />
       </g>
       {/* reared, crowned head looking out over the sun */}
-      <g transform="translate(306 72) rotate(-6)">
-        <g className="sl-sway" style={{ transformOrigin: "306px 72px" }}>
-          {[-120, -92, -64, -36, -8, 20, 48, 76].map((a, i) => (
-            <path key={a} d={flame(66 - Math.abs(i - 3.5) * 6, 11)} transform={`translate(4 0) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.7" filter={u("glow")} />
+      <g transform="translate(306 78) rotate(-8) scale(1.18)">
+        <g className="sl-sway" style={{ transformOrigin: "4px 0px" }}>
+          {[-124, -98, -72, -46, -20, 6, 32, 58].map((a, i) => (
+            <path key={a} d={flame(60 - Math.abs(i - 3.5) * 6, 10)} transform={`translate(4 0) rotate(${a})`} fill={i % 2 ? p.eye : p.accent} opacity="0.7" filter={u("glow")} />
           ))}
         </g>
-        {adultHead(c, 1.1, true)}
+        {adultHead(c, 1.05, true)}
         {/* crown of horn spires */}
         {[
-          [-34, -26, -104, 20],
-          [-24, -28, -90, 28],
-          [-14, -28, -76, 34],
+          [-36, -26, -106, 18],
+          [-26, -28, -92, 26],
+          [-16, -28, -78, 32],
         ].map(([x, y, a, l]) => (
-          <path key={a} d={blade(l, 4.2, 0.7)} transform={`translate(${x} ${y}) rotate(${a})`} fill={u("horn")} {...rim(c, 0.8)} />
+          <path key={a} d={blade(l, 4, 0.7)} transform={`translate(${x} ${y}) rotate(${a})`} fill={u("horn")} {...rim(c, 0.8)} />
         ))}
         {/* trailing barbels */}
-        <g className="sl-sway-slow" style={{ transformOrigin: "214px 78px" }}>
+        <g className="sl-sway-slow" style={{ transformOrigin: "-90px 4px" }}>
           <g fill="none" stroke={p.wingEdge} strokeLinecap="round" opacity="0.9">
-            <path d="M-92,4 C-104,22 -98,42 -82,52 C-74,58 -74,68 -80,76" strokeWidth="2.2" />
-            <path d="M-62,18 C-66,34 -60,46 -48,54" strokeWidth="1.6" />
+            <path d="M-90,4 C-102,22 -96,42 -80,52 C-72,58 -72,68 -78,76" strokeWidth="2" />
+            <path d="M-60,16 C-64,32 -58,44 -46,52" strokeWidth="1.5" />
           </g>
-          <circle cx="-80" cy="76" r="2.6" fill={p.accent} filter={u("glow")} />
+          <circle cx="-78" cy="76" r="2.4" fill={p.accent} filter={u("glow")} />
         </g>
-        <Gem c={c} x={-22} y={-19} s={0.56} />
+        <Gem c={c} x={-22} y={-19} s={0.5} />
       </g>
     </g>
   );
@@ -477,7 +551,7 @@ function ascended(c: Ctx) {
 
 export const solvanth: Renderer = {
   ...evolved,
-  halo: [262, 22, 28],
-  stageFit: [1.3, 1.1, 1, 0.92],
+  halo: [276, 4, 28],
+  stageFit: [1.4, 1.12, 1, 0.9],
   render: byStage(eggling, hatchling, evolved.render, ascended),
 };

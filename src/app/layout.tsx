@@ -11,7 +11,7 @@ import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
 
 export const metadata: Metadata = {
   title: "Solanites — Your Solanite Is Waiting",
-  description: "Hold Solana. Hatch the extraordinary. The longer you hold, the stronger they grow.",
+  description: "Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.",
 };
 
 export const viewport: Viewport = {

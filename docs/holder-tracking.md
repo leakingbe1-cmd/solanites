@@ -186,6 +186,18 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 - **Creature evolution** counts qualifying holding since hatching from the recorded on-chain balance history: the k-th hatched creature (oldest first) grows only while the balance is at least k × 1,000,000. A sale is applied once its transaction is ingested; until then the creature may briefly show more growth, which is corrected on the next view.
 - **Claim payouts are not implemented**, and no refund policy exists. Nothing on the site describes a refund as automatic or guaranteed.
 
+## Planned holder distribution (not implemented)
+
+`/claims` now presents a planned distribution of part of the developer supply to eligible holders, starting 2 hours after the confirmed launch (`HOLDER_DISTRIBUTION_AFTER_LAUNCH_MS` in `src/config/launch.ts`). It is copy only. What exists, and what is still needed:
+
+- **Launch time:** read from `SOLANITES_LAUNCH_AT` (server only, never the browser). It is not set, so the start time is unknown and no countdown is shown. It could be cross-checked against the mint or pool-creation transaction, but the official value must be configured.
+- **Who is eligible:** the tracker already knows every holder of the mint at finalized commitment, excluding treasury, LP and program-owned addresses. Eligibility rules (minimum balance, minimum holding time, exclusions) are not defined.
+- **Holding duration:** the tracker records every balance change with its block time (`holder_changes`) from the moment tracking starts, so time-weighted holding can be computed on the server for any window after that. It cannot see anything before tracking began: for a fair window starting at launch, the tracker (database, RPC, scheduler) must be running from launch, or the history must be backfilled from chain data first. Today the scheduler skips every run (see §3).
+- **Measurement window and formula:** not defined. A pro-rata "token-time" share (balance × time held, summed over the window, from the recorded balance history) is the option that resists Sybil splitting: dividing tokens across wallets gives the same total, and moving tokens only moves future accrual. Thresholds, per-wallet minimums, caps or bonuses are easier to game and would need extra rules.
+- **Structure:** one-time allocation or recurring periods: not decided.
+- **Payout:** not built. It needs the allocation fixed and published, a server-side calculation recorded per wallet (one row per wallet per period, unique, like `fee_claims`), and transfers signed by a dedicated wallet off the website (e.g. multisig batches), with signatures recorded. No signing keys belong on Vercel or in the frontend. Whether holders receive tokens directly or claim them with a wallet signature is also undecided.
+- **Existing claim backend:** the launch-fee refund flow (`src/server/claims`, `/api/claims/*`, wallet sign-in, budget enforcement, audit log) is still in the code but inactive (`ACTIVE_FEE_POLICY = null`) and no longer shown. Parts (sign-in, one-claim-per-wallet, budget, audit) could be reused for a claim-based distribution.
+
 ## 6. Decisions needed from you
 
 1. **The official mint address** and the **excluded addresses**.
@@ -207,3 +219,4 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 9. **Rarity verifiability:** whether to add the commit-reveal scheme above.
 10. **Token ticker:** confirmed as `$SLNT` (`gameConfig.token.symbol`, display only). Tracking never uses the name, only `SOLANITES_MINT`; the mint address itself is still to be provided.
 11. **Early progression:** confirm the incubation (1 min → 12 h) and growing-up (1 min → 6 h) schedules, and that Evolved/Ascended and the Ascension ranks should count from maturity.
+12. **Holder distribution:** allocation (amount or percentage of developer supply), eligibility rules, measurement window, formula (holding-duration weighting), one-time or recurring, direct transfer or claim, the official launch time, and the signing arrangement for payouts.

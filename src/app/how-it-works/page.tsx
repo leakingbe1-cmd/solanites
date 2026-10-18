@@ -4,7 +4,7 @@ import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { describeGrowthSchedule, describeSchedule, eggProgression } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { CLAIMS_OPEN_AFTER_MS } from "@/config/launch";
+import { HOLDER_DISTRIBUTION_AFTER_LAUNCH_MS } from "@/config/launch";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { formUnlockText, rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
@@ -31,7 +31,7 @@ export default function HowItWorksPage() {
       "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
-    ["Launch fee claims", `Open ${CLAIMS_OPEN_AFTER_MS / 3_600_000} hours after launch`, "Separate from eggs: only claims ask you to connect a wallet"],
+    ["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_AFTER_LAUNCH_MS / 3_600_000} hours after launch`, "A portion of the developer supply for eligible holders, favouring longer holding. Allocation, eligibility and method are pending and will be published before activation"],
   ];
 
   return (
@@ -88,9 +88,9 @@ export default function HowItWorksPage() {
             <h3 className="font-display text-xl text-white">How the rules are kept</h3>
             <ul className="mt-5 space-y-3 text-sm leading-relaxed text-mist">
               <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
-              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or claims.</li>
+              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
               <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
-              <li>◇ Fee claims, if a refund programme is confirmed, ask your wallet to sign a one-time message. Connecting alone is never enough.</li>
+              <li>◇ The planned holder distribution will use verified on-chain holdings calculated on the server. Its terms will be published before it starts.</li>
             </ul>
           </div>
         </div>

@@ -101,17 +101,17 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
 | Rarity weights | Common 60 · Rare 25 · Epic 10 · Legendary 3.8 · Mythic 1 · Secret 0.2 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
-| Launch fee claims | Open 6 hours after launch; the only place a wallet is connected |
+| Holder distribution | Planned: a portion of the developer supply for eligible holders, starting 2 hours after the confirmed launch. Allocation, eligibility and method pending; not implemented. `/claims` shows the plan |
 
-## Holder tracking, eggs and fee claims
+## Holder tracking, eggs and holder rewards
 
 - **Eggs (no wallet connection):** the server tracks every holder from Solana (`/api/cron/sync`, `/api/webhooks/solana`), issues eggs into Postgres and serves them at `GET /api/holders/:address`. The Hatchery's **Find my eggs** takes a public address.
-- **Fee claims:** `/claims` opens 6 hours after `SOLANITES_LAUNCH_AT`. The wallet signs a message, verified on the server; one claim per wallet per period. **No refund policy is defined yet, so no amount is quoted, and payouts are not implemented.**
+- **Holder rewards (`/claims`):** shows the planned holder distribution (2 hours after the confirmed launch, terms pending). No distribution trigger, snapshot or payout exists yet. The earlier launch-fee claim backend (`src/server/claims`, `/api/claims/*`, wallet sign-in) is still in the code but inactive and no longer shown.
 
 Architecture, audit, configuration (env checklist, scheduler, `/api/health`), staging plan, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 
 ```bash
-npm test               # 165 tests (+3 real-Postgres tests when TEST_DATABASE_URL is set): tracker, claims, routes, remediation, progression
+npm test               # 181 tests (+3 real-Postgres tests when TEST_DATABASE_URL is set): tracker, claims, routes, remediation, progression
 npm run dev:fixtures   # the site with local fixture holders (labelled as fixture data; refused in production)
 ```
 

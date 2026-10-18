@@ -6,8 +6,9 @@ import { ParticleField } from "@/components/ui/ParticleField";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
+import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatSpan } from "@/lib/format";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES } from "@/lib/species";
 
@@ -89,6 +90,18 @@ export default function Home() {
             Your egg doesn&apos;t just sit there. It glows, cracks, stirs — and one day, it opens.
           </SectionHeading>
           <StageTimeline />
+        </div>
+      </section>
+
+      {/* ── EVOLUTION ── */}
+      <section id="evolution" className="relative py-24 sm:py-32">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <SectionHeading eyebrow="Evolution" title={<>One creature.<br className="hidden sm:block" /> Four forms.</>}>
+            Every species grows into its own shape. After hatching, a Solanite becomes a {gameConfig.evolution.names[1]} after{" "}
+            {formatSpan(gameConfig.evolution.thresholdsMs[1])} of holding, {gameConfig.evolution.names[2]} after {formatSpan(gameConfig.evolution.thresholdsMs[2])}, and{" "}
+            {gameConfig.evolution.names[3]} after {formatSpan(gameConfig.evolution.thresholdsMs[3])}.
+          </SectionHeading>
+          <EvolutionShowcase />
         </div>
       </section>
 

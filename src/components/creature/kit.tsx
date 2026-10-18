@@ -50,7 +50,8 @@ export const polar = (cx: number, cy: number, r: number, deg: number): [number, 
 
 /** Standard soft rim used on every primary form. */
 export function rim(c: Ctx, width = 1.4) {
-  return { stroke: c.p.bodyDark, strokeOpacity: 0.55, strokeWidth: width };
+  // Soft, slightly thinner outline: enough to separate forms without a cartoon look.
+  return { stroke: c.p.bodyDark, strokeOpacity: 0.4, strokeWidth: width * 0.85 };
 }
 
 /** Key-light specular highlight. */

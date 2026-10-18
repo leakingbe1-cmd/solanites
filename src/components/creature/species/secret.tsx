@@ -77,7 +77,7 @@ export const nullborn: Renderer = {
         {/* front legs */}
         {[184, 216].map((x) => (
           <g key={x}>
-            <path d={`M${x - 8},280 L${x - 8},346 L${x + 8},346 L${x + 8},280 Z`} fill={u("body")} {...rim(c, 1)} />
+            <path d={`M${x - 9},278 C${x - 10},300 ${x - 8},324 ${x - 7},340 C${x - 8},346 ${x - 6},350 ${x},350 C${x + 6},350 ${x + 8},346 ${x + 7},340 C${x + 8},324 ${x + 10},300 ${x + 9},278 Z`} fill={u("body")} {...rim(c, 1)} />
             <ellipse cx={x} cy="348" rx="10" ry="5" fill="#000" />
           </g>
         ))}

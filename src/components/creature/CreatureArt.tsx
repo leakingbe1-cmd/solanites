@@ -126,8 +126,10 @@ function Defs({ id, p, rarity }: { id: string; p: Palette; rarity: Species["rari
     <defs>
       <radialGradient id={`${id}-body`} cx="0.36" cy="0.28" r="0.85">
         <stop offset="0" stopColor={p.bodyLight} />
-        <stop offset="0.45" stopColor={p.body} />
-        <stop offset="1" stopColor={p.bodyDark} />
+        <stop offset="0.42" stopColor={p.body} />
+        <stop offset="0.86" stopColor={p.bodyDark} />
+        {/* bounce light on the shadow-side edge gives forms more roundness */}
+        <stop offset="1" stopColor={p.body} />
       </radialGradient>
       <linearGradient id={`${id}-tube`} x1="0" y1="180" x2="0" y2="380" gradientUnits="userSpaceOnUse">
         <stop offset="0" stopColor={p.bodyLight} />

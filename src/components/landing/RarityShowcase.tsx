@@ -30,7 +30,7 @@ export function RarityShowcase() {
           >
             <div className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} />
             <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover:opacity-80" style={{ background: meta.color }} />
-            <div className="relative aspect-square transition-transform duration-500 group-hover:scale-[1.06]">
+            <div className="sl-art-host relative aspect-square" style={{ "--sl-glow": secret ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
               <CreatureArt species={s} stage={2} silhouette={secret} showAura={!secret} />
               {secret && <span className="absolute inset-0 grid place-items-center font-display text-4xl text-white/80">?</span>}
             </div>

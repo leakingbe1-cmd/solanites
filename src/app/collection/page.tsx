@@ -111,7 +111,7 @@ export default function CollectionPage() {
                   <span className="font-mono text-[10px] text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
                   <span className={`font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : hidden ? "Classified" : "Catalogued"}</span>
                 </div>
-                <div className="relative aspect-square transition-transform duration-500 group-hover:scale-[1.06]">
+                <div className="sl-art-host relative aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
                   <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden} animated={!hidden} />
                   {hidden && <span className="absolute inset-0 grid place-items-center font-display text-3xl text-white/70">?</span>}
                 </div>

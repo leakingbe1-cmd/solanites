@@ -1,4 +1,4 @@
-import { blade, Dots, Eye, Gem, MIRROR, polar, rim, Spec, type Renderer } from "../kit";
+import { blade, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type Renderer } from "../kit";
 
 /* Common: one clear idea per species, simple but distinct silhouettes. */
 
@@ -6,95 +6,121 @@ import { blade, Dots, Eye, Gem, MIRROR, polar, rim, Spec, type Renderer } from "
 export const mossling: Renderer = {
   shadow: 140,
   fit: 1.1,
-  halo: [112, 128, 34],
+  halo: [108, 120, 34],
   render: (c) => {
     const { p, u, g } = c;
-    const leafRows: [number, number, number][][] = [
-      [130, 270, 96], [168, 274, 92], [206, 276, 90], [244, 276, 88], [282, 272, 84], [316, 266, 80],
-      [150, 242, 100], [190, 238, 94], [230, 236, 90], [270, 238, 86], [306, 244, 80],
-      [176, 212, 104], [216, 206, 94], [256, 208, 86], [290, 220, 80],
-    ].reduce<[number, number, number][][]>((rows, l, i) => {
-      const r = i < 6 ? 0 : i < 11 ? 1 : 2;
-      (rows[r] ??= []).push(l as [number, number, number]);
-      return rows;
-    }, []);
+    // Leaves sit on concentric arcs of the dome and all flow back toward the tail, like shingles.
+    const rows = [
+      { rx: 106, ry: 74, n: 8, s: 1 },
+      { rx: 82, ry: 54, n: 6, s: 0.9 },
+      { rx: 54, ry: 34, n: 4, s: 0.8 },
+    ];
+    const leaves = rows.map((r, k) =>
+      Array.from({ length: r.n }, (_, i) => {
+        const a = 196 + ((344 - 196) * (i + 0.5)) / r.n;
+        const t = (a * Math.PI) / 180;
+        return { x: round(226 + r.rx * Math.cos(t)), y: round(302 + r.ry * Math.sin(t)), rot: round(12 + (a - 270) * 0.45), s: r.s, k, i };
+      }).reverse(),
+    );
+    const leg = (x: number, near: boolean) => (
+      <g key={x}>
+        <path
+          d={`M${x - 19},284 C${x - 22},310 ${x - 18},332 ${x - 15},343 C${x - 23},346 ${x - 22},355 ${x - 12},355 L${x + 14},355 C${x + 23},355 ${x + 22},346 ${x + 15},343 C${x + 18},331 ${x + 21},309 ${x + 18},284 Z`}
+          fill={near ? u("body") : p.bodyDark}
+          {...(near ? rim(c) : {})}
+        />
+        {near && (
+          <>
+            <path d={`M${x - 12},300 C${x - 13},314 ${x - 11},326 ${x - 9},336`} fill="none" stroke="#fff" strokeOpacity="0.18" strokeWidth="3" strokeLinecap="round" />
+            {[-9, 0, 9].map((d) => (
+              <ellipse key={d} cx={x + d} cy="353" rx="4.2" ry="2.6" fill={p.horn} />
+            ))}
+          </>
+        )}
+      </g>
+    );
     const antler = (dx: number, dy: number, shade: boolean) => (
-      <g transform={`translate(${108 + dx} ${230 + dy}) scale(${g}) translate(${-108} ${-230})`} opacity={shade ? 0.75 : 1}>
-        <g fill="none" strokeLinecap="round">
-          {["M108,230 C102,202 110,176 128,156", "M106,208 C94,200 88,188 88,174", "M114,186 C124,180 134,180 142,172", "M122,166 C118,156 120,146 128,138"].map((d) => (
-            <g key={d}>
-              <path d={d} stroke={p.bodyDark} strokeWidth="9" />
-              <path d={d} stroke={shade ? p.bodyDark : p.horn} strokeWidth="5.5" />
+      <g transform={`translate(${108 + dx} ${228 + dy}) scale(${g}) translate(-108 -228)`} opacity={shade ? 0.7 : 1}>
+        <g fill="none" strokeLinecap="round" strokeLinejoin="round">
+          {[
+            ["M108,228 C103,204 110,180 127,160", 7],
+            ["M106,210 C96,203 90,192 89,179", 4.5],
+            ["M113,190 C122,184 132,183 141,176", 4.5],
+            ["M121,169 C118,159 120,150 127,142", 4],
+          ].map(([d, w]) => (
+            <g key={d as string}>
+              <path d={d as string} stroke={p.bodyDark} strokeOpacity="0.8" strokeWidth={(w as number) + 2.5} />
+              <path d={d as string} stroke={shade ? p.bodyDark : p.horn} strokeWidth={w as number} />
             </g>
           ))}
+          {!shade && <path d="M110,222 C106,204 112,184 124,166" stroke="#fff" strokeOpacity="0.3" strokeWidth="1.4" />}
         </g>
         {!shade &&
-          ([
-            [88, 174, -110],
-            [142, 172, -20],
-            [128, 138, -70],
-            [128, 156, -40],
-          ] as const).map(([x, y, a]) => <path key={`${x}${y}`} d={blade(14, 5)} transform={`translate(${x} ${y}) rotate(${a})`} fill={p.accent} opacity="0.9" />)}
+          (
+            [
+              [89, 179, -112],
+              [141, 176, -24],
+              [127, 142, -72],
+              [127, 160, -38],
+            ] as const
+          ).map(([x, y, a]) => <path key={`${x}${y}`} d={blade(15, 5.5)} transform={`translate(${x} ${y}) rotate(${a})`} fill={p.accent} opacity="0.92" />)}
       </g>
     );
     return (
       <g>
-        {/* far legs */}
-        {[186, 300].map((x) => (
-          <path key={x} d={`M${x - 14},300 L${x - 14},346 C${x - 14},352 ${x + 14},352 ${x + 14},346 L${x + 14},300 Z`} fill={p.bodyDark} />
-        ))}
+        {leg(188, false)}
+        {leg(302, false)}
         {/* leafy tail */}
-        <path d={blade(40 * g + 10, 11)} transform="translate(330 290) rotate(-24)" fill={u("wing")} {...rim(c, 1)} />
+        <g className="sl-sway" style={{ transformOrigin: "330px 292px" }}>
+          <path d={blade(40 * g + 10, 12)} transform="translate(330 292) rotate(-22)" fill={u("wing")} {...rim(c, 1)} />
+        </g>
         {/* domed body */}
-        <path d="M112,305 C110,236 168,196 236,196 C304,196 340,240 338,302 C336,322 318,332 296,332 L150,332 C126,332 112,322 112,305 Z" fill={u("body")} {...rim(c)} />
-        <path d="M126,318 C170,334 290,334 326,316 L322,328 C290,340 170,340 130,330 Z" fill={p.belly} opacity="0.55" />
-        {/* leaf shingles — lower rows first so upper rows overlap */}
-        {leafRows.map((row, ri) =>
-          row.map(([x, y, a]) => (
-            <g key={`${ri}-${x}`} transform={`translate(${x} ${y}) rotate(${a})`}>
-              <path d={blade(44, 17)} fill={u("wing")} stroke={p.bodyDark} strokeOpacity="0.35" />
-              <path d="M2,0 L40,0" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1.2" />
+        <path d="M114,306 C108,260 152,214 224,210 C294,206 340,246 341,296 C342,316 328,330 304,331 L148,331 C128,331 116,322 114,306 Z" fill={u("body")} {...rim(c)} />
+        <path d="M124,314 C170,334 290,336 332,312 C330,326 316,334 300,336 L150,336 C136,334 126,326 124,314 Z" fill={p.belly} opacity="0.5" />
+        {/* leaf shingles, outer rows first */}
+        {leaves.map((row) =>
+          row.map((l) => (
+            <g key={`${l.k}-${l.i}`} transform={`translate(${l.x} ${l.y}) rotate(${l.rot}) scale(${l.s})`}>
+              <path d={blade(44, 17, 0.75)} fill={u("wing")} stroke={p.bodyDark} strokeOpacity="0.28" />
+              <path d={`M4,-2 C14,-12 30,-11 40,-1 C28,-6 14,-6 4,-2 Z`} fill="#fff" opacity={(l.i + l.k) % 2 ? 0.12 : 0.2} />
+              <path d="M3,0 C16,1 28,1 40,0" fill="none" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1.1" />
             </g>
           )),
         )}
         {/* moss tufts */}
-        <g opacity={0.5 + c.mark * 0.5}>
+        <g opacity={0.5 + c.mark * 0.5} fill={p.bodyLight}>
           {[
-            [214, 198],
-            [252, 200],
-            [184, 208],
-            [288, 214],
+            [212, 216],
+            [250, 216],
+            [182, 226],
+            [286, 230],
           ].map(([x, y]) => (
-            <g key={x} fill={p.bodyLight}>
+            <g key={x}>
               <circle cx={x} cy={y} r="5" />
               <circle cx={x + 6} cy={y + 2} r="4" />
               <circle cx={x - 5} cy={y + 3} r="3.5" />
             </g>
           ))}
         </g>
-        <Spec x={226} y={214} rx={44} ry={9} rot={-6} o={0.18} />
-        {/* near legs */}
-        {[164, 290].map((x) => (
-          <g key={x}>
-            <path d={`M${x - 16},298 L${x - 16},346 C${x - 16},354 ${x + 16},354 ${x + 16},346 L${x + 16},298 Z`} fill={u("body")} {...rim(c)} />
-            {[-9, 0, 9].map((d) => (
-              <ellipse key={d} cx={x + d} cy="350" rx="4" ry="3" fill={p.horn} />
-            ))}
-            <circle cx={x - 4} cy="318" r="4" fill={p.bodyLight} opacity="0.4" />
-          </g>
-        ))}
+        <Spec x={230} y={224} rx={46} ry={8} rot={-5} o={0.16} />
+        {leg(166, true)}
+        {leg(292, true)}
         {/* head */}
-        {antler(16, 4, true)}
-        <path d={blade(30, 10)} transform="translate(130 240) rotate(-35)" fill={u("wing")} {...rim(c, 1)} />
-        <path d="M58,262 C56,238 78,224 104,226 C130,228 146,246 146,268 C146,292 128,306 102,306 C76,306 60,290 58,262 Z" fill={u("body")} {...rim(c)} />
-        <path d="M50,278 C50,262 64,256 80,258 C94,262 98,278 94,292 C88,304 66,306 58,298 C52,292 50,286 50,278 Z" fill={p.belly} opacity="0.9" />
-        <ellipse cx="60" cy="278" rx="2.6" ry="2" fill={p.bodyDark} />
-        <ellipse cx="72" cy="282" rx="2.6" ry="2" fill={p.bodyDark} />
-        <path d="M60,297 C68,301 80,300 88,295" fill="none" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
-        <Spec x={98} y={236} rx={18} ry={6} o={0.22} />
-        <Eye c={c} x={98} y={258} r={7} kind="lidded" />
-        <Gem c={c} x={118} y={238} s={0.6} />
-        {antler(0, 0, false)}
+        <g className="sl-sway-slow" style={{ transformOrigin: "120px 236px" }}>{antler(16, 4, true)}</g>
+        <path d={blade(30, 10)} transform="translate(132 240) rotate(-38)" fill={u("wing")} {...rim(c, 1)} />
+        <path d="M154,262 C140,258 126,264 118,276 L130,302 C140,292 150,288 160,288 Z" fill={u("body")} />
+        <path d="M62,268 C58,246 74,228 98,226 C120,224 140,236 146,256 C150,274 142,292 126,300 C114,306 98,308 84,304 C70,300 64,288 62,268 Z" fill={u("body")} {...rim(c)} />
+        <path d="M50,281 C50,267 62,259 76,260 C90,262 96,275 94,289 C91,301 76,307 64,303 C55,299 50,291 50,281 Z" fill={p.belly} />
+        <path d="M76,260 C88,263 95,274 94,287" fill="none" stroke={p.bodyDark} strokeOpacity="0.2" strokeWidth="2" />
+        <ellipse cx="59" cy="279" rx="2.6" ry="2" fill={p.bodyDark} />
+        <ellipse cx="70" cy="283" rx="2.6" ry="2" fill={p.bodyDark} />
+        <path d="M58,296 C66,301 79,300 87,295" fill="none" stroke={p.bodyDark} strokeOpacity="0.55" strokeWidth="1.6" strokeLinecap="round" />
+        <ellipse cx="120" cy="282" rx="9" ry="5" fill={p.accent} opacity="0.18" />
+        <Spec x={96} y={236} rx={20} ry={6} o={0.24} />
+        <path d="M88,248 C96,244 106,244 112,250" fill="none" stroke={p.bodyDark} strokeWidth="3" strokeLinecap="round" opacity="0.7" />
+        <Eye c={c} x={100} y={258} r={7} kind="lidded" />
+        <Gem c={c} x={118} y={238} s={0.58} />
+        <g className="sl-sway-slow" style={{ transformOrigin: "108px 228px" }}>{antler(0, 0, false)}</g>
       </g>
     );
   },
@@ -141,7 +167,9 @@ export const driftfin: Renderer = {
         <path d="M100,206 C94,232 106,252 132,258 C124,242 124,226 128,212 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.6" />
         {/* head */}
         <path d="M96,172 C92,146 104,128 118,122 C114,142 114,160 108,178 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.6" />
+        <path d="M92,170 C104,166 116,170 124,180 L122,204 C112,210 100,212 92,210 Z" fill={p.body} />
         <path d="M102,170 C80,158 52,158 34,174 C26,182 28,192 38,196 C56,204 84,210 104,212 Z" fill={u("body")} {...rim(c)} />
+        <path d="M96,176 C102,186 102,198 96,208" fill="none" stroke={p.bodyDark} strokeOpacity="0.35" strokeWidth="1.6" strokeLinecap="round" />
         <path d="M36,194 C54,202 82,208 102,210 L102,200 C80,200 58,196 40,188 Z" fill={p.belly} opacity="0.85" />
         <Spec x={66} y={168} rx={20} ry={5} rot={-8} o={0.3} />
         <path d="M42,196 C40,212 46,224 56,230" fill="none" stroke={p.accent} strokeWidth="2" strokeLinecap="round" className="sl-sway" style={{ transformOrigin: "42px 196px" }} />
@@ -159,10 +187,14 @@ export const pallow: Renderer = {
   halo: [200, 128, 30],
   render: (c) => {
     const { p, u, g } = c;
+    // Each frond varies a little in length, width, angle and taper, so the rings read as feathers rather than identical spikes.
     const ring = (n: number, len: number, w: number, start: number, fill: string, from = 40) =>
-      Array.from({ length: n }).map((_, i) => (
-        <path key={i} d={blade(len, w)} transform={`translate(200 200) rotate(${start + (i * 360) / n}) translate(${from} 0)`} fill={fill} stroke={p.bodyDark} strokeOpacity="0.25" />
-      ));
+      Array.from({ length: n }).map((_, i) => {
+        const l = round(len * (0.84 + 0.16 * Math.sin(i * 2.4 + start)));
+        const ww = round(w * (0.85 + 0.15 * Math.cos(i * 1.7)));
+        const a = round(start + (i * 360) / n + 3 * Math.sin(i * 3.1));
+        return <path key={i} d={blade(l, ww, i % 2 ? 0.72 : 0.84)} transform={`translate(200 200) rotate(${a}) translate(${from} 0)`} fill={fill} stroke={p.bodyDark} strokeOpacity="0.2" />;
+      });
     const tl = 70 + 50 * g;
     return (
       <g>
@@ -279,7 +311,8 @@ export const sproutwyrm: Renderer = {
           );
         })}
         {segs.map(([x, y, r], i) => (
-          <g key={i}>
+          // Lifted segments ripple in sequence; the planted ones stay put.
+          <g key={i} className={grounded.includes(i) ? undefined : "sl-undulate"} style={{ animationDelay: `${i * 0.15}s` }}>
             <circle cx={x} cy={y} r={r} fill={u("body")} {...rim(c)} />
             <path d={`M${x - r * 0.55},${y - r * 0.8} C${x - r * 0.2},${y - r * 0.2} ${x - r * 0.2},${y + r * 0.3} ${x - r * 0.5},${y + r * 0.85}`} fill="none" stroke={p.bodyDark} strokeOpacity="0.35" strokeWidth="2" />
             <ellipse cx={x - r * 0.25} cy={y - r * 0.45} rx={r * 0.35} ry={r * 0.18} fill="#fff" opacity="0.25" />
@@ -291,11 +324,13 @@ export const sproutwyrm: Renderer = {
           const [x, y, r] = segs[i];
           const h = 10 + 18 * g;
           return (
-            <g key={i} transform={`translate(${x} ${y - r + 2})`}>
-              <path d={`M0,0 C-2,${-h * 0.5} 2,${-h * 0.8} 0,${-h}`} stroke={p.wing} strokeWidth="2.5" fill="none" />
-              <path d={blade(12 * g + 4, 4)} transform={`translate(0 ${-h * 0.55}) rotate(-150)`} fill={p.wing} />
-              <path d={blade(12 * g + 4, 4)} transform={`translate(0 ${-h * 0.45}) rotate(-30)`} fill={p.wing} />
-              <circle cy={-h} r={3 + 2 * g} fill={p.accent} filter={u("glow")} />
+            <g key={i} className="sl-undulate" style={{ animationDelay: `${i * 0.15}s` }}>
+              <g transform={`translate(${x} ${y - r + 2})`}>
+                <path d={`M0,0 C-2,${-h * 0.5} 2,${-h * 0.8} 0,${-h}`} stroke={p.wing} strokeWidth="2.5" fill="none" />
+                <path d={blade(12 * g + 4, 4)} transform={`translate(0 ${-h * 0.55}) rotate(-150)`} fill={p.wing} />
+                <path d={blade(12 * g + 4, 4)} transform={`translate(0 ${-h * 0.45}) rotate(-30)`} fill={p.wing} />
+                <circle cy={-h} r={3 + 2 * g} fill={p.accent} filter={u("glow")} />
+              </g>
             </g>
           );
         })}
@@ -316,60 +351,82 @@ export const sproutwyrm: Renderer = {
   },
 };
 
-/** Frostkit — compact, faceted crystal fox with ice spines and a thick crystal tail. */
+/** Frostkit — a sleek crystal fox: soft frosted coat, ice spines and a thick crystal tail. */
 export const frostkit: Renderer = {
   shadow: 130,
   fit: 1.08,
-  halo: [86, 150, 30],
+  halo: [88, 150, 28],
   render: (c) => {
     const { p, u, g } = c;
-    const spine = (x: number, h: number) => `M${x - 9},238 L${x + 4},${238 - h} L${x + 10},236 Z`;
+    const spines: [number, number, number][] = [
+      [178, 236, 22],
+      [204, 232, 32],
+      [230, 232, 26],
+      [256, 236, 34],
+      [280, 242, 22],
+    ];
+    const leg = (x: number, near: boolean, back: boolean) => (
+      <g key={`${x}${near}`}>
+        {back && <ellipse cx={x + 4} cy="284" rx="26" ry="24" fill={near ? u("body") : p.bodyDark} {...(near ? rim(c) : {})} />}
+        <path
+          d={`M${x - 8},${back ? 292 : 290} C${x - 10},312 ${x - 11},330 ${x - 11},343 C${x - 15},346 ${x - 14},352 ${x - 7},352 L${x + 7},352 C${x + 12},352 ${x + 12},347 ${x + 7},344 C${x + 7},330 ${x + 9},312 ${x + 10},${back ? 292 : 290} Z`}
+          fill={near ? u("body") : p.bodyDark}
+          {...(near ? rim(c, 1) : {})}
+        />
+        {near && <path d={`M${x - 12},346 L${x + 9},346 L${x + 6},352 L${x - 9},352 Z`} fill={p.accent} opacity="0.65" />}
+      </g>
+    );
     return (
       <g>
-        {/* far legs */}
-        <path d="M182,300 L196,300 L194,350 L180,350 Z M286,296 L300,296 L298,350 L284,350 Z" fill={p.bodyDark} />
-        {/* crystal tail */}
+        {leg(192, false, false)}
+        {leg(292, false, true)}
+        {/* crystal tail: soft root turning to faceted ice */}
         <g className="sl-sway-slow" style={{ transformOrigin: "300px 270px" }}>
-          <path d="M298,256 L340,230 L372,190 L384,212 L366,252 L306,294 Z" fill={u("glass")} {...rim(c)} />
-          <path d="M340,230 L384,212 M372,190 L352,246 M306,294 L340,230" stroke="#fff" strokeOpacity="0.35" strokeWidth="1.2" />
+          <path d="M296,258 C326,250 352,226 364,192 C376,212 374,244 356,266 C342,284 320,294 302,292 Z" fill={u("glass")} {...rim(c)} />
+          <path d="M364,192 L344,246 L302,292 M356,266 L344,246 M330,252 L344,246" stroke="#fff" strokeOpacity="0.4" strokeWidth="1.1" fill="none" />
+          <path d="M364,192 C370,214 368,236 356,256 L344,246 Z" fill="#fff" opacity="0.18" className="sl-shimmer-facet" />
+          <path d="M296,258 C306,256 316,254 326,250 C318,266 310,280 302,292 C298,280 296,270 296,258 Z" fill={u("body")} />
         </g>
         {/* ice spines */}
-        {[176, 204, 232, 260].map((x, i) => (
-          <path key={x} d={spine(x, (16 + (i % 2) * 10) * g + 6)} fill={u("glass")} stroke={p.bodyDark} strokeOpacity="0.4" />
-        ))}
-        {/* faceted body */}
-        <path d="M118,264 L168,236 L262,234 L306,256 L302,300 L252,314 L160,314 L122,298 Z" fill={u("body")} {...rim(c)} />
-        <path d="M168,236 L262,234 L218,272 Z" fill="#fff" opacity="0.28" />
-        <path d="M118,264 L168,236 L160,292 Z" fill="#fff" opacity="0.14" />
-        <path d="M262,234 L306,256 L268,292 Z" fill={p.bodyDark} opacity="0.18" />
-        <path d="M160,314 L218,272 L252,314 Z" fill={p.bodyDark} opacity="0.22" />
-        <path d="M218,272 L268,292 L252,314 Z" fill={p.bodyLight} opacity="0.2" />
-        <g opacity={c.mark} stroke={p.accent} strokeWidth="1.4" fill="none">
-          <path d="M190,250 L204,262 L196,276 M238,248 L246,266" />
+        {spines.map(([x, y, h], i) => {
+          const H = h * (0.55 + 0.45 * g);
+          return (
+            <g key={x}>
+              <path d={`M${x - 9},${y + 4} C${x - 6},${y - H * 0.5} ${x + 2},${y - H * 0.9} ${x + 8},${y - H} C${x + 8},${y - H * 0.6} ${x + 10},${y - H * 0.2} ${x + 11},${y + 4} Z`} fill={u("glass")} stroke={p.bodyDark} strokeOpacity="0.3" />
+              <path d={`M${x - 5},${y} C${x - 2},${y - H * 0.5} ${x + 3},${y - H * 0.8} ${x + 7},${y - H * 0.95}`} fill="none" stroke="#fff" strokeOpacity="0.6" strokeWidth="1.1" className="sl-shimmer-facet" style={{ animationDelay: `${i * 0.25}s` }} />
+            </g>
+          );
+        })}
+        {/* sleek body */}
+        <path d="M118,272 C120,246 150,232 192,232 C236,232 270,230 296,244 C316,256 318,282 304,298 C292,310 262,314 236,312 C206,310 172,312 150,306 C130,300 116,290 118,272 Z" fill={u("body")} {...rim(c)} />
+        <path d="M150,300 C190,308 250,310 296,298 C284,308 262,312 236,312 C206,310 172,312 150,306 Z" fill={p.bodyDark} opacity="0.12" />
+        {/* crystal plating over the coat */}
+        <g opacity={0.55 + 0.45 * c.mark}>
+          <path d="M196,238 L230,236 L216,262 Z" fill={u("glass")} stroke="#fff" strokeOpacity="0.35" strokeWidth="0.8" />
+          <path d="M232,238 L266,240 L246,266 Z" fill={u("glass")} stroke="#fff" strokeOpacity="0.35" strokeWidth="0.8" />
+          <path d="M216,262 L246,266 L230,286 Z" fill={u("glass")} stroke="#fff" strokeOpacity="0.25" strokeWidth="0.8" opacity="0.8" />
+          <path d="M196,238 L230,236 L216,262 Z" fill="#fff" opacity="0.2" className="sl-shimmer-facet" style={{ animationDelay: "0.4s" }} />
         </g>
-        {/* near legs */}
-        {[
-          [148, 294],
-          [270, 292],
-        ].map(([x, y]) => (
-          <g key={x}>
-            <path d={`M${x - 10},${y} L${x + 12},${y} L${x + 8},350 L${x - 8},350 Z`} fill={u("body")} {...rim(c)} />
-            <path d={`M${x - 10},${y} L${x + 12},${y} L${x},${y + 24} Z`} fill="#fff" opacity="0.2" />
-            <path d={`M${x - 10},350 L${x + 10},350 L${x + 6},344 L${x - 6},344 Z`} fill={p.accent} opacity="0.7" />
-          </g>
-        ))}
+        <Spec x={214} y={242} rx={50} ry={6} rot={-2} o={0.3} />
+        {/* chest ruff */}
+        <path d="M122,268 C112,286 118,308 140,318 C142,310 148,302 152,292 C146,286 140,276 138,266 Z" fill={p.belly} />
+        <path d="M126,286 L132,292 M128,298 L136,302" stroke={p.bodyDark} strokeOpacity="0.25" strokeWidth="1.2" />
+        {leg(150, true, false)}
+        {leg(282, true, true)}
         {/* head */}
-        <g transform={`translate(110 260) scale(${0.85 + 0.15 * g}) translate(-110 -260)`}>
-          <path d={`M98,222 L${90 - 4 * g},${170 - 22 * g} L118,214 Z`} fill={u("glass")} stroke={p.bodyDark} strokeOpacity="0.5" />
-          <path d={`M112,222 L${118 + 4 * g},${176 - 22 * g} L130,220 Z`} fill={p.bodyDark} opacity="0.8" />
-          <path d="M132,270 L114,222 L84,214 L56,232 L26,252 L58,266 L104,288 Z" fill={u("body")} {...rim(c)} />
-          <path d="M114,222 L84,214 L96,244 Z" fill="#fff" opacity="0.3" />
-          <path d="M26,252 L58,266 L80,252 L56,232 Z" fill={p.belly} opacity="0.9" />
-          <path d="M104,288 L58,266 L96,250 L132,270 Z" fill={p.bodyDark} opacity="0.16" />
-          <circle cx="28" cy="251" r="3.4" fill={p.bodyDark} />
-          <Eye c={c} x={78} y={238} r={6} kind="almond" angle={-12} flip />
+        <g transform={`translate(112 262) scale(${0.86 + 0.14 * g}) translate(-112 -262)`}>
+          <path d={`M110,232 C106,${212 - 10 * g} 110,${192 - 14 * g} 118,${176 - 16 * g} C126,${194 - 12 * g} 130,214 130,234 Z`} fill={p.bodyDark} opacity="0.85" />
+          <path d={`M96,236 C90,${214 - 10 * g} 92,${192 - 14 * g} 100,${174 - 16 * g} C110,${192 - 12 * g} 116,212 118,232 Z`} fill={u("glass")} {...rim(c, 1)} />
+          <path d={`M100,${178 - 16 * g} C104,${196 - 12 * g} 108,212 110,228`} fill="none" stroke="#fff" strokeOpacity="0.45" strokeWidth="1.1" />
+          <path d="M138,266 C130,246 112,234 92,232 C72,230 52,238 30,248 C25,251 27,257 33,258 C52,262 72,272 92,282 C110,290 132,286 138,266 Z" fill={u("body")} {...rim(c)} />
+          <path d="M30,248 C42,252 56,260 70,268 C60,270 46,264 33,258 C27,257 25,251 30,248 Z" fill={p.belly} />
+          <path d="M112,276 C120,284 128,286 136,282 C132,292 120,294 108,290 Z" fill={p.belly} opacity="0.9" />
+          <Spec x={92} y={240} rx={20} ry={4} rot={8} o={0.4} />
+          <ellipse cx="30" cy="251" rx="4" ry="3" fill={p.bodyDark} />
+          <path d="M66,244 C72,238 82,236 90,240" fill="none" stroke={p.bodyDark} strokeWidth="2.2" strokeLinecap="round" opacity="0.6" />
+          <Eye c={c} x={78} y={248} r={6} kind="almond" angle={-10} flip />
         </g>
-        <Gem c={c} x={134} y={286} s={0.55} />
+        <Gem c={c} x={130} y={290} s={0.5} />
       </g>
     );
   },

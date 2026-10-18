@@ -124,7 +124,37 @@ body {
     box-shadow 0.35s;
 }
 .sl-card-hover:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
+}
+
+/* ── Creature hover response ──────────────────────────────
+   On cards, the creature itself lifts, grows slightly and catches a little
+   more light. Its species-specific part motion (fins, wings, antlers…) only
+   plays while the card is hovered or focused on pointer devices, so a grid
+   of creatures is calm at rest and nothing animates when nobody is looking. */
+.sl-art-host {
+  transition:
+    transform 340ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 340ms ease;
+}
+.group:hover .sl-art-host,
+.group:focus-visible .sl-art-host {
+  transform: translateY(-5px) scale(1.04);
+  filter: brightness(1.07) drop-shadow(0 10px 22px var(--sl-glow, rgba(153, 69, 255, 0.35)));
+}
+/* [class] raises specificity above the `animation` shorthands below, which
+   would otherwise reset the play state to running. */
+@media (hover: hover) {
+  .sl-art-host .sl-creature.is-animated[class],
+  .sl-art-host .is-animated [class] {
+    animation-play-state: paused;
+  }
+  .group:hover .sl-art-host .sl-creature.is-animated[class],
+  .group:hover .sl-art-host .is-animated [class],
+  .group:focus-visible .sl-art-host .sl-creature.is-animated[class],
+  .group:focus-visible .sl-art-host .is-animated [class] {
+    animation-play-state: running;
+  }
 }
 
 .sl-scrollbar-none {
@@ -158,6 +188,12 @@ body {
 }
 .is-animated .sl-hover {
   animation: sl-hover 6s ease-in-out infinite;
+}
+.is-animated .sl-undulate {
+  animation: sl-undulate 2.4s ease-in-out infinite;
+}
+.is-animated .sl-shimmer-facet {
+  animation: sl-shimmer-facet 2.8s ease-in-out infinite;
 }
 .is-animated .sl-flap {
   animation: sl-flap 3.2s ease-in-out infinite;
@@ -222,6 +258,14 @@ body {
 @keyframes sl-hover {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-12px) rotate(-1deg); }
+}
+@keyframes sl-undulate {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes sl-shimmer-facet {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.75; }
 }
 @keyframes sl-flap {
   0%, 100% { transform: rotate(0deg); }
@@ -424,6 +468,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .group:hover .sl-art-host,
+  .group:focus-visible .sl-art-host {
+    transform: none;
+  }
   *,
   *::before,
   *::after {

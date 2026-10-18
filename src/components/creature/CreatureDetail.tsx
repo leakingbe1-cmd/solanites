@@ -245,8 +245,8 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <span className="text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
                     {d === "owned" && <span className="text-sol-green">● Discovered</span>}
                   </div>
-                  <div className="aspect-square">
-                    <CreatureArt species={s} stage={2} animated={false} showAura={false} silhouette={rh} />
+                  <div className="sl-art-host aspect-square" style={{ "--sl-glow": rh ? "rgba(110,90,255,0.3)" : RARITIES[s.rarity].glow } as React.CSSProperties}>
+                    <CreatureArt species={s} stage={2} showAura={false} silhouette={rh} />
                   </div>
                   <p className="truncate font-display text-sm text-white">{rh ? "???" : s.name}</p>
                   <div className="mt-1.5">
@@ -255,7 +255,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                 </>
               );
               return onSelectSpecies ? (
-                <button key={s.id} onClick={() => onSelectSpecies(s)} className="sl-card-hover rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3 text-left hover:border-white/15">
+                <button key={s.id} onClick={() => onSelectSpecies(s)} className="sl-card-hover group rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3 text-left hover:border-white/15">
                   {body}
                 </button>
               ) : (

@@ -5,48 +5,74 @@ import { blade, Constellation, Dots, Eye, Gem, MIRROR, rim, Spec, type Renderer 
 /** Astravex — a platinum stag whose antlers are constellations. */
 export const astravex: Renderer = {
   shadow: 110,
-  halo: [314, 40, 28],
+  halo: [314, 36, 28],
   render: (c) => {
-    const { p, u, g } = c;
-    const body = "M126,236 C128,206 168,194 220,196 C262,198 286,214 288,240 C288,262 268,276 220,278 C168,278 128,268 126,236 Z";
+    const { p, u, g, id } = c;
+    const body = "M128,238 C130,210 166,198 214,200 C252,202 278,210 286,228 C292,244 284,262 270,270 C250,280 214,280 180,276 C150,272 128,262 128,238 Z";
     const s = 0.55 + 0.45 * g;
+    // Deer legs: tapered, with a knee (front) or hock (back) and a small hoof.
+    const leg = (x: number, back: boolean, near: boolean) => (
+      <g key={`${x}${near}`}>
+        <path
+          d={
+            back
+              ? `M${x - 10},252 C${x - 14},276 ${x - 2},292 ${x - 4},310 C${x - 5},324 ${x - 6},336 ${x - 6},344 L${x + 3},344 C${x + 3},334 ${x + 5},322 ${x + 7},306 C${x + 10},288 ${x + 10},268 ${x + 8},252 Z`
+              : `M${x - 7},256 C${x - 8},276 ${x - 6},292 ${x - 5},304 C${x - 5},318 ${x - 4},332 ${x - 4},344 L${x + 4},344 C${x + 4},332 ${x + 5},318 ${x + 5},304 C${x + 6},290 ${x + 8},274 ${x + 8},256 Z`
+          }
+          fill={near ? u("body") : p.bodyDark}
+          {...(near ? rim(c, 1) : {})}
+        />
+        <path d={`M${x - (back ? 7 : 5)},342 L${x + (back ? 4 : 5)},342 L${x + (back ? 5 : 6)},352 L${x - (back ? 8 : 6)},352 Z`} fill={near ? p.accent : p.bodyDark} opacity={near ? 0.85 : 1} />
+      </g>
+    );
     return (
       <g>
-        {/* far legs */}
-        <path d="M150,262 L156,262 L158,346 L150,346 Z M266,258 L274,258 L280,346 L272,346 Z" fill={p.bodyDark} />
+        <defs>
+          <radialGradient id={`${id}-flankfade`} cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0.45" stopColor="#fff" />
+            <stop offset="1" stopColor="#000" />
+          </radialGradient>
+          <mask id={`${id}-flank`} maskUnits="userSpaceOnUse" x="120" y="190" width="180" height="100">
+            <ellipse cx="204" cy="240" rx="66" ry="30" fill={`url(#${id}-flankfade)`} />
+          </mask>
+        </defs>
+        {leg(152, true, false)}
+        {leg(270, false, false)}
         {/* wispy tail */}
         <path d="M132,228 C108,220 96,236 92,254 C104,246 118,244 130,246 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.6" className="sl-sway" style={{ transformOrigin: "132px 236px" }} />
-        {/* body with star-field flank */}
+        {/* body; the star-field is a soft window that fades into the coat */}
         <path d={body} fill={u("body")} {...rim(c)} />
-        <path d={body} fill={p.belly} opacity="0.55" transform="translate(200 238) scale(0.8 0.62) translate(-196 -230)" />
-        <path d={body} fill={u("stars")} transform="translate(200 238) scale(0.8 0.62) translate(-196 -230)" className="sl-twinkle" />
-        <Spec x={200} y={206} rx={50} ry={6} rot={-2} o={0.35} />
-        {/* near legs */}
-        {[138, 258].map((x, i) => (
-          <g key={x}>
-            <path d={`M${x - 6},258 C${x - 8},290 ${x - 4},320 ${x - 4},346 L${x + 6},346 C${x + 6},320 ${x + 10},290 ${x + 12},258 Z`} fill={u("body")} {...rim(c, 1)} />
-            <path d={`M${x - 6},344 L${x + 8},344 L${x + 9},352 L${x - 7},352 Z`} fill={p.accent} opacity={i ? 0.9 : 0.8} />
-          </g>
-        ))}
+        <g mask={`url(#${id}-flank)`}>
+          <ellipse cx="204" cy="240" rx="70" ry="34" fill={p.accent} opacity="0.32" />
+          <ellipse cx="186" cy="234" rx="40" ry="18" fill={p.wingEdge} opacity="0.35" />
+          <rect x="130" y="200" width="150" height="80" fill={u("stars")} className="sl-twinkle" />
+        </g>
+        <Spec x={206} y={208} rx={52} ry={5} rot={-2} o={0.4} />
+        {leg(140, true, true)}
+        {leg(260, false, true)}
         {/* flowing mane */}
-        <g className="sl-sway-slow" style={{ transformOrigin: "280px 170px" }}>
-          <path d="M296,146 C274,160 262,190 240,204 C268,204 284,184 300,164 Z" fill={u("fin")} stroke={p.accent} strokeOpacity="0.6" />
-          <path d="M290,170 C268,186 258,214 236,226 C264,224 280,204 296,186 Z" fill={u("fin")} stroke={p.accent} strokeOpacity="0.4" />
+        <g className="sl-sway-slow" style={{ transformOrigin: "282px 172px" }}>
+          <path d="M298,146 C276,160 262,190 238,206 C268,206 286,186 302,166 Z" fill={u("fin")} stroke={p.accent} strokeOpacity="0.6" />
+          <path d="M292,170 C270,186 258,214 234,226 C264,224 282,204 298,186 Z" fill={u("fin")} stroke={p.accent} strokeOpacity="0.4" />
         </g>
         {/* neck & head */}
-        <path d="M258,216 C268,184 280,160 290,144 L312,150 C306,176 298,204 292,232 Z" fill={u("body")} {...rim(c)} />
+        <path d="M254,222 C262,192 276,164 290,144 L312,150 C304,176 296,206 290,234 C280,240 262,236 254,222 Z" fill={u("body")} {...rim(c)} />
+        <path d="M262,224 C270,200 280,176 292,156" fill="none" stroke="#fff" strokeOpacity="0.25" strokeWidth="3" strokeLinecap="round" />
         <path d={blade(28, 8)} transform="translate(300 132) rotate(-150)" fill={u("body")} {...rim(c, 1)} />
         <path d="M288,138 C298,124 318,122 330,130 C344,140 354,154 352,164 C346,170 332,166 318,160 C304,158 290,150 288,138 Z" fill={u("body")} {...rim(c)} />
-        <Spec x={312} y={128} rx={14} ry={4} rot={10} o={0.4} />
+        <path d="M336,150 C344,154 350,160 351,165 C344,168 334,164 328,160 Z" fill={p.belly} opacity="0.6" />
+        <Spec x={312} y={128} rx={14} ry={4} rot={10} o={0.45} />
         <circle cx="350" cy="162" r="2.4" fill={p.bodyDark} />
         <Eye c={c} x={316} y={140} r={5} kind="orb" />
         {/* constellation antlers */}
-        <g transform={`translate(306 126) scale(${s}) translate(-306 -126)`}>
-          <Constellation c={c} pts={[[306, 126], [298, 96], [282, 72], [270, 48]]} />
-          <Constellation c={c} pts={[[298, 96], [314, 74], [322, 50]]} />
-          <Constellation c={c} pts={[[282, 72], [262, 66], [248, 74]]} />
-          <Constellation c={c} pts={[[318, 124], [334, 100], [350, 86], [366, 82]]} />
-          <Constellation c={c} pts={[[334, 100], [340, 76]]} />
+        <g className="sl-sway-slow" style={{ transformOrigin: "306px 126px" }}>
+          <g transform={`translate(306 126) scale(${s}) translate(-306 -126)`}>
+            <Constellation c={c} pts={[[306, 126], [298, 96], [282, 72], [270, 48]]} />
+            <Constellation c={c} pts={[[298, 96], [314, 74], [322, 50]]} />
+            <Constellation c={c} pts={[[282, 72], [262, 66], [248, 74]]} />
+            <Constellation c={c} pts={[[318, 124], [334, 100], [350, 86], [366, 82]]} />
+            <Constellation c={c} pts={[[334, 100], [340, 76]]} />
+          </g>
         </g>
         <Gem c={c} x={276} y={222} s={0.55} />
       </g>

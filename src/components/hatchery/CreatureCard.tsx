@@ -28,7 +28,7 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
         <RarityBadge rarity={s.rarity} />
         <span className="font-mono text-[10px] uppercase tracking-wider text-mist/70">{record.backed ? evo.name : "Dormant"}</span>
       </div>
-      <div className="relative mx-auto mt-1 aspect-square w-full max-w-[240px] transition-transform duration-500 group-hover:scale-[1.05]">
+      <div className="sl-art-host relative mx-auto mt-1 aspect-square w-full max-w-[240px]" style={{ "--sl-glow": meta.glow } as React.CSSProperties}>
         <CreatureArt species={s} stage={evo.stage} />
       </div>
       <p className="relative font-display text-xl text-white">{record.nickname ?? s.name}</p>

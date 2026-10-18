@@ -160,8 +160,8 @@ export const prismara: Renderer = {
     const L = 70 + 70 * g;
     return (
       <g>
-        {/* prism fan */}
-        <g>
+        {/* prism fan: a slow display sway */}
+        <g className="sl-sway-slow" style={{ transformOrigin: "200px 250px" }}>
           {shards.map((a, i) => {
             const l = round(L * (0.82 + 0.18 * Math.sin((i / 12) * Math.PI)));
             const [tx, ty] = polar(200, 250, l * 0.9, a);
@@ -186,7 +186,7 @@ export const prismara: Renderer = {
         <path d="M168,200 C150,240 150,290 172,322 C176,290 182,250 188,214 Z" transform={MIRROR} fill={u("wing")} {...rim(c, 1)} />
         <Spec x={188} y={176} rx={8} ry={20} rot={10} o={0.25} />
         {/* neck & head */}
-        <path d="M192,150 L194,124 L206,124 L208,150 Z" fill={p.body} />
+        <path d="M190,152 C192,140 192,130 194,124 L206,124 C208,130 208,140 210,152 C206,157 194,157 190,152 Z" fill={u("body")} />
         <circle cx="200" cy="112" r="20" fill={u("body")} {...rim(c)} />
         <path d="M195,120 L200,140 L205,120 Z" fill={u("horn")} />
         <Eye c={c} x={191} y={110} r={4.6} kind="almond" flip />

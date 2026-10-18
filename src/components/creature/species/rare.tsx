@@ -16,30 +16,34 @@ export const vael: Renderer = {
           <path d="M318,334 C352,318 372,296 396,300 C380,314 360,330 326,346 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.5" />
           <path d="M318,340 C348,340 372,330 392,338 C374,348 352,354 324,352 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.4" />
         </g>
-        {/* head crest trailing back */}
-        <path
-          d={`M190,${neckTop - 20} C224,${neckTop - 40} 270,${neckTop - 30} ${300 + 20 * g},${neckTop + 4} C266,${neckTop - 6} 234,${neckTop - 6} 200,${neckTop - 6} Z`}
-          fill={u("fin")}
-          stroke={p.wingEdge}
-          strokeOpacity="0.6"
-          className="sl-sway-slow"
-          style={{ transformOrigin: `200px ${neckTop}px` }}
-        />
         <Tube c={c} w={34} belly d="M318,334 C372,336 366,374 300,374 C230,374 168,362 158,334 C150,306 196,296 230,306" />
-        {/* neck fin ribbon */}
-        <path d="M262,236 C290,256 316,262 344,250 C318,280 284,280 256,262 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.5" />
-        <Tube c={c} w={22} belly d={`M222,306 C262,320 272,270 254,224 C240,188 212,${neckTop + 34} 194,${neckTop + 6}`} />
         {/* glowing veins */}
         <g opacity={c.mark} filter={u("glow")} stroke={p.accent} strokeWidth="1.6" fill="none" strokeLinecap="round" className="sl-rune-pulse">
-          <path d="M250,262 C256,246 254,232 248,218 M200,352 C230,358 270,360 300,356 M180,330 C188,318 204,312 220,312" />
+          <path d="M200,352 C230,358 270,360 300,356 M180,330 C188,318 204,312 220,312" />
         </g>
-        {/* narrow elongated head */}
-        <g transform={`translate(0 ${neckTop - 128})`}>
-          <path d="M204,134 C200,112 178,100 150,104 C128,108 106,116 92,124 C106,132 132,136 160,138 C178,140 196,140 204,134 Z" fill={u("body")} {...rim(c)} />
-          <path d="M94,124 C110,130 136,134 162,136 C178,138 194,138 202,134 L196,142 C170,146 128,140 96,128 Z" fill={p.belly} opacity="0.8" />
-          <Spec x={160} y={110} rx={22} ry={4} rot={-6} o={0.35} />
-          <Eye c={c} x={162} y={116} r={5.5} kind="slit" flip angle={-6} />
-          <Gem c={c} x={184} y={110} s={0.45} />
+        {/* neck, crest and head sway together as one serpentine motion */}
+        <g className="sl-sway-slow" style={{ transformOrigin: "230px 306px" }}>
+          {/* head crest trailing back */}
+          <path
+            d={`M190,${neckTop - 20} C224,${neckTop - 40} 270,${neckTop - 30} ${300 + 20 * g},${neckTop + 4} C266,${neckTop - 6} 234,${neckTop - 6} 200,${neckTop - 6} Z`}
+            fill={u("fin")}
+            stroke={p.wingEdge}
+            strokeOpacity="0.6"
+            className="sl-sway-slow"
+            style={{ transformOrigin: `200px ${neckTop}px` }}
+          />
+          {/* neck fin ribbon */}
+          <path d="M262,236 C290,256 316,262 344,250 C318,280 284,280 256,262 Z" fill={u("fin")} stroke={p.wingEdge} strokeOpacity="0.5" />
+          <Tube c={c} w={22} belly d={`M222,306 C262,320 272,270 254,224 C240,188 212,${neckTop + 34} 194,${neckTop + 6}`} />
+          <path d="M250,262 C256,246 254,232 248,218" fill="none" stroke={p.accent} strokeWidth="1.6" strokeLinecap="round" opacity={c.mark} filter={u("glow")} className="sl-rune-pulse" />
+          {/* narrow elongated head */}
+          <g transform={`translate(0 ${neckTop - 128})`}>
+            <path d="M204,134 C200,112 178,100 150,104 C128,108 106,116 92,124 C106,132 132,136 160,138 C178,140 196,140 204,134 Z" fill={u("body")} {...rim(c)} />
+            <path d="M94,124 C110,130 136,134 162,136 C178,138 194,138 202,134 L196,142 C170,146 128,140 96,128 Z" fill={p.belly} opacity="0.8" />
+            <Spec x={160} y={110} rx={22} ry={4} rot={-6} o={0.35} />
+            <Eye c={c} x={162} y={116} r={5.5} kind="slit" flip angle={-6} />
+            <Gem c={c} x={184} y={110} s={0.45} />
+          </g>
         </g>
       </g>
     );
@@ -60,18 +64,22 @@ export const stormquill: Renderer = {
     return (
       <g>
         {/* tail plumes with lightning bars */}
-        {[138, 150, 162, 174].map((a, i) => (
-          <g key={a} transform={`translate(160 238) rotate(${a})`}>
-            <path d={blade(70 + 30 * g - i * 6, 9)} fill={u("feather")} stroke={p.bodyDark} strokeOpacity="0.4" />
-            <path d="M30,-3 L38,3 L46,-3 L54,3" fill="none" stroke={p.accent} strokeWidth="1.8" opacity={c.mark} />
-          </g>
-        ))}
-        {/* stilt legs */}
-        <g fill="none" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M212,252 L222,302 L206,350" stroke={p.bodyDark} strokeWidth="6" />
-          <path d="M196,254 L188,302 L196,350 M184,352 L196,350 L210,354 M194,350 L188,356" stroke={p.horn} strokeWidth="4.5" />
-          <path d="M206,350 L194,354 M206,350 L218,354" stroke={p.bodyDark} strokeWidth="4" />
+        <g className="sl-sway-slow" style={{ transformOrigin: "160px 238px" }}>
+          {[138, 150, 162, 174].map((a, i) => (
+            <g key={a} transform={`translate(160 238) rotate(${a})`}>
+              <path d={blade(70 + 30 * g - i * 6, 9)} fill={u("feather")} stroke={p.bodyDark} strokeOpacity="0.4" />
+              <path d="M30,-3 L38,3 L46,-3 L54,3" fill="none" stroke={p.accent} strokeWidth="1.8" opacity={c.mark} />
+            </g>
+          ))}
         </g>
+        {/* stilt legs: feathered thigh, reverse-bent knee, tapered scaled shin, spread toes */}
+        <path d="M206,252 C214,270 222,286 222,300 C220,318 212,334 208,348 L203,348 C206,334 213,318 215,302 C214,290 208,276 200,262 Z" fill={p.bodyDark} />
+        <path d="M200,350 L208,348 L220,353 M208,348 L206,356" fill="none" stroke={p.bodyDark} strokeWidth="3" strokeLinecap="round" />
+        <path d="M190,250 C186,272 184,290 189,302 C192,318 194,334 195,348 L201,348 C200,334 199,318 196,302 C194,290 198,272 204,256 Z" fill={u("horn")} {...rim(c, 1)} />
+        <ellipse cx="190" cy="302" rx="4.2" ry="5" fill={p.horn} {...rim(c, 1)} />
+        <path d="M193,312 L197,312 M194,322 L198,322 M194,332 L198,332" stroke={p.bodyDark} strokeOpacity="0.3" strokeWidth="1" />
+        <path d="M183,353 L197,349 L212,354 M197,349 L192,357" fill="none" stroke={p.horn} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M178,244 C182,262 196,270 210,262 C206,252 196,244 184,242 Z" fill={u("feather")} stroke={p.bodyDark} strokeOpacity="0.3" />
         {/* narrow body */}
         <path d="M152,232 C150,198 188,176 226,182 C258,188 268,214 256,236 C240,262 196,272 170,262 C158,256 152,246 152,232 Z" fill={u("body")} {...rim(c)} />
         <path d="M168,214 C196,196 242,200 258,222 C234,238 200,246 170,242 Z" fill={u("wing")} {...rim(c, 1)} />
@@ -217,47 +225,53 @@ export const cryovant: Renderer = {
 /** Emberlisk — a low, splayed, armour-plated salamander with lava seams. */
 export const emberlisk: Renderer = {
   shadow: 160,
-  fit: 1.12,
-  halo: [70, 236, 26],
+  fit: 1.18,
+  halo: [64, 230, 26],
   render: (c) => {
     const { p, u, g } = c;
-    const plates = [140, 172, 204, 236, 268, 298];
+    // Overlapping shield-shaped scutes along the spine, largest over the shoulders.
+    const plates = [130, 160, 190, 220, 250, 278, 304].map((x, i) => ({ x, h: round((14 + 12 * Math.sin(((i + 1) / 8) * Math.PI)) * (0.55 + 0.45 * g)), w: 17 - i * 0.8 }));
+    const limb = (d: string, near: boolean) => <path d={d} fill={near ? u("body") : p.bodyDark} {...(near ? rim(c) : {})} />;
     return (
       <g>
         {/* far legs */}
-        <path d="M150,300 L160,286 L172,300 L170,338 L184,346 L156,346 Z M262,298 L274,286 L286,300 L294,336 L308,344 L280,346 Z" fill={p.bodyDark} />
+        {limb("M170,312 C160,322 156,332 160,342 C152,346 150,352 158,353 L182,353 C184,348 178,344 174,342 C172,334 176,326 184,318 Z", false)}
+        {limb("M272,312 C282,322 288,332 286,342 C292,346 294,352 286,353 L262,353 C260,348 266,344 270,342 C270,334 266,326 258,318 Z", false)}
         {/* curled tail */}
-        <path d="M326,298 C362,302 382,280 380,254 C378,236 360,230 348,242 C362,244 366,256 362,268 C356,282 340,286 322,284 Z" fill={u("body")} {...rim(c)} />
-        {/* dorsal armour plates */}
-        {plates.map((x, i) => {
-          const h = round((16 + 10 * Math.sin((i / 5) * Math.PI)) * (0.6 + 0.4 * g));
-          return (
-            <g key={x}>
-              <path d={`M${x - 16},270 C${x - 12},${262 - h} ${x + 8},${258 - h} ${x + 16},268 Z`} fill={u("body")} stroke={p.bodyDark} strokeWidth="1.4" />
-              <path d={`M${x - 12},268 C${x - 8},${262 - h} ${x + 6},${260 - h} ${x + 12},266`} fill="none" stroke={p.accent} strokeWidth="1.5" opacity={0.4 + 0.5 * c.mark} filter={u("glow")} />
-            </g>
-          );
-        })}
-        {/* long low body */}
-        <path d="M96,300 C110,268 160,258 220,260 C280,262 320,276 336,300 C326,318 290,326 220,326 C160,326 112,322 96,300 Z" fill={u("body")} {...rim(c)} />
-        <path d="M110,310 C150,324 290,326 326,306 L320,318 C290,334 150,334 116,320 Z" fill={p.belly} opacity="0.85" filter={u("glow")} />
-        <g opacity={c.mark} filter={u("glow")} stroke={p.accent} strokeWidth="1.8" fill="none" strokeLinecap="round" className="sl-rune-pulse">
-          <path d="M150,284 L166,292 L160,304 M210,280 L222,294 L238,290 M276,286 L288,298 M190,300 L200,310" />
+        <g className="sl-sway-slow" style={{ transformOrigin: "330px 300px" }}>
+          <path d="M322,296 C350,300 376,288 382,262 C386,242 372,228 356,234 C344,239 344,254 356,256 C366,258 368,268 362,276 C352,290 334,292 318,284 Z" fill={u("body")} {...rim(c)} />
+          <path d="M330,290 C352,290 370,280 376,262" fill="none" stroke={p.accent} strokeWidth="1.6" opacity={0.4 + 0.5 * c.mark} filter={u("glow")} />
         </g>
-        <Spec x={210} y={270} rx={60} ry={6} rot={0} o={0.18} />
-        {/* near splayed legs */}
-        <path d="M124,306 L108,334 L92,346 L126,350 L144,316 Z" fill={u("body")} {...rim(c)} />
-        <path d="M282,308 L298,334 L318,346 L284,350 L264,316 Z" fill={u("body")} {...rim(c)} />
-        {[96, 108, 120, 290, 302, 314].map((x) => (
-          <path key={x} d={`M${x},346 L${x - 3},354 L${x + 4},350 Z`} fill={p.horn} />
+        {/* dorsal scutes */}
+        {plates.map(({ x, h, w }) => (
+          <g key={x}>
+            <path d={`M${x - w},272 C${x - w},${266 - h * 0.6} ${x - 4},${262 - h} ${x + 2},${262 - h} C${x + 8},${262 - h} ${x + w},${266 - h * 0.6} ${x + w},272 Z`} fill={u("body")} stroke={p.bodyDark} strokeWidth="1.3" />
+            <path d={`M${x - w + 4},270 C${x - w + 4},${266 - h * 0.55} ${x - 3},${264 - h} ${x + 2},${264 - h} C${x + 7},${264 - h} ${x + w - 4},${266 - h * 0.55} ${x + w - 4},270`} fill="none" stroke={p.accent} strokeWidth="1.6" opacity={0.45 + 0.5 * c.mark} filter={u("glow")} className="sl-rune-pulse" />
+            <path d={`M${x - 6},${268 - h * 0.7} C${x - 2},${264 - h * 0.9} ${x + 4},${264 - h * 0.9} ${x + 7},${267 - h * 0.7}`} fill="none" stroke="#fff" strokeOpacity="0.22" strokeWidth="1.2" />
+          </g>
+        ))}
+        {/* long low body */}
+        <path d="M92,298 C100,268 150,254 214,254 C282,254 322,268 338,292 C344,304 332,318 312,322 C280,328 240,330 210,330 C160,330 116,324 98,314 C92,310 90,304 92,298 Z" fill={u("body")} {...rim(c)} />
+        <path d="M104,312 C150,326 276,328 326,312 C318,322 300,326 280,328 C240,332 160,332 116,322 Z" fill={p.belly} opacity="0.9" filter={u("glow")} />
+        <g opacity={c.mark} filter={u("glow")} stroke={p.accent} strokeWidth="1.7" fill="none" strokeLinecap="round" className="sl-rune-pulse">
+          <path d="M146,282 C154,286 158,292 156,300 M156,300 C162,302 168,300 172,296 M206,276 C212,284 220,288 232,286 M232,286 C236,292 236,298 232,304 M268,282 C276,288 282,296 282,304" />
+        </g>
+        <Spec x={214} y={266} rx={64} ry={6} rot={0} o={0.16} />
+        {/* near splayed legs with elbows */}
+        {limb("M132,306 C118,314 108,324 106,336 C98,342 92,350 100,353 L128,353 C128,346 122,342 120,340 C122,330 130,322 144,316 Z", true)}
+        {limb("M284,306 C298,314 308,324 310,336 C318,342 324,350 316,353 L288,353 C288,346 294,342 296,340 C294,330 286,322 272,316 Z", true)}
+        {[98, 108, 118, 298, 308, 318].map((x) => (
+          <path key={x} d={`M${x - 3},352 C${x - 2},356 ${x + 2},357 ${x + 4},353`} fill={p.horn} stroke={p.horn} strokeWidth="1.5" />
         ))}
         {/* wide flat head */}
-        <path d="M104,298 C88,280 58,274 30,282 C18,288 18,302 30,310 C56,320 90,320 110,312 Z" fill={u("body")} {...rim(c)} />
-        <path d="M24,300 C50,310 84,312 108,306" fill="none" stroke={p.belly} strokeWidth="2.4" strokeLinecap="round" filter={u("glow")} />
-        <path d="M54,280 C66,272 82,272 94,280 L88,286 C78,282 66,282 58,286 Z" fill={p.bodyDark} />
-        <circle cx="30" cy="290" r="2.4" fill={p.accent} filter={u("glow")} />
-        <Eye c={c} x={68} y={290} r={6} kind="slit" flip angle={-6} />
-        <Gem c={c} x={92} y={288} s={0.45} />
+        <path d="M112,298 C98,280 72,270 46,273 C28,276 16,286 18,297 C20,308 34,315 54,317 C80,320 102,316 114,310 Z" fill={u("body")} {...rim(c)} />
+        <path d="M22,302 C40,312 74,314 108,308" fill="none" stroke={p.belly} strokeWidth="2.6" strokeLinecap="round" filter={u("glow")} />
+        <path d="M54,278 C66,270 84,270 96,278 C90,282 84,284 76,284 C68,284 60,282 54,278 Z" fill={p.bodyDark} opacity="0.85" />
+        <path d="M60,276 C70,272 82,272 90,277" fill="none" stroke="#fff" strokeOpacity="0.18" strokeWidth="1.2" />
+        <Spec x={66} y={282} rx={26} ry={4} rot={-4} o={0.2} />
+        <circle cx="26" cy="290" r="2.6" fill={p.accent} filter={u("glow")} className="sl-core" />
+        <Eye c={c} x={70} y={290} r={6.4} kind="slit" flip angle={-6} />
+        <Gem c={c} x={96} y={290} s={0.45} />
       </g>
     );
   },

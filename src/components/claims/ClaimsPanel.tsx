@@ -82,12 +82,13 @@ export function ClaimsPanel() {
   }
 
   if (!status) return <div className="mt-10 h-40 animate-pulse rounded-3xl bg-white/[0.03]" />;
-  if ("error" in status) return <Panel tone="warn" title="Claims aren't available on this server yet">{status.error}</Panel>;
+  if ("error" in status) return <Panel title="Claims status unavailable">We couldn&apos;t load the claims status just now. Please try again shortly.</Panel>;
 
   const { s, offset } = status;
   const now = Date.now() + offset;
-  if (!s.serviceReady)
-    return <Panel tone="warn" title="Claims aren't available on this site yet">Fee claims need the site&apos;s Solana and database settings, which haven&apos;t been switched on yet. Nothing can be claimed until then.</Panel>;
+  // Until a refund programme is confirmed (an active policy) and the service is set up, visitors see the
+  // planned feature. The countdown and sign-in flow below take over unchanged once both are in place.
+  if (!s.serviceReady || !s.policyConfigured) return <ComingSoon />;
   if (s.launchAt === null) return <Panel title="Not scheduled yet">The launch time hasn&apos;t been announced. Claims open six hours after launch; this page will show a countdown once it is set.</Panel>;
   if (!s.open && s.opensAt !== null && now < s.opensAt)
     return (
@@ -97,12 +98,6 @@ export function ClaimsPanel() {
       </Panel>
     );
   if (!s.open) return <Panel title="The claim period has ended">Recorded claims keep their status below once you sign in.</Panel>;
-  if (!s.policyConfigured)
-    return (
-      <Panel tone="warn" title="Claims are open, but amounts aren't available yet">
-        The refund rules haven&apos;t been confirmed, so no amount can be calculated or claimed. Nothing is promised until they are published here.
-      </Panel>
-    );
 
   return (
     <div className="mt-10 space-y-4">
@@ -182,6 +177,22 @@ function Lines({ lines }: { lines: { label: string; value: string }[] }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+function ComingSoon() {
+  return (
+    <section className="relative mt-10 overflow-hidden rounded-3xl border border-sol-purple/25 bg-gradient-to-b from-sol-purple/[0.08] to-white/[0.02] p-6 sm:p-8" data-testid="claims-coming-soon">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sol-blue/60 to-transparent" aria-hidden />
+      <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-sol-blue/90">
+        <span className="h-1.5 w-1.5 rounded-full bg-sol-blue shadow-[0_0_8px_#00c2ff]" aria-hidden />
+        Claims portal
+      </p>
+      <h2 className="mt-3 font-display text-2xl text-white sm:text-3xl">Coming soon</h2>
+      <p className="mt-3 max-w-xl text-sm leading-relaxed text-mist">
+        We&apos;re preparing the claims experience. Details on eligibility, timing and the claim process will be announced here once confirmed.
+      </p>
+    </section>
   );
 }
 

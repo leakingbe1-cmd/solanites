@@ -392,7 +392,7 @@ function ascended(c: Ctx) {
     <g key={key}>
       {/* raised wing, kept outside the disc so it frames the sun */}
       <g className="sl-flap" style={{ transformOrigin: "166px 224px" }}>
-        <Wing c={c} s={[166, 224]} wr={[100, 196]} sa={[118, 160]} pa={[196, 258]} L={104} ns={7} np={7} />
+        <Wing c={c} s={[166, 222]} wr={[98, 184]} sa={[116, 158]} pa={[198, 262]} L={108} ns={7} np={7} />
       </g>
       {/* tail streamer */}
       <g className="sl-sway-slow" style={{ transformOrigin: "196px 322px" }}>
@@ -416,6 +416,8 @@ function ascended(c: Ctx) {
       ))}
       <Talons c={c} x={186} top={326} foot={350} />
       <Talons c={c} x={214} top={326} foot={350} />
+      {/* soft shadow so the gold body separates from the gold sun */}
+      <ellipse cx="200" cy="236" rx="58" ry="92" fill={p.bodyDark} opacity="0.45" filter={u("blur8")} />
       {/* body, facing out like a crest */}
       <path d="M156,236 C152,196 174,172 200,172 C226,172 248,196 244,236 C242,282 228,318 200,330 C172,318 158,282 156,236 Z" fill={hv(c, "body")} {...rim(c)} />
       <path d="M174,212 C186,204 214,204 226,212 C232,250 224,296 200,322 C176,296 168,250 174,212 Z" fill={p.belly} />

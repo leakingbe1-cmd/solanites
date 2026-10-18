@@ -5,3 +5,21 @@ out
 next-env.d.ts
 .env*.local
 preview/dist
+
+# Playwright
+/test-results
+/playwright-report
+/blob-report
+/playwright/.cache
+# Playwright CLI output (may contain credentials)
+.playwright-cli/
+
+# Secrets (never commit)
+.env
+.env.production
+.env.development
+*keypair*.json
+*.pem
+
+# Graphify output (local only)
+graphify-out/

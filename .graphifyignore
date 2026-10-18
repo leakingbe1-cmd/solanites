@@ -1,0 +1,16 @@
+# Never index secrets or generated output
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*keypair*.json
+id.json
+node_modules/
+.next/
+preview/dist/
+test-results/
+playwright-report/
+.playwright-cli/
+package-lock.json
+.claude/

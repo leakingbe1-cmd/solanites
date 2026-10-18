@@ -49,7 +49,7 @@ describe("egg rule: 1,000,000 SOLITE = 1 egg", () => {
   it("is configured centrally", () => {
     expect(eggProgression.tokensPerEgg).toBe(1_000_000);
     expect(eggProgression.totalSupply).toBe(1_000_000_000);
-    expect(eggProgression.incubationScheduleMs).toEqual([5 * MIN, 6 * HOUR, 24 * HOUR, 48 * HOUR, 72 * HOUR]);
+    expect(eggProgression.incubationScheduleMs).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR]);
   });
 
   it.each([
@@ -80,7 +80,7 @@ describe("Workflow A: automatic tracking, no wallet connection (tests 1, 2, 4)",
     expect(v.holdings.amount).toBe("1000000");
     expect(v.holdings.qualifyingUnits).toBe(1);
     expect(v.counts).toEqual({ earned: 1, queued: 0, incubating: 1, ready: 0, hatched: 0 });
-    expect(v.eggs[0]).toMatchObject({ sequence: 1, status: "incubating", incubationMs: 5 * MIN, incubationStartedAt: clock.t, readyAt: clock.t + 5 * MIN, speciesId: null });
+    expect(v.eggs[0]).toMatchObject({ sequence: 1, status: "incubating", incubationMs: 1 * MIN, incubationStartedAt: clock.t, readyAt: clock.t + 1 * MIN, speciesId: null, maturityMs: 1 * MIN });
   });
 
   it("issues nothing below 1,000,000 and the next egg at each further million", async () => {
@@ -153,14 +153,14 @@ describe("multiple token accounts (test 3)", () => {
 });
 
 describe("incubation schedule (tests 5, 6, 7)", () => {
-  it("first egg: ready after exactly five minutes of server time, then hatches through the existing roll", async () => {
+  it("first egg: ready after exactly one minute of server time, then hatches through the existing roll", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(10);
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
     const egg = (await tracker.holderView(h)).eggs[0];
 
-    clock.advance(5 * MIN - 1);
+    clock.advance(1 * MIN - 1);
     expect((await tracker.holderView(h)).eggs[0].status).toBe("incubating");
     expect(await tracker.hatch(egg.id)).toEqual({ ok: false, code: "NOT_READY", readyAt: egg.readyAt });
 
@@ -179,26 +179,27 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     expect(v.eggs[0].speciesId).toBe(r.result.speciesId);
   });
 
-  it("second egg: queued behind the first, then incubates for six hours", async () => {
+  it("second egg: queued behind the first, then incubates for five minutes", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(11);
     buy(h, 2_000_000);
     await tracker.runSync({ force: true });
     const [e1, e2] = (await tracker.holderView(h)).eggs;
-    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 6 * HOUR, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 6 * HOUR });
-    clock.advance(5 * MIN);
+    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 5 * MIN, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 5 * MIN, maturityMs: 5 * MIN });
+    clock.advance(1 * MIN);
     expect((await tracker.holderView(h)).eggs[1].status).toBe("incubating");
-    clock.advance(6 * HOUR);
+    clock.advance(5 * MIN);
     expect((await tracker.holderView(h)).eggs.map((e) => e.status)).toEqual(["ready", "ready"]);
   });
 
-  it("later eggs: 24h, 48h, then 72h each", async () => {
+  it("later eggs: 15 min, 1 h, 6 h, then 12 h each", async () => {
     const { tracker, buy } = await setup();
     const h = W(12);
     buy(h, 7_000_000);
     await tracker.runSync({ force: true });
     const eggs = (await tracker.holderView(h)).eggs;
-    expect(eggs.map((e) => e.incubationMs)).toEqual([5 * MIN, 6 * HOUR, 24 * HOUR, 48 * HOUR, 72 * HOUR, 72 * HOUR, 72 * HOUR]);
+    expect(eggs.map((e) => e.incubationMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
+    expect(eggs.map((e) => e.maturityMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 3 * HOUR, 6 * HOUR, 6 * HOUR]);
     for (let i = 1; i < eggs.length; i++) expect(eggs[i].incubationStartedAt).toBe(eggs[i - 1].readyAt);
   });
 
@@ -211,12 +212,12 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
     const e2 = (await tracker.holderView(h)).eggs[1];
-    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 6 * HOUR });
+    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 5 * MIN });
   });
 
   it("scheduleEgg and incubationMsFor follow the config", () => {
-    expect([1, 2, 3, 4, 5, 9].map((s) => incubationMsFor(s))).toEqual([5 * MIN, 6 * HOUR, 24 * HOUR, 48 * HOUR, 72 * HOUR, 72 * HOUR]);
-    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 6 * HOUR, readyAt: 500 + 6 * HOUR });
+    expect([1, 2, 3, 4, 5, 6, 9].map((s) => incubationMsFor(s))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
+    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 5 * MIN, readyAt: 500 + 5 * MIN });
     expect(scheduleEgg(2, 100, 500, { ...eggProgression, incubationMode: "parallel" }).incubationStartedAt).toBe(100);
     expect(() => incubationMsFor(0)).toThrow();
   });
@@ -292,7 +293,7 @@ describe("transfers and balance changes (test 10)", () => {
     await tracker.runSync({ force: true });
     const v = await tracker.holderView(b);
     expect(v.counts.earned).toBe(1);
-    expect(v.eggs[0].incubationMs).toBe(5 * MIN); // b's own first egg
+    expect(v.eggs[0].incubationMs).toBe(1 * MIN); // b's own first egg
   });
 
   it("uncredited tokens leave first, so splitting a wallet is fair", async () => {
@@ -500,12 +501,12 @@ describe("evolution of tracked creatures uses verified holding only", () => {
     expect(qualifyingMs(0, 500, 10n, [], 9n)).toEqual({ ms: 0, growing: false });
   });
 
-  it("a hatched creature reaches Hatchling at 5 min, then pauses while the holder has sold", async () => {
+  it("a hatched creature grows from when its egg hatched, then pauses while the holder has sold", async () => {
     const { tracker, buy, chain, pool, clock } = await setup();
     const h = W(60);
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
-    clock.advance(5 * MIN);
+    clock.advance(1 * MIN);
     const id = (await tracker.holderView(h)).eggs[0].id;
     expect((await tracker.hatch(id)).ok).toBe(true);
     clock.advance(5 * MIN);

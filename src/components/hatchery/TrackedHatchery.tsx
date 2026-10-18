@@ -10,10 +10,10 @@ import { SectionTitle, Stat } from "@/components/hatchery/HatcheryUi";
 import { Modal } from "@/components/ui/Modal";
 import { ParticleField } from "@/components/ui/ParticleField";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { describeSchedule } from "@/config/eggProgression";
+import { describeGrowthSchedule, describeSchedule, incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { formatDuration, formatNumber, shortAddress } from "@/lib/format";
-import type { SolaniteRecord } from "@/lib/progression";
+import { formatDuration, formatNumber, formatSpan, shortAddress } from "@/lib/format";
+import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
 import { useHatchery } from "@/state/HatcheryProvider";
@@ -35,8 +35,36 @@ function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord
     hatchedAt: e.hatchedAt,
     // Server-verified qualifying hold, counted forward only while the balance still backs it.
     growthMs: e.growthMs === null ? 0 : e.growthMs + (e.growing ? Math.max(0, now - serverNow) : 0),
+    maturityMs: e.maturityMs,
     backed: e.hatchedAt === null || e.growing,
   };
+}
+
+/** A balance not re-verified for this long is shown as possibly out of date. */
+const STALE_AFTER_MS = 30 * 60_000;
+
+type Milestone = { text: string; inMs: number; progress: number | null; action?: "hatch" };
+
+/**
+ * The next thing that will happen for this address, from the server's
+ * timestamps (shifted onto the server clock). Display only: the server decides
+ * every transition.
+ */
+function nextMilestone(eggs: TrackedEgg[], now: number, serverNow: number): Milestone | null {
+  const ready = eggs.find((e) => e.hatchedAt === null && now >= e.readyAt);
+  if (ready) return { text: `Egg #${ready.sequence} has hatched. Reveal it to meet your Solanite`, inMs: 0, progress: 1, action: "hatch" };
+  const options: Milestone[] = [];
+  const incubating = eggs.find((e) => e.hatchedAt === null && now >= e.incubationStartedAt && now < e.readyAt);
+  if (incubating) options.push({ text: `Egg #${incubating.sequence} hatches`, inMs: incubating.readyAt - now, progress: (now - incubating.incubationStartedAt) / Math.max(1, incubating.incubationMs) });
+  for (const e of eggs) {
+    if (e.hatchedAt === null || e.growthMs === null || !e.growing) continue;
+    // Count forward from the server's figure the same way the creature card does.
+    const evo = evolutionOf(e.growthMs + Math.max(0, now - serverNow), gameConfig, e.maturityMs);
+    if (evo.isFinal || evo.nextLabel === null) continue;
+    const name = e.speciesId ? (SPECIES_BY_ID[e.speciesId]?.name ?? "Your Solanite") : "Your Solanite";
+    options.push({ text: evo.phase === "growing" ? `${name} is fully grown` : `${name} becomes ${evo.nextLabel}`, inMs: evo.toNextMs, progress: evo.toNextProgress });
+  }
+  return options.sort((x, y) => x.inMs - y.inMs)[0] ?? null;
 }
 
 /**
@@ -75,6 +103,15 @@ export function TrackedHatchery({ address }: { address: string }) {
     };
   }, [refresh]);
 
+  // When the next milestone falls due, ask the server rather than waiting for the next poll.
+  useEffect(() => {
+    if (load.kind !== "ready") return;
+    const m = nextMilestone(load.view.eggs, Date.now() + load.offset, load.view.serverNow);
+    if (!m || m.action === "hatch") return;
+    const t = window.setTimeout(refresh, Math.max(2000, m.inMs + 500));
+    return () => window.clearTimeout(t);
+  }, [load, refresh]);
+
   async function hatch(egg: TrackedEgg, record: SolaniteRecord) {
     setHatchError(null);
     const res = await fetch(`/api/eggs/${encodeURIComponent(egg.id)}/hatch`, { method: "POST" });
@@ -109,6 +146,10 @@ export function TrackedHatchery({ address }: { address: string }) {
   const inspected = view.eggs.find((e) => e.id === inspect);
   const unit = view.rules.tokensPerEgg;
   const toNext = Number(view.holdings.toNextEgg);
+  const lastVerified = view.sync.lastSyncedAt;
+  const stale = lastVerified !== null && now - lastVerified > STALE_AFTER_MS;
+  const milestone = nextMilestone(view.eggs, now, view.serverNow);
+  const milestoneEgg = milestone?.action === "hatch" ? view.eggs.find((e) => e.hatchedAt === null && now >= e.readyAt) : undefined;
 
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
@@ -125,11 +166,13 @@ export function TrackedHatchery({ address }: { address: string }) {
             <p className="mt-3 break-all font-mono text-xs text-mist">{address}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green" />
+            <span className="relative flex h-2 w-2" aria-hidden>
+              {!stale && lastVerified !== null && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-60" />}
+              <span className={`relative inline-flex h-2 w-2 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} />
             </span>
-            {view.sync.lastSyncedAt ? `Verified ${formatDuration(now - view.sync.lastSyncedAt)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Waiting for first sync"}
+            <span data-testid="verification-status">
+              {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
+            </span>
             <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-white">
               Change address
             </button>
@@ -161,6 +204,12 @@ export function TrackedHatchery({ address }: { address: string }) {
           {view.holdings.excluded && <Note tone="warn">This is a project, pool or program-controlled address, so it does not earn eggs.</Note>}
           {!view.tracked && !view.holdings.excluded && <Note>No {gameConfig.token.symbol} has been seen at this address yet. Eggs appear here automatically once it holds {formatNumber(unit)} or more.</Note>}
           {view.sync.error && <Note tone="warn">{view.sync.error}</Note>}
+          {stale && (
+            <Note tone="warn">
+              This balance was last verified {formatDuration(now - lastVerified!)} ago, so it may be out of date. It is re-checked automatically; new eggs are only issued from a fresh, complete
+              reading of the chain.
+            </Note>
+          )}
           {Number(view.holdings.inheritedCreditAmount) > 0 && (
             <Note>
               {Number(view.holdings.inheritedCreditAmount).toLocaleString()} of these tokens came from a wallet where they had already earned an egg, so they don&apos;t earn another here. New eggs come
@@ -169,6 +218,25 @@ export function TrackedHatchery({ address }: { address: string }) {
           )}
           {hatchError && <Note tone="warn">{hatchError}</Note>}
         </div>
+
+        {milestone && (
+          <div className="sl-glass mt-6 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between" data-testid="next-milestone">
+            <div className="min-w-0 flex-1">
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-sol-green/80">Next milestone</p>
+              <p className="mt-1 font-display text-lg text-white">{milestone.text}</p>
+              {milestone.progress !== null && milestone.inMs > 0 && <ProgressBar value={milestone.progress} className="mt-2 max-w-md" label="Progress to the next milestone" />}
+            </div>
+            {milestoneEgg ? (
+              <button onClick={() => hatch(milestoneEgg, recordOf(milestoneEgg))} className="sl-btn-primary shrink-0 rounded-full px-6 py-3 font-display text-xs font-semibold tracking-[0.2em] text-white">
+                REVEAL
+              </button>
+            ) : (
+              <p className="shrink-0 font-mono text-2xl tabular-nums text-white" data-testid="next-milestone-in">
+                {formatDuration(milestone.inMs)}
+              </p>
+            )}
+          </div>
+        )}
 
         <SectionTitle title="Incubating" count={eggs.length} />
         {eggs.length ? (
@@ -191,7 +259,7 @@ export function TrackedHatchery({ address }: { address: string }) {
           </div>
         ) : (
           <p className="rounded-3xl border border-white/5 p-10 text-center text-mist">
-            {view.counts.earned ? "Every egg has hatched." : `Hold ${formatNumber(unit)} ${gameConfig.token.symbol} to earn your first egg. It hatches ${describeSchedule().split(",")[0]} after it appears.`}
+            {view.counts.earned ? "Every egg has hatched." : `Hold ${formatNumber(unit)} ${gameConfig.token.symbol} to earn your first egg. It hatches ${formatSpan(incubationMsFor(1))} after it appears, and the creature is fully grown ${formatSpan(initialGrowthMsFor(1))} after that.`}
           </p>
         )}
 
@@ -207,7 +275,7 @@ export function TrackedHatchery({ address }: { address: string }) {
         )}
 
         <p className="mt-16 text-xs leading-relaxed text-mist/70">
-          Incubation: {describeSchedule()}. Timers run on the server, so they keep going while you are away and look the same on every device. Earned eggs are never taken back if the balance
+          Incubation: {describeSchedule()}. Growing up after hatching: {describeGrowthSchedule()}. Timers run on the server, so they keep going while you are away and look the same on every device. Earned eggs are never taken back if the balance
           later drops. Anyone can view a public address; nothing here needs or asks for a wallet signature, seed phrase or private key.
         </p>
       </div>

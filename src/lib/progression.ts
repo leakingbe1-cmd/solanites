@@ -1,4 +1,6 @@
+import { initialGrowthMsFor } from "@/config/eggProgression";
 import type { GameConfig, RarityId } from "@/config/gameConfig";
+import { formatSpan } from "@/lib/format";
 import { mulberry32 } from "@/lib/rng";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES, speciesOfRarity } from "@/lib/species";
@@ -25,6 +27,8 @@ export interface SolaniteRecord {
   hatchedAt: number | null;
   /** Qualifying holding time accumulated since hatching. */
   growthMs: number;
+  /** This creature's initial growth to its mature form. Falls back to the first creature's. */
+  maturityMs?: number;
   /** Whether the last tick found this record backed by the wallet's balance. */
   backed: boolean;
   nickname?: string;
@@ -121,9 +125,24 @@ export function timeToHatch(r: SolaniteRecord, cfg: GameConfig): number {
 
 /* ── Evolution ──────────────────────────────────────────────── */
 
+export type GrowthPhase =
+  /** Hatched, still growing towards its mature form. */
+  | "growing"
+  /** Initial growth complete: the mature form. */
+  | "mature"
+  /** A later evolution. */
+  | "evolved"
+  /** The final form, including its Ascension ranks. */
+  | "ascended";
+
 export interface EvolutionInfo {
   /** Form index (0 = first form). */
   stage: number;
+  phase: GrowthPhase;
+  /** Initial growth complete. */
+  matured: boolean;
+  /** This creature's initial growth duration. */
+  maturityMs: number;
   name: string;
   /** 0..1 progress toward the next form (1 at the final form). */
   progress: number;
@@ -147,13 +166,25 @@ export interface EvolutionInfo {
 
 const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
+/** The first creature's initial growth; the default for records without their own. */
+export const FIRST_MATURITY_MS = initialGrowthMsFor(1);
+
 /**
- * Evolution from cumulative qualifying holding time since hatching. A form
- * is reached exactly at its threshold (>=), never before.
+ * Qualifying holding since hatching at which each form is reached for a
+ * creature with this initial growth: newborn at 0, mature at `maturityMs`,
+ * later evolutions after maturity.
  */
-export function evolutionOf(growthMs: number, cfg: GameConfig): EvolutionInfo {
+export function formThresholdsMs(maturityMs: number, cfg: GameConfig): number[] {
+  return [0, maturityMs, ...cfg.evolution.afterMaturityMs.map((ms) => maturityMs + ms)];
+}
+
+/**
+ * Growth and evolution from cumulative qualifying holding time since
+ * hatching. A milestone is reached exactly at its threshold (>=), never before.
+ */
+export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: number = FIRST_MATURITY_MS): EvolutionInfo {
   const g = Math.max(0, growthMs);
-  const t = cfg.evolution.thresholdsMs;
+  const t = formThresholdsMs(maturityMs, cfg);
   const names = cfg.evolution.names;
   let stage = 0;
   for (let i = 0; i < t.length; i++) if (g >= t[i]) stage = i;
@@ -163,7 +194,7 @@ export function evolutionOf(growthMs: number, cfg: GameConfig): EvolutionInfo {
   const ranks = cfg.evolution.ascensionRanksMs;
   const milestones: { at: number; label: string }[] = [
     ...t.map((at, i) => ({ at, label: names[i] })),
-    ...ranks.map((at, i) => ({ at, label: `${names[names.length - 1]} ${ROMAN[i + 2] ?? i + 2}` })),
+    ...ranks.map((at, i) => ({ at: maturityMs + at, label: `${names[names.length - 1]} ${ROMAN[i + 2] ?? i + 2}` })),
   ];
   let m = 0;
   for (let i = 0; i < milestones.length; i++) if (g >= milestones[i].at) m = i;
@@ -172,6 +203,9 @@ export function evolutionOf(growthMs: number, cfg: GameConfig): EvolutionInfo {
 
   return {
     stage,
+    phase: stage === 0 ? "growing" : stage === 1 ? "mature" : isMax ? "ascended" : "evolved",
+    matured: stage >= 1,
+    maturityMs,
     name: names[stage],
     progress: isMax ? 1 : (g - t[stage]) / (t[stage + 1] - t[stage]),
     remainingMs: isMax ? 0 : t[stage + 1] - g,
@@ -184,6 +218,16 @@ export function evolutionOf(growthMs: number, cfg: GameConfig): EvolutionInfo {
     toNextProgress: next ? (g - milestones[m].at) / (next.at - milestones[m].at) : 1,
     isFinal: !next,
   };
+}
+
+/**
+ * When form `i` is reached, in words. With a creature's own initial growth the
+ * maturity time is exact; without one (browsing a species) it is described.
+ */
+export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number): string {
+  if (i <= 0) return "At hatch";
+  if (i === 1) return maturityMs !== undefined ? `After ${formatSpan(maturityMs)} of growth` : `When initial growth completes (${formatSpan(FIRST_MATURITY_MS)} for a first creature)`;
+  return `${formatSpan(cfg.evolution.afterMaturityMs[i - 2])} of holding after maturity`;
 }
 
 /* ── Rarity roll ────────────────────────────────────────────── */

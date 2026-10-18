@@ -2,11 +2,11 @@ import Link from "next/link";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { describeSchedule, eggProgression } from "@/config/eggProgression";
+import { describeGrowthSchedule, describeSchedule, eggProgression } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { CLAIMS_OPEN_AFTER_MS } from "@/config/launch";
 import { formatNumber, formatSpan } from "@/lib/format";
-import { rarityChances } from "@/lib/progression";
+import { formUnlockText, rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 
 export const metadata = { title: "How It Works — Solanites" };
@@ -23,11 +23,12 @@ export default function HowItWorksPage() {
     ["Incubation", describeSchedule(prog), prog.incubationMode === "sequential" ? "One egg incubates at a time. Timers run on the server clock, including while you are offline" : "Every egg starts incubating when earned, on the server clock"],
     ["If your balance drops", "Earned eggs are kept", "They keep incubating. New eggs need tokens that have not already earned one"],
     ["Moving tokens to another wallet", "No new egg for the same tokens", "Tokens that already earned an egg carry that with them, so a transfer can't earn the same egg twice"],
-    ["Evolution schedule", cfg.evolution.names.map((n, i) => (i ? `${n} at ${formatSpan(cfg.evolution.thresholdsMs[i])}` : `${n} at hatch`)).join(" · "), "Cumulative qualifying holding time since hatching"],
+    ["Growing up", describeGrowthSchedule(prog), `A newly hatched ${cfg.evolution.names[0]} becomes a fully grown ${cfg.evolution.names[1]} after this much qualifying holding. Your first creature is grown ${formatSpan(prog.initialGrowthScheduleMs[0])} after it hatches`],
+    ["Evolution schedule", cfg.evolution.names.map((n, i) => `${n} ${formUnlockText(i, cfg).toLowerCase()}`).join(" · "), "Growth and evolution count qualifying holding from when the egg hatched (its incubation ended), paused while the balance no longer backs the creature"],
     [
       "After Ascended",
       cfg.evolution.ascensionRanksMs.map((ms, i) => `${["II", "III", "IV", "V", "VI", "VII"][i] ?? i + 2} at ${formatSpan(ms)}`).join(" · "),
-      "Ascension ranks: each milestone takes longer than the one before",
+      "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
     ["Launch fee claims", `Open ${CLAIMS_OPEN_AFTER_MS / 3_600_000} hours after launch`, "Separate from eggs: only claims ask you to connect a wallet"],

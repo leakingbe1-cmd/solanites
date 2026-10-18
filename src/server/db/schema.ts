@@ -10,7 +10,7 @@ import type { Db } from "./types";
  *   fee_claims UNIQUE(claimant, period)  one claim per wallet per period
  *   fee_claims UNIQUE(payout_signature)  a payout transaction is recorded once
  */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 const STATEMENTS = [
   `CREATE TABLE IF NOT EXISTS schema_migrations (version int PRIMARY KEY, applied_ms bigint NOT NULL)`,
@@ -88,6 +88,9 @@ const STATEMENTS = [
     hatched_ms bigint,
     UNIQUE (owner, sequence)
   )`,
+  // v2: each egg's initial growth (to its creature's mature form), fixed at issuance like incubation_ms.
+  // Rows issued before v2 have NULL and use the configured value for their sequence when read.
+  `ALTER TABLE eggs ADD COLUMN IF NOT EXISTS maturity_ms bigint CHECK (maturity_ms >= 0)`,
 
   `CREATE TABLE IF NOT EXISTS sync_runs (
     id bigserial PRIMARY KEY,

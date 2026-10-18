@@ -10,6 +10,7 @@ import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
 import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
+import { FIRST_MATURITY_MS } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 
@@ -98,9 +99,9 @@ export default function Home() {
       <section id="evolution" className="relative py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Evolution" title={<>One creature.<br className="hidden sm:block" /> Four forms.</>}>
-            Every species grows into its own shape. After hatching, a Solanite becomes a {gameConfig.evolution.names[1]} after{" "}
-            {formatSpan(gameConfig.evolution.thresholdsMs[1])} of holding, {gameConfig.evolution.names[2]} after {formatSpan(gameConfig.evolution.thresholdsMs[2])}, and{" "}
-            {gameConfig.evolution.names[3]} after {formatSpan(gameConfig.evolution.thresholdsMs[3])}.
+            Every species grows into its own shape. A newly hatched Solanite is fully grown, its {gameConfig.evolution.names[1]} form, after {formatSpan(FIRST_MATURITY_MS)} for
+            your first creature (later ones take longer). It becomes {gameConfig.evolution.names[2]} after {formatSpan(gameConfig.evolution.afterMaturityMs[0])} more of holding, and{" "}
+            {gameConfig.evolution.names[3]} {formatSpan(gameConfig.evolution.afterMaturityMs[1])} after it grew up.
           </SectionHeading>
           <EvolutionShowcase />
         </div>

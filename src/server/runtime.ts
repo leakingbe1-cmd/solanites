@@ -25,7 +25,10 @@ export interface Runtime {
   fixtureChain?: ReturnType<typeof createLedgerChain>;
 }
 
-let runtime: Promise<Runtime> | null = null;
+// One runtime per process. Kept on globalThis because route handlers can be bundled
+// separately (notably in `next dev`), each with its own copy of this module; in fixture
+// mode that would otherwise give every route its own in-memory database.
+const holder = globalThis as typeof globalThis & { __solanitesRuntime?: Promise<Runtime> | null };
 
 /**
  * Server runtime for holder tracking and claims, created once per process.
@@ -36,13 +39,13 @@ let runtime: Promise<Runtime> | null = null;
  * in production builds.
  */
 export function getRuntime(env: Record<string, string | undefined> = process.env): Promise<Runtime> {
-  if (!runtime) {
-    runtime = buildRuntime(env).catch((e) => {
-      runtime = null;
+  if (!holder.__solanitesRuntime) {
+    holder.__solanitesRuntime = buildRuntime(env).catch((e) => {
+      holder.__solanitesRuntime = null;
       throw e;
     });
   }
-  return runtime;
+  return holder.__solanitesRuntime;
 }
 
 /** Builds a runtime without caching (used by getRuntime and tests). */

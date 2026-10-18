@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { gameConfig } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
+import { FIRST_MATURITY_MS, formUnlockText } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
 
@@ -19,12 +20,13 @@ import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
 const FEATURED = ["mossling", "emberlisk", "cryovant", "neonyx", "aurelion", "velynx"] as const;
 
 const FORMS = gameConfig.evolution.names;
-const THRESHOLDS = gameConfig.evolution.thresholdsMs;
+const AFTER = gameConfig.evolution.afterMaturityMs;
 const LAST = FORMS.length - 1;
 const STEP_MS = 2600;
 
+/** For a first creature: grown at 1 min, then later forms counted from maturity ("+30 min", "+2 h"). */
 function whenLabel(i: number) {
-  return THRESHOLDS[i] === 0 ? "At hatch" : formatSpan(THRESHOLDS[i]);
+  return i === 0 ? "At hatch" : i === 1 ? formatSpan(FIRST_MATURITY_MS) : `+${formatSpan(AFTER[i - 2])}`;
 }
 
 export function EvolutionShowcase() {
@@ -188,7 +190,7 @@ export function EvolutionShowcase() {
                 <button
                   type="button"
                   aria-pressed={on}
-                  aria-label={`${form}, ${THRESHOLDS[i] === 0 ? "at hatch" : `after ${formatSpan(THRESHOLDS[i])} of holding`}`}
+                  aria-label={`${form}, ${formUnlockText(i, gameConfig).toLowerCase()}`}
                   onClick={() => chooseStage(i)}
                   className="group flex flex-col items-center rounded-xl px-1 pb-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green/70"
                 >

@@ -22,7 +22,8 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     expect(res.status).toBe(200);
     const v = (await res.json()) as TrackedHolderView;
     expect(v).toMatchObject({ source: "fixture", tracked: true, counts: { earned: 3 } });
-    expect(v.eggs.map((e) => e.incubationMs)).toEqual([5 * 60_000, 6 * 3_600_000, 24 * 3_600_000]);
+    expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
+    expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
     expect(v.eggs.every((e) => e.speciesId === null)).toBe(true); // sealed until hatch
   });
 
@@ -38,6 +39,17 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     const { GET } = await import("@/app/api/holders/[address]/route");
     const res = await GET(req(`/api/holders/0xabc`), { params: Promise.resolve({ address: "0xabc" }) });
     expect(res.status).toBe(400);
+  });
+
+  it("demo data can never reach real tracking: the demo wallet address is refused and unknown eggs can't be hatched", async () => {
+    const { demoWallet } = await import("@/services/wallet/demoWallet");
+    const demo = (await demoWallet.connect()).address;
+    const { GET } = await import("@/app/api/holders/[address]/route");
+    expect((await GET(req(`/api/holders/${demo}`), { params: Promise.resolve({ address: demo }) })).status).toBe(400);
+    const { POST } = await import("@/app/api/eggs/[id]/hatch/route");
+    const fake = `egg_${demo}_1`;
+    const res = await POST(req(`/api/eggs/${fake}/hatch`, { method: "POST" }), { params: Promise.resolve({ id: fake }) });
+    expect(res.status).toBeGreaterThanOrEqual(400);
   });
 
   it("POST /api/eggs/:id/hatch refuses an egg that is still incubating, by the server clock", async () => {

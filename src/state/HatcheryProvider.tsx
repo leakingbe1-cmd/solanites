@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
-import { incubationMsFor } from "@/config/eggProgression";
+import { incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig, TIME, type GameConfig } from "@/config/gameConfig";
 import { advance, eggsAllowed, phaseOf, rollSpecies, type SolaniteRecord } from "@/lib/progression";
 import { randomSeed } from "@/lib/rng";
@@ -80,13 +80,14 @@ function makeId(seed: number) {
 export const DEMO_BALANCE = 5.2 * gameConfig.token.tokensPerEgg;
 
 function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
-  // Each demo egg uses the real per-egg schedule for its position (egg 1 = 5 min, egg 2 = 6 h, …).
+  // Each demo egg uses the real per-egg schedules for its position (egg 1: 1 min incubation, 1 min growth; …).
   const base = (n: number, seed: number, speciesId: string, ageMs: number, extra: Partial<SolaniteRecord>): SolaniteRecord => ({
     id: makeId(seed),
     seed,
     acquiredAt: now - ageMs,
     incubationMs: 0,
     durationMs: incubationMsFor(n),
+    maturityMs: initialGrowthMsFor(n),
     speciesId,
     hatchedAt: null,
     growthMs: 0,
@@ -95,7 +96,7 @@ function demoRecords(now: number, cfg: GameConfig): SolaniteRecord[] {
   });
   const d = (n: number) => incubationMsFor(n);
   return [
-    // Pre-grown demo creatures: one well into its Ascension ranks, one just past Hatchling.
+    // Pre-grown demo creatures: one well into its Ascension ranks, one fully grown and on its way to Evolved.
     base(1, 9101, "duskwing", d(1) + 3 * TIME.DAY, { incubationMs: d(1), hatchedAt: now - 3 * TIME.DAY, growthMs: 3 * TIME.DAY, nickname: "Nightwarden" }),
     base(2, 4410, "mossling", d(2) + 20 * TIME.MINUTE, { incubationMs: d(2), hatchedAt: now - 20 * TIME.MINUTE, growthMs: 20 * TIME.MINUTE }),
     base(3, 7777, "aurelion", d(3) + TIME.HOUR, { incubationMs: d(3) }),
@@ -139,6 +140,7 @@ function reducer(state: State, action: Action): State {
         acquiredAt: state.simNow,
         incubationMs: 0,
         durationMs: incubationMsFor(state.records.length + 1),
+        maturityMs: initialGrowthMsFor(state.records.length + 1),
         speciesId: rollSpecies(action.seed, cfg),
         hatchedAt: null,
         growthMs: 0,

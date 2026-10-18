@@ -25,7 +25,7 @@ export default function CollectionPage() {
 
   const bestForm = useMemo(() => {
     const m: Record<string, number> = {};
-    for (const r of h.records) if (r.hatchedAt !== null) m[r.speciesId] = Math.max(m[r.speciesId] ?? 0, evolutionOf(r.growthMs, h.config).stage);
+    for (const r of h.records) if (r.hatchedAt !== null) m[r.speciesId] = Math.max(m[r.speciesId] ?? 0, evolutionOf(r.growthMs, h.config, r.maturityMs).stage);
     return m;
   }, [h.records, h.config]);
 

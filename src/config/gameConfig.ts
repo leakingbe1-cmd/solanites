@@ -48,14 +48,20 @@ export interface GameConfig {
   };
   evolution: {
     /**
-     * Cumulative qualifying holding time since hatching (ms) needed for each
-     * form. Index 0 is the first form, reached at hatch (0 ms).
+     * Form names. Index 0 is the newborn form at hatch, index 1 the mature
+     * form reached when initial growth completes (per-creature duration, see
+     * `initialGrowthScheduleMs` in eggProgression), and the rest are later
+     * evolutions.
      */
-    thresholdsMs: number[];
     names: string[];
     /**
-     * After the final form: cumulative qualifying holding time since hatching
-     * for each further Ascension rank (II, III, …). Gaps grow each time.
+     * Later evolutions (index 2 onwards in `names`): qualifying holding needed
+     * after the creature reached maturity (ms, cumulative).
+     */
+    afterMaturityMs: number[];
+    /**
+     * After the final form: qualifying holding after maturity for each further
+     * Ascension rank (II, III, …). Gaps grow each time.
      */
     ascensionRanksMs: number[];
   };
@@ -88,10 +94,11 @@ export const gameConfig: GameConfig = {
     stirringAt: 0.7,
   },
   evolution: {
-    // Eggling at hatch → Hatchling at 5 min → Evolved at 30 min → Ascended at 2 h (cumulative).
-    thresholdsMs: [0, 5 * MINUTE, 30 * MINUTE, 2 * HOUR],
+    // Eggling at hatch (growing) → Hatchling when initial growth completes (mature; 1 min for the
+    // first creature, see eggProgression) → Evolved 30 min later → Ascended 2 h after maturity.
     names: ["Eggling", "Hatchling", "Evolved", "Ascended"],
-    // Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (cumulative).
+    afterMaturityMs: [30 * MINUTE, 2 * HOUR],
+    // Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days after maturity.
     ascensionRanksMs: [8 * HOUR, 24 * HOUR, 3 * DAY, 7 * DAY, 30 * DAY],
   },
   rarityWeights: {

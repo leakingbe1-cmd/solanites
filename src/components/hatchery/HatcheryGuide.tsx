@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
-import { describeSchedule } from "@/config/eggProgression";
+import { describeGrowthSchedule, describeSchedule } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { SPECIES_BY_ID } from "@/lib/species";
@@ -12,7 +12,7 @@ import { SPECIES_BY_ID } from "@/lib/species";
  */
 export function HatcheryGuide() {
   const names = gameConfig.evolution.names;
-  const t = gameConfig.evolution.thresholdsMs;
+  const after = gameConfig.evolution.afterMaturityMs;
   const cards = [
     {
       key: "eggs",
@@ -25,7 +25,7 @@ export function HatcheryGuide() {
       key: "evolve",
       eyebrow: "Hatching & evolution",
       title: "Hatch, then keep holding",
-      body: `A ready egg is hatched with one tap to reveal its species, sealed when the egg was earned. It then grows with continued holding: ${names[1]} at ${formatSpan(t[1])}, ${names[2]} at ${formatSpan(t[2])}, ${names[3]} at ${formatSpan(t[3])}.`,
+      body: `An egg hatches when its incubation ends; tap to reveal the species, sealed when the egg was earned. With continued holding it grows up into its ${names[1]} form (${describeGrowthSchedule()}), becomes ${names[2]} ${formatSpan(after[0])} later and ${names[3]} ${formatSpan(after[1])} after growing up.`,
       art: <CreatureArt species={SPECIES_BY_ID["aurelion"]} stage={2} />,
     },
     {

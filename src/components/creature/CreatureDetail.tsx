@@ -8,7 +8,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { designOf } from "@/lib/creatureDesigns";
 import { discoveryOf, type Discovery } from "@/lib/discovery";
 import { formatDuration, formatSpan } from "@/lib/format";
-import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
+import { evolutionOf, formUnlockText, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, SPECIES, statsAt, type Species } from "@/lib/species";
 import { useHatchery } from "@/state/HatcheryProvider";
@@ -35,10 +35,10 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
   const meta = RARITIES[species.rarity];
 
   // Real progression only: the owned creature's stage, or the best stage among the viewer's hatched creatures of this species.
-  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig) : null;
+  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs) : null;
   const bestOwned = useMemo(() => {
     let best = -1;
-    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig).stage);
+    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig, r.maturityMs).stage);
     return best;
   }, [h.records, species.id]);
   const current = evoInfo?.stage ?? (bestOwned >= 0 ? bestOwned : null);
@@ -151,7 +151,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-mist/60">Stage {i + 1}</p>
                     <p className="mt-0.5 font-display text-base text-white">{n}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-mist">
-                      {hidden ? "Undiscovered." : isLocked ? `Unlocks after ${formatSpan(gameConfig.evolution.thresholdsMs[i])} bonded.` : (design?.stages[i]?.summary ?? "")}
+                      {hidden ? "Undiscovered." : isLocked ? `Unlocks: ${formUnlockText(i, gameConfig, record?.maturityMs).toLowerCase()}.` : (design?.stages[i]?.summary ?? "")}
                     </p>
                   </div>
                 </button>
@@ -175,7 +175,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
             <p className="mt-3 text-sm leading-relaxed text-mist">Its form is unknown until you discover it.</p>
           ) : (
             <>
-              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. This form unlocks after ${formatSpan(gameConfig.evolution.thresholdsMs[selected])} of qualifying hold since hatching.` : design?.stages[selected]?.summary}</p>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. ${formUnlockText(selected, gameConfig, record?.maturityMs)}, counting only time the balance still backs it.` : design?.stages[selected]?.summary}</p>
               {design && !selLocked && (
                 <dl className="mt-4 space-y-2 text-xs leading-relaxed">
                   {[

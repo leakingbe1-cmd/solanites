@@ -29,7 +29,7 @@ export interface TrackedHolderView {
   };
   counts: { earned: number; queued: number; incubating: number; ready: number; hatched: number };
   eggs: TrackedEgg[];
-  rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel" };
+  rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel"; initialGrowthScheduleMs: number[] };
   sync: { lastSyncedAt: number | null; pending: boolean; error: string | null };
 }
 
@@ -46,15 +46,29 @@ export interface TrackedEgg {
   displaySeed: number;
   /** Revealed at hatch. Before that, only shown as the silhouette once the egg is stirring. */
   speciesId: string | null;
+  /** Initial growth this creature needs to reach its mature form; fixed when the egg was issued. */
+  maturityMs: number;
   /**
-   * Hatched creatures: qualifying holding time since hatching, as of `serverNow`
-   * (drives evolution). Null for eggs.
+   * Hatched creatures: qualifying holding time since the egg hatched (its
+   * incubation completed), as of `serverNow`. Drives growth and evolution. Null for eggs.
    */
   growthMs: number | null;
   /** Whether that time is still accruing (the balance currently backs this creature). */
   growing: boolean;
-  /** Evolution decided by the server from `growthMs` at `serverNow` (authoritative; the page only counts down between refreshes). */
-  evolution: { stage: number; label: string } | null;
+  /**
+   * Growth and evolution decided by the server from `growthMs` at `serverNow`
+   * (authoritative; the page only counts down between refreshes).
+   */
+  evolution: {
+    stage: number;
+    label: string;
+    phase: "growing" | "mature" | "evolved" | "ascended";
+    /** Initial growth complete. */
+    matured: boolean;
+    nextLabel: string | null;
+    /** Qualifying holding still needed for the next milestone, as of `serverNow`. */
+    toNextMs: number;
+  } | null;
 }
 
 export interface HatchResult {

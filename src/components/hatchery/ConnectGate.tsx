@@ -6,9 +6,9 @@ import { HatcheryGuide } from "@/components/hatchery/HatcheryGuide";
 import { HatcheryTour, type TourStep } from "@/components/hatchery/HatcheryTour";
 import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 import { ParticleField } from "@/components/ui/ParticleField";
-import { describeSchedule } from "@/config/eggProgression";
+import { incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { DEMO_BALANCE, useHatchery } from "@/state/HatcheryProvider";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatSpan } from "@/lib/format";
 
 const BASE58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
@@ -82,7 +82,7 @@ export function ConnectGate() {
               </p>
             )}
             <p className="mt-3 text-xs leading-relaxed text-mist/70">
-              Only your public address. Solanites never asks for a seed phrase, private key or signature to track eggs. Your first egg hatches {describeSchedule().split(",")[0]} after it appears.
+              Only your public address. Solanites never asks for a seed phrase, private key or signature to track eggs. Your first egg hatches {formatSpan(incubationMsFor(1))} after it appears and is fully grown {formatSpan(initialGrowthMsFor(1))} later.
             </p>
 
             {fixtures.length > 0 && (

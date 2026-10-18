@@ -27,7 +27,7 @@ Open **The Hatchery** → **Explore the demo**. The demo wallet starts with a mo
 | 4 | Egg in Stage 3 (stirring) |
 | 5 | Egg in Stage 2 (awakening, cracks showing) |
 
-The **Prototype simulation controls** at the bottom of the Hatchery let you change time speed (real time up to 1 day/second), skip ahead, reset the demo, and drag the mock balance to see what happens when it falls below the threshold or qualifies for another egg. Demo eggs follow the real per-egg schedule (5 min, 6 h, 24 h, 48 h, then 72 h).
+The **Prototype simulation controls** at the bottom of the Hatchery let you change time speed (real time up to 1 day/second), skip ahead, reset the demo, and drag the mock balance to see what happens when it falls below the threshold or qualifies for another egg. Demo eggs follow the real per-egg schedules (incubation 1 min, 5 min, 15 min, 1 h, 6 h, then 12 h; growing up 1 min, 5 min, 15 min, 1 h, 3 h, then 6 h).
 
 Sound is off by default; turn it on with the speaker button in the nav. All sounds are synthesized with Web Audio, so there are no audio files.
 
@@ -94,10 +94,11 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Total supply | 1,000,000,000 SOLITE |
 | Tokens per egg | 1,000,000 (0.1% of supply). Eggs = verified balance ÷ 1,000,000, rounded down |
 | Max eggs per wallet | No cap |
-| Incubation | Egg 1: 5 min · egg 2: 6 h · egg 3: 24 h · egg 4: 48 h · egg 5 onwards: 72 h. One at a time (`sequential`), on the server clock |
+| Incubation | Egg 1: 1 min · egg 2: 5 min · egg 3: 15 min · egg 4: 1 h · egg 5: 6 h · egg 6 onwards: 12 h. One at a time (`sequential`), on the server clock (`eggProgression.incubationScheduleMs`) |
+| Growing up | A hatched Eggling becomes a fully grown Hatchling after: creature 1: 1 min · 2: 5 min · 3: 15 min · 4: 1 h · 5: 3 h · 6 onwards: 6 h of qualifying holding, counted from when its egg hatched (`eggProgression.initialGrowthScheduleMs`). The first egg is therefore hatched at 1:00 and fully grown at 2:00 |
 | Balance drops | Earned eggs are kept and keep incubating; new eggs need tokens that haven't earned one |
 | Transfers | Tokens that earned an egg carry that "credit" to the receiving wallet, so they can't earn it twice |
-| Evolution | Cumulative qualifying hold since hatching: Eggling → Hatchling at 5 min → Evolved at 30 min → Ascended at 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
+| Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
 | Rarity weights | Common 60 · Rare 25 · Epic 10 · Legendary 3.8 · Mythic 1 · Secret 0.2 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
 | Launch fee claims | Open 6 hours after launch; the only place a wallet is connected |
@@ -110,7 +111,7 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 Architecture, audit, configuration (env checklist, scheduler, `/api/health`), staging plan, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 
 ```bash
-npm test               # 155 tests (+3 real-Postgres tests when TEST_DATABASE_URL is set): tracker, claims, routes, remediation, progression
+npm test               # 165 tests (+3 real-Postgres tests when TEST_DATABASE_URL is set): tracker, claims, routes, remediation, progression
 npm run dev:fixtures   # the site with local fixture holders (labelled as fixture data; refused in production)
 ```
 

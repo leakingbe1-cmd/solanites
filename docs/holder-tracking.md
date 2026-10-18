@@ -34,7 +34,10 @@ The old rules (10,000 per egg, cap of 6, 7-day incubation) are replaced by the n
 `src/config/eggProgression.ts`:
 
 - `tokensPerEgg: 1_000_000`, `totalSupply: 1_000_000_000`, `maxEggsPerWallet: null` (no cap).
-- `incubationScheduleMs: [5 min, 6 h, 24 h, 48 h, 72 h]`: the last value repeats for egg 5 onwards.
+- `incubationScheduleMs: [1 min, 5 min, 15 min, 1 h, 6 h, 12 h]`: by egg sequence number; the last value repeats for egg 6 onwards.
+- `initialGrowthScheduleMs: [1 min, 5 min, 15 min, 1 h, 3 h, 6 h]`: how long each creature (by its egg's sequence number) takes to grow from Eggling to its mature Hatchling form; the last value repeats.
+- Both values are fixed on the egg row when it is issued (`incubation_ms`, `maturity_ms`), so changing the config never alters eggs that already exist.
+- Growth counts qualifying holding from the moment the egg hatched (`ready_ms`, its incubation end), not from when the reveal was opened. Later evolution (`gameConfig.evolution.afterMaturityMs`: Evolved +30 min, Ascended +2 h) and the Ascension ranks are counted from maturity, so they always come after it.
 - `incubationMode: "sequential"`: eggs incubate one at a time. Egg *n* starts when egg *n−1* is ready (or when earned, if later). Switch to `"parallel"` to start every egg as soon as it is earned. **Please confirm which you intend; see §6.**
 
 `src/config/launch.ts`: `CLAIMS_OPEN_AFTER_MS = 6 h`.
@@ -134,9 +137,9 @@ On Vercel Pro you can replace the GitHub schedule with a `*/10 * * * *` Vercel C
 1. Create a separate staging Postgres and set Preview-only variables, with a devnet or test mint (never the production database).
 2. Deploy the branch; open `/api/health` and confirm `source` is not `demo`/`fixtures`.
 3. Trigger `/api/cron/sync` with the Bearer secret; confirm health shows a recent `ok` run and the supply check matches.
-4. From a test wallet, buy or transfer exactly 1,000,000 test tokens; confirm one egg after the next sync with no wallet connection, ready 5 minutes later.
+4. From a test wallet, buy or transfer exactly 1,000,000 test tokens; enter the address in the Hatchery and confirm one egg appears with no wallet connection, ready 1 minute later.
 5. Transfer tokens to a second wallet; confirm no extra eggs appear (credit moves with the tokens).
-6. Hatch; confirm a second hatch request returns the same creature, and that evolution reaches Hatchling/Evolved/Ascended at 5 min / 30 min / 2 h of qualifying holding.
+6. Hatch; confirm a second hatch request returns the same creature, that it is fully grown (Hatchling) 2 minutes after the egg was earned, Evolved 30 min later and Ascended 2 h after maturity.
 7. Sell below the threshold; confirm growth pauses.
 8. Send a webhook twice; confirm it is applied once (`webhook.duplicate_ignored`).
 9. Check `/claims` before and after `SOLANITES_LAUNCH_AT + 6h`; with no approved policy it must say nothing can be claimed.
@@ -154,9 +157,9 @@ They run against an embedded Postgres (PGlite, the same SQL as production) and a
 2. Automatic detection.
 3. Multiple token accounts.
 4. Below and above each million.
-5. The 5-minute first egg.
-6. The 6-hour second egg.
-7. 24 h / 48 h / 72 h.
+5. The 1-minute first egg, fully grown at 2 minutes.
+6. The 5-minute second egg and 5-minute second growth.
+7. 15 min / 1 h / 6 h / 12 h.
 8. Restarts.
 9. Duplicate events and concurrent workers.
 10. Transfers, splits, sell-and-rebuy and multi-leg transactions.
@@ -186,7 +189,7 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 ## 6. Decisions needed from you
 
 1. **The official mint address** and the **excluded addresses**.
-2. **Incubation mode:** sequential (implemented default) or parallel. In sequential mode, a 10M holder's eggs arrive over about 21 days; in parallel mode, all within 72 hours.
+2. **Incubation mode:** sequential (implemented default) or parallel. In sequential mode, a 10M holder's ten eggs are all hatched after about 2.8 days (1 min + 5 min + 15 min + 1 h + 6 h + 5 × 12 h = 67 h 21 min); in parallel mode, all within 12 hours.
 3. **Fee refund policy** (all currently undefined):
    - which fees are refunded and how they are measured;
    - rate or formula and per-wallet cap;
@@ -202,3 +205,5 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 7. **Ascension ranks** after Ascended (8 h, 24 h, 3 d, 7 d, 30 d) are a proposal.
 8. **Holder rewards**, if any, are a separate programme from fee refunds and need their own rules.
 9. **Rarity verifiability:** whether to add the commit-reveal scheme above.
+10. **Token ticker:** the site displays `$SOLITE` (`gameConfig.token.symbol`). If the official ticker is `$SLNT`, change that one value; tracking never uses the name, only `SOLANITES_MINT`.
+11. **Early progression:** confirm the incubation (1 min → 12 h) and growing-up (1 min → 6 h) schedules, and that Evolved/Ascended and the Ascension ranks should count from maturity.

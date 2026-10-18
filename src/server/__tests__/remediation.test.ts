@@ -72,15 +72,15 @@ describe("token configuration", () => {
 });
 
 describe("incubation and evolution boundaries (server clock only)", () => {
-  it("eggs 2 and 3 become ready exactly at 6 h and 24 h after they start, not a millisecond before", async () => {
+  it("eggs 2 and 3 become ready exactly 5 min and 15 min after they start, not a millisecond before", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(10);
     buy(h, 3_000_000);
     await tracker.runSync({ force: true });
     const [e1, e2, e3] = (await tracker.holderView(h)).eggs;
     for (const [egg, ms] of [
-      [e2, 6 * HOUR],
-      [e3, 24 * HOUR],
+      [e2, 5 * MIN],
+      [e3, 15 * MIN],
     ] as const) {
       expect(egg.readyAt - egg.incubationStartedAt).toBe(ms);
       clock.t = egg.readyAt - 1;
@@ -89,31 +89,31 @@ describe("incubation and evolution boundaries (server clock only)", () => {
       clock.t = egg.readyAt;
       expect((await tracker.holderView(h)).eggs.find((e) => e.id === egg.id)!.status).toBe("ready");
     }
-    expect(e1.readyAt - e1.incubationStartedAt).toBe(5 * MIN);
+    expect(e1.readyAt - e1.incubationStartedAt).toBe(1 * MIN);
   });
 
-  it("the server decides each evolution stage: 5 min, 30 min and 2 h after hatching", async () => {
+  it("the server decides growth and each evolution stage: grown 1 min after hatching, Evolved 30 min and Ascended 2 h after that", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(11);
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
-    clock.advance(5 * MIN);
-    const id = (await tracker.holderView(h)).eggs[0].id;
-    await tracker.hatch(id);
-    const hatchedAt = clock.t;
+    clock.advance(1 * MIN);
+    const egg = (await tracker.holderView(h)).eggs[0];
+    await tracker.hatch(egg.id);
+    const hatchedAt = egg.readyAt;
     const at = async (ms: number) => {
       clock.t = hatchedAt + ms;
       return (await tracker.holderView(h)).eggs[0].evolution;
     };
-    expect(await at(5 * MIN - 1)).toEqual({ stage: 0, label: "Eggling" });
-    expect(await at(5 * MIN)).toEqual({ stage: 1, label: "Hatchling" });
-    expect(await at(30 * MIN - 1)).toEqual({ stage: 1, label: "Hatchling" });
-    expect(await at(30 * MIN)).toEqual({ stage: 2, label: "Evolved" });
-    expect(await at(2 * HOUR - 1)).toEqual({ stage: 2, label: "Evolved" });
-    expect(await at(2 * HOUR)).toEqual({ stage: 3, label: "Ascended" });
-    expect(await at(8 * HOUR)).toEqual({ stage: 3, label: "Ascended II" });
+    expect(await at(1 * MIN - 1)).toMatchObject({ stage: 0, label: "Eggling", phase: "growing", matured: false, toNextMs: 1 });
+    expect(await at(1 * MIN)).toMatchObject({ stage: 1, label: "Hatchling", phase: "mature", matured: true, nextLabel: "Evolved" });
+    expect(await at(31 * MIN - 1)).toMatchObject({ stage: 1, label: "Hatchling" });
+    expect(await at(31 * MIN)).toMatchObject({ stage: 2, label: "Evolved", phase: "evolved" });
+    expect(await at(121 * MIN - 1)).toMatchObject({ stage: 2, label: "Evolved" });
+    expect(await at(121 * MIN)).toMatchObject({ stage: 3, label: "Ascended", phase: "ascended" });
+    expect(await at(1 * MIN + 8 * HOUR)).toMatchObject({ stage: 3, label: "Ascended II" });
     // Repeated reads don't advance anything on their own.
-    expect(await at(2 * HOUR)).toEqual({ stage: 3, label: "Ascended" });
+    expect(await at(121 * MIN)).toMatchObject({ stage: 3, label: "Ascended" });
   });
 
   it("concurrent hatch requests reveal one outcome exactly once", async () => {

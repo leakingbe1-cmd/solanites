@@ -139,12 +139,27 @@ export function createLedgerChain(opts: { mint?: string; decimals?: number; prog
     accountsOf: (owner: string) => [...accounts.values()].filter((a) => a.owner === owner && !a.closed).map((a) => a.address),
   };
 
+  /** The account's balance as of the last finalized slot: later transactions are not visible yet. */
+  function visibleAmount(a: Account): bigint {
+    if (state.finalizedSlot === Infinity) return a.amount;
+    let amount = a.amount;
+    for (const tx of txs.values()) {
+      if (tx.slot <= state.finalizedSlot || tx.failed) continue;
+      const i = tx.keys.indexOf(a.address);
+      if (i < 0) continue;
+      const pre = tx.pre.find((x) => x.accountIndex === i)?.amount ?? 0n;
+      const post = tx.post.find((x) => x.accountIndex === i)?.amount ?? 0n;
+      amount -= post - pre;
+    }
+    return amount;
+  }
+
   function parsedAccount(a: Account) {
     return {
       pubkey: a.address,
       account: {
         owner: program,
-        data: { program: "spl-token", parsed: { type: "account", info: { mint, owner: a.owner, state: a.state, tokenAmount: { amount: a.amount.toString(), decimals } } } },
+        data: { program: "spl-token", parsed: { type: "account", info: { mint, owner: a.owner, state: a.state, tokenAmount: { amount: visibleAmount(a).toString(), decimals } } } },
       },
     };
   }

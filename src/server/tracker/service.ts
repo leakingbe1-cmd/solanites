@@ -1,4 +1,4 @@
-import { eggProgression, eggStatusAt, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
+import { eggProgression, eggStatusAt, initialGrowthMsFor, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { evolutionOf, rollSpecies } from "@/lib/progression";
 import { hashString } from "@/lib/rng";
@@ -80,6 +80,7 @@ interface EggRow {
   ready_ms: string;
   species_id: string;
   hatched_ms: string | null;
+  maturity_ms: string | null;
 }
 
 const num = (v: string | number | null): number | null => (v === null ? null : Number(v));
@@ -284,8 +285,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
           const seed = randomSeed();
           // Plain INSERT: the UNIQUE(owner, sequence) constraint aborts the whole award if it would duplicate an egg.
           await sql.query(
-            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig)],
+            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig), initialGrowthMsFor(sequence, config.progression)],
           );
           prevReady = sch.readyAt;
         }
@@ -415,6 +416,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       hatchedAt: egg.hatchedAt,
       displaySeed: hashString(r.id),
       speciesId: showSpecies ? r.species_id : null,
+      // Fixed when the egg was issued; eggs from before that was stored use the configured value for their sequence.
+      maturityMs: r.maturity_ms !== null ? Number(r.maturity_ms) : initialGrowthMsFor(r.sequence, config.progression),
       growthMs: null,
       growing: false,
       evolution: null,
@@ -430,8 +433,10 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const unitBase = wholeTokensToBase(config.progression.tokensPerEgg, decimals);
     const balance = row ? BigInt(row.balance_base) : 0n;
     const credit = row ? BigInt(row.credit_base) : 0n;
-    // Evolution: qualifying holding since hatching. The k-th hatched creature (oldest first)
-    // grows while the recorded balance is at least k × tokensPerEgg.
+    // Growth: qualifying holding since the egg hatched, which is when its incubation completed
+    // (readyAt), not when someone pressed the reveal. So a first egg earned at 0:00 hatches at
+    // 1:00 and is fully grown at 2:00 however late the reveal is opened. The k-th hatched
+    // creature (oldest first) grows while the recorded balance is at least k × tokensPerEgg.
     const hatched = eggs.filter((e) => e.hatchedAt !== null);
     if (hatched.length) {
       const changes = (
@@ -441,11 +446,11 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         )
       ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }));
       hatched.forEach((e, k) => {
-        const g = qualifyingMs(e.hatchedAt!, t, unitBase * BigInt(k + 1), changes, balance);
+        const g = qualifyingMs(e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
         e.growing = g.growing;
-        const evo = evolutionOf(g.ms, gameConfig);
-        e.evolution = { stage: evo.stage, label: evo.label };
+        const evo = evolutionOf(g.ms, gameConfig, e.maturityMs);
+        e.evolution = { stage: evo.stage, label: evo.label, phase: evo.phase, matured: evo.matured, nextLabel: evo.nextLabel, toNextMs: evo.toNextMs };
       });
     }
     const uncredited = balance > credit ? balance - credit : 0n;
@@ -472,7 +477,12 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       },
       counts,
       eggs,
-      rules: { tokensPerEgg: config.progression.tokensPerEgg, incubationScheduleMs: config.progression.incubationScheduleMs, incubationMode: config.progression.incubationMode },
+      rules: {
+        tokensPerEgg: config.progression.tokensPerEgg,
+        incubationScheduleMs: config.progression.incubationScheduleMs,
+        incubationMode: config.progression.incubationMode,
+        initialGrowthScheduleMs: config.progression.initialGrowthScheduleMs,
+      },
       sync: { lastSyncedAt: row ? num(row.last_sync_ms) : null, pending: row ? row.needs_sync : false, error: row?.last_sync_error ?? null },
     };
   }

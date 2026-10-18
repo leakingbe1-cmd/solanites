@@ -184,11 +184,20 @@ function hatchling(c: Ctx) {
       {near && [-8, -2, 4].map((d) => <path key={d} d={`M${x + d - 4},352 l-2,4`} stroke={p.horn} strokeWidth="2.2" strokeLinecap="round" />)}
     </g>
   );
+  // Small feathered wing: a fan of rounded flight feathers from the shoulder.
   const wing = (near: boolean) => (
-    <g transform={near ? undefined : "translate(14 -8)"} opacity={near ? 1 : 0.75}>
-      <g className="sl-flap" style={{ transformOrigin: "214px 240px" }}>
-        <path d="M206,244 C208,216 222,192 248,174 C252,190 260,198 272,200 C264,208 262,216 268,226 C254,226 242,230 232,242 C226,236 216,238 206,244 Z" fill={near ? u("wing") : p.bodyDark} {...rim(c, 1)} />
-        {near && <path d="M214,236 C224,212 236,196 248,182 M226,236 C238,222 250,212 266,206" fill="none" stroke={p.wingEdge} strokeOpacity="0.55" strokeWidth="1.2" />}
+    <g transform={near ? undefined : "translate(16 -6)"} opacity={near ? 1 : 0.7}>
+      <g className="sl-flap" style={{ transformOrigin: "212px 238px" }}>
+        {[
+          [-118, 40],
+          [-96, 50],
+          [-74, 54],
+          [-52, 48],
+          [-32, 38],
+        ].map(([a, l]) => (
+          <path key={a} d={blade(l, 10, 0.7)} transform={`translate(212 238) rotate(${a})`} fill={near ? u("feather") : p.bodyDark} stroke={near ? p.wingEdge : p.bodyDark} strokeOpacity="0.7" strokeWidth="1" />
+        ))}
+        <ellipse cx="214" cy="234" rx="14" ry="10" fill={near ? u("wing") : p.bodyDark} {...rim(c, 1)} />
       </g>
     </g>
   );
@@ -279,8 +288,8 @@ function ascended(c: Ctx) {
   // Mane of golden plates radiating behind the head.
   const mane = Array.from({ length: 13 }, (_, i) => {
     const a = 150 + (240 / 12) * i;
-    const [x, y] = polar(200, 112, 30, a);
-    return { x, y, a: round(a), l: i % 2 ? 40 : 52 };
+    const [x, y] = polar(200, 112, 34, a);
+    return { x, y, a: round(a), l: i % 2 ? 50 : 64 };
   });
   return (
     <g>
@@ -293,6 +302,21 @@ function ascended(c: Ctx) {
           <path key={a} d={blade(30, 9)} transform={`translate(350 272) rotate(${a})`} fill={p.horn} {...rim(c, 1)} />
         ))}
       </g>
+      {/* lower pair: long gilded flight feathers fanning from the hips */}
+      {[0, 1].map((m) => (
+        <g key={m} transform={m ? MIRROR : undefined}>
+          <g className="sl-sway-slow" style={{ transformOrigin: "166px 250px" }}>
+            {[
+              [160, 92],
+              [172, 104],
+              [184, 98],
+              [196, 84],
+            ].map(([a, l]) => (
+              <path key={a} d={blade(l, 13, 0.72)} transform={`translate(166 250) rotate(${a})`} fill={u("feather")} stroke={p.wingEdge} strokeOpacity="0.6" strokeWidth="1" />
+            ))}
+          </g>
+        </g>
+      ))}
       {wing}
       <g transform={MIRROR}>{wing}</g>
       {/* haunches and planted paws */}
@@ -335,7 +359,7 @@ function ascended(c: Ctx) {
       {/* mane of gold plates */}
       <g className="sl-sway-slow" style={{ transformOrigin: "200px 112px" }}>
         {mane.map((m) => (
-          <path key={m.a} d={blade(m.l, 13, 0.7)} transform={`translate(${m.x} ${m.y}) rotate(${m.a})`} fill={m.l > 45 ? u("horn") : p.wing} {...rim(c, 1)} />
+          <path key={m.a} d={blade(m.l, 15, 0.7)} transform={`translate(${m.x} ${m.y}) rotate(${m.a})`} fill={m.l > 45 ? u("horn") : p.wing} {...rim(c, 1)} />
         ))}
       </g>
       {/* neck */}

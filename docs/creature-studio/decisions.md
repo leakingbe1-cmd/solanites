@@ -52,3 +52,11 @@ Standing constraints from the same review:
 - **Credits:** a shared future budget of 180 credits across workstreams; the earlier 80 are historical; **all paid generation paused**; each image needs separate owner approval.
 
 Applied on this branch: art bible §1, §7, §9 and §10; the Velynx brief (§8 table, §9 prompts, canon note); round-1 style block and V-A/V-B prompts (V-B is no longer crouched); the Cryovant lighting line; the evolution stage-row rule; the website handoff (items 1, 2, 5–7). Superseded rules are listed in canon §7.
+
+## 2026-10-19 · Velynx Evolved v1 (the only authorised paid image)
+
+- Owner decisions: Velynx stays the Shadow cat; prototype ceiling 80 credits, but **only the Evolved image (20 credits) is authorised**; creature art transparent, environments as separate website layers; no retries without approval.
+- `nano-banana-2.1` is available in the workspace; its exact cost could not be confirmed without a paid test, so it was not used.
+- Generated with nano-banana-pro 1K, task `40f476c8-d9e3-48d0-ade0-b447de791f0a`, **20 credits** (1,935 → 1,915). Raw file saved unmodified: `art/creature-studio/velynx/3-evolved-raw-40f476c8.png` (1024 × 1024 RGB, sha256 `1b4e121d…5c35`).
+- Result: anatomy brief met (upright biped, long fingers, cheek tufts, ear notch, violet rim, glyph tile, abstract glyphs, chest gem); **fur came out warm taupe (body median luminance 100) instead of charcoal (shipped original 53, V-A 58)**, which weakens the Shadow identity. Free local cut-out and framing pass (78.0 %, centred, C9 90/57, emission 3.4 %). Free local recolour to charcoal fails C9 (56/44) and muddies the lit side, so it is not a reliable fix.
+- Stopped for owner review. Remaining approved-but-not-authorised Velynx ceiling: 60 credits.

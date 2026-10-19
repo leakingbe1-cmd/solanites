@@ -1,6 +1,6 @@
 # Runway generation ledger (shared workspace)
 
-Status: **ALL PAID GENERATION PAUSED.** Approved credit policy (canon §6, 2026-10-19): a shared future budget of **180 credits** across all workstreams, with **20 spent so far** (Velynx Evolved v1; the Velynx prototype ceiling is 80). The 100 credits below (V-A 20 + website 80) are **historical** and outside that budget. The budget is not permission to generate: **each image needs its own explicit owner approval.** One ledger for both workstreams (canon G1). Workstreams: creature-studio (this branch), design (`design/creative-direction`), website (session "Solanites interactive website", branch `design/eclipse-vigil-code`, not on GitHub).
+Status: **ALL PAID GENERATION PAUSED.** Approved credit policy (canon §6, 2026-10-19): a shared future budget of **180 credits** across all workstreams, with **40 spent so far** (Velynx Evolved v1 and v2; the Velynx prototype ceiling is 80). The 100 credits below (V-A 20 + website 80) are **historical** and outside that budget. The budget is not permission to generate: **each image needs its own explicit owner approval.** One ledger for both workstreams (canon G1). Workstreams: creature-studio (this branch), design (`design/creative-direction`), website (session "Solanites interactive website", branch `design/eclipse-vigil-code`, not on GitHub).
 
 | Created (UTC) | Task ID | Workstream | What | Model / size | Credits | Balance after |
 |---|---|---|---|---|---|---|

@@ -60,3 +60,10 @@ Applied on this branch: art bible §1, §7, §9 and §10; the Velynx brief (§8 
 - Generated with nano-banana-pro 1K, task `40f476c8-d9e3-48d0-ade0-b447de791f0a`, **20 credits** (1,935 → 1,915). Raw file saved unmodified: `art/creature-studio/velynx/3-evolved-raw-40f476c8.png` (1024 × 1024 RGB, sha256 `1b4e121d…5c35`).
 - Result: anatomy brief met (upright biped, long fingers, cheek tufts, ear notch, violet rim, glyph tile, abstract glyphs, chest gem); **fur came out warm taupe (body median luminance 100) instead of charcoal (shipped original 53, V-A 58)**, which weakens the Shadow identity. Free local cut-out and framing pass (78.0 %, centred, C9 90/57, emission 3.4 %). Free local recolour to charcoal fails C9 (56/44) and muddies the lit side, so it is not a reliable fix.
 - Stopped for owner review. Remaining approved-but-not-authorised Velynx ceiling: 60 credits.
+
+## 2026-10-19 · Velynx Evolved v2 (approved 20-credit edit)
+
+- Owner approved the single edit. Task `21e98b40-15bc-4718-a727-31b47d35af64`, **20 credits** (1,915 → 1,895); Velynx total **40 of 80**. Raw file saved unmodified: `art/creature-studio/velynx/3-evolved-v2-raw-21e98b40.png` (sha256 `bb478f94…026d`).
+- Result: anatomy, pose, silhouette and details preserved exactly. Legs, lower body and tail are charcoal with a crisp violet rim; **head, ears, chest and arms stayed warm brown** (7.2 % of the body). Body median luminance 67 (v1 100, shipped original 53). C9 readability **fails** (61/43), the inherent tension of a dark creature on the near-black card.
+- Free local neutralisation of the brown (same lightness, cool charcoal hue): colour consistent and on identity, but it removes the warm gold key light on the face and chest (canon C2) and C9 still fails (61/43). Preview saved as `3-evolved-v2-local-neutralised-preview.png`.
+- Stopped for owner review. 40 of the 80 remain; none authorised.

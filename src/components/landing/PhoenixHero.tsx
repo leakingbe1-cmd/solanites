@@ -5,8 +5,8 @@
  * above the copy.
  *
  * The awakening plays once and never blocks the page: darkness opens outwards from the
- * Phoenix's heart and a golden pulse ignites once. No ring, halo, glow, haze or embers
- * are added around it (approved art canon W2; the still itself stays live under W3).
+ * Phoenix's heart. No pulse, ring, halo, glow, haze or embers are added on or around
+ * it (approved art canon W2; the still itself stays live under W3).
  * CSS only (transform, opacity); the final frame is the resting state, and reduced
  * motion shows it at once.
  */
@@ -75,8 +75,7 @@ export function PhoenixHero() {
         <div className="sl-phx-breathe h-full w-full">
           <HeroPicture />
         </div>
-        {/* awakening light, positioned on the Phoenix itself */}
-        <div className="sl-phx-pulse" />
+        {/* the awakening: darkness opening outwards from the Phoenix's heart */}
         <div className="sl-phx-dawn" />
       </div>
       {/* legibility: darken where the copy sits, and fade into the page below */}

@@ -7,7 +7,7 @@ import { EggArt } from "@/components/egg/EggArt";
 import { Sigil } from "@/components/brand/Sigil";
 import { gameConfig } from "@/config/gameConfig";
 import { PHOENIX_INTRO } from "@/config/intro";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { CATALOGUE_SIZE, SPECIES_BY_ID } from "@/lib/species";
 import { PhoenixVideo } from "./PhoenixVideo";
 import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen } from "./introState";
 
@@ -245,7 +245,7 @@ export function FirstVisitIntro() {
             waiting to <span className="sl-gradient-text">hatch.</span>
           </h1>
           <p id="sl-intro-desc" className="sl-intro-rise mx-auto mt-4 max-w-md text-sm sm:max-w-xl leading-relaxed text-mist sm:text-base" style={{ animationDelay: "5.1s" }}>
-            Discover {SPECIES.length} species. Hold {gameConfig.token.symbol} to earn eggs, hatch them, and watch your Solanites grow from Eggling to Ascended.
+            Discover {CATALOGUE_SIZE} species. Hold {gameConfig.token.symbol} to earn eggs, hatch them, and watch your Solanites grow from Eggling to Ascended.
           </p>
         </div>
 

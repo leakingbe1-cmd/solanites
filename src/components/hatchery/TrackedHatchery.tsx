@@ -13,6 +13,7 @@ import { describeGrowthSchedule, describeSchedule, incubationMsFor, initialGrowt
 import { gameConfig } from "@/config/gameConfig";
 import { formatDuration, formatNumber, formatSpan, shortAddress } from "@/lib/format";
 import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
+import { revealClassified } from "@/components/creature/revealClassified";
 import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
 import { useHatchery } from "@/state/HatcheryProvider";
@@ -86,6 +87,8 @@ export function TrackedHatchery({ address }: { address: string }) {
       const body = (await res.json().catch(() => null)) as TrackedHolderView | TrackerApiError | null;
       if (!body) return setLoad({ kind: "error", code: "UPSTREAM_ERROR", message: `The server answered HTTP ${res.status}.` });
       if ("error" in body) return setLoad((l) => (l.kind === "ready" && body.error.code === "RPC_UNAVAILABLE" ? l : { kind: "error", code: body.error.code, message: body.error.message }));
+      // Classified species arrive only with this holder's hatched eggs; make them drawable first.
+      revealClassified(body.classified);
       setLoad({ kind: "ready", view: body, offset: body.serverNow - Date.now() });
     } catch {
       setLoad((l) => (l.kind === "ready" ? l : { kind: "error", code: "UPSTREAM_ERROR", message: "Could not reach the Solanites server." }));
@@ -119,6 +122,7 @@ export function TrackedHatchery({ address }: { address: string }) {
       setHatchError(body && "error" in body ? body.error.message : "Hatching failed. Please try again.");
       return refresh();
     }
+    revealClassified(body.classified);
     setInspect(null);
     setHatching({ record, speciesId: body.speciesId });
   }

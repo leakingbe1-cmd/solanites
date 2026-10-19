@@ -4,7 +4,7 @@ import { blade, byStage, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type C
 /**
  * Pyraurum — the phoenix of the roster. Gold body plumage that burns crimson at
  * the edges, flame-tipped flight feathers, a flame crest and long fire streamers.
- * Not Helivane (a gold falcon with a sun disc, no flames) and not Aurelion (a dragon).
+ * Not a sun-disc falcon (that is a classified Mythic) and not Aurelion (a dragon).
  */
 
 type Pt = [number, number];

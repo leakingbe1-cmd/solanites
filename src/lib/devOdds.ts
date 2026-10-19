@@ -2,7 +2,7 @@ import type { GameConfig, RarityId } from "@/config/gameConfig";
 import { rollRarity, rollSpecies } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { mulberry32 } from "@/lib/rng";
-import { SPECIES } from "@/lib/species";
+import { PUBLIC_ROLL_CATALOGUE, type Species } from "@/lib/species";
 
 /**
  * Developer hatch odds: a test-only view of the hatch roll for Developer Mode
@@ -65,7 +65,7 @@ export function parseDevOdds(input: unknown): { ok: true; settings: DevOddsSetti
   if (typeof includeZeroWeight !== "boolean") return { ok: false, error: "includeZeroWeight must be true or false." };
   const force = o.force ?? null;
   if (force !== null && !isRarity(force)) return { ok: false, error: "force must be a known rarity or null." };
-  if (force && !SPECIES.some((s) => s.rarity === force)) return { ok: false, error: `No species exist for ${force}.` };
+  if (force && !PUBLIC_ROLL_CATALOGUE.some((s) => s.rarity === force)) return { ok: false, error: `No species exist for ${force}.` };
   return { ok: true, settings: { multiplier: m, boosted: [...new Set(boosted)], includeZeroWeight, force } };
 }
 
@@ -120,9 +120,12 @@ export function devGameConfig(cfg: GameConfig, s: DevOddsSettings): GameConfig {
   return { ...cfg, rarityWeights: effectiveWeights(cfg, s) };
 }
 
-/** One simulated hatch: the production roll, fed the developer weights. */
-export function simulateHatch(seed: number, cfg: GameConfig, s: DevOddsSettings): string {
-  return rollSpecies(seed, devGameConfig(cfg, s));
+/**
+ * One simulated hatch: the production roll, fed the developer weights. The studio route
+ * passes the full catalogue (ALL_SPECIES), so it lands on real classified species.
+ */
+export function simulateHatch(seed: number, cfg: GameConfig, s: DevOddsSettings, catalogue?: readonly Species[]): string {
+  return rollSpecies(seed, devGameConfig(cfg, s), catalogue);
 }
 
 /** The rarity a seed would roll under these settings (same PRNG sequence as `simulateHatch`). */

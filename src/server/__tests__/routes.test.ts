@@ -160,3 +160,32 @@ describe("operations, demo isolation and request limits", () => {
     expect(res.status).toBe(413);
   });
 });
+
+describe("classified species through the public API", () => {
+  it("an egg holding a classified species reads as sealed until it hatches, then comes with that species' art", async () => {
+    const holders = await import("@/app/api/holders/[address]/route");
+    const { POST } = await import("@/app/api/eggs/[id]/hatch/route");
+    const rt = await getRuntime();
+    const owner = keypairFromSeed(1002).address; // 3,500,000 fixture holder (3 eggs)
+    const egg = (await rt.tracker.holderView(owner)).eggs[0];
+    // Test database only: give this egg a Mythic species and make it stir, then ready.
+    await rt.db.query(`UPDATE eggs SET species_id = 'orbelith', incubation_started_ms = 0, ready_ms = $2, incubation_ms = $2 WHERE id = $1`, [egg.id, Date.now() + 60_000]);
+    const view = async () => (await (await holders.GET(req(`/api/holders/${owner}`), { params: Promise.resolve({ address: owner }) })).json()) as TrackedHolderView;
+
+    const before = await view();
+    const text = JSON.stringify(before);
+    expect(before.eggs.find((e) => e.id === egg.id)?.speciesId).toBe("sealed-mythic");
+    expect(text).not.toMatch(/orbelith|Orbelith|Celestine/);
+    expect(before.classified).toBeUndefined();
+
+    await rt.db.query(`UPDATE eggs SET ready_ms = 0, incubation_ms = 1 WHERE id = $1`, [egg.id]);
+    const hatched = await (await POST(req(`/api/eggs/${egg.id}/hatch`, { method: "POST" }), { params: Promise.resolve({ id: egg.id }) })).json();
+    expect(hatched.speciesId).toBe("orbelith");
+    expect(hatched.classified.map((b: { species: { id: string } }) => b.species.id)).toEqual(["orbelith"]);
+    expect(hatched.classified[0].art.stages).toHaveLength(4);
+
+    const after = await view();
+    expect(after.eggs.find((e) => e.id === egg.id)?.speciesId).toBe("orbelith");
+    expect(after.classified?.map((b) => b.species.id)).toEqual(["orbelith"]);
+  });
+});

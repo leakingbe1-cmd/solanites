@@ -1,6 +1,7 @@
 import { eggProgression, eggStatusAt, initialGrowthMsFor, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { evolutionOf, rollSpecies } from "@/lib/progression";
+import { ALL_SPECIES } from "@/server/classified";
 import { hashString } from "@/lib/rng";
 import type { HatchResult, TrackedEgg, TrackedHolderView } from "@/shared/trackedHolder";
 import { formatBaseUnits, wholeTokensToBase } from "../amounts";
@@ -289,7 +290,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
           // Plain INSERT: the UNIQUE(owner, sequence) constraint aborts the whole award if it would duplicate an egg.
           await sql.query(
             `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig), initialGrowthMsFor(sequence, config.progression)],
+            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig, ALL_SPECIES), initialGrowthMsFor(sequence, config.progression)],
           );
           prevReady = sch.readyAt;
         }

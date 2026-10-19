@@ -1,4 +1,5 @@
-import { byStage, Gem, polar, rad, rim, round, Spec, type Ctx, type Renderer } from "../kit";
+import "server-only";
+import { byStage, Gem, polar, rad, rim, round, Spec, type Ctx, type Renderer } from "@/components/creature/kit";
 
 /**
  * GENESIS — "Slot Zero". A levitating obsidian polyhedron with green edge

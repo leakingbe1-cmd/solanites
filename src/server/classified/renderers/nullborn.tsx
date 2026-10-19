@@ -1,5 +1,6 @@
+import "server-only";
 import type { ReactNode } from "react";
-import { byStage, Gem, MIRROR, rim, round, Spec, type Ctx, type Renderer } from "../kit";
+import { byStage, Gem, MIRROR, rim, round, Spec, type Ctx, type Renderer } from "@/components/creature/kit";
 
 /**
  * Ø NULLBORN, The Unindexed: an inverted, glitched kitsune.

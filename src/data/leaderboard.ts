@@ -1,5 +1,5 @@
 import { mulberry32 } from "@/lib/rng";
-import { SPECIES, type Species } from "@/lib/species";
+import { SEALED, SPECIES, type Species } from "@/lib/species";
 import { RARITIES } from "@/lib/rarity";
 
 /** SIMULATED leaderboard entries for the prototype. Deterministic so SSR and client agree. */
@@ -20,7 +20,8 @@ function weightedSpecies(rand: () => number): Species {
   // Skew toward rarer creatures — the board shows the best of the best.
   const x = rand();
   const tier = x < 0.02 ? "secret" : x < 0.1 ? "mythic" : x < 0.3 ? "legendary" : x < 0.55 ? "epic" : x < 0.8 ? "rare" : "common";
-  const pool = SPECIES.filter((s) => s.rarity === tier);
+  // Classified tiers stay sealed on the public board; one draw is still taken so the board is unchanged otherwise.
+  const pool = tier === "mythic" || tier === "secret" ? [SEALED[tier]] : SPECIES.filter((s) => s.rarity === tier);
   return pool[Math.floor(rand() * pool.length)];
 }
 

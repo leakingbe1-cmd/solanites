@@ -12,7 +12,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { FIRST_MATURITY_MS } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { CATALOGUE_SIZE, SEALED } from "@/lib/species";
 
 export default function Home() {
   const pctSupply = (gameConfig.token.tokensPerEgg / gameConfig.token.totalSupply) * 100;
@@ -32,7 +32,7 @@ export default function Home() {
               A world waiting to <span className="sl-phx-gold italic">awaken.</span>
             </h1>
             <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              {SPECIES.length} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
+              {CATALOGUE_SIZE} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
             </p>
             <div className="sl-awake-in mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
               <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
@@ -63,7 +63,7 @@ export default function Home() {
           <dl className="mb-20 grid grid-cols-3 divide-x divide-white/10 text-center">
             {[
               { value: formatNumber(gameConfig.token.tokensPerEgg), label: `${gameConfig.token.symbol} per egg` },
-              { value: String(SPECIES.length), label: "Species" },
+              { value: String(CATALOGUE_SIZE), label: "Species" },
               { value: String(RARITY_ORDER.length), label: "Bloodlines" },
             ].map((stat) => (
               <div key={stat.label} className="flex min-w-0 flex-col px-1 sm:px-2">
@@ -120,9 +120,9 @@ export default function Home() {
       {/* ── CTA ── */}
       <section className="relative overflow-hidden py-28 sm:py-40">
         <div className="relative mx-auto max-w-3xl px-4 text-center">
-          {/* a stirring egg with a classified silhouette inside; still under reduced motion (global rule) */}
+          {/* a stirring egg with the generic sealed (classified) silhouette inside; still under reduced motion (global rule) */}
           <div className="relative mx-auto mb-8 h-44 w-36 sm:h-56 sm:w-44" aria-hidden>
-            <EggArt stage={3} progress={0.9} seed={9} inside={SPECIES_BY_ID["genesis"]} className="relative h-full w-full" />
+            <EggArt stage={3} progress={0.9} seed={9} inside={SEALED.secret} className="relative h-full w-full" />
           </div>
           <h2 className="sl-display-l text-bone">
             Something is <span className="italic">stirring</span>.

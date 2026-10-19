@@ -1,4 +1,5 @@
-import { byStage, Eye, Gem, rim, round, Spec, type Ctx, type Renderer } from "../kit";
+import "server-only";
+import { byStage, Eye, Gem, rim, round, Spec, type Ctx, type Renderer } from "@/components/creature/kit";
 
 /**
  * Orbelith — "The Celestine Coil". A living planet: a banded platinum orb

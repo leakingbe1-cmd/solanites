@@ -1,5 +1,6 @@
 import "server-only";
 import { fail, failFromError, noStore, rateLimit } from "@/server/http";
+import { discloseEggs } from "@/server/classified";
 import { log } from "@/server/log";
 import { getRuntime } from "@/server/runtime";
 import { checkSolanaAddress } from "@/server/solana/address";
@@ -35,7 +36,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ address:
         log.warn("holders.refresh_failed", { error: (e as Error).message });
       }
     }
-    return Response.json(view, { headers: noStore });
+    // Classified species are named only for hatched eggs (src/server/classified).
+    const { eggs, classified } = discloseEggs(view.eggs);
+    return Response.json({ ...view, eggs, ...(classified.length ? { classified } : {}) }, { headers: noStore });
   } catch (e) {
     return failFromError(e, "holders");
   }

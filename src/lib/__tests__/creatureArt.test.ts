@@ -4,7 +4,8 @@ import manifest from "@/data/creatureAssets.json";
 import designs from "@/data/creatureDesigns.json";
 import { pickImage } from "@/components/creature/CreatureArt";
 import { discoveryOf } from "@/lib/discovery";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { SPECIES } from "@/lib/species";
+import { ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
 
 const ids = SPECIES.map((s) => s.id).sort();
 

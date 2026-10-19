@@ -4,7 +4,7 @@ import { useId, type ReactNode } from "react";
 import type { Palette, Species } from "@/lib/species";
 import { RARITIES } from "@/lib/rarity";
 import { stageAsset, type StageAsset } from "@/lib/creatureAssets";
-import { RENDERERS } from "./species";
+import { rendererFor } from "./species";
 import type { Ctx } from "./kit";
 
 /**
@@ -47,7 +47,7 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
   const evo = Math.max(0, Math.min(3, Math.round(stage)));
   const p = species.palette;
   const rarity = species.rarity;
-  const r = RENDERERS[species.id];
+  const r = rendererFor(species.id);
 
   const ctx: Ctx = {
     id,

@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CollectionPlate } from "@/components/creature/CollectionPlate";
 import { CreatureArt } from "@/components/creature/CreatureArt";
+import { revealClassified } from "@/components/creature/revealClassified";
 import { EggArt } from "@/components/egg/EggArt";
 import { CreatureCard } from "@/components/hatchery/CreatureCard";
 import { HatchReveal } from "@/components/hatchery/HatchReveal";
@@ -15,6 +16,7 @@ import { CLASSIFIED_RARITIES, discoveryOf } from "@/lib/discovery";
 import { FIRST_MATURITY_MS, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES, SPECIES_BY_ID, type Species } from "@/lib/species";
+import type { ClassifiedBundle } from "@/shared/classified";
 import { DevOddsPanel } from "./DevOddsPanel";
 
 const STAGES = gameConfig.evolution.names;
@@ -35,17 +37,30 @@ function previewRecord(s: Species, stage: number): SolaniteRecord {
  * the Collection, the Hatchery and the hatch reveal present them. Everything here is a
  * preview: no ownership, eggs, progression, tokens or rewards are created or changed,
  * and the public pages read nothing from this page.
+ *
+ * The classified (Mythic and Secret) species are not in this component's code: the server
+ * page sends them, with finished art, only after the owner's sign-in (`classified`).
  */
-export function DeveloperMode() {
+export function DeveloperMode({ classified }: { classified: ClassifiedBundle[] }) {
+  const [ready, setReady] = useState(false);
+  const all = useMemo(() => [...SPECIES, ...classified.map((b) => b.species)], [classified]);
+  useEffect(() => {
+    revealClassified(classified);
+    setReady(true);
+  }, [classified]);
+  return ready ? <DeveloperModeView all={all} /> : <p className="px-4 pt-32 text-center text-mist" data-testid="developer-loading">Loading Developer Mode…</p>;
+}
+
+function DeveloperModeView({ all: ALL }: { all: Species[] }) {
   const router = useRouter();
   const [rarity, setRarity] = useState<RarityId | "all">("all");
-  const [selected, setSelected] = useState<Species>(SPECIES.find((s) => s.rarity === "mythic") ?? SPECIES[0]);
+  const [selected, setSelected] = useState<Species>(ALL.find((s) => s.rarity === "mythic") ?? ALL[0]);
   const [stage, setStage] = useState(2);
   const [eggStage, setEggStage] = useState<1 | 2 | 3 | 4>(3);
   const [odds, setOdds] = useState<DevOddsSettings>({ ...DEFAULT_DEV_ODDS });
   const [reveal, setReveal] = useState<{ species: Species; seed: number } | null>(null);
 
-  const list = useMemo(() => SPECIES.filter((s) => rarity === "all" || s.rarity === rarity), [rarity]);
+  const list = useMemo(() => ALL.filter((s) => rarity === "all" || s.rarity === rarity), [ALL, rarity]);
   const restricted = CLASSIFIED_RARITIES.includes(selected.rarity);
 
   function exit() {
@@ -72,7 +87,7 @@ export function DeveloperMode() {
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <p className="sl-eyebrow">Owner tools</p>
         <h1 className="sl-display-l mt-3 text-bone">Developer Mode</h1>
-        <p className="mt-3 max-w-2xl text-mist">All {SPECIES.length} species and all {STAGES.length} stages, including Mythic and Secret, which stay classified for everyone else until they hatch one.</p>
+        <p className="mt-3 max-w-2xl text-mist">All {ALL.length} species and all {STAGES.length} stages, including Mythic and Secret, which stay classified for everyone else until they hatch one.</p>
 
         {/* species browser */}
         <section aria-labelledby="dev-species" className="mt-10">
@@ -80,7 +95,7 @@ export function DeveloperMode() {
           <div className="mt-3 flex flex-wrap gap-2">
             {(["all", ...RARITY_ORDER] as const).map((r) => (
               <button key={r} type="button" aria-pressed={rarity === r} onClick={() => setRarity(r)} className={`rounded-full border px-3 py-1 text-xs ${rarity === r ? "border-gilt/60 text-bone" : "border-white/10 text-mist hover:text-bone"}`}>
-                {r === "all" ? `All (${SPECIES.length})` : `${RARITIES[r].label} (${SPECIES.filter((s) => s.rarity === r).length})`}
+                {r === "all" ? `All (${ALL.length})` : `${RARITIES[r].label} (${ALL.filter((s) => s.rarity === r).length})`}
               </button>
             ))}
           </div>

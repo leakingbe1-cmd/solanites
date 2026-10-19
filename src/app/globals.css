@@ -640,27 +640,6 @@ body {
   100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
 }
 
-/* 2. A golden pulse ignites at the heart, then settles into a slow glow. */
-.sl-phx-pulse {
-  position: absolute;
-  left: 50%;
-  top: var(--heart-y);
-  width: 30%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(circle, rgba(255, 236, 190, 0.9) 0%, rgba(255, 180, 70, 0.45) 22%, transparent 62%);
-  mix-blend-mode: screen;
-  opacity: 0;
-}
-[data-awake] .sl-phx-pulse {
-  animation: sl-phx-pulse 2.4s ease-out 0.15s both;
-}
-@keyframes sl-phx-pulse {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
-  30% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
-}
-
 /* a slow breath on the whole artwork once it is awake */
 @keyframes sl-phx-breathe {
   0%, 100% { transform: scale(1); }
@@ -738,8 +717,7 @@ body {
 }
 /* reduced motion: the awake, final frame at once */
 @media (prefers-reduced-motion: reduce) {
-  .sl-phx-dawn,
-  .sl-phx-pulse {
+  .sl-phx-dawn {
     display: none;
   }
   .sl-phx-breathe,
@@ -1030,12 +1008,6 @@ html[data-realm="how-it-works"] .sl-realm-violet {
   transform-origin: 50% 50%;
   background: linear-gradient(90deg, transparent, rgba(232, 183, 92, 0.55) 25%, var(--color-flare) 50%, rgba(232, 183, 92, 0.55) 75%, transparent);
   box-shadow: 0 0 8px rgba(232, 183, 92, 0.45);
-}
-
-/* An approved replacement phoenix carries its own light: the ignition pulse placed on
-   the current still stands down. */
-.sl-phx[data-art="eclipse"] .sl-phx-pulse {
-  display: none;
 }
 
 /* ── First-visit intro ─────────────────────────────────────

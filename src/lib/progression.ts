@@ -3,7 +3,7 @@ import type { GameConfig, RarityId } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { mulberry32 } from "@/lib/rng";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES, speciesOfRarity, type Species } from "@/lib/species";
+import { PUBLIC_ROLL_CATALOGUE, type Species } from "@/lib/species";
 
 /**
  * Pure progression rules. No React, no storage, no clock — so the exact same
@@ -256,7 +256,7 @@ export function rollRarity(rand: () => number, cfg: GameConfig): RarityId {
  * Checks that every rarity with a positive weight has at least one species,
  * so a roll can never land on an empty tier.
  */
-export function validateRarityConfig(cfg: GameConfig, catalogue: readonly Species[] = SPECIES): void {
+export function validateRarityConfig(cfg: GameConfig, catalogue: readonly Species[] = PUBLIC_ROLL_CATALOGUE): void {
   const positive = RARITY_ORDER.filter((r) => (cfg.rarityWeights[r] || 0) > 0);
   if (!positive.length) throw new Error("rarityWeights must give at least one rarity a positive weight");
   const empty = positive.filter((r) => !catalogue.some((s) => s.rarity === r));
@@ -269,11 +269,15 @@ export function validateRarityConfig(cfg: GameConfig, catalogue: readonly Specie
  * species. The server supplies a cryptographically random seed when the egg is
  * issued and stores the result; nothing here reads the clock or the client.
  * Throws if the rolled rarity has no species (never substitutes another tier).
+ *
+ * The server passes the full catalogue (ALL_SPECIES in src/server/classified). The default,
+ * for client-side simulations, has one sealed stand-in per classified tier: the rarity odds
+ * are the same, but a simulated Mythic or Secret never names a classified species.
  */
-export function rollSpecies(seed: number, cfg: GameConfig, catalogue: readonly Species[] = SPECIES): string {
+export function rollSpecies(seed: number, cfg: GameConfig, catalogue: readonly Species[] = PUBLIC_ROLL_CATALOGUE): string {
   const rand = mulberry32(seed);
   const rarity = rollRarity(rand, cfg);
-  const pool = catalogue === SPECIES ? speciesOfRarity(rarity) : catalogue.filter((s) => s.rarity === rarity);
+  const pool = catalogue.filter((s) => s.rarity === rarity);
   if (!pool.length) throw new Error(`No species configured for rarity: ${rarity}`);
   return pool[Math.floor(rand() * pool.length)].id;
 }

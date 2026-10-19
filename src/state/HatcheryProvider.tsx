@@ -5,6 +5,7 @@ import { incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig, TIME, type GameConfig } from "@/config/gameConfig";
 import { advance, eggsAllowed, phaseOf, rollSpecies, type SolaniteRecord } from "@/lib/progression";
 import { randomSeed } from "@/lib/rng";
+import { SPECIES_BY_ID } from "@/lib/species";
 import { setSoundEnabled } from "@/lib/sound";
 import { demoWallet } from "@/services/wallet/demoWallet";
 import { injectedWallet } from "@/services/wallet/injectedWallet";
@@ -21,6 +22,19 @@ import { ApiBalanceProvider } from "@/services/token/apiBalance";
  */
 
 const STORAGE_KEY = "solanites:prototype:v1";
+
+/**
+ * Demo games saved before classified species moved to the server can hold a Mythic or
+ * Secret species id this browser no longer knows. Rolling the record's own seed again
+ * lands on the same rarity (the roll depends only on the seed and the weights), now as
+ * that tier's sealed stand-in.
+ */
+function sealUnknownSpecies(saved: Partial<State>): Partial<State> {
+  if (!saved.records?.some((r) => r.speciesId && !SPECIES_BY_ID[r.speciesId])) return saved;
+  const records = saved.records.map((r) => (r.speciesId && !SPECIES_BY_ID[r.speciesId] ? { ...r, speciesId: rollSpecies(r.seed, gameConfig) } : r));
+  const discovered = Array.from(new Set([...(saved.discovered ?? []), ...records.filter((r) => r.hatchedAt !== null).map((r) => r.speciesId)]));
+  return { ...saved, records, discovered };
+}
 
 export const SPEED_OPTIONS = [
   { label: "Real time", value: 1 },
@@ -229,7 +243,7 @@ export function HatcheryProvider({ children }: { children: ReactNode }) {
     } catch {
       /* storage unavailable — start fresh */
     }
-    dispatch({ type: "hydrate", state: { ...saved, hydrated: true, balanceError: null } });
+    dispatch({ type: "hydrate", state: { ...sealUnknownSpecies(saved), hydrated: true, balanceError: null } });
   }, []);
 
   // Persist.

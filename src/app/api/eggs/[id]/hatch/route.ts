@@ -1,4 +1,5 @@
 import "server-only";
+import { classifiedBundle, isClassifiedId } from "@/server/classified";
 import { fail, failFromError, noStore, rateLimit } from "@/server/http";
 import { getRuntime } from "@/server/runtime";
 
@@ -18,7 +19,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try {
     const r = await (await getRuntime()).tracker.hatch(id);
     if (!r.ok) return r.code === "NOT_FOUND" ? fail(404, "NOT_FOUND", "Unknown egg.") : fail(409, "NOT_READY", "This egg is still incubating.", { readyAt: r.readyAt });
-    return Response.json(r.result, { headers: noStore });
+    // A hatched classified species travels with its finished art (src/server/classified).
+    const { speciesId } = r.result;
+    return Response.json(isClassifiedId(speciesId) ? { ...r.result, classified: [classifiedBundle(speciesId)] } : r.result, { headers: noStore });
   } catch (e) {
     return failFromError(e, "hatch");
   }

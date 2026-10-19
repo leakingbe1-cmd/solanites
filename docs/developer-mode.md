@@ -1,6 +1,6 @@
 # Developer Mode
 
-Owner-only tools at `/studio/dev`: previews of all 28 species and 4 stages (Mythic and Secret included), and simulated hatches with developer odds. Nothing in it changes eggs, creatures, discoveries, rewards or the public site.
+Owner-only tools at `/studio/dev`: previews of all 28 species and 4 stages (Mythic and Secret included), and simulated hatches with developer odds. Nothing in it changes eggs, creatures, discoveries, rewards or the public site. The Mythic and Secret species are sent by the server only after sign-in; they are not in the page's public JavaScript (see `docs/classified-species.md`).
 
 ## Turning it on
 

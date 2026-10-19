@@ -291,8 +291,21 @@ for (const [name, vp, mobile] of [
   const [c, p] = await ctx({ reducedMotion: "reduce" }, SEEN);
   await p.goto(B + "/");
   await p.waitForTimeout(600);
-  const anim = await p.evaluate(() => ({ breathe: getComputedStyle(document.querySelector(".sl-phx-breathe")).animationName, pulse: getComputedStyle(document.querySelector(".sl-phx-pulse")).display }));
-  ok("hero: reduced motion stops the breath and the ignition pulse", anim.breathe === "none" && anim.pulse === "none", JSON.stringify(anim));
+  const anim = await p.evaluate(() => ({ breathe: getComputedStyle(document.querySelector(".sl-phx-breathe")).animationName, dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).display, art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity }));
+  ok("hero: reduced motion stops the breath and the dawn, and shows the art at once", anim.breathe === "none" && anim.dawn === "none" && anim.art === "1", JSON.stringify(anim));
+  await c.close();
+}
+{
+  const [c, p] = await ctx({}, SEEN);
+  await p.goto(B + "/");
+  await p.waitForTimeout(3200);
+  const hero = await p.evaluate(() => ({
+    pulse: document.querySelectorAll(".sl-phx-pulse").length,
+    art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity,
+    dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).opacity,
+    sheets: [...document.styleSheets].some((s) => { try { return [...s.cssRules].some((r) => /sl-phx-pulse/.test(r.cssText)); } catch { return false; } }),
+  }));
+  ok("hero: no ignition pulse element or rule; after the awakening the art rests fully visible", hero.pulse === 0 && !hero.sheets && hero.art === "1" && hero.dawn === "0", JSON.stringify(hero));
   await c.close();
 }
 {

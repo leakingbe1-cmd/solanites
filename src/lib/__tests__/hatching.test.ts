@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { gameConfig, type GameConfig } from "@/config/gameConfig";
 import { rarityChances, rollRarity, rollSpecies, validateRarityConfig } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { SEALED } from "@/lib/species";
+// The game's full catalogue (classified included), as the server rolls it.
+import { ALL_SPECIES as SPECIES, ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
 import { DEMO_UNHATCHED, demoRecords } from "@/state/HatcheryProvider";
 
 /**
@@ -19,10 +21,26 @@ const seq = (...xs: number[]) => {
   return () => xs[i++];
 };
 
+describe("classified species stay on the server", () => {
+  it("a client-side (simulated) roll lands on the same tier as the server roll, sealed for Mythic and Secret", () => {
+    const tiers = new Set<string>();
+    for (let seed = 0; seed < 50_000; seed++) {
+      const real = rollSpecies(seed, gameConfig, SPECIES);
+      const sim = rollSpecies(seed, gameConfig);
+      const rarity = SPECIES_BY_ID[real].rarity;
+      tiers.add(rarity);
+      if (rarity === "mythic" || rarity === "secret") expect(sim).toBe(SEALED[rarity].id);
+      else expect(sim).toBe(real);
+    }
+    expect(tiers.size).toBe(RARITY_ORDER.length);
+  });
+});
+
 describe("the configured rarity model", () => {
   it("is the shipped design: weights 60 / 25 / 10 / 3.8 / 1 / 0.2 and every tier has species", () => {
     expect(gameConfig.rarityWeights).toEqual({ common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 });
     expect(() => validateRarityConfig(gameConfig)).not.toThrow();
+    expect(() => validateRarityConfig(gameConfig, SPECIES)).not.toThrow();
     for (const r of RARITY_ORDER) expect(SPECIES.some((s) => s.rarity === r)).toBe(true);
   });
 
@@ -49,7 +67,7 @@ describe("the configured rarity model", () => {
     const cfg = withWeights({ common: 1, secret: 1 });
     expect(rollRarity(seq(0.49), cfg)).toBe("common");
     expect(rollRarity(seq(0.5), cfg)).toBe("secret");
-    for (let s = 0; s < 2000; s++) expect(["pallow", "mossling", "driftfin", "glimmeray", "sproutwyrm", "frostkit", "genesis", "nullborn"]).toContain(rollSpecies(s, cfg));
+    for (let s = 0; s < 2000; s++) expect(["pallow", "mossling", "driftfin", "glimmeray", "sproutwyrm", "frostkit", "genesis", "nullborn"]).toContain(rollSpecies(s, cfg, SPECIES));
   });
 
   it("over 400,000 consecutive seeds, rarity shares match the weights and every species appears", () => {
@@ -57,7 +75,7 @@ describe("the configured rarity model", () => {
     const byRarity: Record<string, number> = {};
     const bySpecies: Record<string, number> = {};
     for (let s = 0; s < N; s++) {
-      const id = rollSpecies(s, gameConfig);
+      const id = rollSpecies(s, gameConfig, SPECIES);
       bySpecies[id] = (bySpecies[id] ?? 0) + 1;
       const r = SPECIES_BY_ID[id].rarity;
       byRarity[r] = (byRarity[r] ?? 0) + 1;
@@ -74,13 +92,13 @@ describe("the configured rarity model", () => {
   });
 
   it("different eggs can hatch different species, and the same species can hatch more than once", () => {
-    const outcomes = Array.from({ length: 60 }, (_, s) => rollSpecies(s, gameConfig));
+    const outcomes = Array.from({ length: 60 }, (_, s) => rollSpecies(s, gameConfig, SPECIES));
     expect(new Set(outcomes).size).toBeGreaterThan(5);
     expect(new Set(outcomes).size).toBeLessThan(outcomes.length); // duplicates happen
   });
 
   it("the same seed always gives the same species (so a stored egg can't be rerolled)", () => {
-    for (const s of [0, 1, 99, 2 ** 31, 2 ** 32 - 1]) expect(rollSpecies(s, gameConfig)).toBe(rollSpecies(s, gameConfig));
+    for (const s of [0, 1, 99, 2 ** 31, 2 ** 32 - 1]) expect(rollSpecies(s, gameConfig, SPECIES)).toBe(rollSpecies(s, gameConfig, SPECIES));
   });
 });
 

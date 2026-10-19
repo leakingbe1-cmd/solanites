@@ -1,5 +1,6 @@
+import "server-only";
 import type { ReactNode } from "react";
-import { blade, byStage, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type Ctx, type Renderer } from "../kit";
+import { blade, byStage, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type Ctx, type Renderer } from "@/components/creature/kit";
 
 /** Helivane — a raptor carrying a sun: falcon head, layered raptor wings and a solar corona. Not a phoenix: no flame body. */
 

@@ -10,7 +10,7 @@ import { useHatchery } from "@/state/HatcheryProvider";
 import type { RarityId } from "@/config/gameConfig";
 import { evolutionOf } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
+import { CATALOGUE_SIZE, catalogueForViewer, ELEMENT_GLYPH, type Element, type Species } from "@/lib/species";
 
 
 
@@ -29,14 +29,16 @@ export default function CollectionPage() {
 
   const discovery = (s: Species) => discoveryOf(s, h.discovered);
 
-  const elements = Array.from(new Set(SPECIES.map((s) => s.element)));
-  const list = SPECIES.filter(
+  // Public species, then each classified slot: sealed unless the server revealed it to this viewer.
+  const catalogue = catalogueForViewer();
+  const elements = Array.from(new Set(catalogue.filter((s) => discovery(s) !== "classified").map((s) => s.element)));
+  const list = catalogue.filter(
     (s) =>
       (rarity === "all" || s.rarity === rarity) &&
       (element === "all" || (s.element === element && discovery(s) !== "classified")) &&
       (status === "all" || (status === "owned" ? discovery(s) === "owned" : discovery(s) !== "owned")),
   );
-  const ownedCount = SPECIES.filter((s) => h.discovered.includes(s.id)).length;
+  const ownedCount = catalogue.filter((s) => h.discovered.includes(s.id)).length;
 
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
@@ -53,10 +55,10 @@ export default function CollectionPage() {
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your discoveries</p>
               <p className="font-display text-2xl text-bone">
                 {ownedCount}
-                <span className="text-base text-mist">/{SPECIES.length}</span>
+                <span className="text-base text-mist">/{CATALOGUE_SIZE}</span>
               </p>
             </div>
-            <ProgressBar value={ownedCount / SPECIES.length} className="mt-3" />
+            <ProgressBar value={ownedCount / CATALOGUE_SIZE} className="mt-3" />
           </div>
         </div>
 

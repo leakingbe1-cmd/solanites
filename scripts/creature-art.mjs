@@ -27,6 +27,9 @@ const CHECKLIST = path.join(ROOT, "docs/creature-art/checklist.md");
 const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 
 const designs = JSON.parse(readFileSync(path.join(ROOT, "src/data/creatureDesigns.json"), "utf8"));
+// Classified (Mythic/Secret) design text is server only. It feeds the prompt sheet, but those
+// species never get public asset files or manifest entries: their art is served by the server.
+const classifiedDesigns = JSON.parse(readFileSync(path.join(ROOT, "src/server/classified/designs.json"), "utf8"));
 const STAGES = designs.stageNames.map((s) => s.toLowerCase()); // eggling, hatchling, evolved, ascended
 const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec;
 /**
@@ -230,7 +233,7 @@ function prompts() {
     `**Avoid:** ${style.negative}`,
     "",
   ];
-  for (const [id, s] of Object.entries(designs.species)) {
+  for (const [id, s] of Object.entries({ ...designs.species, ...classifiedDesigns.species })) {
     out.push(`## ${id}`, "", `- **Silhouette:** ${s.silhouette}`, `- **Anatomy:** ${s.anatomy}`, `- **Face:** ${s.face}`, `- **Posture:** ${s.posture}`, `- **Materials:** ${s.materials}`, `- **Effects:** ${s.effects}`);
     if (s.reference) out.push(`- **Reference strip:** \`${s.reference}\``);
     out.push("");

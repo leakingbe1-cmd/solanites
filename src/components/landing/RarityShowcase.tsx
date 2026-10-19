@@ -18,14 +18,15 @@ const FEATURED: Record<string, string> = {
   rare: "duskwing",
   epic: "neonyx",
   legendary: "aurelion",
-  mythic: "astravex",
-  secret: "genesis",
+  // classified tiers show the generic sealed form: their real designs never ship to the browser
+  mythic: "sealed-mythic",
+  secret: "sealed-secret",
 };
 
 /**
  * One card per rarity tier. Each opens the same creature detail view the
  * Collection uses, so classified (Mythic/Secret) species stay classified there
- * too, and are drawn as silhouettes here.
+ * too, and are drawn here as the generic sealed silhouette.
  */
 export function RarityShowcase() {
   const chances = rarityChances(gameConfig);

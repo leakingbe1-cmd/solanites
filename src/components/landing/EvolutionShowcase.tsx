@@ -138,13 +138,6 @@ export function EvolutionShowcase() {
 
       {/* ── the forms ── */}
       <div className="relative px-4 pt-8 sm:px-8 sm:pt-10">
-        {/* backlight in the species' rarity colours, centred under the current form */}
-        <div
-          className="pointer-events-none absolute top-10 h-64 w-64 -translate-x-1/2 rounded-full opacity-50 blur-[80px] transition-[left,background-color] duration-700 ease-out max-md:left-1/2"
-          style={{ left: `${12.5 + stage * 25}%`, background: rarity.color2 }}
-          aria-hidden
-        />
-
         {/* phones and small tablets: the current form, large */}
         <div key={`${species.id}-${stage}`} className="sl-fade-in relative mx-auto aspect-square w-full max-w-[19rem] md:hidden">
           <CreatureArt species={species} stage={stage} />

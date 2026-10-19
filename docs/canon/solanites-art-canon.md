@@ -1,84 +1,91 @@
 # Solanites art canon
 
-**Version 2 · 2026-10-19 · canonical for all artwork.** Written on `design/eclipse-vigil-code` at the owner's request ("one canonical art direction document"). It is version 1 (Creature Studio's proposal, `creature-studio/art-direction` commit `33ce366`) with the owner's later decisions applied and the evidence from the website round-1 audit (`website-round-1-audit.md`). Every change from version 1 is listed in §6, so the other two branches can adopt this file verbatim at the same path. Nobody edits another workstream's branch.
+**Status: APPROVED by the owner on 2026-10-19.** This is the one authoritative document for creature art, the phoenix and how artwork is presented on the website. It binds all three workstreams:
 
-Where an older document disagrees with this one about artwork, this one wins:
+- creature-studio (`creature-studio/art-direction`)
+- design (`design/creative-direction`)
+- website (`design/eclipse-vigil-code`, the "Solanites interactive website" session)
 
-- `docs/creature-studio/art-bible.md` and `prototypes/*` (Creature Studio)
-- `docs/design/creative-direction.md`, `art-direction-v2.md`, `phase-1.md`, `alignment.md` (design)
-- the website session's Phase A and B1 review pages
+Where any other document disagrees with this one, this one wins. Site UI rules that do not touch artwork (type, buttons, plates, the 12-tick Vigil ring, motion) stay with `design/creative-direction`.
 
-Site UI rules that do not touch artwork (type, buttons, plates, the 12-tick ring, motion) stay with the design branch and the website code.
+**Branch isolation:** this file is maintained on `creature-studio/art-direction`. Other branches copy it verbatim to the same path (`docs/canon/solanites-art-canon.md`) and mark their own superseded sections; nobody edits another workstream's branch and nothing is merged to do this.
 
-## 1. Name and scope
+## 1. Name
 
-The direction is **The Eclipse Vigil** (approved by the owner by that name). The design branch's **Celestial Atlas** vocabulary (constellations, gold engraving, the Threshold) survives only as *site UI* devices. For artwork, the direction means three things:
+The direction is **The Celestial Atlas** (the Eclipse Vigil folded in). For artwork:
 
-- **Eclipse light:** one warm gold key light, a restrained violet rim, deep cosmic darkness. Light comes from the eclipse corona and from Solgems, nowhere else.
-- **The Vigil:** time and progress belong to the UI ring, never to the artwork.
-- **The world, not the interface:** constellations, engraving, frames and ground are drawn by the site, never baked into artwork.
+- **Eclipse light:** warm gold key light plus a restrained violet rim.
+- **The Vigil:** the 12-tick ring belongs to the UI only.
+- **The Atlas:** constellations and engraving belong to the UI only, never to the artwork.
 
-## 2. Rules for all creature artwork
+## 2. Artwork rules (creatures and the phoenix)
 
-| # | Rule | Value |
+| # | Rule |
+|---|---|
+| C1 | **Finish.** Stylised, **hand-painted 2D** throughout, **including the phoenix**. Clean graphic silhouette, coloured linework (darkest local colour, never black) that thins in the light, painted volume in three values, visible but controlled brushwork. Not 3D render, not photoreal, not "collectible sculpture / museum light", not flat vector, not anime or chibi. |
+| C2 | **Key light.** Warm gold **`#FFE2A8`** from the **upper left**. The only key light. |
+| C3 | **Rim light.** Restrained **violet** (`#7D5CF0` family) from **behind**, catching the back and outer edges of the silhouette. It must be strong enough to separate a dark silhouette from a dark background (C9), and never becomes a glow halo around the creature. |
+| C4 | **Identity.** Every species keeps its established identity, anatomy and distinctive silhouette: its shipped body plan, name, element, rarity, Solgem position and four evolution stages. Stormquill, Aurelion, Zephrax and Mossling get an individual review before their designs lock. **Mossling keeps its antlers.** |
+| C5 | **Emission.** Only from anatomy (glyphs, lure, seams, eyes from Epic up, the Solgem), within the rarity limits as a share of the silhouette: Common ≤ 3%, Rare ≤ 5%, Epic ≤ 10%, Legendary ≤ 10%, Mythic ≤ 15%, Secret free. |
+| C6 | **Never in the artwork:** ground planes, contact or cast shadows, floor glints, horizon lines, pedestals, light cones, **halos (including Pyraurum's: removed)**, radial rays, sparkle stars, lens flares, lightning, decorative particles, text, logos (no Solana marks; the Solanites glyph is Epoch Ring), frames. |
+| C7 | **Background.** Final creature art is transparent; review images use flat `#07060d`. |
+| C8 | **Camera.** Three-quarter view facing left, eye level. Frontal symmetry only for Mythic "deity" forms and abstract Secret forms. |
+| C9 | **Readability.** The 48 px solid black-fill identifies the species. In colour, downscaled to 48 px on `#07060d`, the creature's pixels (luminance > 20/255) have a **median luminance ≥ 70 and a 25th percentile ≥ 45**. Calibration: V-A scores 54 / 40 (fail), Velynx `fb118638` 70 / 50, Mossling `ce879099` 97 / 77. |
+| C10 | **Stages.** Each stage changes at least two of: head-to-body proportion, primary shape, pose, appendage count. One signature trait persists and grows. Ascended changes the silhouette or posture, not just glow. |
+| C11 | **Faces.** Species-specific eyes and a readable expression (brow or lid, eye, mouth corner). One catchlight per eye, upper left. |
+| C12 | **Delivery.** One file per species × stage, 1024 × 1024, transparent, through the existing pipeline. Multi-stage sheets are studies only. |
+| C13 | **Stage framing.** Occupancy targets: stage 1 = **45%**, stage 2 = **60%**, stage 3 = **78%**, stage 4 = **88%** of the frame, ±3 points. Measured exactly as in §3. |
+
+## 3. How framing is measured (C13)
+
+Every asset is checked with `docs/canon/measure-framing.py` (free, local):
+
+- **Frame:** the full delivered canvas (1024 × 1024).
+- **Creature pixels:** alpha ≥ 32 on transparent files; on review images, luminance differing from the `#07060d` background by more than 16/255. A 3 px median filter is applied, and connected specks smaller than 0.1% of the frame are ignored.
+- **Box:** the smallest rectangle containing all creature pixels.
+- **Occupancy** = the larger of box height and box width ÷ frame size. The larger side is used so tall, long and wide body plans are judged alike.
+- **Placement:** box centre at 50% / 50% of the frame, ±3 points. There is no ground line, because nothing stands on a floor.
+
+Example: V-A measures 84.4% (stage 3 target 78%: **fail**), centre 55.8% / 49.4% (**fail**).
+
+## 4. Website presentation rules
+
+| # | Rule |
+|---|---|
+| W1 | **No ground in presentation either:** no contact shadows, floor glints, pedestals or horizon lines under creatures, eggs or the phoenix. |
+| W2 | No decorative halos, rays, sparkles, nebula blobs or rarity auras behind artwork. Species glow comes only from the artwork, within C5. |
+| W3 | The existing phoenix stays live until a replacement is separately approved. |
+
+Where the current site breaks W1–W2 (the creature shadow ellipse, the Ascended halo, rarity auras), the fixes are listed in `docs/creature-studio/website-builder-handoff.md` for the website workstream.
+
+## 5. Prototypes
+
+The first three prototypes are **Velynx, Mossling and Cryovant**. No other species starts until their four-stage evolution lines are approved. Velynx requirements: `docs/canon/reconciliation-2026-10-19.md` §3 (upright biped, long fingers, cheek tufts, clear ear notch, strong violet rim, warm gold key, glyph tile under one foot, dark-background readability; V-A is a rendering reference only).
+
+## 6. Credit policy
+
+| # | Rule |
+|---|---|
+| G1 | **Shared future budget: 180 Runway credits** across all three workstreams. |
+| G2 | The **80 credits** spent by the website session at 20:35 UTC and the **20 credits** spent on V-A are **historical** and outside this budget. |
+| G3 | **ALL PAID GENERATION IS PAUSED.** No generation, retry, upscale, background removal or any other paid image operation. |
+| G4 | The budget is **not** permission to generate. **Each image needs its own explicit owner approval** before it is generated. |
+| G5 | Every generation is logged in `docs/canon/generation-ledger.md` with task ID, time, workstream, prompt location, model, size and balance before and after. |
+| G6 | Concept model and size when approved: nano-banana-pro, 1K, square (measured 20 credits per image; 2K also measured at 20). |
+
+## 7. Superseded rules
+
+These rules are void in every workstream, whatever document they appear in:
+
+| Superseded rule | Where it appeared | Replaced by |
 |---|---|---|
-| C1 | **Finish** | Stylised, **hand-painted 2D** illustration: a clean graphic silhouette, coloured linework (darkest local colour, never black) that thins in the light, painted volume in three values, and visible but controlled brushwork. **Not** 3D render, not "collectible sculpture / museum light", not photoreal, not flat vector, not anime or chibi. |
-| C2 | **Key light** | Warm gold (`#ffe2a8`) from the upper left (11 o'clock). The only key light. |
-| C3 | **Rim light** | Restrained violet (`#7d5cf0` family) along the back and right edges, from behind and lower right. Strong enough to separate a dark body from a dark background (C9); never a glow halo. The element colour may tint the rim up to about 25%. |
-| C4 | **Emission** | Only from anatomy (glyphs, lure, seams, eyes from Epic up, the Solgem). Budget as a share of the silhouette: Common ≤ 3%, Rare ≤ 5%, Epic and Legendary ≤ 10%, Mythic ≤ 15%, Secret free. |
-| C5 | **Never in the artwork** | Ground planes, horizon lines, contact or cast shadows, floor glints, pedestals, light cones, halos, radial rays, sparkle stars, lens flares, lightning, **coloured glow or bloom in the air around the creature**, particles more than one body-width away, text, logos (including Solana marks), frames. Mechanical joints (rings, rivets, plates at elbows and knees) unless the species is built of metal. |
-| C6 | **Background** | Delivered transparent; reviewed on flat obsidian `#07060d`. Any ground or shadow is drawn by the site (§5, decision 1). |
-| C7 | **Camera** | Three-quarter view facing left, eye level. Frontal symmetry only for Mythic "deity" forms and abstract Secret forms. |
-| C8 | **Identity** | Every species keeps its shipped body plan, **palette family** (`src/lib/species.ts`), name, element, rarity, Solgem position and evolution count. Where references disagree, the shipped body plan wins. Stormquill, Aurelion, Zephrax and Mossling get an individual review before their designs lock. |
-| C9 | **Readability** | A solid black-fill at 48 px identifies the species. In colour at 48 px on `#07060d`, pixels with luminance > 20 of 255 have a **median ≥ 70 and a 25th percentile ≥ 45**. |
-| C10 | **Stages** | Each stage changes at least two of: head-to-body proportion, primary shape, pose, appendage count. One signature trait persists and grows. Ascended changes the silhouette or posture, not just the glow. |
-| C11 | **Faces** | Species-specific eyes (shape, lids, pupils) and a readable expression (brow or lid, eye, mouth corner) matching the species' written temperament. One catchlight per eye, upper left. No human make-up conventions (eyeliner, lashes) unless the brief asks for them. |
-| C12 | **Delivery** | One file per species × stage. **Master 2048 × 2048 transparent** (owner decision), larger where the final display size needs it; the pipeline delivers 1024 and thumbnails and never enlarges. Every master passes `scripts/lib/image-quality.mjs` (not upscaled) and a 100% review. Multi-stage sheets are studies only. |
-
-## 3. The Eclipse Phoenix (hero key art)
-
-| # | Rule |
-|---|---|
-| P1 | Same finish as C1 (hand-painted 2D), owner decision. It is the **monumental mythic figure** of the world: more scale, detail and presence than any creature, but the same light and paint. |
-| P2 | It must read as a **phoenix**, not an eagle or griffin: long trailing tail plumes, a crest, flight feathers whose tips turn to corona light. It must stay distinct from Pyraurum (the collectible Ember phoenix). |
-| P3 | The eclipse is in the sky, **not centred behind the head** (that reads as a halo, C5). |
-| P4 | Desktop: the left 40% stays clear for the headline (mean luminance < 8%, measured by `docs/design/tools/phoenix_qa.py`), clipped highlights < 0.5%. |
-| P5 | A **separate portrait composition** for phones (figure in the top 55%), never a crop of the landscape one. |
-| P6 | Masters: desktop ≥ 2560 × 1440 native (3840 × 2160 preferred), mobile ≥ 1080 × 1920; `scripts/hero-art.mjs` validates and encodes. |
-
-## 4. Shared assets and governance
-
-| # | Rule |
-|---|---|
-| A1 | **Glyph: the Epoch Ring**, Creature Studio's mark B (`docs/creature-studio/glyph/mark-b-epoch-ring.svg`), implemented as `src/components/brand/EpochRing.tsx`. It replaces every third-party mark on creatures. At 12 px its 4-unit stroke falls to about 1 px; a heavier small-size cut is an open item (§5). |
-| G1 | **One credit ledger** for the shared Runway workspace: `docs/canon/generation-ledger.md` (on `creature-studio/art-direction`). Every generation is logged with its task ID, time (UTC), workstream, prompt, model, size and the balance before and after. |
-| G2 | **One budget.** Caps are approved per batch by the owner and apply to the workspace, not to each workstream. |
-| G3 | **No generation** without a written prompt in the repo and the owner's approval for that batch. |
-| G4 | Concepts: nano-banana-pro, **2K**. Measured: 1K and 2K both cost 20 credits per image in this workspace, and the 2K outputs carry native detail (spectral check), so 2K costs nothing extra and can be inspected at production size. 4K only with approval and a measured price. |
-| G5 | **Pause:** all paid generation in every workstream is paused until the owner approves a batch. |
-| G6 | Originals are preserved: review images stay byte-for-byte in review folders (`art/creature-studio/…`, `art/review/…`); shipped SVG artwork is never edited for redesign work; nothing reaches `art/creatures/` until a complete set is approved. |
-
-## 5. Decisions still open (owner)
-
-1. **Site-side ground under creatures and eggs** (design v1 gilt floor glint / Threshold vs the current soft shadow). Default until decided: the existing shadow only.
-2. **Stage scale in frame.** Proposed 45 / 60 / 78 / 88% of frame height, never breaking the frame.
-3. **Pyraurum's Ascended halo** as anatomy, or none.
-4. **Transparent production output.** nano-banana-pro cannot output transparency. Options: a model that can (seedream-5-pro, gpt-image-2; prices not yet measured) or Runway background removal (sam3, birefnet-v2; price not yet measured). Needs one measured test before stages.
-5. **Small-size Epoch Ring cut** (heavier strokes below 16 px).
-6. **Shared data text:** `src/data/creatureDesigns.json → style.prompt` still says "3D character". Changing it alters generated prompt docs; website builder to change on approval.
-
-Decided since version 1: phoenix finish (P1), prototype set (Velynx, Mossling, Cryovant), master size (C12), direction name (§1), concept size (G4).
-
-## 6. Changes from version 1 (`33ce366`)
-
-| Where | Version 1 | Version 2 | Why |
-|---|---|---|---|
-| §1 name | The Celestial Atlas | The Eclipse Vigil (Atlas devices are UI only) | Owner approved "The Eclipse Vigil" by name |
-| C5 | — | adds glow in the air, mechanical joints | Round-1 audit: Cryovant's air glow fills its 48 px black-fill; Velynx grew mechanical joint rings |
-| C8 | — | adds palette family | Round-1 audit: Mossling drifted from hue 150° to 45° |
-| C11 | — | no human make-up conventions | Round-1 audit: Velynx eyeliner and lashes |
-| C12 | 1024 × 1024 delivery | 2048 master, 1024 delivered | Owner decision |
-| §3 | phoenix was open decision 3 | P1–P6 | Owner decision; phase-1 QA checks adopted |
-| A1 | glyph referenced in C5 only | Epoch Ring rule | Two drawings were both called "Epoch Ring"; mark B was selected first and is canonical |
-| G4 | 1K concepts | 2K concepts | Same measured price; inspectable at production size |
-| §5 | 5 open decisions | 3 carried (ground, scale, Pyraurum), 3 new (transparency, small glyph, shared style text) | Phoenix, prototype set decided by owner |
+| "Stylised realism, a collectible sculpture under museum light" | `design/creative-direction` `art-direction-v2.md` §3.2 rule 6 | C1 |
+| Contact shadow, gilt floor glint, matte obsidian ground, Threshold horizon under subjects | `creative-direction.md` §2.7.3, `art-direction-v2.md` §2.3 and §3.2.6, `phase-1.md` §2 | C6, W1 |
+| Photoreal phoenix ("hammered molten gold… filmic contrast", "photoreal VFX") | `art-direction-v2.md` §1.4, `phase-1.md` §1.4 | C1 (hand-painted 2D) |
+| Mossling as a "mossy boulder", antlers dropped, stone shell, grove-tortoise | `art-direction-v2.md` §3.3, `phase-1.md` §3, `docs/design/mossling/*.svg` | C4 (antlers kept) |
+| Pyraurum's ember becoming a halo at Ascended | `art-direction-v2.md` §3.3 | C6 (no halo) |
+| "Warm-neutral" key light; "cool cyan-violet" rim from the right | `docs/creature-studio/art-bible.md` §7 (before this approval); `design/creative-direction` `alignment.md` | C2, C3 |
+| ~80% framing for every stage; ground line at 88% | `docs/creature-studio/art-bible.md` §10 (before this approval) | C13, §3 |
+| Eggling 40 / Hatchling 55 / Evolved 75 / Ascended 90%+, frame-breaking allowed | `art-direction-v2.md` §3.2 rule 5 | C13 |
+| Duskwing and Pyraurum as prototypes | `art-direction-v2.md` §3.3 | §5 |
+| Separate 180-credit ceilings per workstream | `phase-1.md` §1.2, creature-studio Round 1 | G1 |

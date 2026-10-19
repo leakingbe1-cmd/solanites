@@ -8,6 +8,7 @@ import { HatcheryChamber } from "@/components/hatchery/HatcheryChamber";
 import { incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { DEMO_BALANCE, useHatchery } from "@/state/HatcheryProvider";
 import { formatNumber, formatSpan } from "@/lib/format";
+import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 
 const BASE58 = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
 
@@ -109,6 +110,8 @@ export function ConnectGate() {
               <button type="button" onClick={() => setTouring(true)} className="underline-offset-4 transition hover:text-bone hover:underline">
                 New here? Take the 3-step tour
               </button>
+              <span className="text-white/15" aria-hidden>·</span>
+              <ReplayIntroButton className="underline-offset-4 transition hover:text-bone hover:underline" />
             </div>
           </div>
         </div>

@@ -4,11 +4,11 @@
  * of centre with the copy over its darkened left wing; phones show its head and body
  * above the copy.
  *
- * The awakening plays once, about three seconds, and never blocks the page: darkness
- * opens outwards from the Phoenix's heart, a golden pulse ignites, a violet current
- * passes through, the eclipse ring (the sigil's celestial ring) traces itself around
- * its head, then embers rise. CSS and SVG only (transform, opacity, stroke-dashoffset);
- * the final frame is the resting state, and reduced motion shows it at once.
+ * The awakening plays once and never blocks the page: darkness opens outwards from the
+ * Phoenix's heart and a golden pulse ignites once. No ring, halo, glow, haze or embers
+ * are added around it (approved art canon W2; the still itself stays live under W3).
+ * CSS only (transform, opacity); the final frame is the resting state, and reduced
+ * motion shows it at once.
  */
 
 import heroAssets from "@/data/heroAssets.json";
@@ -48,12 +48,6 @@ function HeroPicture() {
   );
 }
 
-// Eight embers rising from the Phoenix's body only: [left %, size px, duration s, delay s, drift px].
-const EMBERS: [number, number, number, number, number][] = [
-  [46, 3, 9, 2.2, 20], [50, 2, 11, 5.5, -16], [54, 3, 8.5, 3.2, 18], [58, 2, 12, 7.6, -22],
-  [62, 3, 9.5, 4.4, 14], [66, 2, 10, 9.2, -12], [70, 3, 8.8, 2.8, 20], [74, 2, 11.5, 6.4, -18],
-];
-
 export function PhoenixHero() {
   return (
     <div className="sl-phx pointer-events-none absolute inset-0 overflow-hidden" data-art={ECLIPSE.desktop ? "eclipse" : "still"} aria-hidden="true">
@@ -65,28 +59,10 @@ export function PhoenixHero() {
         </div>
         {/* awakening light, positioned on the Phoenix itself */}
         <div className="sl-phx-pulse" />
-        <div className="sl-phx-glow" />
-        <svg className="sl-phx-eclipse" viewBox="0 0 200 200">
-          <circle className="sl-phx-eclipse-ring" cx="100" cy="100" r="96" pathLength={1} />
-          <g className="sl-phx-eclipse-ticks">
-            {Array.from({ length: 12 }, (_, i) => i * 30).map((a) => (
-              <line key={a} x1="100" y1={a % 90 === 0 ? 0 : 2} x2="100" y2="9" transform={`rotate(${a} 100 100)`} />
-            ))}
-          </g>
-        </svg>
         <div className="sl-phx-dawn" />
       </div>
-      <div className="sl-phx-current" />
       {/* legibility: darken where the copy sits, and fade into the page below */}
       <div className="sl-phx-shade absolute inset-0" />
-      <div className="sl-phx-embers absolute inset-0">
-        {EMBERS.map(([left, size, dur, delay, drift], i) => (
-          <span
-            key={i}
-            style={{ left: `${left}%`, width: size, height: size, animationDuration: `${dur}s`, animationDelay: `${delay}s`, ["--drift" as string]: `${drift}px` }}
-          />
-        ))}
-      </div>
     </div>
   );
 }

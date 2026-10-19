@@ -3,10 +3,11 @@
 //   npm run build && npx next start -p 3100 &
 //   node scripts/qa/phoenix-site.mjs <screenshot-dir> [base-url]
 //
-// The homepage awakening (interactive at once, waits for its image, fallbacks, reduced motion,
-// no JavaScript), media resolution on every route, the sigil, the Hatchery chamber, the
-// Collection bestiary, the hero at six widths, the main routes, Holder Rewards, navigation,
-// transitions, history, overflow and console errors.
+// The first-visit intro (restored), the homepage awakening for returning visitors (interactive
+// at once, waits for its image, fallbacks, reduced motion, no JavaScript), the approved art
+// canon's presentation rules (W1–W2) on every route, media resolution, the sigil, the Hatchery
+// chamber, the Collection bestiary, the hero at six widths, the main routes, Holder Rewards,
+// navigation, transitions, history, overflow and console errors.
 import { mkdirSync } from "node:fs";
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "/opt/node22/lib/node_modules/playwright/index.mjs").catch(() => import("playwright"));
 
@@ -17,7 +18,8 @@ const res = [];
 const errs = [];
 const ok = (name, cond, extra = "") => res.push(`${cond ? "PASS" : "FAIL"}  ${name}${extra ? `  (${extra})` : ""}`);
 const browser = await chromium.launch();
-const SEEN = undefined; // the first-visit intro is retired; kept so contexts read the same
+// A returning visitor: the first-visit intro has been seen (src/components/intro/introState.ts).
+const SEEN = `try{localStorage.setItem("solanites:intro:v1",JSON.stringify({seen:true,at:0}))}catch(e){}`;
 
 async function ctx(opts = {}, init) {
   const c = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
@@ -29,14 +31,67 @@ async function ctx(opts = {}, init) {
 }
 const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderboard", "/claims"];
 
-// 1. Homepage awakening: no blocking intro, usable at once, then awake once the image is ready.
+// 0. The first-visit intro (restored): shown once on the homepage, skippable, remembered,
+//    replayable, never on deep links, and canon-clean in its reduced-motion form.
 {
   const [c, p] = await ctx();
+  await p.goto(B + "/", { waitUntil: "domcontentloaded" });
+  const shown = await p.waitForSelector('[role="dialog"].sl-intro', { timeout: 8000 }).then(() => true).catch(() => false);
+  ok("intro: shows on a first visit to the homepage", shown);
+  const v = await p.evaluate(() => ({ variant: document.querySelector(".sl-intro")?.getAttribute("data-intro-variant"), video: document.querySelectorAll(".sl-intro video").length }));
+  ok("intro: phoenix video variant by default", v.variant === "video" && v.video >= 1, JSON.stringify(v));
+  ok("intro: Enter the Hatchery and Skip are available at once", (await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).count()) === 1 && (await p.getByRole("button", { name: /Skip intro/ }).count()) === 1);
+  await p.screenshot({ path: `${out}/intro-first-visit.png` });
+  await p.keyboard.press("Escape");
+  const closed = await p.waitForSelector(".sl-intro", { state: "detached", timeout: 3000 }).then(() => true).catch(() => false);
+  ok("intro: Escape skips it", closed);
+  ok("intro: remembered after it closes", (await p.evaluate(() => localStorage.getItem("solanites:intro:v1"))) !== null);
+  await p.reload({ waitUntil: "networkidle" });
+  await p.waitForTimeout(1200);
+  ok("intro: not shown again to a returning visitor", (await p.locator(".sl-intro").count()) === 0);
+  await p.locator("footer").getByRole("button", { name: /intro/i }).click();
+  const replayed = await p.waitForSelector(".sl-intro", { timeout: 3000 }).then(() => true).catch(() => false);
+  ok("intro: replay from the footer", replayed);
+  await p.getByRole("button", { name: /Skip intro/ }).click();
+  await p.waitForSelector(".sl-intro", { state: "detached", timeout: 3000 }).catch(() => {});
+  await c.close();
+}
+{
+  const [c, p] = await ctx({ reducedMotion: "reduce" });
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  await p.waitForSelector(".sl-intro", { timeout: 6000 }).catch(() => {});
+  const st = await p.evaluate(() => ({
+    variant: document.querySelector(".sl-intro")?.getAttribute("data-intro-variant") ?? "animated",
+    open: !!document.querySelector(".sl-intro"),
+    video: document.querySelectorAll(".sl-intro video").length,
+    canvas: document.querySelectorAll(".sl-intro canvas").length,
+    blobs: [...document.querySelectorAll(".sl-intro *")].filter((e) => /blur\((\d{2,})px\)/.test(getComputedStyle(e).filter)).length,
+    halo: document.querySelectorAll(".sl-intro-halo").length,
+  }));
+  ok("intro, reduced motion: still frame, no video", st.open && st.variant !== "video" && st.video === 0, JSON.stringify(st));
+  ok("intro, reduced motion: no particle field, nebula blobs or halo (canon W2)", st.canvas === 0 && st.blobs === 0 && st.halo === 0, JSON.stringify(st));
+  await p.screenshot({ path: `${out}/intro-reduced-motion.png` });
+  await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).click();
+  await p.waitForURL("**/hatchery", { timeout: 5000 }).catch(() => {});
+  ok("intro, reduced motion: Enter the Hatchery navigates", p.url().endsWith("/hatchery"));
+  await c.close();
+}
+{
+  const [c, p] = await ctx();
+  await p.goto(B + "/collection", { waitUntil: "networkidle" });
+  await p.waitForTimeout(800);
+  ok("intro: never interrupts a deep link", (await p.locator(".sl-intro").count()) === 0);
+  await c.close();
+}
+
+// 1. Homepage awakening for a returning visitor: usable at once, then awake once the image is ready.
+{
+  const [c, p] = await ctx({}, SEEN);
   const mediaReqs = [];
   p.on("request", (r) => /\.(mp4|webm|mov)(\?|$)|\/intro\//.test(r.url()) && mediaReqs.push(r.url()));
   await p.goto(B + "/", { waitUntil: "commit" });
   await p.waitForSelector("h1");
-  ok("home: no first-visit overlay or video", (await p.locator('[role="dialog"]').count()) === 0 && (await p.locator("video").count()) === 0);
+  ok("home, returning visitor: no intro overlay or video", (await p.locator('[role="dialog"]').count()) === 0 && (await p.locator("video").count()) === 0);
   ok("home: headline", (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim().toUpperCase() === "A WORLD WAITING TO AWAKEN.");
   const t0 = Date.now();
   await p.getByRole("link", { name: /EXPLORE SOLANITES/ }).click({ timeout: 3000 });
@@ -48,14 +103,14 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
   ok("home: awakens once the image has loaded", st.awake && st.art === "1", JSON.stringify(st));
   await p.screenshot({ path: `${out}/home-awake.png` });
   ok("home: sigil drawn beside the eyebrow", st.sigil >= 1);
-  ok("home: no video requested", mediaReqs.length === 0, mediaReqs.join(", "));
+  ok("home, returning visitor: no intro video requested", mediaReqs.length === 0, mediaReqs.join(", "));
   await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().click();
   await p.waitForURL("**/hatchery");
   ok("home: Enter the Hatchery works", p.url().endsWith("/hatchery"));
   await c.close();
 }
 {
-  const [c, p] = await ctx();
+  const [c, p] = await ctx({}, SEEN);
   await c.route("**/hero/**", (r) => r.abort());
   await p.goto(B + "/", { waitUntil: "domcontentloaded" });
   await p.waitForTimeout(3000);
@@ -65,11 +120,11 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
   await c.close();
 }
 {
-  const [c, p] = await ctx({ reducedMotion: "reduce" });
+  const [c, p] = await ctx({ reducedMotion: "reduce" }, SEEN);
   await p.goto(B + "/", { waitUntil: "networkidle" });
   await p.waitForTimeout(300);
-  const st = await p.evaluate(() => ({ art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity, dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).display, ring: getComputedStyle(document.querySelector(".sl-phx-eclipse-ring")).strokeDashoffset }));
-  ok("reduced motion: awake frame at once (no dawn, ring already drawn)", st.art === "1" && st.dawn === "none" && parseFloat(st.ring) === 0, JSON.stringify(st));
+  const st = await p.evaluate(() => ({ art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity, dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).display }));
+  ok("reduced motion: awake frame at once (no dawn)", st.art === "1" && st.dawn === "none", JSON.stringify(st));
   await c.close();
 }
 {
@@ -80,9 +135,52 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
   await c.close();
 }
 
-// 2. Media resolution in the browser: no video anywhere; every raster image's native size recorded.
+// 1b. Approved art canon, website rules W1–W2, as rendered: no ground shadow, floor, platform,
+//     light shaft, motes, aura, rays, halo, nebula or glow blob under or behind any creature,
+//     egg or the phoenix, and no coloured glow behind art on hover.
 {
-  const [c, p] = await ctx();
+  const [c, p] = await ctx({}, SEEN);
+  const PROHIBITED = [
+    ".sl-aura", ".sl-halo", ".sl-backlight", ".sl-glitch-lines", ".sl-egg-halo", ".sl-rays",
+    ".sl-chamber-floor", ".sl-chamber-shaft", ".sl-chamber-motes", ".sl-chamber-reflection",
+    ".sl-portrait-cone", ".sl-portrait-floor", ".sl-phx-eclipse", ".sl-phx-glow", ".sl-phx-embers", ".sl-phx-current",
+  ].join(",");
+  for (const path of ["/", "/hatchery", "/collection", "/how-it-works", "/leaderboard"]) {
+    await p.goto(B + path, { waitUntil: "networkidle" });
+    await p.waitForTimeout(500);
+    const st = await p.evaluate((sel) => {
+      const art = [...document.querySelectorAll(".sl-creature, .sl-egg")];
+      const shadows = document.querySelectorAll('.sl-creature ellipse[cx="200"][cy="376"], .sl-egg ellipse[cx="150"][cy="364"]').length;
+      // a blurred blob (blur of 40 px or more) placed beside artwork in the same container
+      const blobs = new Set();
+      for (const a of art) {
+        let host = a.parentElement;
+        for (let up = 0; up < 4 && host; up++, host = host.parentElement) {
+          for (const sib of host.children) {
+            const m = getComputedStyle(sib).filter.match(/blur\((\d+(?:\.\d+)?)px\)/);
+            if (m && parseFloat(m[1]) >= 40 && !sib.contains(a)) blobs.add(sib.className || sib.tagName);
+          }
+        }
+      }
+      return { art: art.length, prohibited: [...document.querySelectorAll(sel)].map((e) => e.getAttribute("class")), shadows, blobs: [...blobs] };
+    }, PROHIBITED);
+    ok(`canon ${path}: no prohibited ornaments around artwork`, st.prohibited.length === 0, st.prohibited.slice(0, 4).join(" | "));
+    ok(`canon ${path}: no ground shadow under creatures or eggs (${st.art} artworks)`, st.shadows === 0, String(st.shadows));
+    ok(`canon ${path}: no glow blobs behind artwork`, st.blobs.length === 0, st.blobs.join(" | "));
+  }
+  await p.goto(B + "/collection", { waitUntil: "networkidle" });
+  const plate = p.locator("main button.sl-plate").first();
+  await plate.hover();
+  await p.waitForTimeout(450);
+  const hover = await plate.evaluate((e) => getComputedStyle(e.querySelector(".sl-art-host")).filter);
+  ok("canon: no coloured glow behind art on hover", !/drop-shadow/.test(hover), hover);
+  await c.close();
+}
+
+// 2. Media resolution in the browser (returning visitor): no video on any route; every raster
+//    image's native size recorded. The first-visit intro's own video is covered in section 0.
+{
+  const [c, p] = await ctx({}, SEEN);
   const found = [];
   for (const path of ROUTES_ALL) {
     await p.goto(B + path, { waitUntil: "networkidle" });
@@ -101,7 +199,7 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
 
 // 3. Hatchery chamber and Collection bestiary.
 {
-  const [c, p] = await ctx();
+  const [c, p] = await ctx({}, SEEN);
   await p.goto(B + "/hatchery", { waitUntil: "networkidle" });
   ok("hatchery: chamber presents the egg", (await p.locator(".sl-chamber .sl-chamber-egg svg").count()) >= 1);
   ok("hatchery: address field and demo still there", (await p.getByPlaceholder(/public address/i).count()) === 1 && (await p.getByRole("button", { name: /EXPLORE THE DEMO/i }).count()) === 1);
@@ -177,8 +275,8 @@ for (const [name, vp, mobile] of [
   const [c, p] = await ctx({ reducedMotion: "reduce" }, SEEN);
   await p.goto(B + "/");
   await p.waitForTimeout(600);
-  const anim = await p.evaluate(() => ({ breathe: getComputedStyle(document.querySelector(".sl-phx-breathe")).animationName, embers: getComputedStyle(document.querySelector(".sl-phx-embers")).display }));
-  ok("hero: reduced motion stops the breath and hides embers", anim.breathe === "none" && anim.embers === "none", JSON.stringify(anim));
+  const anim = await p.evaluate(() => ({ breathe: getComputedStyle(document.querySelector(".sl-phx-breathe")).animationName, pulse: getComputedStyle(document.querySelector(".sl-phx-pulse")).display }));
+  ok("hero: reduced motion stops the breath and the ignition pulse", anim.breathe === "none" && anim.pulse === "none", JSON.stringify(anim));
   await c.close();
 }
 {

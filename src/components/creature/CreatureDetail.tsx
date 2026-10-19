@@ -141,7 +141,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                   className={`relative flex h-full w-full flex-col overflow-hidden rounded-md border text-left transition ${isSel ? "border-white/30 bg-white/[0.06]" : "border-white/[0.07] bg-white/[0.02] hover:border-white/15"}`}
                   style={isCurrent ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 30px -10px ${meta.glow}` } : undefined}
                 >
-                  <div className="relative aspect-square w-full" style={{ background: `radial-gradient(circle at 50% 60%, ${isLocked ? "rgba(110,90,255,0.12)" : meta.glow}, transparent 70%)` }}>
+                  <div className="relative aspect-square w-full">
                     <CreatureArt species={species} stage={i} animated={false} showAura={false} silhouette={isLocked} />
                     {isCurrent && <span className="absolute left-2 top-2 rounded-full px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-black" style={{ background: meta.color }}>{record ? "Current" : "Your best"}</span>}
                     {isLocked && !hidden && <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-mist">Locked</span>}
@@ -163,7 +163,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
 
       {/* ── featured stage ── */}
       <div className="mt-6 grid overflow-hidden rounded-md border border-white/[0.07] bg-white/[0.02] md:grid-cols-[1.3fr_1fr]">
-        <div className="relative aspect-square md:aspect-auto md:min-h-[420px]" style={{ background: `radial-gradient(circle at 50% 55%, ${selLocked ? "rgba(110,90,255,0.15)" : meta.glow}, transparent 70%)` }}>
+        <div className="relative aspect-square md:aspect-auto md:min-h-[420px]">
           <div className="absolute inset-0 mx-auto max-w-[520px]">
             <CreatureArt species={species} stage={selected} silhouette={selLocked} />
           </div>

@@ -48,7 +48,6 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
       className="sl-card-hover group relative overflow-hidden rounded-md border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
       style={{ "--card-glow": meta.glow, ...(celebrate ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 40px -8px ${meta.color}` } : {}) } as React.CSSProperties}
     >
-      <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-30 blur-3xl transition group-hover:opacity-60" style={{ background: meta.color }} />
       <div className="relative flex items-center justify-between gap-2">
         <RarityBadge rarity={s.rarity} />
         <span

@@ -48,7 +48,6 @@ export default function LeaderboardPage() {
             const meta = RARITIES[e.species.rarity];
             return (
               <div key={`${tab}-${e.wallet}`} className={`sl-fade-up sl-plate relative flex flex-col items-center rounded-md p-3 text-center sm:p-6 ${rank === 1 ? "sl-podium-first pb-8 sm:pb-12" : ""}`} style={{ animationDelay: `${rank * 0.1}s` }}>
-                <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full opacity-25 blur-3xl" style={{ background: meta.color }} />
                 <span className={`relative font-display text-xl sm:text-3xl ${rank === 1 ? "sl-phx-gold" : "text-[#f6d488]/55"}`}>#{rank}</span>
                 <div className={`relative ${rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"}`}>
                   <CreatureArt species={e.species} stage={e.evoStage} animated={false} />

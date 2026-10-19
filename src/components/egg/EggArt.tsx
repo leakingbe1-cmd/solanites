@@ -21,6 +21,8 @@ interface EggArtProps {
   hatching?: boolean;
   /** Override the number of visible cracks. */
   cracks?: number;
+  /** "vigil" (default) draws no halo or floor glow (approved art canon W1–W2); "legacy" draws the originals. */
+  ornament?: "vigil" | "legacy";
   className?: string;
 }
 
@@ -45,7 +47,8 @@ const CRACKS = [
   "M70,290 L92,276 L88,256 L110,246",
 ];
 
-export function EggArt({ stage, progress = 0, seed = 0, inside, paused, hatching, cracks, className = "" }: EggArtProps) {
+export function EggArt({ stage, progress = 0, seed = 0, inside, paused, hatching, cracks, ornament = "vigil", className = "" }: EggArtProps) {
+  const legacy = ornament === "legacy";
   const raw = useId();
   const id = "eg" + raw.replace(/[^a-zA-Z0-9]/g, "");
   const hue = SHELL_HUES[Math.abs(seed) % SHELL_HUES.length];
@@ -104,10 +107,9 @@ export function EggArt({ stage, progress = 0, seed = 0, inside, paused, hatching
         </filter>
       </defs>
 
-      {/* halo */}
-      <circle cx="150" cy="200" r="150" fill={`url(#${id}-halo)`} className="sl-egg-halo" />
-      {/* floor glow */}
-      <ellipse cx="150" cy="364" rx="90" ry="10" fill={hue.a} opacity={0.25 + glow * 0.4} filter={`url(#${id}-blur)`} />
+      {/* halo and floor glow: original ornaments, drawn only for legacy renders (canon W1–W2) */}
+      {legacy && <circle cx="150" cy="200" r="150" fill={`url(#${id}-halo)`} className="sl-egg-halo" />}
+      {legacy && <ellipse cx="150" cy="364" rx="90" ry="10" fill={hue.a} opacity={0.25 + glow * 0.4} filter={`url(#${id}-blur)`} />}
 
       <g className="sl-egg-body">
         <path d={EGG} fill={`url(#${id}-shell)`} />

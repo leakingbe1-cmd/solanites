@@ -11,7 +11,9 @@
  * Nothing is ever invented: a stage without a source file stays "missing"
  * and the site keeps showing the four-stage vector drawing for it.
  */
-import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -27,8 +29,13 @@ const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 const designs = JSON.parse(readFileSync(path.join(ROOT, "src/data/creatureDesigns.json"), "utf8"));
 const STAGES = designs.stageNames.map((s) => s.toLowerCase()); // eggling, hatchling, evolved, ascended
 const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec;
-/** Approved baseline: 2048 px masters, so the 1024 delivery is always a reduction, never an enlargement. */
-const MIN_INPUT = 2048;
+/**
+ * Delivery is SIZE × SIZE (1024, docs/canon/solanites-art-canon.md C12). Larger working
+ * masters (e.g. 2048) are accepted and reduced; nothing smaller is ever enlarged.
+ */
+const MIN_INPUT = SIZE;
+/** Canon C13 framing tool, run on the delivered canvas. */
+const FRAMING_TOOL = path.join(ROOT, "docs/canon/measure-framing.py");
 /** Classified until discovered — they also get a silhouette asset so the full art is never needed to show "???". */
 const CLASSIFIED = new Set(["astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"]);
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
@@ -41,7 +48,7 @@ function findSource(id, n) {
   return hit ? path.join(dir, hit) : null;
 }
 
-async function inspect(file) {
+async function inspect(file, n) {
   const meta = await sharp(file).metadata();
   // An alpha channel is not enough: many exporters add one to fully opaque images.
   const transparent = !!meta.hasAlpha && !(await sharp(file).stats()).isOpaque;
@@ -59,7 +66,36 @@ async function inspect(file) {
     if (detail.verdict === "upscaled") problems.push(`measures as upscaled (high-frequency ratio ${detail.ratio}): supply the native output`);
     else if (detail.verdict === "low-detail") warnings.push(`little fine detail (ratio ${detail.ratio}): check face, edges and material at 100%`);
   }
+  if (!problems.length) {
+    const framing = measureFraming(await deliveredCanvas(file, transparent), n + 1);
+    if (framing.error) problems.push(`framing not measured: ${framing.error}`);
+    else {
+      const where = `occupancy ${framing.occupancy}% (target ${framing.target} ± 3), centre ${framing.centre.join("% / ")}%`;
+      if (!framing.occupancyPass || !framing.centrePass) problems.push(`framing outside canon C13: ${where}`);
+    }
+  }
   return { meta, transparent, problems, warnings };
+}
+
+/** The canvas exactly as `processOne` delivers it, as a PNG for measuring. */
+async function deliveredCanvas(file, transparent) {
+  const bg = transparent ? { r: 0, g: 0, b: 0, alpha: 0 } : { r: 7, g: 6, b: 13, alpha: 1 };
+  const dir = mkdtempSync(path.join(os.tmpdir(), "solanites-framing-"));
+  const out = path.join(dir, "delivered.png");
+  await sharp(file).rotate().resize(SIZE, SIZE, { fit: "contain", background: bg }).png().toFile(out);
+  return out;
+}
+
+/** Runs the canon's own measure() so the pipeline and the canon can never disagree. */
+function measureFraming(file, stage) {
+  const code = "import json,runpy,sys; m=runpy.run_path(sys.argv[1]); print(json.dumps(m['measure'](sys.argv[2], int(sys.argv[3]))))";
+  try {
+    return JSON.parse(execFileSync("python3", ["-I", "-c", code, FRAMING_TOOL, file, String(stage)], { encoding: "utf8" }));
+  } catch (e) {
+    return { error: `python3 with Pillow is required (${String(e.message).split("\n")[0]})` };
+  } finally {
+    rmSync(path.dirname(file), { recursive: true, force: true });
+  }
 }
 
 /** Bits that may differ between two 16×16 average hashes before they count as the same picture. */
@@ -126,7 +162,7 @@ async function run(mode) {
         continue;
       }
       supplied++;
-      const info = await inspect(file);
+      const info = await inspect(file, n);
       const rel = path.relative(ROOT, file);
       if (!info.problems.length) {
         const hash = await perceptualHash(file);

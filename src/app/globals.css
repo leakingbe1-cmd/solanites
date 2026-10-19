@@ -225,8 +225,9 @@ body {
 }
 .group:hover .sl-art-host,
 .group:focus-visible .sl-art-host {
+  /* lift and brighten only: no coloured glow behind the art (canon W2) */
   transform: translateY(-5px) scale(1.04);
-  filter: brightness(1.07) drop-shadow(0 10px 22px var(--sl-glow, rgba(153, 69, 255, 0.35)));
+  filter: brightness(1.07);
 }
 /* [class] raises specificity above the `animation` shorthands below, which
    would otherwise reset the play state to running. */
@@ -541,12 +542,6 @@ body {
   background-size: 200% 100%;
   animation: sl-shimmer 2.4s linear infinite;
 }
-@keyframes sl-rays {
-  to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-.sl-rays {
-  animation: sl-rays 18s linear infinite;
-}
 @keyframes sl-letter {
   0% { opacity: 0; letter-spacing: 0.8em; filter: blur(10px); }
   100% { opacity: 1; letter-spacing: 0.3em; filter: blur(0); }
@@ -598,7 +593,6 @@ body {
   height: 56svh;
   --head-y: 25%;
   --heart-y: 50%;
-  --ring: 56%;
 }
 .sl-phx-art img {
   object-position: 50% 28%;
@@ -615,7 +609,6 @@ body {
     height: 100%;
     --head-y: 24%;
     --heart-y: 53%;
-    --ring: 26%;
   }
   .sl-phx-art img {
     object-position: 50% 30%;
@@ -667,81 +660,6 @@ body {
   30% { opacity: 1; transform: translate(-50%, -50%) scale(0.8); }
   100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
 }
-.sl-phx-glow {
-  position: absolute;
-  left: 50%;
-  top: var(--heart-y);
-  width: 46%;
-  aspect-ratio: 1.6;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(ellipse at center, rgba(255, 170, 60, 0.3) 0%, rgba(255, 120, 30, 0.1) 40%, transparent 70%);
-  mix-blend-mode: screen;
-  opacity: 0;
-}
-[data-awake] .sl-phx-glow {
-  animation:
-    sl-fade-in 1.2s ease 1.2s forwards,
-    sl-phx-glow 5s ease-in-out 2.4s infinite;
-}
-@keyframes sl-phx-glow {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-/* 3. The eclipse: the sigil's celestial ring traces itself around the Phoenix's head. */
-.sl-phx-eclipse {
-  position: absolute;
-  left: 50%;
-  top: var(--head-y);
-  width: var(--ring);
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%);
-  overflow: visible;
-  fill: none;
-  stroke: #f6d488;
-  mix-blend-mode: screen;
-  filter: drop-shadow(0 0 6px rgba(255, 200, 110, 0.55));
-}
-.sl-phx-eclipse-ring {
-  stroke-width: 0.6;
-  opacity: 0.55;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-}
-[data-awake] .sl-phx-eclipse-ring {
-  animation: sl-sigil-draw 2s cubic-bezier(0.6, 0, 0.2, 1) 0.9s forwards;
-}
-.sl-phx-eclipse-ticks line {
-  stroke-width: 0.7;
-  stroke-linecap: round;
-}
-.sl-phx-eclipse-ticks {
-  opacity: 0;
-}
-[data-awake] .sl-phx-eclipse-ticks {
-  animation: sl-phx-ticks 1.2s ease 2s forwards;
-}
-@keyframes sl-phx-ticks {
-  to { opacity: 0.6; }
-}
-
-/* 4. A violet current passes once through the scene, then rests as a faint haze. */
-.sl-phx-current {
-  position: absolute;
-  inset: -20% -40%;
-  background: radial-gradient(40% 22% at 50% 50%, rgba(153, 69, 255, 0.26), transparent 70%);
-  mix-blend-mode: screen;
-  transform: translate3d(-35%, 8%, 0) rotate(-8deg);
-  opacity: 0;
-}
-[data-awake] .sl-phx-current {
-  animation: sl-phx-current 3.4s cubic-bezier(0.4, 0, 0.2, 1) 0.6s forwards;
-}
-@keyframes sl-phx-current {
-  0% { opacity: 0; transform: translate3d(-35%, 8%, 0) rotate(-8deg); }
-  35% { opacity: 1; }
-  100% { opacity: 0.35; transform: translate3d(12%, -4%, 0) rotate(-8deg); }
-}
 
 /* a slow breath on the whole artwork once it is awake */
 @keyframes sl-phx-breathe {
@@ -760,27 +678,6 @@ body {
 }
 [data-awake] .sl-phx-art {
   opacity: 1;
-}
-
-/* 5. Embers rise past the Phoenix (each starts after the dawn) */
-.sl-phx-embers span {
-  position: absolute;
-  bottom: -10px;
-  border-radius: 9999px;
-  background: #ffb54a;
-  box-shadow: 0 0 8px 2px rgba(255, 150, 40, 0.7);
-  opacity: 0;
-}
-[data-awake] .sl-phx-embers span {
-  animation-name: sl-phx-ember;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes sl-phx-ember {
-  0% { transform: translate(0, 0); opacity: 0; }
-  12% { opacity: 0.9; }
-  70% { opacity: 0.6; }
-  100% { transform: translate(var(--drift), -95svh); opacity: 0; }
 }
 
 /* the hero copy settles in quickly; it is usable from the first frame */
@@ -817,7 +714,9 @@ body {
 }
 .sl-btn-outline {
   border: 1px solid var(--color-rim-strong);
-  background: transparent;
+  /* an obsidian backing keeps the label at AA contrast over bright artwork
+     (the hero wing at 1024 px measured 2.1:1 without it) */
+  background: rgb(7 6 10 / 0.82);
   color: var(--color-bone);
   transition:
     border-color var(--dur-quick) ease,
@@ -834,28 +733,17 @@ body {
 }
 
 /* paused while scrolled away (HeroSection marks it) */
-[data-offscreen] .sl-phx-breathe,
-[data-offscreen] .sl-phx-glow,
-[data-offscreen] .sl-phx-embers span {
+[data-offscreen] .sl-phx-breathe {
   animation-play-state: paused;
 }
 /* reduced motion: the awake, final frame at once */
 @media (prefers-reduced-motion: reduce) {
   .sl-phx-dawn,
-  .sl-phx-pulse,
-  .sl-phx-embers {
+  .sl-phx-pulse {
     display: none;
   }
   .sl-phx-breathe,
   [data-awake] .sl-phx-breathe { animation: none; }
-  .sl-phx-glow,
-  [data-awake] .sl-phx-glow { animation: none; opacity: 0.8; }
-  .sl-phx-current,
-  [data-awake] .sl-phx-current { animation: none; opacity: 0.35; transform: translate3d(12%, -4%, 0) rotate(-8deg); }
-  .sl-phx-eclipse-ring,
-  [data-awake] .sl-phx-eclipse-ring { animation: none; stroke-dashoffset: 0; }
-  .sl-phx-eclipse-ticks,
-  [data-awake] .sl-phx-eclipse-ticks { animation: none; opacity: 0.6; }
   .sl-awake-in { animation: none; }
   .sl-phx-art { opacity: 1; }
 }
@@ -1019,84 +907,31 @@ body {
 }
 
 /* ── The Hatchery chamber (components/hatchery/HatcheryChamber.tsx) ──
-   The egg floats over an engraved platform under a shaft of light, framed by an arch.
-   Only the egg float, the slow shaft breath and six motes move. */
+   The egg floats inside an arch. No floor, platform, shaft, reflection, motes or cast
+   shadow under it (approved art canon W1–W2). Only the egg's float moves. */
 .sl-chamber {
   --egg-w: min(50vw, 300px);
   width: min(92vw, 420px);
   padding-top: 40px;
+  padding-bottom: calc(var(--egg-w) * 0.4);
 }
 .sl-chamber-arch {
   opacity: 0.9;
-}
-.sl-chamber-shaft {
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(ellipse 34% 100% at 50% 0%, rgba(246, 212, 136, 0.16) 0%, rgba(153, 69, 255, 0.07) 55%, transparent 100%);
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
-  animation: sl-chamber-shaft 7s ease-in-out infinite alternate;
-}
-@keyframes sl-chamber-shaft {
-  from { opacity: 0.6; }
-  to { opacity: 1; }
 }
 .sl-chamber-egg {
   width: var(--egg-w);
   aspect-ratio: 0.78;
   animation: sl-chamber-float 6s ease-in-out infinite;
-  filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.6));
 }
 @keyframes sl-chamber-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
-.sl-chamber-floor {
-  width: calc(var(--egg-w) * 1.35);
-  aspect-ratio: 1;
-  margin-top: calc(var(--egg-w) * -0.5);
-  transform: perspective(600px) rotateX(72deg);
-  transform-origin: 50% 50%;
-}
-.sl-chamber-reflection {
-  border-radius: 9999px;
-  background: radial-gradient(circle, rgba(153, 69, 255, 0.35) 0%, rgba(0, 194, 255, 0.12) 35%, transparent 65%);
-  animation: sl-chamber-shaft 6s ease-in-out infinite alternate;
-}
-.sl-chamber-motes {
-  bottom: calc(var(--egg-w) * 0.3);
-  width: var(--egg-w);
-  height: calc(var(--egg-w) * 1.1);
-}
-.sl-chamber-motes span {
-  position: absolute;
-  bottom: 0;
-  width: 3px;
-  height: 3px;
-  border-radius: 9999px;
-  background: #f6d488;
-  box-shadow: 0 0 6px 1px rgba(246, 212, 136, 0.7);
-  opacity: 0;
-  animation-name: sl-chamber-mote;
-  animation-timing-function: ease-out;
-  animation-iteration-count: infinite;
-}
-@keyframes sl-chamber-mote {
-  0% { opacity: 0; transform: translate3d(0, 0, 0); }
-  20% { opacity: 0.9; }
-  100% { opacity: 0; transform: translate3d(0, calc(var(--egg-w) * -0.9), 0); }
-}
 @media (prefers-reduced-motion: reduce) {
-  .sl-chamber-shaft,
-  .sl-chamber-egg,
-  .sl-chamber-reflection {
+  .sl-chamber-egg {
     animation: none;
   }
-  .sl-chamber-motes {
-    display: none;
-  }
 }
-
 /* ── Plates (§2.5): the signature card. A rim border and an inner gilt rule inset 6px
    that warms on hover or focus; a single soft band of light sweeps across once. Cards
    never move: only the creature inside does. --tier is the rarity colour. */
@@ -1152,29 +987,11 @@ body {
   }
 }
 
-/* ── Creature portrait (§2.7), an interim light treatment for the current SVG creatures:
-   a warm key-light cone from 11 o'clock, a contact shadow, and a grade toward the
-   Phoenix's lighting. Not the final creature art (a separate workstream). */
+/* ── Creature portrait, an interim light treatment for the current SVG creatures: a
+   grade toward the canon's warm key and violet rim, applied to the art itself. No light
+   cone or contact shadow (approved art canon W1–W2). Not the final creature art. */
 .sl-portrait {
   position: relative;
-}
-.sl-portrait-cone {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(60% 55% at 42% 0%, rgba(255, 226, 168, 0.2), transparent 70%);
-  opacity: 0.65;
-  transition: opacity 320ms var(--ease-out);
-  pointer-events: none;
-}
-.sl-portrait-floor {
-  position: absolute;
-  left: 15%;
-  right: 15%;
-  bottom: 8%;
-  height: 8%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.6), transparent);
-  pointer-events: none;
 }
 .sl-portrait-grade {
   position: absolute;
@@ -1185,9 +1002,6 @@ body {
 }
 .sl-portrait-art {
   filter: saturate(0.86) contrast(1.06);
-}
-.group:is(:hover, :focus-visible) .sl-portrait-cone {
-  opacity: 1;
 }
 
 /* ── Realm light: the same world, lit a little differently in each area ── */
@@ -1218,8 +1032,76 @@ html[data-realm="how-it-works"] .sl-realm-violet {
   box-shadow: 0 0 8px rgba(232, 183, 92, 0.45);
 }
 
-/* The approved Eclipse Phoenix carries its own eclipse and light: the overlays that
-   were placed on the retired still (ring, pulse, glow, embers) stand down. */
-.sl-phx[data-art="eclipse"] :is(.sl-phx-pulse, .sl-phx-glow, .sl-phx-eclipse, .sl-phx-current, .sl-phx-embers) {
+/* An approved replacement phoenix carries its own light: the ignition pulse placed on
+   the current still stands down. */
+.sl-phx[data-art="eclipse"] .sl-phx-pulse {
   display: none;
 }
+
+/* ── First-visit intro ─────────────────────────────────────
+   Pre-paint cover: set on <html> by the inline boot script for a visit that
+   is due an intro, so the page never flashes first. It fades away on its own
+   after a few seconds in case the app fails to start. */
+html[data-sl-intro] body {
+  overflow: hidden;
+}
+html[data-sl-intro]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+  background: #05040a;
+  animation: sl-intro-failsafe 0.4s ease 4s forwards;
+}
+@keyframes sl-intro-failsafe {
+  to { opacity: 0; visibility: hidden; }
+}
+
+/* opaque from the first frame on a first visit (no flash of the page); a replay fades in over the page */
+.sl-intro.is-replay { animation: sl-fade-in 0.5s ease both; }
+.sl-intro.is-leaving { animation: sl-intro-out 0.65s cubic-bezier(0.4, 0, 0.2, 1) forwards; pointer-events: none; }
+@keyframes sl-intro-out { to { opacity: 0; transform: scale(1.03); filter: blur(4px); } }
+
+.sl-intro-light { animation: sl-fade-in 1.6s ease 0.1s both; }
+.sl-intro-actions { animation: sl-fade-in 0.5s ease 0.15s both; }
+.sl-intro-mark { animation: sl-intro-reveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) 0.5s both; }
+.sl-intro-letter { animation: sl-intro-letter 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.sl-intro-rise { animation: sl-intro-reveal 1s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes sl-intro-reveal {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+@keyframes sl-intro-letter {
+  from { opacity: 0; transform: translateY(0.4em); filter: blur(8px); letter-spacing: 0.3em; }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* egg: emerges, wakes (glow builds), then gives way to light */
+.sl-intro-egg { animation: sl-intro-egg 4.1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both; }
+@keyframes sl-intro-egg {
+  0% { opacity: 0; transform: translateY(18px) scale(0.92); filter: brightness(0.6); }
+  30% { opacity: 1; transform: none; filter: brightness(0.9); }
+  70% { opacity: 1; transform: scale(1.02); filter: brightness(1.25) drop-shadow(0 0 30px rgba(153, 69, 255, 0.6)); }
+  86% { opacity: 1; transform: scale(1.05); filter: brightness(2.2) drop-shadow(0 0 60px rgba(255, 255, 255, 0.8)); }
+  100% { opacity: 0; transform: scale(1.12); filter: brightness(3); }
+}
+.sl-intro-flash {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(160, 120, 255, 0.5) 30%, transparent 62%);
+  animation: sl-intro-flash 1.3s ease-out 3.75s both;
+}
+@keyframes sl-intro-flash {
+  0% { opacity: 0; transform: scale(0.3); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.5); }
+}
+.sl-intro-creature { animation: sl-intro-creature 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) 3.95s both; }
+@keyframes sl-intro-creature {
+  from { opacity: 0; transform: translateY(16px) scale(0.86); filter: brightness(2.2) blur(6px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+/* reduced motion: the finished frame at once (no egg sequence, no delays) */
+@media (prefers-reduced-motion: reduce) {
+  .sl-intro *, .sl-intro { animation-delay: 0s !important; }
+  .sl-intro-egg, .sl-intro-flash { display: none; }
+}
+

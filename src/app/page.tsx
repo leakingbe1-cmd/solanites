@@ -119,11 +119,9 @@ export default function Home() {
 
       {/* ── CTA ── */}
       <section className="relative overflow-hidden py-28 sm:py-40">
-        <div className="absolute left-1/2 top-1/2 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sol-purple/15 blur-[120px]" />
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           {/* a stirring egg with a classified silhouette inside; still under reduced motion (global rule) */}
           <div className="relative mx-auto mb-8 h-44 w-36 sm:h-56 sm:w-44" aria-hidden>
-            <div className="absolute inset-x-2 bottom-3 top-6 rounded-full bg-sol-green/20 blur-3xl" />
             <EggArt stage={3} progress={0.9} seed={9} inside={SPECIES_BY_ID["genesis"]} className="relative h-full w-full" />
           </div>
           <h2 className="sl-display-l text-bone">

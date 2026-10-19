@@ -117,8 +117,6 @@ export default function CollectionPage() {
                 </div>
                 {/* interim lighting around the current SVG creature (the creature art itself is being redesigned separately) */}
                 <div className="sl-portrait sl-art-host aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
-                  <div className="sl-portrait-cone" aria-hidden />
-                  <div className="sl-portrait-floor" aria-hidden />
                   <div className="sl-portrait-art relative h-full w-full">
                     <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden && ["legendary", "mythic", "secret"].includes(s.rarity)} animated={false} />
                   </div>

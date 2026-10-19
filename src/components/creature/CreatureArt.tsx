@@ -20,9 +20,9 @@ import type { Ctx } from "./kit";
  * Solgem — so they read as one universe without being one character.
  * `stage` (0..3) grows each species' own anatomy.
  *
- * `ornament` sets what the app draws around the creature. "vigil" (the default,
- * docs/design: The Eclipse Vigil) keeps one still backlight and lets the creature's
- * own anatomy carry rarity: no ray bursts, sparkles, orbiting motes or halos.
+ * `ornament` sets what the app draws around the creature. "vigil" (the default)
+ * draws nothing: no ground shadow, aura, rays, sparkles or halo (approved art canon,
+ * docs/canon/solanites-art-canon.md W1–W2); any glow comes from the artwork itself.
  * "legacy" draws the original ornaments exactly, for baseline renders and comparison.
  */
 
@@ -72,8 +72,8 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
       <div className={`sl-creature relative ${animated ? "is-animated" : ""} rar-${rarity} ${silhouette ? "is-silhouette" : ""} ${className}`} role="img" aria-label={label}>
         <svg viewBox="0 0 400 400" className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
           <Defs id={id} p={p} rarity={rarity} />
-          {showAura && !silhouette && (legacy ? <Aura id={id} species={species} evo={evo} /> : <Backlight id={id} />)}
-          <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />
+          {legacy && showAura && !silhouette && <Aura id={id} species={species} evo={evo} />}
+          {legacy && <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />}
         </svg>
         {/* eslint-disable-next-line @next/next/no-img-element -- pre-optimised static WebP with its own thumbnail */}
         <img
@@ -98,15 +98,15 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
       aria-label={label}
     >
       <Defs id={id} p={p} rarity={rarity} />
-      {showAura && !silhouette && (legacy ? <Aura id={id} species={species} evo={evo} /> : <Backlight id={id} />)}
-      <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />
+      {legacy && showAura && !silhouette && <Aura id={id} species={species} evo={evo} />}
+      {legacy && <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />}
       <g transform={`translate(200 ${anchor}) scale(${scale}) translate(-200 -${anchor})`}>
         <g className={r.floating ? "sl-hover" : "sl-bob"}>
           {r.render(ctx)}
           {legacy && evo === 3 && <Halo id={id} p={p} at={r.halo} />}
         </g>
       </g>
-      {rarity === "secret" && !silhouette && <SecretOverlay id={id} legacy={legacy} />}
+      {legacy && rarity === "secret" && !silhouette && <SecretOverlay id={id} />}
     </svg>
   );
 }
@@ -236,11 +236,6 @@ function Defs({ id, p, rarity }: { id: string; p: Palette; rarity: Species["rari
 
 /* ───────────────────────────── aura ───────────────────────────── */
 
-/** The Vigil backlight: the rarity tint, held still and low behind the creature. */
-function Backlight({ id }: { id: string }) {
-  return <circle cx="200" cy="215" r="175" fill={`url(#${id}-aura)`} opacity="0.55" className="sl-backlight" />;
-}
-
 /** The original ornaments (`ornament="legacy"`). */
 function Aura({ id, species, evo }: { id: string; species: Species; evo: number }) {
   const r = RARITIES[species.rarity];
@@ -348,15 +343,15 @@ function Halo({ id, p, at = [200, 62, 44] }: { id: string; p: Palette; at?: [num
   );
 }
 
-function SecretOverlay({ id, legacy }: { id: string; legacy: boolean }) {
+function SecretOverlay({ id }: { id: string }) {
   return (
     <g className="sl-glitch-lines" pointerEvents="none">
       {[60, 140, 210, 300].map((y, i) => (
         <rect key={i} x="0" y={y} width="400" height={i % 2 ? 2 : 4} fill={i % 2 ? "#ff3df2" : "#14f195"} opacity="0.35" style={{ animationDelay: `${i * 0.7}s` }} />
       ))}
-      {legacy && <text x="200" y="395" textAnchor="middle" fontSize="9" fill="#14f195" opacity="0.5" fontFamily="monospace" letterSpacing="3" id={`${id}-sig`}>
+      <text x="200" y="395" textAnchor="middle" fontSize="9" fill="#14f195" opacity="0.5" fontFamily="monospace" letterSpacing="3" id={`${id}-sig`}>
         0x000000 · UNINDEXED
-      </text>}
+      </text>
     </g>
   );
 }

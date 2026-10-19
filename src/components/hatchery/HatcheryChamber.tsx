@@ -1,18 +1,11 @@
 import type { ReactNode } from "react";
 
 /**
- * The Hatchery chamber: an ancient arch, a shaft of light from above, and an engraved
- * platform (the sigil's celestial ring of twelve marks, seen in perspective) with the
- * egg suspended over it. A few motes rise from the platform towards the egg, and the
- * egg's light falls back onto the floor. SVG and CSS only; still under reduced motion.
+ * The Hatchery chamber: an ancient arch framing the egg, which floats in it. Nothing
+ * stands under the egg: no floor, platform, light shaft, reflection or motes (approved
+ * art canon W1–W2, docs/canon/solanites-art-canon.md). SVG and CSS only.
  * `children` is the egg (or whatever the chamber presents).
  */
-
-// Motes rising from the platform: [x % across the platform, delay s, duration s].
-const MOTES: [number, number, number][] = [
-  [38, 0, 9], [57, 3.2, 10.5], [68, 6.1, 9.5],
-];
-
 export function HatcheryChamber({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <div className={`sl-chamber relative ${className}`}>
@@ -29,32 +22,9 @@ export function HatcheryChamber({ children, className = "" }: { children: ReactN
           </linearGradient>
         </defs>
       </svg>
-      {/* light falling from above onto the egg */}
-      <div className="sl-chamber-shaft absolute inset-x-0 top-0 mx-auto" aria-hidden />
 
       {/* the egg, suspended */}
       <div className="sl-chamber-egg relative z-10 mx-auto">{children}</div>
-
-      {/* the platform: engraved rings and twelve marks, in perspective */}
-      <div className="sl-chamber-floor relative mx-auto" aria-hidden>
-        <div className="sl-chamber-reflection absolute inset-0" />
-        <svg className="absolute inset-0 h-full w-full" viewBox="0 0 200 200">
-          <g fill="none" stroke="#f6d488">
-            <circle cx="100" cy="100" r="96" strokeWidth="0.8" opacity="0.55" />
-            <circle cx="100" cy="100" r="80" strokeWidth="0.5" opacity="0.35" />
-            <circle cx="100" cy="100" r="54" strokeWidth="0.6" opacity="0.4" strokeDasharray="2 4" />
-            {Array.from({ length: 12 }, (_, i) => i * 30).map((a) => (
-              <line key={a} x1="100" y1={a % 90 === 0 ? 2 : 6} x2="100" y2="18" strokeWidth={a % 90 === 0 ? 1.4 : 0.9} opacity="0.65" transform={`rotate(${a} 100 100)`} />
-            ))}
-          </g>
-        </svg>
-      </div>
-      {/* motes rising from the platform towards the egg */}
-      <div className="sl-chamber-motes absolute inset-x-0 mx-auto" aria-hidden>
-        {MOTES.map(([x, delay, dur], i) => (
-          <span key={i} style={{ left: `${x}%`, animationDelay: `${delay}s`, animationDuration: `${dur}s` }} />
-        ))}
-      </div>
     </div>
   );
 }

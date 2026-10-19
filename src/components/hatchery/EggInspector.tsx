@@ -35,7 +35,7 @@ export function EggInspector({
 
   return (
     <div className="grid md:grid-cols-[1fr_1.05fr]">
-      <div className="relative flex items-center justify-center overflow-hidden p-8" style={{ background: "radial-gradient(circle at 50% 50%, rgba(153,69,255,0.25), transparent 70%)" }}>
+      <div className="relative flex items-center justify-center overflow-hidden p-8">
         <div className="h-[340px] w-full max-w-[300px]">
           <EggArt stage={stage} progress={stageProgress(record, cfg)} seed={record.seed} inside={SPECIES_BY_ID[record.speciesId]} paused={!record.backed} />
         </div>

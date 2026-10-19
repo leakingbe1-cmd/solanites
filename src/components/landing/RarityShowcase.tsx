@@ -49,7 +49,6 @@ export function RarityShowcase() {
               style={{ boxShadow: `inset 0 1px 0 ${meta.color}22` }}
             >
               <span className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} aria-hidden />
-              <span className="absolute -top-16 left-1/2 h-44 w-44 -translate-x-1/2 rounded-full opacity-40 blur-3xl transition-opacity duration-500 group-hover:opacity-80" style={{ background: meta.color }} aria-hidden />
               <span
                 className="sl-art-host relative -mx-2 -mt-1 block aspect-square sm:-mx-3"
                 style={{ "--sl-glow": classified ? `${meta.color}55` : meta.glow } as React.CSSProperties}

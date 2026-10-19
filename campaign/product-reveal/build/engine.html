@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#05050a}canvas{display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+import * as E from "./engine.js";
+const q = new URLSearchParams(location.search);
+const W = +q.get("w"), H = +q.get("h");
+const comp = await import(q.get("comp"));
+const c = document.getElementById("c"); c.width = W; c.height = H;
+const ctx = c.getContext("2d");
+await E.initFonts(new URL("fonts", import.meta.url).href);
+await E.initSmoke();
+await comp.init?.(E, { W, H });
+window.renderFrame = async (t, frame) => {
+  ctx.save(); ctx.fillStyle = "#05050a"; ctx.fillRect(0, 0, W, H); ctx.restore();
+  await comp.draw(ctx, t, frame, { W, H, E });
+  return c.toDataURL("image/jpeg", 0.95).slice(23);
+};
+window.drawnText = () => [...E.drawnText];
+window.compInfo = { duration: comp.DURATION, approved: comp.APPROVED_TEXT, cues: comp.CUES };
+document.body.dataset.ready = "1";
+</script></body></html>

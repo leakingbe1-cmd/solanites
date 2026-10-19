@@ -18,7 +18,11 @@ Checked 2026-10-19 using read-only calls. Nothing was generated and no credits w
 
 **Higgsfield** is connected too, but its connector cannot generate media (browse and balance only), so it is not an option for this work.
 
-## What is not confirmed: the exact cost per image
+## Measured cost (2026-10-19)
+
+**nano-banana-pro at 1K = 20 credits per image** in this workspace (balance 2,035 → 2,015 after one generation). Reference uploads cost nothing. The estimate table below used 4–20; actual cost sits at the top of that range, so the whole-collection figure is about 6,000 credits at 3 tries per stage with this model.
+
+## What was not confirmed before the first generation: the exact cost per image
 
 The Runway tool's per-model cost notes are cut off in the tool listing this session receives, and Runway's pricing pages are blocked by this environment's network policy. So **the exact credit cost per image in this workspace could not be read**. The best available figures:
 

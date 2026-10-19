@@ -19,3 +19,14 @@ Standing constraints from the same review:
 - The other 25 species do not start until the three prototype evolution lines are approved.
 - All work stays on `creature-studio/art-direction`; no app code changes, no overwriting originals, no deploys.
 - The goal is still all 28 species and 112 stages.
+
+## 2026-10-19 · Round 1 approval
+
+- Round 1 approved: up to 9 images, nano-banana-pro at 1K, concept exploration only. **Hard cap 180 credits**; stop if the first image costs more than 20 credits or the total could exceed 180. No model switch or extra spend without asking.
+- Uploading the three Evolved-stage reference renders to Runway approved (done; the uploads cost 0 credits).
+- **Glyph B, Epoch Ring, is the preferred Solanites glyph.** Candidates A and C stay in `glyph/` for reference.
+- Generated images stay in the review folder `art/creature-studio/round-1/`. After Round 1, stop and present the comparison; no stages or other species until the direction is explicitly approved.
+
+**Measured cost:** the first generation (V-A) moved the balance from 2,035 to 2,015, so **nano-banana-pro at 1K costs 20 credits per image** in this workspace. Six concepts = 120 credits; all nine permitted images would be exactly 180.
+
+**Status (paused after 1 of ≤ 9 images, 20 of 180 credits spent):** V-A (Velynx Fence-walker) generated successfully, Runway task `d966d96d-da0c-44e3-9bce-f45fb74b1768`. It could not be downloaded: this cloud environment's network policy blocks Runway's output hosts `dnznrvs05pmza.cloudfront.net` and `d2jqrm6oza8nb6.cloudfront.net`. Generation is paused so no credits go on images that cannot be inspected, saved to the review folder or compared against the originals.

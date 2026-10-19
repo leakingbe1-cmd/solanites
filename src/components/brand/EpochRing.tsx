@@ -1,34 +1,22 @@
 /**
  * The Solanites Epoch Ring: the glyph that replaces any third-party chain mark on
- * creatures and on-chain details. Three arcs of one ring, the epochs a Solgem passes
- * through, waxing in weight around the cut gem itself.
+ * creatures and on-chain details. Three epoch arcs around a small Solgem.
  *
- * Drawn on a 48-unit grid. Checked at 12, 16, 24, 32 and 64 px on obsidian and on bone:
- * the thinnest arc is kept at 3.4 units so it survives 12 px. An earlier version with
- * a tick in a top gap read as a power button and was dropped.
+ * Canonical geometry: Creature Studio's mark B (docs/creature-studio/glyph/
+ * mark-b-epoch-ring.svg), selected in review on 2026-10-19 and adopted by
+ * docs/canon/solanites-art-canon.md. Single colour, stroke-based, legible from 16 px.
  */
-const EPOCHS: [number, number][] = [
-  [72, 3.4],
-  [192, 4.8],
-  [312, 6.2],
-];
-
-function arc(start: number, r = 18) {
-  const a0 = ((start - 90) * Math.PI) / 180;
-  const a1 = ((start + 96 - 90) * Math.PI) / 180;
-  const p = (a: number) => `${(24 + r * Math.cos(a)).toFixed(2)} ${(24 + r * Math.sin(a)).toFixed(2)}`;
-  return `M${p(a0)} A${r} ${r} 0 0 1 ${p(a1)}`;
-}
+const ARCS = ["M36.34 7.38 A25 25 0 0 1 55.49 40.55", "M51.15 48.07 A25 25 0 0 1 12.85 48.07", "M8.51 40.55 A25 25 0 0 1 27.66 7.38"];
 
 export function EpochRing({ className = "h-6 w-6", title }: { className?: string; title?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className={className} role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
-      <g fill="none" stroke="currentColor">
-        {EPOCHS.map(([start, w]) => (
-          <path key={start} d={arc(start)} strokeWidth={w} />
+    <svg viewBox="0 0 64 64" className={className} role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      <g fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+        {ARCS.map((d) => (
+          <path key={d} d={d} />
         ))}
       </g>
-      <path d="M24 15.5 29.5 24 24 32.5 18.5 24Z" fill="currentColor" />
+      <path d="M32 22 L40 32 L32 42 L24 32 Z" fill="currentColor" />
     </svg>
   );
 }

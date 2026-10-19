@@ -56,8 +56,8 @@ async function validate(name, v) {
   const [mw, mh] = v.min;
   if (meta.width < mw || meta.height < mh) problems.push(`too small (${meta.width}×${meta.height}, need ≥ ${mw}×${mh})`);
   const detail = await detailCheck(file);
-  if (detail.verdict === "upscaled") problems.push(`measures as upscaled (${detail.psnr} dB round trip): use the native output`);
-  if (detail.verdict === "low-detail") warnings.push(`little fine detail (${detail.psnr} dB): review face, feathers and edges at 100% before approval`);
+  if (detail.verdict === "upscaled") problems.push(`measures as upscaled (high-frequency ratio ${detail.ratio}): use the native output`);
+  if (detail.verdict === "low-detail") warnings.push(`little fine detail (ratio ${detail.ratio}): review face, feathers and edges at 100% before approval`);
   return { name, file, meta, detail, status: problems.length ? "rejected" : "ok", problems, warnings };
 }
 
@@ -83,7 +83,7 @@ for (const [name, v] of Object.entries(VARIANTS)) results.push(await validate(na
 
 for (const r of results) {
   const dims = r.meta ? ` ${r.meta.width}×${r.meta.height}` : "";
-  const detail = r.detail ? ` detail ${r.detail.psnr} dB (${r.detail.verdict})` : "";
+  const detail = r.detail ? ` detail ratio ${r.detail.ratio} (${r.detail.verdict})` : "";
   console.log(`${r.name.padEnd(8)} ${r.status.padEnd(9)}${dims}${detail}`);
   for (const p of r.problems) console.log(`         ✗ ${p}`);
   for (const w of r.warnings) console.log(`         ! ${w}`);

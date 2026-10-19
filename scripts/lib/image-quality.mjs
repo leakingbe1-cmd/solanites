@@ -1,67 +1,131 @@
 /**
  * Image quality checks shared by the art pipelines (hero, creatures).
  *
- * Pixel dimensions say nothing about sharpness: an upscaled or soft image has the
- * pixels but not the detail. The check shrinks the image to 75% and scales it back,
- * then measures how much changed (PSNR on luminance). A sharp image loses real detail
- * in that round trip; a soft or upscaled one barely changes.
+ * Pixel dimensions say nothing about sharpness: an enlarged image has the pixels but
+ * not the detail. Enlargement removes energy from the top half of the frequency range,
+ * so the check compares spectral energy at 0.30–0.50 cycles/px with energy at
+ * 0.15–0.25 cycles/px, on the most detailed 512 px region (dark compositions are mostly
+ * empty space, which says nothing either way).
  *
- * Measured on the most detailed 1024 px region (ffmpeg lanczos, 0.75 round trip):
- *   sharp vector sheet, UI screenshot            34–35 dB
- *   the retired phoenix still (visibly soft)       37.9 dB
- *   flat-colour test card (little fine detail)     39.7 dB
- *   the still upscaled from 75% / from 50%         48.3 / 53.2 dB
+ * Measured on the most detailed 512 px region (ratio; higher = more fine detail):
+ *   native 1K painted concept (Creature Studio V-A)     0.17
+ *   native 2K painted concepts (website round 1)        0.32–0.66
+ *   the retired phoenix still                            0.42
+ *   that still enlarged 1.33× / V-A enlarged 2× / still 2×   0.153 / 0.039 / 0.017
  *
- * Only "upscaled" is a hard verdict: enlargement leaves a wide, content-independent gap.
- * "low-detail" is advisory, because flat graphic shapes score like a soft painting; it
- * asks for the 100% review that every approved image gets anyway.
+ * Only "upscaled" is a hard verdict. A mild enlargement (about 1.33×) scores close to
+ * native, so the native size recorded with each generation (task ID, model, size) and
+ * the 100% review remain the guard for that case.
+ *
+ * An earlier version used a downscale round-trip PSNR and scored tiles with sharp's
+ * stats(), which reads the whole input rather than the extracted tile. It rejected native
+ * painted art and measured the wrong region; both were replaced.
  */
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
-import os from "node:os";
-import path from "node:path";
+import sharp from "sharp";
 
-export const SOFT_DB = 38;
-export const UPSCALED_DB = 44;
+/** Below this the image is enlarged: reject. */
+export const UPSCALED_RATIO = 0.08;
+/** Below this, little fine detail: advisory, review at 100%. */
+export const LOW_DETAIL_RATIO = 0.15;
+const N = 512;
 
-/** Round-trip PSNR (dB) after scaling to `factor` and back. Needs ffmpeg on PATH. */
-export function roundTripPsnr(file, factor = 0.75) {
-  const size = execFileSync("ffprobe", ["-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=s=x:p=0", file], { encoding: "utf8" }).trim();
-  const [w, h] = size.split("x");
-  const graph = `[0]format=gray,split[a][b];[b]scale=trunc(iw*${factor}/2)*2:-2:flags=lanczos,scale=${w}:${h}:flags=lanczos[c];[a][c]psnr`;
-  const run = spawnSync("ffmpeg", ["-hide_banner", "-i", file, "-filter_complex", graph, "-f", "null", "-"], { encoding: "utf8" });
-  const out = run.stderr ?? "";
-  const m = out.match(/average:([0-9.]+|inf)/);
-  if (!m) throw new Error(`could not measure ${file}`);
-  return m[1] === "inf" ? Infinity : Number(m[1]);
-}
-
-/**
- * The most detailed square region (by luminance spread), written to a temporary PNG.
- * Dark compositions are mostly empty space, which never changes in the round trip and
- * would make every image read as soft; the verdict is about where the detail should be.
- */
-async function busiestRegion(file, tmpDir, size = 1024) {
-  const { default: sharp } = await import("sharp");
-  const meta = await sharp(file).metadata();
-  const s = Math.min(size, meta.width, meta.height);
+async function busiestRegion(file) {
+  // Decode once to one luminance channel, then score tiles from the pixels themselves
+  // (sharp's stats() reads the whole input, not an extracted region).
+  const { data: all, info } = await sharp(file).flatten({ background: "#07060a" }).toColourspace("b-w").raw().toBuffer({ resolveWithObject: true });
+  if (info.channels !== 1) throw new Error(`expected one channel, got ${info.channels}`);
+  const W = info.width;
+  const s = Math.min(N, info.width, info.height);
   let best = null;
-  const step = Math.max(64, Math.floor(s / 2));
-  for (let top = 0; top + s <= meta.height; top += step) {
-    for (let left = 0; left + s <= meta.width; left += step) {
-      const { channels } = await sharp(file).extract({ left, top, width: s, height: s }).flatten({ background: "#07060a" }).greyscale().stats();
-      if (!best || channels[0].stdev > best.stdev) best = { left, top, stdev: channels[0].stdev };
+  for (let top = 0; top + s <= info.height; top += s / 2) {
+    for (let left = 0; left + s <= W; left += s / 2) {
+      let sum = 0;
+      let sq = 0;
+      for (let y = top; y < top + s; y += 2) {
+        for (let x = left; x < left + s; x += 2) {
+          const v = all[y * W + x];
+          sum += v;
+          sq += v * v;
+        }
+      }
+      const k = (s / 2) * (s / 2);
+      const sd = Math.sqrt(sq / k - (sum / k) ** 2);
+      if (!best || sd > best.sd) best = { left, top, sd };
     }
   }
-  mkdirSync(tmpDir, { recursive: true });
-  const out = path.join(tmpDir, `${path.basename(file, path.extname(file))}-region.png`);
-  await sharp(file).extract({ left: best.left, top: best.top, width: s, height: s }).flatten({ background: "#07060a" }).png().toFile(out);
-  return out;
+  const data = new Uint8Array(s * s);
+  for (let y = 0; y < s; y++) data.set(all.subarray((best.top + y) * W + best.left, (best.top + y) * W + best.left + s), y * s);
+  return { data, size: s };
 }
 
-/** "native" | "low-detail" (advisory: review at 100%) | "upscaled" (reject), on the most detailed region. */
-export async function detailCheck(file, tmpDir = path.join(os.tmpdir(), "solanites-quality")) {
-  const psnr = roundTripPsnr(await busiestRegion(file, tmpDir));
-  const verdict = psnr >= UPSCALED_DB ? "upscaled" : psnr >= SOFT_DB ? "low-detail" : "native";
-  return { psnr: Math.round(psnr * 10) / 10, verdict };
+/** In-place radix-2 FFT. */
+function fft(re, im) {
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) {
+      [re[i], re[j]] = [re[j], re[i]];
+      [im[i], im[j]] = [im[j], im[i]];
+    }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = (-2 * Math.PI) / len;
+    for (let i = 0; i < n; i += len) {
+      for (let k = 0; k < len / 2; k++) {
+        const wr = Math.cos(ang * k);
+        const wi = Math.sin(ang * k);
+        const ar = re[i + k + len / 2];
+        const ai = im[i + k + len / 2];
+        const tr = ar * wr - ai * wi;
+        const ti = ar * wi + ai * wr;
+        re[i + k + len / 2] = re[i + k] - tr;
+        im[i + k + len / 2] = im[i + k] - ti;
+        re[i + k] += tr;
+        im[i + k] += ti;
+      }
+    }
+  }
+}
+
+/** Energy at 0.30–0.50 cycles/px divided by energy at 0.15–0.25 cycles/px (Hann-windowed). */
+export async function highFrequencyRatio(file) {
+  const { data, size } = await busiestRegion(file);
+  const n = 1 << Math.floor(Math.log2(size));
+  let mean = 0;
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) mean += data[y * size + x];
+  mean /= n * n;
+  const hann = (i) => 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (n - 1));
+  const re = Array.from({ length: n }, () => new Float64Array(n));
+  const im = Array.from({ length: n }, () => new Float64Array(n));
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) re[y][x] = (data[y * size + x] - mean) * hann(x) * hann(y);
+  for (let y = 0; y < n; y++) fft(re[y], im[y]);
+  const colR = new Float64Array(n);
+  const colI = new Float64Array(n);
+  let hi = 0;
+  let mid = 0;
+  for (let x = 0; x < n; x++) {
+    for (let y = 0; y < n; y++) {
+      colR[y] = re[y][x];
+      colI[y] = im[y][x];
+    }
+    fft(colR, colI);
+    const fx = (x < n / 2 ? x : x - n) / n;
+    for (let y = 0; y < n; y++) {
+      const fy = (y < n / 2 ? y : y - n) / n;
+      const r = Math.hypot(fx, fy);
+      const p = colR[y] * colR[y] + colI[y] * colI[y];
+      if (r >= 0.3 && r < 0.5) hi += p;
+      else if (r >= 0.15 && r < 0.25) mid += p;
+    }
+  }
+  return mid === 0 ? 0 : hi / mid;
+}
+
+/** "native" | "low-detail" (advisory: review at 100%) | "upscaled" (reject). */
+export async function detailCheck(file) {
+  const ratio = await highFrequencyRatio(file);
+  const verdict = ratio < UPSCALED_RATIO ? "upscaled" : ratio < LOW_DETAIL_RATIO ? "low-detail" : "native";
+  return { ratio: Math.round(ratio * 1000) / 1000, verdict };
 }

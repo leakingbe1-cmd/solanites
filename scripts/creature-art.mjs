@@ -56,8 +56,8 @@ async function inspect(file) {
   if (!transparent) warnings.push("no transparency; it will be shown with a soft vignette on the dark card");
   if (meta.width && meta.height) {
     const detail = await detailCheck(file);
-    if (detail.verdict === "upscaled") problems.push(`measures as upscaled (${detail.psnr} dB round trip): supply the native output`);
-    else if (detail.verdict === "low-detail") warnings.push(`little fine detail (${detail.psnr} dB): check face, edges and material at 100%`);
+    if (detail.verdict === "upscaled") problems.push(`measures as upscaled (high-frequency ratio ${detail.ratio}): supply the native output`);
+    else if (detail.verdict === "low-detail") warnings.push(`little fine detail (ratio ${detail.ratio}): check face, edges and material at 100%`);
   }
   return { meta, transparent, problems, warnings };
 }

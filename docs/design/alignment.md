@@ -26,6 +26,8 @@ This branch does not keep its own creature prompts or creature style rules any m
 | `art-direction-v2.md` §1.4 and `phase-1.md` §1.4 phoenix prompts ("photoreal VFX", "filmic", gold halo) | **Superseded** | §3 below: hand-painted 2D, no halo |
 | "The Eclipse Vigil" | Informal description from the website session's unified-direction page, not a project name | The working name stays **The Celestial Atlas** |
 
+**Pending owner decision (not adopted here):** the proposed shared canon on `creature-studio/art-direction` (`docs/canon/solanites-art-canon.md`, status PROPOSED) would set the key light to warm gold `#ffe2a8` from the upper left and the rim to a restrained violet (`#7d5cf0` family) from behind and lower right, replacing the art bible's warm-neutral key and cyan-violet rim. It also proposes one shared credit ledger, workspace-wide budgets, and a pause on all paid generation. If it is approved, it supersedes this file wherever they differ, and the phoenix prompt in §3 already uses a warm gold key and a blue-violet rim.
+
 Kept unchanged: palette tokens, Cormorant/Inter type, motion tokens, the sigil, constellations, the Threshold horizon, the 12-tick ring, restrained gold engraving, and the labelling rule (existing / temporary / proposed / study / not yet made).
 
 ## 3. Phoenix key art: the single prompt

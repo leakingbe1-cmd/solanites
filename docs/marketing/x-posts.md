@@ -8,7 +8,8 @@ mint, Solana data provider, database and scheduler are configured in production.
 posts that promise eggs from real holdings would not be true yet. The holder distribution is
 planned, not built, and its terms are unpublished: never quote amounts, percentages or dates for it.
 
-Site: https://solanites.vercel.app
+**PRELAUNCH URL RULE:** no website or preview address in any post until the official launch URL is
+approved. See `prelaunch-rules.md`.
 
 ---
 
@@ -17,7 +18,7 @@ Site: https://solanites.vercel.app
 >
 > Solanites: 28 creatures, sealed in eggs, earned by holding $SLNT. Hatch yours, then watch it grow, evolve and ascend.
 >
-> solanites.vercel.app
+> The hatching begins soon.
 
 **2. No wallet needed (square)**
 > You don't connect a wallet to play Solanites.

@@ -157,7 +157,7 @@ export function FirstVisitIntro() {
         ref={primary}
         type="button"
         onClick={() => close("/hatchery")}
-        className="sl-btn-primary w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto"
+        className={`${variant === "video" ? "sl-btn-gold" : "sl-btn-primary text-white"} w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto`}
       >
         ENTER THE HATCHERY <span aria-hidden>→</span>
       </button>

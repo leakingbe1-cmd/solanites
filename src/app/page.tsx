@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EggArt } from "@/components/egg/EggArt";
-import { HeroLifecycle } from "@/components/landing/HeroLifecycle";
+import { HeroSection } from "@/components/landing/HeroSection";
+import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { ParticleField } from "@/components/ui/ParticleField";
@@ -19,24 +20,24 @@ export default function Home() {
   return (
     <>
       {/* ── HERO ── */}
-      <section className="sl-atmosphere relative flex min-h-[100svh] items-center overflow-hidden pt-20">
-        <div className="sl-grid absolute inset-0" />
-        <ParticleField density={0.00016} />
-        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-x-6 gap-y-10 px-4 pb-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-y-0 lg:px-8">
-          <div className="text-center lg:col-start-1 lg:row-start-1 lg:self-end lg:text-left">
+      <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
+        <PhoenixHero />
+        {/* phones: the phoenix above, the copy beneath it; wide screens: the copy left, over the phoenix's darkened wing */}
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[30svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
+          <div className="max-w-xl text-center lg:text-left">
             <p className="sl-fade-up font-mono text-[11px] uppercase tracking-[0.4em] text-sol-green/80" style={{ animationDelay: "0.1s" }}>
               ◇ Genesis Hatchery · Season 0
             </p>
-            <h1 className="sl-fade-up mt-6 font-display text-[2.6rem] font-bold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-7xl" style={{ animationDelay: "0.25s" }}>
-              YOUR <span className="sl-gradient-text">SOLANITE</span>
+            <h1 className="sl-fade-up mt-4 font-display text-[2.6rem] sm:mt-6 font-bold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-7xl" style={{ animationDelay: "0.25s" }}>
+              YOUR <span className="sl-phx-gold">SOLANITE</span>
               <br />
               IS WAITING.
             </h1>
-            <p className="sl-fade-up mx-auto mt-7 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
+            <p className="sl-fade-up mx-auto mt-5 max-w-lg text-lg leading-relaxed text-mist sm:mt-7 sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
               Discover your creature. Hatch the extraordinary. <span className="text-white">Watch your Solanite grow stronger through its evolution.</span>
             </p>
             {/* walletless exploration: true for everything except launch fee claims (the only wallet sign-in on the site) */}
-            <div className="sl-fade-up mx-auto mt-7 max-w-lg lg:mx-0" style={{ animationDelay: "0.48s" }}>
+            <div className="sl-fade-up mx-auto mt-5 max-w-lg sm:mt-7 lg:mx-0" style={{ animationDelay: "0.48s" }}>
               <p className="sl-glass inline-flex items-center gap-2.5 rounded-full py-2 pl-3 pr-4 text-sm font-medium text-white">
                 <span className="relative flex h-2 w-2" aria-hidden>
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-50" />
@@ -48,24 +49,18 @@ export default function Home() {
                 Discover creatures, watch them evolve, and explore the Solanites universe. Connect your wallet only when a feature requires it.
               </p>
             </div>
-            <div className="sl-fade-up mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
-              <Link href="/hatchery" className="sl-btn-primary group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white">
+            <div className="sl-fade-up mt-6 flex flex-col flex-wrap items-center gap-4 sm:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
+              <Link href="/hatchery" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em]">
                 ENTER THE HATCHERY
                 <span className="transition-transform group-hover:translate-x-1">→</span>
               </Link>
-              <Link href="/collection" className="whitespace-nowrap rounded-full border border-white/10 px-7 py-4 text-sm tracking-wider text-mist transition hover:border-white/25 hover:text-white">
+              <Link href="/collection" className="whitespace-nowrap rounded-full border border-white/15 bg-black/30 px-7 py-4 text-sm tracking-wider text-mist backdrop-blur transition hover:border-white/30 hover:text-white">
                 Explore the Collection
               </Link>
             </div>
-          </div>
-          {/* phones and tablets: copy and CTAs, then the showcase, then the stats; desktop: copy and stats left, showcase right */}
-          <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pt-4">
-            <HeroLifecycle />
-          </div>
-          {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
-          <div className="lg:col-start-1 lg:row-start-2 lg:self-start">
+            {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
             <dl
-              className="sl-fade-up mx-auto grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/5 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0 lg:mt-4"
+              className="sl-fade-up mx-auto mt-10 grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/10 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
               style={{ animationDelay: "0.7s" }}
             >
               {[
@@ -73,7 +68,7 @@ export default function Home() {
                 { value: String(SPECIES.length), label: "species to find" },
                 { value: String(RARITY_ORDER.length), label: "rarity tiers" },
               ].map((stat, i) => (
-                <div key={stat.label} className={`flex min-w-0 flex-col rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3.5 text-center lg:text-left ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
+                <div key={stat.label} className={`flex min-w-0 flex-col rounded-2xl border border-white/[0.08] bg-black/30 px-4 py-3.5 text-center backdrop-blur-sm lg:text-left ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
                   <dt className="mt-1 text-[10px] uppercase leading-snug tracking-[0.18em] text-mist/70">{stat.label}</dt>
                   <dd className="order-first whitespace-nowrap font-display text-2xl font-semibold tabular-nums text-white">{stat.value}</dd>
                 </div>
@@ -81,12 +76,11 @@ export default function Home() {
             </dl>
           </div>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-void" />
         <a href="#rarities" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-white md:flex">
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
-      </section>
+      </HeroSection>
 
       <CreatureMarquee />
 

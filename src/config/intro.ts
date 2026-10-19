@@ -16,17 +16,17 @@
 const base = (process.env.NEXT_PUBLIC_INTRO_VIDEO_BASE ?? "/intro").replace(/\/$/, "");
 
 export const PHOENIX_INTRO = {
-  enabled: false,
+  enabled: true,
   /** Desktop and landscape screens. */
   landscape: { webm: `${base}/phoenix-16x9.webm`, mp4: `${base}/phoenix-16x9.mp4`, poster: `${base}/phoenix-16x9-poster.jpg` },
   /** Phones and portrait screens. */
   portrait: { webm: `${base}/phoenix-9x16.webm`, mp4: `${base}/phoenix-9x16.mp4`, poster: `${base}/phoenix-9x16-poster.jpg` },
   /** Expected length; the intro closes this long after start even if `ended` never fires. */
-  durationMs: 12_000,
+  durationMs: 16_800,
   /** Hold on the final SOLANITES frame before handing over to the page. */
   holdAfterEndMs: 1_200,
   /** If playback hasn't started by then, use the animated intro instead. */
   startTimeoutMs: 4_000,
   /** The video files carry an audio track (muted until the visitor turns it on). */
-  hasAudio: false,
+  hasAudio: true,
 } as const;

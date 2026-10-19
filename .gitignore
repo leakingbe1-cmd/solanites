@@ -23,3 +23,6 @@ id.json
 *.db
 pgdata/
 .pglite/
+
+# Intro video masters (large, rebuilt by scripts/phoenix-intro.sh); web files live in public/intro
+art/intro/master-*.mp4

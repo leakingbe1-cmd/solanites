@@ -600,3 +600,125 @@ html[data-sl-intro]::after {
 @media (prefers-reduced-motion: reduce) {
   .sl-hero-rays, .sl-hero-pulse { animation: none; }
 }
+
+/* ── Homepage hero: the realistic phoenix ─────────────────
+   Phones: the phoenix fills the top of the screen, cropped to its head and body,
+   and the copy sits beneath it. Wide screens: the phoenix sits right of centre
+   and the copy rests over its darkened left wing. */
+.sl-phx-art {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 56svh;
+}
+.sl-phx-art img {
+  object-position: 50% 28%;
+}
+.sl-phx-shade {
+  background:
+    linear-gradient(180deg, rgba(5, 5, 10, 0.55) 0%, rgba(5, 5, 10, 0) 18%),
+    linear-gradient(180deg, rgba(5, 5, 10, 0) 26svh, rgba(5, 5, 10, 0.82) 42svh, var(--color-void) 56svh);
+}
+@media (min-width: 1024px) {
+  .sl-phx-art {
+    inset: 0 -28% 0 auto;
+    width: 130%;
+    height: 100%;
+  }
+  .sl-phx-art img {
+    object-position: 50% 30%;
+  }
+  .sl-phx-shade {
+    background:
+      linear-gradient(90deg, rgba(5, 5, 10, 0.94) 0%, rgba(5, 5, 10, 0.78) 30%, rgba(5, 5, 10, 0.2) 52%, rgba(5, 5, 10, 0) 64%),
+      linear-gradient(180deg, rgba(5, 5, 10, 0.55) 0%, rgba(5, 5, 10, 0) 16%, rgba(5, 5, 10, 0) 70%, var(--color-void) 100%);
+  }
+}
+
+/* a slow breath on the whole artwork, and a fire glow pulsing at its heart */
+@keyframes sl-phx-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.035); }
+}
+.sl-phx-breathe {
+  transform-origin: 50% 40%;
+  animation: sl-phx-breathe 14s ease-in-out infinite;
+}
+.sl-phx-glow {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 46%;
+  aspect-ratio: 1.6;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse at center, rgba(255, 170, 60, 0.32) 0%, rgba(255, 120, 30, 0.12) 40%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: sl-phx-glow 4.5s ease-in-out infinite;
+}
+@keyframes sl-phx-glow {
+  0%, 100% { opacity: 0.55; }
+  45% { opacity: 1; }
+  60% { opacity: 0.75; }
+}
+
+/* embers drifting up past the phoenix */
+.sl-phx-embers span {
+  position: absolute;
+  bottom: -10px;
+  border-radius: 9999px;
+  background: #ffb54a;
+  box-shadow: 0 0 8px 2px rgba(255, 150, 40, 0.7);
+  opacity: 0;
+  animation-name: sl-phx-ember;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes sl-phx-ember {
+  0% { transform: translate(0, 0); opacity: 0; }
+  12% { opacity: 0.9; }
+  70% { opacity: 0.6; }
+  100% { transform: translate(var(--drift), -95svh); opacity: 0; }
+}
+
+.sl-phx-gold {
+  background: linear-gradient(180deg, #fff3cf 0%, #ffd77a 40%, #e9a63a 75%, #ffcf6b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 24px rgba(255, 170, 60, 0.35));
+}
+.sl-btn-gold {
+  background: linear-gradient(180deg, #ffe7a3 0%, #f2b84b 55%, #d98f22 100%);
+  color: #120a02;
+  box-shadow:
+    0 0 0 1px rgba(255, 240, 200, 0.5) inset,
+    0 12px 40px -12px rgba(255, 160, 40, 0.85),
+    0 0 70px -18px rgba(255, 190, 90, 0.7);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+}
+.sl-btn-gold:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 0 0 1px rgba(255, 245, 215, 0.7) inset,
+    0 16px 50px -10px rgba(255, 160, 40, 0.95),
+    0 0 90px -10px rgba(255, 190, 90, 0.8);
+}
+
+/* paused while scrolled away (HeroSection marks it), and still under reduced motion */
+[data-offscreen] .sl-phx-breathe,
+[data-offscreen] .sl-phx-glow,
+[data-offscreen] .sl-phx-embers span {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-phx-breathe,
+  .sl-phx-glow {
+    animation: none;
+  }
+  .sl-phx-embers {
+    display: none;
+  }
+}

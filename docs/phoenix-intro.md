@@ -3,8 +3,8 @@
 The cinematic phoenix intro is generated with Runway, finished locally with
 `scripts/phoenix-intro.sh`, and shown by the existing first-visit intro.
 
-- **Site switch:** `src/config/intro.ts` → `PHOENIX_INTRO.enabled` (default `false`).
-- **Preview on any deployment:** add `?intro=video` to the URL.
+- **Site switch:** `src/config/intro.ts` → `PHOENIX_INTRO.enabled` (**on**: first visits to `/` and `/hatchery` see the video).
+- **Preview or replay:** add `?intro=video` (video) or `?intro=1` (whichever variant applies) to the URL.
 - **Fallback:** if the video can't play (missing file, autoplay blocked, slow network), the
   animated intro plays instead. Reduced motion always gets the animated intro's still frame.
 - **Files:** `public/intro/phoenix-{16x9,9x16}.{webm,mp4}` and `-poster.jpg`.
@@ -51,19 +51,26 @@ shot prompts at 9:16.
 
 ## Make the site files
 
-1. Download the clips from Runway (library → download MP4) into `art/intro/`, e.g. `clip-1.mp4`, `clip-2.mp4`.
-2. Run:
-   ```bash
-   KEEP_AUDIO=1 scripts/phoenix-intro.sh art/intro/clip-1.mp4 art/intro/clip-2.mp4
-   ```
-   It joins the clips, holds the final frame 1.8 s, fades in SOLANITES over the last moments, and writes the
-   16:9 and 9:16 web files and posters to `public/intro/`, plus full-quality masters to `art/intro/master-*.mp4`
-   for X. Tune with `HOLD=`, `FADE_IN=`, `WEB_CRF=`, `WEBM_CRF=`, `PORTRAIT=fit|crop`.
-3. If you kept the audio, set `hasAudio: true` in `src/config/intro.ts` (a "Sound on" button appears; it is always muted at first).
-4. Preview with `?intro=video`. When happy, set `enabled: true`.
+The source clips are in the repo: `art/intro/clip-1-awakening.mp4` (5 s) and `art/intro/clip-2-rebirth.mp4` (10 s).
 
-The wordmark images (`art/intro/wordmark-*.png`) are rendered from the site's own font; regenerate them with
-the same headless-browser approach if the brand type changes.
+```bash
+scripts/phoenix-intro.sh art/intro/clip-1-awakening.mp4 art/intro/clip-2-rebirth.mp4
+```
+
+It fades up from black, gives every frame the same 2.39:1 cinema bars (the awakening clip has bars
+baked into its first 3.5 s only), holds the settled phoenix, and plays the SOLANITES wordmark reveal
+(`scripts/intro-wordmark.mjs`, rendered in the site's fonts) over the ending. Output (16.75 s, 24 fps,
+with sound that starts muted on the site):
+
+| File | Size |
+|---|---|
+| `public/intro/phoenix-16x9.webm` / `.mp4` (1280x720) | 3.7 MB / 3.4 MB |
+| `public/intro/phoenix-9x16.webm` / `.mp4` (720x1280) | 2.4 MB / 1.9 MB |
+| `public/intro/phoenix-*-poster.jpg` | final frame, for sharing (not used as the video poster) |
+| `art/intro/master-*.mp4` (1080p, not committed) | rebuild with the script |
+
+Tune with `HOLD=`, `REVEAL_AT=`, `PORTRAIT_ZOOM=`, `KEEP_AUDIO=0`, `WEB_CRF=`, `WEBM_CRF=`.
+Browser checks: `node scripts/qa/phoenix-site.mjs <screenshot-dir>` against `next start -p 3100`.
 
 ## Costs (Runway credits, from this account's actual charges)
 
@@ -74,9 +81,10 @@ the same headless-browser approach if the brand type changes.
 | Sound effect (separate track) | 1 per second |
 | Joining clips in Runway | 1 per 20 s (the script does this locally for free) |
 
-Spent so far: **340** (2 stills + shot 2). A finished two-shot intro needs about **150 more** (shot 1, 5 s).
+Spent so far: about **510** (3 stills, shot 1 at 5 s, shot 2 at 10 s). The finished intro needed no more.
+An egg-hatching shot (not generated) would be about **170** (one still + 5 s), only with the owner's approval.
 A native 9:16 set would be about **20 + 450** more. The plan has 2,250 credits a month.
 
-Hosting: the files are static assets on Vercel. Expect roughly 1–4 MB per first visit (only first visits
+Hosting: the files are static assets on Vercel. Expect about 2.4–3.9 MB per first visit (only first visits
 see the intro, and the browser loads only the one cut it needs). Vercel's Hobby plan includes
 100 GB of data transfer a month.

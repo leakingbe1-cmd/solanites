@@ -18,6 +18,7 @@
 # Options: HOLD=seconds the final frame is held (default 2.6), LETTERBOX=0 to drop the bars,
 # MUTE=1 to drop audio. Needs ffmpeg.
 set -euo pipefail
+"$(dirname "$0")/check-prelaunch-urls.sh"
 [ "$#" -ge 2 ] || { echo "usage: $0 clip.mp4 [clip.mp4 ...] still.png" >&2; exit 1; }
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

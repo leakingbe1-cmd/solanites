@@ -6,7 +6,8 @@ import { PHOENIX_INTRO } from "@/config/intro";
 /**
  * The Runway phoenix intro video, full screen and without controls. Plays
  * muted (browsers only autoplay muted video); picks the 9:16 cut on portrait
- * screens and the 16:9 master otherwise. Calls `onFail` if the file is
+ * screens and the 16:9 master otherwise. No poster: the video opens from black, the
+ * intro's own background, so a slow start never flashes the ending. Calls `onFail` if the file is
  * missing, autoplay is blocked or playback hasn't started in time, so the
  * caller can fall back to the animated intro instead of a blank screen.
  */
@@ -52,7 +53,6 @@ export function PhoenixVideo({ onEnded, onFail }: { onEnded: () => void; onFail:
       <video
         ref={video}
         className="absolute inset-0 h-full w-full object-cover"
-        poster={cut.poster}
         muted={muted}
         autoPlay
         playsInline

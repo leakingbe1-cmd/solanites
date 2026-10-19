@@ -14,6 +14,8 @@ const out = join(root, "art/promo/overlays");
 mkdirSync(out, { recursive: true });
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "/opt/node22/lib/node_modules/playwright/index.mjs").catch(() => import("playwright"));
 
+// Anything that looks like a web address: a scheme, a "www" prefix, or a common domain ending.
+const URL_PATTERN = /https?:\/\/|www\.|\b[a-z0-9-]+\.(?:vercel\.app|app|com|io|xyz|net|org|fun|gg|so|dev|site|link)\b/i;
 const font = (pkg, file) => readFileSync(join(root, "node_modules/@fontsource-variable", pkg, "files", file)).toString("base64");
 const css = `@font-face{font-family:U;src:url(data:font/woff2;base64,${font("unbounded", "unbounded-latin-wght-normal.woff2")}) format("woff2");font-weight:200 900}
 @font-face{font-family:I;src:url(data:font/woff2;base64,${font("inter", "inter-latin-wght-normal.woff2")}) format("woff2");font-weight:100 900}
@@ -26,9 +28,9 @@ html,body{margin:0;background:transparent}
 .eyebrow{font-family:U;font-weight:500;color:#14f195;letter-spacing:.4em;padding-left:.4em}
 .head{font-family:U;font-weight:700;color:#fff;letter-spacing:.04em;line-height:1.1;text-transform:uppercase;text-shadow:0 2px 18px rgba(0,0,0,.85)}
 .sub{font-family:I;font-weight:400;color:#e4e1f2;letter-spacing:.03em;text-shadow:0 1px 12px rgba(0,0,0,.9)}
-.cta{font-family:U;font-weight:600;color:#05040a;background:linear-gradient(180deg,#ffe7a3,#e9a63a);border-radius:999px;letter-spacing:.14em;box-shadow:0 0 40px rgba(255,190,90,.35)}
+.cta{font-family:U;font-weight:600;color:#ffd77a;border:1.5px solid rgba(255,215,122,.65);border-radius:999px;letter-spacing:.24em;padding-left:.24em;background:rgba(5,4,10,.55);box-shadow:0 0 36px rgba(255,190,90,.22),inset 0 0 18px rgba(255,190,90,.12)}
 .head .gold{text-shadow:none;filter:drop-shadow(0 0 24px rgba(255,190,90,.35))}
-.url{font-family:U;font-weight:500;color:#fff;letter-spacing:.18em;padding-left:.18em}`;
+.follow{font-family:U;font-weight:500;color:#d6d3e6;letter-spacing:.3em;padding-left:.3em;opacity:.85}`;
 
 // Feature captions (timed in promo-assets.sh). Sources: creatureDesigns.json (28 species),
 // eggProgression.ts (1,000,000 per egg), gameConfig.ts (stage names, six rarities).
@@ -67,8 +69,8 @@ const endcard = (f) => {
   <div class="mark gold" style="font-size:${f.mark}px;filter:drop-shadow(0 0 ${f.mark * 0.18}px rgba(255,190,90,.45)) drop-shadow(0 0 ${f.mark * 0.5}px rgba(153,69,255,.35))">SOLANITES</div>
   <div class="rule" style="margin-top:${f.mark * 0.42}px;width:${f.mark * 3.2}px"></div>
   <div class="tag" style="margin-top:${f.mark * 0.5}px;font-size:${f.tag}px">A new world is waiting to hatch.</div>
-  <div class="cta" style="margin-top:${f.tag * 1.1}px;font-size:${f.cta}px;padding:${f.cta * 0.85}px ${f.cta * 1.6}px">HATCH YOURS →</div>
-  <div class="url" style="margin-top:${f.cta * 0.95}px;font-size:${f.cta * 0.95}px">SOLANITES.VERCEL.APP</div></div>`;
+  <div class="cta" style="margin-top:${f.tag * 1.1}px;font-size:${f.cta}px;padding:${f.cta * 0.85}px ${f.cta * 1.6}px">THE HATCHING BEGINS SOON</div>
+  <div class="follow" style="margin-top:${f.cta * 1.05}px;font-size:${f.cta * 0.72}px">FOLLOW FOR LAUNCH UPDATES</div></div>`;
 };
 
 const poster = (w, h) => `<div class="f" style="width:${w}px;height:${h}px;justify-content:space-between;padding:${h * 0.07}px ${w * 0.07}px ${h * 0.06}px">
@@ -77,8 +79,8 @@ const poster = (w, h) => `<div class="f" style="width:${w}px;height:${h}px;justi
   <div style="display:flex;flex-direction:column;align-items:center"><div class="mark gold" style="font-size:${w * 0.062}px;filter:drop-shadow(0 0 ${w * 0.012}px rgba(255,190,90,.45)) drop-shadow(0 0 ${w * 0.03}px rgba(153,69,255,.35))">SOLANITES</div>
   <div class="rule" style="margin-top:${w * 0.026}px;width:${w * 0.2}px"></div>
   <div class="tag" style="margin-top:${w * 0.028}px;font-size:${w * 0.022}px">28 creatures · Hold $SLNT · Hatch · Grow · Evolve · Ascend</div>
-  <div class="cta" style="margin-top:${w * 0.03}px;font-size:${w * 0.02}px;padding:${w * 0.017}px ${w * 0.032}px">HATCH YOURS →</div>
-  <div class="url" style="margin-top:${w * 0.02}px;font-size:${w * 0.019}px">SOLANITES.VERCEL.APP</div></div></div>`;
+  <div class="cta" style="margin-top:${w * 0.03}px;font-size:${w * 0.02}px;padding:${w * 0.017}px ${w * 0.032}px">THE HATCHING BEGINS SOON</div>
+  <div class="follow" style="margin-top:${w * 0.024}px;font-size:${w * 0.015}px">FOLLOW FOR LAUNCH UPDATES</div></div></div>`;
 
 const jobs = [["poster-4x5", 2160, 2700, poster(2160, 2700)]];
 for (const [name, f] of Object.entries(formats)) {
@@ -86,6 +88,10 @@ for (const [name, f] of Object.entries(formats)) {
   jobs.push([`endcard-${name}`, f.w, f.h, endcard(f)]);
   if (f.top) jobs.push([`brand-${name}`, f.w, f.h, brand(f)]);
 }
+
+// PRELAUNCH URL RULE (docs/marketing/prelaunch-rules.md): no website or preview address in any overlay.
+const leak = jobs.find(([, , , html]) => URL_PATTERN.test(html.replace(/<style>[\s\S]*?<\/style>|data:[^)"]+/g, "")));
+if (leak) throw new Error(`Overlay ${leak[0]} contains a web address. Prelaunch assets must not show any URL.`);
 
 const browser = await chromium.launch();
 for (const [name, w, h, html] of jobs) {

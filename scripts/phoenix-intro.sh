@@ -1,79 +1,80 @@
 #!/usr/bin/env bash
-# Builds the website intro videos from Runway clips.
+# Builds the website intro videos from the Runway clips.
 #
-#   scripts/phoenix-intro.sh art/intro/clip-1.mp4 [art/intro/clip-2.mp4 ...]
+#   scripts/phoenix-intro.sh art/intro/clip-1-awakening.mp4 art/intro/clip-2-rebirth.mp4
 #
-# Joins the clips, fades the SOLANITES wordmark (art/intro/wordmark-*.png, the
-# site's own Unbounded font) in over the final seconds and holds it, then writes
-# web-optimised files to public/intro/:
+# Fades up from black, cuts the clips together under one set of 2.39:1 cinema bars (the
+# awakening clip has bars baked into its first seconds only, so every frame gets the same
+# bars), holds the settled phoenix, and plays the SOLANITES wordmark reveal over the
+# ending (rendered in the site's fonts by scripts/intro-wordmark.mjs). Writes to public/intro/:
 #   phoenix-16x9.{webm,mp4} + phoenix-16x9-poster.jpg   (1920x1080, landscape)
-#   phoenix-9x16.{webm,mp4} + phoenix-9x16-poster.jpg   (1080x1920 for phones and X; PORTRAIT=fit|crop)
-# and full-quality masters to art/intro/master-*.mp4 for X and announcements.
+#   phoenix-9x16.{webm,mp4} + phoenix-9x16-poster.jpg   (1080x1920, phones)
+# and full-quality masters to art/intro/master-*.mp4.
 #
-# Needs ffmpeg. Set KEEP_AUDIO=1 to keep the clips' audio track (muted on the site until the visitor turns it on).
+# Options: HOLD=seconds the final frame is held (default 1.6), REVEAL_AT=seconds before the
+# end of the footage that the wordmark starts (default 2.4), KEEP_AUDIO=0 to drop the sound
+# (on the site it always starts muted), PORTRAIT_ZOOM=how much larger than "fit" the phone cut
+# shows the footage (default 1.3; wings run off the sides), LETTERBOX=0, WEB_CRF=, WEBM_CRF=.
+# Needs ffmpeg and Playwright (for the wordmark).
 set -euo pipefail
 [ "$#" -ge 1 ] || { echo "usage: $0 clip.mp4 [clip.mp4 ...]" >&2; exit 1; }
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ART="$ROOT/art/intro"
 OUT="$ROOT/public/intro"
-HOLD="${HOLD:-1.8}"        # seconds to hold the final frame with the wordmark
-FADE_IN="${FADE_IN:-1.2}"  # wordmark fade-in length
+HOLD="${HOLD:-1.6}"
+REVEAL_AT="${REVEAL_AT:-2.4}"
+ZOOM="${PORTRAIT_ZOOM:-1.3}"
+FPS=24                      # Runway renders at 24 fps; keep it to avoid judder
+BG=0x05040a                 # the site's intro background, also used for the bars
 mkdir -p "$OUT"
 work="$(mktemp -d)"
 trap 'rm -rf "$work"' EXIT
 
-# 1. Join clips (re-encode so mixed sources concatenate cleanly), then hold the last frame.
-inputs=(); filters=""; i=0
-for c in "$@"; do inputs+=(-i "$c"); filters+="[$i:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps=30,setsar=1[v$i];"; i=$((i + 1)); done
-concat=""; for ((j = 0; j < i; j++)); do concat+="[v$j]"; done
-ffmpeg -y -loglevel error "${inputs[@]}" -filter_complex "${filters}${concat}concat=n=$i:v=1:a=0,tpad=stop_mode=clone:stop_duration=$HOLD[v]" -map "[v]" -c:v libx264 -crf 14 -preset slow -pix_fmt yuv420p "$work/joined.mp4"
-dur="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$work/joined.mp4")"
-start="$(awk -v d="$dur" -v h="$HOLD" -v f="$FADE_IN" 'BEGIN { s = d - h - f; if (s < 0) s = 0; print s }')"
-
-audio=(-an)
-if [ "${KEEP_AUDIO:-0}" = "1" ]; then
-  # Clips without an audio track get silence of the same length, so the sound stays in sync.
-  af=""; ins=""; j=0
-  for c in "$@"; do
-    if [ -n "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$c")" ]; then
-      af+="[$j:a]aresample=48000,aformat=channel_layouts=stereo[a$j];"
-    else
-      d="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$c")"
-      af+="aevalsrc=0:c=stereo:s=48000:d=$d[a$j];"
-    fi
-    ins+="[a$j]"; j=$((j + 1))
-  done
-  ffmpeg -y -loglevel error "${inputs[@]}" -filter_complex "${af}${ins}concat=n=$i:v=0:a=1,apad[a]" -map "[a]" -t "$dur" -c:a aac -b:a 128k "$work/audio.m4a"
-  audio=(-i "$work/audio.m4a" -map 2:a -c:a aac -b:a 128k)
-fi
-
-# 2. Wordmark: fade in over the final seconds; overlay on the landscape and portrait cuts.
-# Portrait framing: "fit" (default) keeps the whole wide shot, so spread wings are never cut,
-# centred on the same near-black as the footage; "crop" fills the screen and cuts the sides.
-frame() { # width height -> filter for the background video
-  if [ "$1" -lt "$2" ] && [ "${PORTRAIT:-fit}" = "fit" ]; then
-    echo "scale=$1:-2,pad=$1:$2:(ow-iw)/2:(oh-ih)/2:color=0x05040a"
+# 1. Join the clips with uniform bars, hold the last frame, and smooth the audio at each cut.
+inputs=(); vf=""; af=""; n=0; total="$HOLD"; footage=0
+for c in "$@"; do
+  inputs+=(-i "$c")
+  bars=""; [ "${LETTERBOX:-1}" = "1" ] && bars=",crop=iw:iw/2.39,pad=iw:iw*9/16:(ow-iw)/2:(oh-ih)/2:color=$BG"
+  vf+="[$n:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080${bars},fps=$FPS,setsar=1[v$n];"
+  d="$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$c")"
+  total="$(awk -v t="$total" -v d="$d" 'BEGIN{print t+d}')"; footage="$(awk -v t="$footage" -v d="$d" 'BEGIN{print t+d}')"
+  if [ -n "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$c")" ]; then
+    af+="[$n:a]aresample=48000,aformat=channel_layouts=stereo,atrim=0:$d,afade=t=in:d=0.05,afade=t=out:st=$(awk -v d="$d" 'BEGIN{print d-0.08}'):d=0.08[a$n];"
   else
-    echo "scale=$1:$2:force_original_aspect_ratio=increase,crop=$1:$2"
+    af+="aevalsrc=0:c=stereo:s=48000:d=$d[a$n];"
   fi
-}
-build() { # name width height wordmark
-  local name="$1" w="$2" h="$3" mark="$4"
-  ffmpeg -y -loglevel error -i "$work/joined.mp4" -loop 1 -i "$mark" "${audio[@]}" \
-    -filter_complex "[0:v]$(frame "$w" "$h")[bg];[1:v]format=rgba,fade=t=in:st=${start}:d=${FADE_IN}:alpha=1[wm];[bg][wm]overlay=0:0:shortest=1,format=yuv420p[v]" \
-    -map "[v]" -c:v libx264 -crf 12 -preset slow -movflags +faststart "$ART/master-$name.mp4"
-  # Web file: small enough to start quickly, still clean on large screens.
-  ffmpeg -y -loglevel error -i "$ART/master-$name.mp4" -c:v libx264 -crf "${WEB_CRF:-26}" -preset slow -profile:v high -pix_fmt yuv420p -movflags +faststart \
-    $( [ "${KEEP_AUDIO:-0}" = "1" ] && echo "-c:a aac -b:a 96k" || echo "-an" ) "$OUT/phoenix-$name.mp4"
+  n=$((n + 1))
+done
+vcat=""; acat=""; for ((j = 0; j < n; j++)); do vcat+="[v$j]"; acat+="[a$j]"; done
+ffmpeg -y -loglevel error "${inputs[@]}" -filter_complex \
+  "${vf}${af}${vcat}concat=n=$n:v=1:a=0,tpad=stop_mode=clone:stop_duration=$HOLD,fade=t=in:d=0.8[v];${acat}concat=n=$n:v=0:a=1,apad=whole_dur=$total,afade=t=in:d=0.3,afade=t=out:st=$(awk -v t="$total" 'BEGIN{print t-1.5}'):d=1.5[a]" \
+  -map "[v]" -map "[a]" -t "$total" -c:v libx264 -crf 12 -preset slow -pix_fmt yuv420p -c:a aac -b:a 192k "$work/joined.mp4"
+start="$(awk -v f="$footage" -v r="$REVEAL_AT" 'BEGIN{s=f-r; if(s<0)s=0; print s}')"
+
+# 2. The wordmark reveal, as transparent frames for both cuts.
+node "$ROOT/scripts/intro-wordmark.mjs" "$work/wm" "$FPS" >/dev/null
+
+# 3. Per cut: frame the footage, play the reveal from $start and hold its last frame, then encode for the web.
+build() { # name width height background-filter
+  local name="$1" w="$2" h="$3" frame="$4"
+  ffmpeg -y -loglevel error -i "$work/joined.mp4" -framerate "$FPS" -i "$work/wm/$name/%03d.png" -filter_complex \
+    "[0:v]${frame}[bg];[1:v]format=rgba,setpts=PTS-STARTPTS+${start}/TB[wm];[bg][wm]overlay=0:0:eof_action=repeat,format=yuv420p[v]" \
+    -map "[v]" -map 0:a -c:a copy -t "$total" -c:v libx264 -crf 12 -preset slow -r "$FPS" -movflags +faststart "$ART/master-$name.mp4"
+  local a_mp4=(-an) a_webm=(-an)
+  [ "${KEEP_AUDIO:-1}" = "1" ] && a_mp4=(-c:a aac -b:a 96k) && a_webm=(-c:a libopus -b:a 96k)
+  # Web files at the footage's own 720p (the masters keep 1080p for the wordmark): quick to start.
+  local web=(-vf "scale=$((w * 2 / 3 / 2 * 2)):-2:flags=lanczos")
+  ffmpeg -y -loglevel error -i "$ART/master-$name.mp4" "${web[@]}" -c:v libx264 -crf "${WEB_CRF:-26}" -preset slow -profile:v high -pix_fmt yuv420p -movflags +faststart "${a_mp4[@]}" "$OUT/phoenix-$name.mp4"
   # WebM (VP9): smaller; offered first, with the MP4 as the fallback (Safari and older browsers).
-  ffmpeg -y -loglevel error -i "$ART/master-$name.mp4" -c:v libvpx-vp9 -crf "${WEBM_CRF:-36}" -b:v 0 -row-mt 1 -deadline good -cpu-used 2 -pix_fmt yuv420p \
-    $( [ "${KEEP_AUDIO:-0}" = "1" ] && echo "-c:a libopus -b:a 96k" || echo "-an" ) "$OUT/phoenix-$name.webm"
-  # Poster: the final frame with the wordmark (also the reduced-motion / loading image).
-  ffmpeg -y -loglevel error -sseof -0.2 -i "$ART/master-$name.mp4" -frames:v 1 -q:v 3 "$OUT/phoenix-$name-poster.jpg"
+  ffmpeg -y -loglevel error -i "$ART/master-$name.mp4" "${web[@]}" -c:v libvpx-vp9 -crf "${WEBM_CRF:-35}" -b:v 0 -row-mt 1 -deadline good -cpu-used 2 -pix_fmt yuv420p "${a_webm[@]}" "$OUT/phoenix-$name.webm"
+  # Poster: the final frame with the wordmark (shown while the video loads).
+  ffmpeg -y -loglevel error -sseof -0.3 -i "$ART/master-$name.mp4" "${web[@]}" -frames:v 1 -q:v 3 "$OUT/phoenix-$name-poster.jpg"
   echo "  $name: $(du -h "$OUT/phoenix-$name.webm" | cut -f1) webm, $(du -h "$OUT/phoenix-$name.mp4" | cut -f1) mp4, $(du -h "$ART/master-$name.mp4" | cut -f1) master"
 }
-echo "Building intro (${dur}s, wordmark from ${start}s):"
-build 16x9 1920 1080 "$ART/wordmark-16x9.png"
-build 9x16 1080 1920 "$ART/wordmark-9x16.png"
-echo "Done. Preview with ?intro=video, then set PHOENIX_INTRO.enabled in src/config/intro.ts."
+echo "Building intro (${total}s, wordmark from ${start}s):"
+build 16x9 1920 1080 "scale=1920:1080"
+# Phones: the wide shot a little larger than fit, nudged above centre so the wordmark sits beneath it.
+pw="$(awk -v z="$ZOOM" 'BEGIN{printf "%d", 1080*z/2*2}')"
+build 9x16 1080 1920 "scale=${pw}:-2,crop=min(iw\,1080):ih,pad=1080:1920:(ow-iw)/2:(oh-ih)/2-110:color=$BG"
+echo "Done. Preview with ?intro=video; PHOENIX_INTRO.enabled in src/config/intro.ts makes it the default."

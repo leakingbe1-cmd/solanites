@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CONTENT_PACK, packMarkdown } from "@/studio/contentPack";
-import { CAMPAIGNS, CAMPAIGN_IDS, PLATFORMS, checkContent, defaultInput, generate, type CampaignId, type GeneratedContent, type PlatformId, type StudioInput } from "@/studio/copy";
-import { FEATURES, FEATURE_IDS, displayUrl, type FeatureId } from "@/studio/facts";
+import { CAMPAIGNS, CAMPAIGN_IDS, PLATFORMS, checkContent, defaultInput, generate, template, type CampaignId, type GeneratedContent, type PlatformId, type StudioInput } from "@/studio/copy";
+import { FEATURES, FEATURE_IDS, PRELAUNCH, displayUrl, featureAllowed, type FeatureId } from "@/studio/facts";
 import { CANVAS_FORMATS, STILLS, type CanvasFormatId, type CreativeCopy, type Graphic } from "@/studio/render/draw";
 import { StudioPreview, type PreviewSpec } from "./StudioPreview";
 import { CopyButton, Label, Panel, XCount, downloadText, inputCls } from "./studioUi";
@@ -24,6 +24,7 @@ const GRAPHICS: { value: Graphic | "endcard"; label: string }[] = [
   { value: "stages", label: "Incubation stages" },
   { value: "cta", label: "Feature list + CTA" },
   { value: "question", label: "Question" },
+  { value: "choices", label: "Three choices" },
   { value: "endcard", label: "End card" },
 ];
 const AUDIENCES = ["Crypto gamers", "Digital collectors", "Solana holders", "People new to Solanites"];
@@ -35,6 +36,7 @@ export function ContentStudio() {
       <header className="flex flex-col gap-4 border-b border-white/5 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-amber-300/80">Internal · not linked from the site · noindex</p>
+          {PRELAUNCH && <p className="mt-3 inline-block rounded-full border border-rose-400/40 bg-rose-400/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.25em] text-rose-200">Prelaunch teaser phase · no links, token details or launch claims</p>}
           <h1 className="mt-2 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">Content Studio</h1>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-mist">Build Phoenix campaign creatives and X drafts from verified project data. Nothing is posted anywhere: copy what you want and post it yourself.</p>
         </div>
@@ -74,7 +76,7 @@ function Create() {
   };
 
   const pickCampaign = (campaign: CampaignId) => {
-    const t = CAMPAIGNS[campaign];
+    const t = template(campaign);
     const next = { ...input, campaign, features: [...t.features], cta: t.cta, variant: 0 };
     setInput(next);
     run(next);
@@ -137,7 +139,7 @@ function Create() {
               <Label>Campaign type</Label>
               <select className={inputCls} value={input.campaign} onChange={(e) => pickCampaign(e.target.value as CampaignId)}>
                 {CAMPAIGN_IDS.map((id) => (
-                  <option key={id} value={id}>{CAMPAIGNS[id].label}</option>
+                  <option key={id} value={id}>{CAMPAIGNS[id].label}{PRELAUNCH && CAMPAIGNS[id].heldInPrelaunch ? " (held until the reveal)" : ""}</option>
                 ))}
               </select>
             </label>
@@ -186,7 +188,7 @@ function Create() {
           <div className="space-y-3">
             <label className="block">
               <Label hint="optional · replaces the headline">Main message</Label>
-              <input className={inputCls} value={input.message} onChange={(e) => set("message", e.target.value)} placeholder={CAMPAIGNS[input.campaign].headlines[0].replace(/\*/g, "")} />
+              <input className={inputCls} value={input.message} onChange={(e) => set("message", e.target.value)} placeholder={template(input.campaign).headlines[0].replace(/\*/g, "")} />
             </label>
             <label className="block">
               <Label hint="optional">Target audience</Label>
@@ -199,23 +201,24 @@ function Create() {
                 {FEATURE_IDS.map((id) => {
                   const on = input.features.includes(id);
                   const i = input.features.indexOf(id);
+                  const held = !featureAllowed(id);
                   return (
-                    <button key={id} type="button" onClick={() => toggleFeature(id)} title={`${FEATURES[id].line}\nVerified in ${FEATURES[id].source}`} className={`rounded-full border px-2.5 py-1 text-[11px] transition ${on ? "border-amber-300/50 bg-amber-300/10 text-white" : "border-white/10 text-mist hover:text-white"}`}>
+                    <button key={id} type="button" disabled={held} onClick={() => toggleFeature(id)} title={held ? `Held until launch: ${FEATURES[id].heldUntilLaunch}` : `${FEATURES[id].line}\nVerified in ${FEATURES[id].source}`} className={`rounded-full border px-2.5 py-1 text-[11px] transition disabled:cursor-not-allowed disabled:line-through disabled:opacity-35 ${on ? "border-amber-300/50 bg-amber-300/10 text-white" : "border-white/10 text-mist hover:text-white"}`}>
                       {on && <span className="mr-1 font-mono text-amber-300">{i + 1}</span>}
                       {FEATURES[id].label}
                     </button>
                   );
                 })}
               </div>
-              <p className="mt-2 text-[11px] leading-relaxed text-mist/60">Only features verified in the codebase are offered (hover for the source). The leaderboard, fee claims and payouts are left out on purpose.</p>
+              <p className="mt-2 text-[11px] leading-relaxed text-mist/60">Only features verified in the codebase are offered (hover for the source). Struck-through ones are held until the reveal because they need live egg tracking or would reveal the site. The leaderboard, fee claims and payouts are left out on purpose.</p>
             </fieldset>
             <label className="block">
               <Label>Call to action</Label>
               <input className={inputCls} value={input.cta} onChange={(e) => set("cta", e.target.value)} />
             </label>
             <label className="block">
-              <Label hint="optional · off for the teaser">Website URL</Label>
-              <input className={inputCls} value={input.url} onChange={(e) => set("url", e.target.value)} placeholder="Add once the domain is final" inputMode="url" />
+              <Label hint={PRELAUNCH ? "locked until the reveal" : "optional"}>Website URL</Label>
+              <input className={`${inputCls} disabled:cursor-not-allowed disabled:opacity-40`} disabled={PRELAUNCH} value={PRELAUNCH ? "" : input.url} onChange={(e) => set("url", e.target.value)} placeholder={PRELAUNCH ? "No links during the prelaunch teaser" : "Add once the domain is final"} inputMode="url" />
             </label>
             <label className="block">
               <Label hint="optional · used as written">Campaign details</Label>
@@ -269,7 +272,7 @@ function Create() {
               </>
             )}
             <TextField label="Button" value={draft.creative.cta} onChange={(v) => setCreative("cta", v)} />
-            <TextField label="URL shown" value={draft.creative.url} onChange={(v) => setCreative("url", displayUrl(v))} placeholder="none" />
+            {PRELAUNCH ? <TextField label="Footer line" value={draft.creative.signoff} onChange={(v) => setCreative("signoff", v)} /> : <TextField label="URL shown" value={draft.creative.url} onChange={(v) => setCreative("url", displayUrl(v))} placeholder="none" />}
           </div>
         </Panel>
 
@@ -379,7 +382,7 @@ function Pack() {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p className="max-w-2xl text-sm leading-relaxed text-mist">Eight drafts for the Phoenix teaser, in posting order. Every figure is read from the game config. No links are included while the domain is changing; add one in a reply or the profile when it's final.</p>
+        <p className="max-w-2xl text-sm leading-relaxed text-mist">{CONTENT_PACK.filter((p) => p.status === "approved").length} posts approved in principle for the teaser phase and {CONTENT_PACK.filter((p) => p.status === "hold").length} on hold until the reveal, in posting order. Every figure is read from the game config. Nothing is posted or scheduled from here.</p>
         <button type="button" onClick={() => downloadText(packMarkdown(), "solanites-x-content-pack.md")} className="rounded-full border border-white/15 px-4 py-2 text-xs tracking-wider text-white hover:border-white/35">
           Download pack (.md)
         </button>
@@ -410,13 +413,22 @@ function Pack() {
                   </h3>
                   <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/60">{p.slot}</span>
                 </div>
+                <p className={`mt-2 inline-block self-start rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] ${p.status === "approved" ? "bg-emerald-400/10 text-emerald-200" : "bg-amber-400/10 text-amber-200"}`}>{p.status === "approved" ? "Approved in principle" : "Hold"}</p>
+                {p.holdReason && <p className="mt-1 text-xs leading-relaxed text-amber-100/70">{p.holdReason}</p>}
                 <p className="mt-2 text-xs leading-relaxed text-mist"><span className="text-white/70">Objective:</span> {p.objective}</p>
                 <p className="mt-1 text-xs leading-relaxed text-mist"><span className="text-white/70">Creative:</span> {p.asset.description}</p>
                 <p className="mt-1 text-xs text-mist"><span className="text-white/70">CTA:</span> {p.cta}</p>
                 <pre className="mt-3 flex-1 whitespace-pre-wrap rounded-xl border border-white/8 bg-white/[0.02] p-3 font-sans text-sm leading-relaxed text-white">{p.caption}</pre>
+                {p.reply && (
+                  <div className="mt-2">
+                    <p className="text-xs text-white/70">Follow-up reply</p>
+                    <pre className="mt-1 whitespace-pre-wrap rounded-xl border border-white/8 bg-white/[0.02] p-3 font-sans text-sm leading-relaxed text-white">{p.reply}</pre>
+                  </div>
+                )}
                 {p.poll && <p className="mt-2 text-xs text-mist"><span className="text-white/70">Optional poll:</span> {p.poll.join(" · ")}</p>}
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <CopyButton text={p.caption} label="Copy caption" />
+                  {p.reply && <CopyButton text={p.reply} label="Copy reply" />}
                   {p.thread && <CopyButton text={p.thread.join("\n\n---\n\n")} label={`Copy thread (${p.thread.length})`} />}
                   {ready && (
                     <a href={src} download className="rounded-full border border-white/12 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-mist hover:text-white">

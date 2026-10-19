@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-19T15:50:14.265Z",
+  "generatedAt": "2026-10-19T16:26:25.914Z",
   "source": "phoenix-source.mp4",
   "videos": [
     {
@@ -10,7 +10,7 @@
       "frames": 278,
       "audio": true,
       "duration": 11.583333,
-      "bytes": 12424418
+      "bytes": 12427724
     },
     {
       "file": "ads/solanites-phoenix-9x16.mp4",
@@ -20,7 +20,7 @@
       "frames": 278,
       "audio": true,
       "duration": 11.583333,
-      "bytes": 8214425
+      "bytes": 8216667
     },
     {
       "file": "ads/solanites-phoenix-1x1.mp4",
@@ -30,7 +30,7 @@
       "frames": 278,
       "audio": true,
       "duration": 11.583333,
-      "bytes": 6968167
+      "bytes": 6971494
     },
     {
       "file": "ads/solanites-phoenix-4x5.mp4",
@@ -40,10 +40,28 @@
       "frames": 278,
       "audio": true,
       "duration": 11.583333,
-      "bytes": 7471716
+      "bytes": 7471401
     }
   ],
   "stills": [
+    {
+      "file": "stills/x-00-which-creature-4x5.jpg",
+      "format": "poster-4x5",
+      "kind": "static",
+      "graphic": "choices",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 230886
+    },
+    {
+      "file": "stills/x-00-which-creature-1x1.jpg",
+      "format": "square",
+      "kind": "static",
+      "graphic": "choices",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 176522
+    },
     {
       "file": "stills/x-01-phoenix-reveal.jpg",
       "format": "x-image",
@@ -51,16 +69,7 @@
       "graphic": "phoenix",
       "width": 1600,
       "height": 900,
-      "bytes": 208536
-    },
-    {
-      "file": "stills/x-02-hatchery.jpg",
-      "format": "x-image",
-      "kind": "static",
-      "graphic": "stages",
-      "width": 1600,
-      "height": 900,
-      "bytes": 224755
+      "bytes": 211578
     },
     {
       "file": "stills/x-03-collection.jpg",
@@ -69,16 +78,7 @@
       "graphic": "species",
       "width": 1600,
       "height": 900,
-      "bytes": 228337
-    },
-    {
-      "file": "stills/x-04-rarity.jpg",
-      "format": "x-image",
-      "kind": "static",
-      "graphic": "rarity",
-      "width": 1600,
-      "height": 900,
-      "bytes": 225784
+      "bytes": 231607
     },
     {
       "file": "stills/x-07-community.jpg",
@@ -87,7 +87,25 @@
       "graphic": "question",
       "width": 1600,
       "height": 900,
-      "bytes": 246613
+      "bytes": 249456
+    },
+    {
+      "file": "stills/x-02-hatchery.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "stages",
+      "width": 1600,
+      "height": 900,
+      "bytes": 227529
+    },
+    {
+      "file": "stills/x-04-rarity.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "rarity",
+      "width": 1600,
+      "height": 900,
+      "bytes": 228995
     },
     {
       "file": "stills/x-08-explore.jpg",
@@ -96,7 +114,7 @@
       "graphic": "cta",
       "width": 1600,
       "height": 900,
-      "bytes": 215013
+      "bytes": 218903
     },
     {
       "file": "stills/endcard-16x9.jpg",
@@ -105,7 +123,7 @@
       "graphic": "stats",
       "width": 1920,
       "height": 1080,
-      "bytes": 238351
+      "bytes": 239380
     },
     {
       "file": "stills/endcard-9x16.jpg",
@@ -114,7 +132,7 @@
       "graphic": "stats",
       "width": 1080,
       "height": 1920,
-      "bytes": 208258
+      "bytes": 210192
     },
     {
       "file": "stills/endcard-1x1.jpg",
@@ -123,7 +141,7 @@
       "graphic": "stats",
       "width": 1080,
       "height": 1080,
-      "bytes": 153996
+      "bytes": 154986
     },
     {
       "file": "stills/endcard-4x5.jpg",
@@ -132,7 +150,16 @@
       "graphic": "stats",
       "width": 1080,
       "height": 1350,
-      "bytes": 173196
+      "bytes": 174174
+    },
+    {
+      "file": "stills/poster-4x5.jpg",
+      "format": "poster-4x5",
+      "kind": "static",
+      "graphic": "stats",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 213819
     },
     {
       "file": "stills/poster.jpg",
@@ -141,7 +168,7 @@
       "graphic": "stats",
       "width": 1200,
       "height": 1800,
-      "bytes": 274714
+      "bytes": 276386
     },
     {
       "file": "stills/square-1x1.jpg",
@@ -150,7 +177,7 @@
       "graphic": "stats",
       "width": 1080,
       "height": 1080,
-      "bytes": 217931
+      "bytes": 218471
     },
     {
       "file": "stills/portrait-4x5.jpg",
@@ -159,7 +186,7 @@
       "graphic": "rarity",
       "width": 1080,
       "height": 1350,
-      "bytes": 246106
+      "bytes": 246061
     },
     {
       "file": "stills/vertical-9x16.jpg",
@@ -168,7 +195,7 @@
       "graphic": "stages",
       "width": 1080,
       "height": 1920,
-      "bytes": 281403
+      "bytes": 286575
     }
   ]
 }

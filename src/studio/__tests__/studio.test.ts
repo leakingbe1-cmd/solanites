@@ -4,9 +4,9 @@ import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES } from "@/lib/species";
 import { studioEnabled } from "@/studio/access";
 import { CONTENT_PACK, packMarkdown } from "@/studio/contentPack";
-import { CAMPAIGN_IDS, MASTER_CREATIVE, PLATFORMS, checkContent, defaultInput, generate, type PlatformId } from "@/studio/copy";
-import { FACTS, FEATURES, FEATURE_IDS } from "@/studio/facts";
-import { X_LIMIT, lintClaims, xLength } from "@/studio/xText";
+import { CAMPAIGN_IDS, MASTER_CREATIVE, PLATFORMS, assertPrelaunchSafe, checkContent, defaultInput, generate, template, type PlatformId } from "@/studio/copy";
+import { FACTS, FEATURES, FEATURE_IDS, PRELAUNCH, featureAllowed } from "@/studio/facts";
+import { X_LIMIT, lintClaims, lintPrelaunch, xLength } from "@/studio/xText";
 
 const plain = (s: string) => s.replace(/\*/g, "");
 
@@ -28,10 +28,11 @@ describe("campaign facts come from the live config", () => {
     expect(packMarkdown()).not.toMatch(/vercel|https?:/);
   });
 
-  it("adds a URL everywhere once one is set", () => {
-    const c = generate({ ...defaultInput("intro"), url: "https://solanites.example" });
-    expect(c.caption).toContain("Enter the Hatchery → https://solanites.example");
-    expect(c.creative.url).toBe("solanites.example");
+  it("ignores any URL typed in while the teaser phase is on", () => {
+    expect(PRELAUNCH).toBe(true);
+    const c = generate({ ...defaultInput("intro"), url: "https://solanites.vercel.app" });
+    expect([c.caption, ...c.thread, c.cta, c.creative.url].join(" ")).not.toMatch(/vercel|https?:/);
+    expect(c.notes.join(" ")).toMatch(/locked/);
   });
 });
 
@@ -40,7 +41,7 @@ describe("master advert copy", () => {
     expect(plain(MASTER_CREATIVE.hook)).toBe("NOT JUST ANOTHER EGG.");
     expect(MASTER_CREATIVE.callouts.map(plain)).toEqual(["28 SPECIES TO DISCOVER", "6 RARITY TIERS", "HATCH. COLLECT. EVOLVE."]);
     expect(plain(MASTER_CREATIVE.tagline)).toBe("YOUR SOLANITE IS WAITING.");
-    expect(MASTER_CREATIVE.cta.toUpperCase()).toBe("ENTER THE HATCHERY");
+    expect(MASTER_CREATIVE.cta.toUpperCase()).toBe("FOLLOW FOR THE REVEAL");
     expect(MASTER_CREATIVE.url).toBe("");
   });
 });
@@ -75,33 +76,69 @@ describe("generated drafts", () => {
     expect(c.headline).toBe("Hatch something rare");
     expect(c.caption.startsWith("Hatch something rare.")).toBe(true);
     expect(generate({ ...defaultInput("community"), url: "https://solanites.example" }).caption).not.toContain("solanites.example");
+    expect(generate(defaultInput("community")).creative.points).toEqual(["PHOENIX", "SOMETHING RARE", "THE UNKNOWN"]);
   });
 
-  it("asks for launch details instead of inventing a date", () => {
-    expect(generate(defaultInput("launch")).notes.join(" ")).toMatch(/launch date/);
+  it("holds launch, hatchery and rarity campaigns until the reveal, and flags dates", () => {
+    for (const id of ["launch", "hatchery", "rarity"] as const) expect(generate(defaultInput(id)).notes.join(" "), id).toMatch(/HOLD until the reveal/);
     const withDate = generate({ ...defaultInput("launch"), details: "Opens 1 Nov, 18:00 UTC." });
-    expect(withDate.caption).toContain("Opens 1 Nov, 18:00 UTC.");
+    expect(checkContent(withDate).map((w) => w.reason).join(" ")).toMatch(/launch dates/);
+  });
+
+  it("never offers features that need live tracking or reveal the site", () => {
+    for (const id of ["eggs", "walletless", "sealed", "incubation", "ascension", "demo"] as const) expect(featureAllowed(id), id).toBe(false);
+    for (const campaign of CAMPAIGN_IDS) for (const f of template(campaign).features) expect(featureAllowed(f)).toBe(true);
+    const forced = generate({ ...defaultInput("intro"), features: ["eggs", "walletless", "species"] });
+    expect(forced.creative.callouts).toEqual([FEATURES.species.callout]);
   });
 });
 
 describe("content pack", () => {
-  it("has the eight briefed posts, all within X's limit and clean", () => {
-    expect(CONTENT_PACK.map((p) => p.n)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+  it("keeps every post within X's limit, clean, and link-free; approved posts are teaser-safe", () => {
+    expect(CONTENT_PACK.map((p) => p.n)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(CONTENT_PACK.filter((p) => p.status === "approved").map((p) => p.id)).toEqual(["first-engagement", "phoenix-reveal", "collection", "video-launch", "community"]);
     for (const p of CONTENT_PACK) {
       expect(xLength(p.caption), p.id).toBeLessThanOrEqual(X_LIMIT);
       expect(lintClaims(p.caption), p.id).toEqual([]);
+      expect(p.caption, p.id).not.toMatch(/vercel|https?:|\.app\b/);
+      if (p.status === "approved") {
+        expect(lintPrelaunch([p.caption, p.reply ?? ""].join("\n")), p.id).toEqual([]);
+        for (const a of [p.asset, ...(p.altAssets ?? [])]) if (a.copy) expect(() => assertPrelaunchSafe({ ...MASTER_CREATIVE, ...a.copy }, a.file)).not.toThrow();
+      } else expect(p.holdReason, p.id).toBeTruthy();
+      if (p.reply) expect(xLength(p.reply)).toBeLessThanOrEqual(X_LIMIT);
       expect(p.objective.length).toBeGreaterThan(10);
       expect(p.asset.file).toMatch(/\.(jpg|mp4)$/);
       for (const t of p.thread ?? []) expect(xLength(t)).toBeLessThanOrEqual(X_LIMIT);
       for (const o of p.poll ?? []) expect(o.length).toBeLessThanOrEqual(25);
     }
-    expect(packMarkdown()).toContain("## Post 8: Website traffic");
+    expect(packMarkdown()).toContain("## Post 9: Website traffic (hold)");
   });
 
   it("quotes the real rarity weights", () => {
     const rarity = CONTENT_PACK.find((p) => p.id === "rarity")!;
     expect(rarity.caption).toContain("Common 60%");
     expect(rarity.caption).toContain("Secret 0.2%");
+  });
+});
+
+describe("first engagement post", () => {
+  it("uses the verified creature count and the brief's three choices", () => {
+    const first = CONTENT_PACK[0];
+    expect(first.caption).toContain(`${SPECIES.length} creatures. One world.`);
+    expect(first.caption).toMatch(/🔥 A Phoenix\n⚡ Something rare\n👁️ Something nobody has seen before/);
+    expect(first.asset.format).toBe("poster-4x5");
+    expect(first.altAssets?.[0].format).toBe("square");
+    expect(first.reply).toBeTruthy();
+  });
+});
+
+describe("prelaunch guard", () => {
+  it("refuses any creative that could reveal the site or the coin", () => {
+    expect(() => assertPrelaunchSafe(MASTER_CREATIVE)).not.toThrow();
+    expect(() => assertPrelaunchSafe({ ...MASTER_CREATIVE, url: "solanites.vercel.app" })).toThrow(/prelaunch/);
+    expect(() => assertPrelaunchSafe({ ...MASTER_CREATIVE, tagline: "Visit solanites.vercel.app" })).toThrow(/prelaunch/);
+    expect(() => assertPrelaunchSafe({ ...MASTER_CREATIVE, sub: "CA: 7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU" })).toThrow(/prelaunch/);
+    expect(() => assertPrelaunchSafe({ ...MASTER_CREATIVE, sub: "Hold $SLNT to earn eggs" })).toThrow(/prelaunch/);
   });
 });
 

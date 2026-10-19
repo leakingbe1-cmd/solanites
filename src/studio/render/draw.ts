@@ -14,10 +14,11 @@
  */
 
 import { LOGO_PATHS } from "@/components/layout/Logo";
+import { PRELAUNCH } from "@/studio/facts";
 
 // ── Formats ─────────────────────────────────────────────────────────────────
 
-export type CanvasFormatId = "landscape" | "vertical" | "square" | "portrait" | "x-image" | "poster";
+export type CanvasFormatId = "landscape" | "vertical" | "square" | "portrait" | "x-image" | "poster" | "poster-4x5";
 
 export interface CanvasFormat {
   id: CanvasFormatId;
@@ -33,6 +34,7 @@ export const CANVAS_FORMATS: Record<CanvasFormatId, CanvasFormat> = {
   portrait: { id: "portrait", label: "4:5 · 1080×1350", w: 1080, h: 1350 },
   "x-image": { id: "x-image", label: "X image 16:9 · 1600×900", w: 1600, h: 900 },
   poster: { id: "poster", label: "Poster 2:3 · 1200×1800", w: 1200, h: 1800 },
+  "poster-4x5": { id: "poster-4x5", label: "Poster 4:5 · 1080×1350", w: 1080, h: 1350 },
 };
 
 export const VIDEO_FORMAT_IDS: CanvasFormatId[] = ["landscape", "vertical", "square", "portrait"];
@@ -84,11 +86,16 @@ export interface CreativeCopy {
   headline: string;
   sub: string;
   stats: Stat[];
-  /** Up to three factual lines for the CTA graphic. */
+  /** Up to three factual lines for the CTA graphic, or the options of the "choices" graphic. */
   points: string[];
+  /** Footer line on stills when there is no URL (teaser CTA, e.g. FOLLOW FOR THE REVEAL). */
+  signoff: string;
 }
 
-export type Graphic = "phoenix" | "species" | "rarity" | "stages" | "stats" | "question" | "cta";
+/** Last line of defence: during the teaser phase no URL is ever drawn, whatever the copy says. */
+const guard = (c: CreativeCopy): CreativeCopy => (PRELAUNCH && c.url ? { ...c, url: "" } : c);
+
+export type Graphic = "phoenix" | "species" | "rarity" | "stages" | "stats" | "question" | "cta" | "choices";
 
 export interface GraphicData {
   elements: string[];
@@ -623,7 +630,8 @@ function adLayout(id: CanvasFormatId): AdLayout {
  * One frame of the video advert at time `t` (seconds, 0 … AD_DURATION).
  * `frame` is the source frame for min(t, SOURCE_DURATION).
  */
-export function drawAdFrame(ctx: Ctx, id: CanvasFormatId, t: number, frame: FrameSource | null, copy: CreativeCopy) {
+export function drawAdFrame(ctx: Ctx, id: CanvasFormatId, t: number, frame: FrameSource | null, input: CreativeCopy) {
+  const copy = guard(input);
   const { w: W, h: H } = CANVAS_FORMATS[id];
   const L = adLayout(id);
   ctx.save();
@@ -781,6 +789,9 @@ function staticLayout(id: CanvasFormatId): StaticLayout {
       return { split: false, band: { y: 290, zoom: 1, dx: 0 }, text: { x: W / 2, y: 150, w: 940, align: "center", size: 58, lines: 1 }, graphic: { x: 70, y: 925, w: 940, h: 300 }, footer: { y: 1285 }, margin: 70 };
     case "vertical":
       return { split: false, band: { y: 600, zoom: 1, dx: 0 }, text: { x: W / 2, y: 330, w: 920, align: "center", size: 76, lines: 3 }, graphic: { x: 80, y: 1190, w: 920, h: 400 }, footer: { y: 1690 }, margin: 80 };
+    case "poster-4x5":
+      // the wings-raised still fits a larger band without losing a wingtip
+      return { split: false, band: { y: 330, zoom: 1.22, dx: 0 }, text: { x: W / 2, y: 175, w: 960, align: "center", size: 74, lines: 2 }, graphic: { x: 60, y: 1010, w: 960, h: 210 }, footer: { y: 1292 }, margin: 60 };
     case "poster":
       return { split: false, band: { y: 450, zoom: 1.3, dx: 0 }, text: { x: W / 2, y: 225, w: 1040, align: "center", size: 92, lines: 2 }, graphic: { x: 80, y: 1265, w: 1040, h: 300 }, footer: { y: 1665 }, margin: 80 };
     default: {
@@ -791,7 +802,8 @@ function staticLayout(id: CanvasFormatId): StaticLayout {
 }
 
 /** A still creative. `frame` should be a source still (see `STILLS`); split layouts suit `wingsRaised`. */
-export function drawStatic(ctx: Ctx, id: CanvasFormatId, graphic: Graphic, frame: FrameSource | null, copy: CreativeCopy, data: GraphicData) {
+export function drawStatic(ctx: Ctx, id: CanvasFormatId, graphic: Graphic, frame: FrameSource | null, input: CreativeCopy, data: GraphicData) {
+  const copy = guard(input);
   const { w: W, h: H } = CANVAS_FORMATS[id];
   const L = staticLayout(id);
   ctx.save();
@@ -830,19 +842,22 @@ export function drawStatic(ctx: Ctx, id: CanvasFormatId, graphic: Graphic, frame
   const fy = L.footer.y;
   if (L.split) {
     const lw = drawLockup(ctx, L.margin, fy, 38 * unit, "left");
-    if (copy.url) drawSegs(ctx, [{ text: copy.url, gold: false }], L.margin + lw + 36 * unit, fy + 7 * unit, { size: 19 * unit, family: FONTS.mono, weight: 400, tracking: 0.08, color: C.mist }, "left");
+    const foot = copy.url || copy.signoff;
+    if (foot) drawSegs(ctx, [{ text: foot, gold: false }], L.margin + lw + 36 * unit, fy + 7 * unit, { size: 19 * unit, family: FONTS.mono, weight: 400, tracking: copy.url ? 0.08 : 0.22, color: copy.url ? C.mist : "rgba(255, 222, 160, 0.9)" }, "left");
   } else {
     const ms = id === "square" ? 36 : 44;
     const st: TextStyle = { size: ms * 0.5, family: FONTS.mono, weight: 400, tracking: 0.08, color: C.mist };
     const lockW = ms + ms * 0.38 + measureSegs(ctx, [{ text: "SOLANITES", gold: false }], { size: ms * 0.5, weight: 600, tracking: 0.24 });
-    const urlW = copy.url ? measureSegs(ctx, [{ text: copy.url, gold: false }], st) : 0;
+    const foot = copy.url || copy.signoff;
+    if (!copy.url) Object.assign(st, { tracking: 0.22, color: "rgba(255, 222, 160, 0.9)" });
+    const urlW = foot ? measureSegs(ctx, [{ text: foot, gold: false }], st) : 0;
     const gap = ms * 0.9;
     const x0 = W / 2 - (lockW + (urlW ? gap + urlW : 0)) / 2;
     drawLockup(ctx, x0, fy, ms, "left");
     if (urlW) {
       ctx.fillStyle = "rgba(255,255,255,0.25)";
       ctx.fillRect(x0 + lockW + gap / 2 - 0.75, fy - ms * 0.3, 1.5, ms * 0.6);
-      drawSegs(ctx, [{ text: copy.url, gold: false }], x0 + lockW + gap, fy + st.size * 0.36, st, "left");
+      drawSegs(ctx, [{ text: foot, gold: false }], x0 + lockW + gap, fy + st.size * 0.36, st, "left");
     }
   }
   ctx.restore();
@@ -1027,6 +1042,35 @@ function drawGraphic(ctx: Ctx, g: Graphic, r: { x: number; y: number; w: number;
       if (copy.cta && y + 50 * unit < r.y + r.h + 60 * unit) drawPill(ctx, copy.cta, align === "center" ? cx : r.x, y + 34 * unit, 17 * unit, align);
       return;
     }
+    case "choices": {
+      // three tiles: drawn icons (no emoji fonts needed) over a label each
+      const opts = copy.points.slice(0, 3);
+      const icons = ["fire", "bolt", "eye"] as const;
+      const tint = ["255, 176, 64", "176, 124, 255", "126, 232, 255"];
+      const gap = 18 * unit;
+      const tw = Math.min((r.w - gap * (opts.length - 1)) / opts.length, 330 * unit);
+      const th = Math.min(r.h, 210 * unit);
+      const total = tw * opts.length + gap * (opts.length - 1);
+      const x0 = align === "center" ? r.x + (r.w - total) / 2 : r.x;
+      const y0 = r.y + (r.h - th) / 2;
+      opts.forEach((label, i) => {
+        const x = x0 + i * (tw + gap);
+        ctx.save();
+        roundRect(ctx, x, y0, tw, th, 22 * unit);
+        const bg = ctx.createLinearGradient(0, y0, 0, y0 + th);
+        bg.addColorStop(0, `rgba(${tint[i]}, 0.16)`);
+        bg.addColorStop(1, "rgba(10, 8, 20, 0.72)");
+        ctx.fillStyle = bg;
+        ctx.fill();
+        ctx.strokeStyle = `rgba(${tint[i]}, 0.55)`;
+        ctx.lineWidth = 1.6 * unit;
+        ctx.stroke();
+        ctx.restore();
+        drawIcon(ctx, icons[i], x + tw / 2, y0 + th * 0.36, th * 0.3, tint[i]);
+        drawBlock(ctx, label, x + tw / 2, y0 + th * 0.74, { size: 25 * unit, weight: 700, tracking: 0.06 }, tw - 28 * unit, 2, "center", 1.08);
+      });
+      return;
+    }
     case "question": {
       drawSegs(ctx, [{ text: "REPLY WITH YOURS ↓", gold: false }], cx, r.y + 30 * unit, { size: 15 * unit, family: FONTS.mono, weight: 400, tracking: 0.3, color: "rgba(255,214,140,0.85)" }, ta);
       return;
@@ -1037,10 +1081,84 @@ function drawGraphic(ctx: Ctx, g: Graphic, r: { x: number; y: number; w: number;
   }
 }
 
+/** Small vector icons for the choices graphic, centred on (cx, cy). */
+function drawIcon(ctx: Ctx, kind: "fire" | "bolt" | "eye", cx: number, cy: number, size: number, rgb: string) {
+  const s = size / 100;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s, s);
+  ctx.shadowColor = `rgba(${rgb}, 0.95)`;
+  ctx.shadowBlur = 28;
+  if (kind === "fire") {
+    const g = ctx.createLinearGradient(0, -50, 0, 50);
+    g.addColorStop(0, "#fff4cc");
+    g.addColorStop(0.45, "#ffc24a");
+    g.addColorStop(1, "#ff6a1f");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(0, -52);
+    ctx.bezierCurveTo(14, -30, 38, -14, 36, 14);
+    ctx.bezierCurveTo(35, 38, 18, 50, 0, 50);
+    ctx.bezierCurveTo(-18, 50, -35, 38, -36, 16);
+    ctx.bezierCurveTo(-37, -4, -24, -14, -18, -30);
+    ctx.bezierCurveTo(-10, -16, -6, -10, -2, -8);
+    ctx.bezierCurveTo(-4, -26, -6, -38, 0, -52);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "rgba(255, 248, 220, 0.9)";
+    ctx.beginPath();
+    ctx.moveTo(0, 2);
+    ctx.bezierCurveTo(10, 14, 16, 22, 15, 32);
+    ctx.bezierCurveTo(14, 42, 7, 46, 0, 46);
+    ctx.bezierCurveTo(-7, 46, -14, 42, -15, 33);
+    ctx.bezierCurveTo(-16, 22, -6, 14, 0, 2);
+    ctx.fill();
+  } else if (kind === "bolt") {
+    const g = ctx.createLinearGradient(-30, -50, 30, 50);
+    g.addColorStop(0, "#f0e2ff");
+    g.addColorStop(0.5, "#b07cff");
+    g.addColorStop(1, "#6b5bff");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(10, -54);
+    ctx.lineTo(-30, 6);
+    ctx.lineTo(-4, 6);
+    ctx.lineTo(-14, 54);
+    ctx.lineTo(30, -10);
+    ctx.lineTo(4, -10);
+    ctx.closePath();
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = "#dff9ff";
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(-52, 0);
+    ctx.quadraticCurveTo(0, -46, 52, 0);
+    ctx.quadraticCurveTo(0, 46, -52, 0);
+    ctx.closePath();
+    ctx.stroke();
+    const g = ctx.createRadialGradient(0, 0, 2, 0, 0, 20);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.35, "#7ee8ff");
+    g.addColorStop(1, "#2a6bff");
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, 19, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = "#05040a";
+    ctx.beginPath();
+    ctx.arc(0, 0, 7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
 // ── End card ────────────────────────────────────────────────────────────────
 
 /** Clean end card: logo, key figures and the website CTA over a dimmed Phoenix. */
-export function drawEndCard(ctx: Ctx, id: CanvasFormatId, frame: FrameSource | null, copy: CreativeCopy) {
+export function drawEndCard(ctx: Ctx, id: CanvasFormatId, frame: FrameSource | null, input: CreativeCopy) {
+  const copy = guard(input);
   const { w: W, h: H } = CANVAS_FORMATS[id];
   ctx.save();
   ctx.clearRect(0, 0, W, H);

@@ -1,6 +1,16 @@
 # Phoenix campaign
 
-The first Solanites campaign: a teaser for X built around the Runway Phoenix clip. The site URL is deliberately left off every creative and draft because the domain is going to change; add it in the Studio's URL field (or in a reply) once it is final.
+The first Solanites campaign: a prelaunch teaser for X built around the Runway Phoenix clip. See [`MANIFEST.md`](MANIFEST.md) for the proposed official selection.
+
+## Prelaunch rule (enforced in code)
+
+While `PHASE` in `src/studio/facts.ts` is `"prelaunch"`:
+
+- **No website or preview URL, QR code, contract address, launch date or token detail** may appear in any creative, caption, reply, thread or campaign doc. The copy generator drops URLs, the Studio locks the URL field, the renderer never draws a URL, and `npm run campaign:render` refuses to start if any asset's copy breaks the rule (`assertPrelaunchSafe`). After rendering it OCRs every still and a frame every 0.25 s of every video (`scripts/campaign/scan-urls.mjs`) and fails on any URL, domain or address it reads.
+- **Claims that need live egg tracking are held**: earning eggs by holding, eggs arriving automatically, wallet lookups, incubation timings, ascension ranks, rarity sealing and odds, the demo. They are struck out in the Studio and the posts that use them are marked HOLD.
+- **Calls to action are teaser CTAs**: FOLLOW FOR THE REVEAL, THE STORY BEGINS SOON, WHICH CREATURE WOULD YOU HATCH?
+
+Changing `PHASE` to `"launch"` is the reviewed code change that authorises the reveal. Do it only with the owner's explicit approval.
 
 ## What's here
 
@@ -10,11 +20,13 @@ The first Solanites campaign: a teaser for X built around the Runway Phoenix cli
 | Vertical video | `public/campaign/ads/solanites-phoenix-9x16.mp4` | 1080×1920 |
 | Square video | `public/campaign/ads/solanites-phoenix-1x1.mp4` | 1080×1080 |
 | Portrait video | `public/campaign/ads/solanites-phoenix-4x5.mp4` | 1080×1350 |
-| Poster | `public/campaign/stills/poster.jpg` | 1200×1800 |
+| Poster (4:5) | `public/campaign/stills/poster-4x5.jpg` | 1080×1350 |
+| Poster (2:3) | `public/campaign/stills/poster.jpg` | 1200×1800 |
+| First X post | `public/campaign/stills/x-00-which-creature-{4x5,1x1}.jpg` | 1080×1350, 1080×1080 |
 | End cards | `public/campaign/stills/endcard-{16x9,9x16,1x1,4x5}.jpg` | per ratio |
 | X post images | `public/campaign/stills/x-0*.jpg` | 1600×900 |
 | Static variants | `public/campaign/stills/{square-1x1,portrait-4x5,vertical-9x16}.jpg` | per ratio |
-| X drafts | `docs/campaign/x-content-pack.md` | eight posts |
+| X drafts | `docs/campaign/x-content-pack.md` | nine posts (5 approved in principle, 4 on hold) |
 
 `public/campaign/manifest.json` lists what the last render produced; every file in it was checked with ffprobe for size and duration.
 
@@ -26,7 +38,7 @@ The first Solanites campaign: a teaser for X built around the Runway Phoenix cli
 | 0.35–2.2 s | Hook: **NOT JUST ANOTHER EGG.** A small brand lockup appears in the corner and stays until the end screen, so muted autoplay always shows whose ad it is. |
 | 2.35–6.4 s | Three callouts, one at a time: **28 species to discover · 6 rarity tiers · Hatch. Collect. Evolve.** |
 | 6.5 s | A soft flash into the full wingspan. |
-| 6.7 s to end | Logo, **YOUR SOLANITE IS WAITING.**, then **ENTER THE HATCHERY**. The last source frame is held for 1.5 s, so the end screen reads for about 4.5 s. |
+| 6.7 s to end | Logo, **YOUR SOLANITE IS WAITING.**, then **FOLLOW FOR THE REVEAL**. The last source frame is held for 1.5 s, so the end screen reads for about 4.5 s. |
 
 The source audio is kept and fades out over the hold. Everything reads with the sound off.
 
@@ -34,7 +46,7 @@ The source audio is kept and fades out over the hold. Everything reads with the 
 
 ## Claims
 
-Every figure comes from `src/studio/facts.ts`, which reads the game config and catalogue (`gameConfig`, `eggProgression`, `species`, `rarity`), so creatives follow the rules if they change. Left out on purpose: the leaderboard (simulated), fee claims and payouts (not implemented), prices, partnerships, holder counts and launch dates. `src/studio/xText.ts` flags financial, guaranteed-outcome and unverifiable wording in generated and hand-typed copy alike.
+Every figure comes from `src/studio/facts.ts`, which reads the game config and catalogue (`gameConfig`, `eggProgression`, `species`, `rarity`), so creatives follow the rules if they change. Left out on purpose: the leaderboard (simulated), fee claims and payouts (not implemented), holder rewards (planned, not built), prices, partnerships, holder counts and launch dates. `src/studio/xText.ts` flags financial, guaranteed-outcome and unverifiable wording in generated and hand-typed copy alike.
 
 ## Re-rendering
 
@@ -42,6 +54,7 @@ Every figure comes from `src/studio/facts.ts`, which reads the game config and c
 npm run campaign:render                     # adverts, stills, content pack (about 6–8 min)
 npm run campaign:render -- --only stills    # or: videos, pack
 npm run campaign:render -- --source new.mp4 # a different source clip (any 16:9)
+npm run campaign:scan                       # OCR leak scan on its own (needs tesseract-ocr)
 ```
 
 Needs `ffmpeg`/`ffprobe` on PATH and Playwright's Chromium (`npx playwright install chromium` if missing). The script runs the Studio's own canvas renderer (`src/studio/render/draw.ts`) in headless Chromium, one source frame at a time, and pipes the frames to x264. To change the master copy, edit `MASTER_INPUT` in `src/studio/copy.ts`. The content pack lives in `src/studio/contentPack.ts`.

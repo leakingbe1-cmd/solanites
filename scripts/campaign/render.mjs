@@ -146,4 +146,12 @@ if (!only || only === "pack") {
 await browser.close();
 await rm(tmp, { recursive: true, force: true });
 if (only !== "pack") await writeFile(path.join(outDir, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+
+// 7. prelaunch leak scan of what was just written (OCR; skipped with a warning if tesseract is missing)
+if (only !== "pack" && !process.argv.includes("--no-scan")) {
+  const targets = [...(!only || only === "videos" ? ["public/campaign/ads"] : []), ...(!only || only === "stills" ? ["public/campaign/stills"] : [])];
+  const scan = spawnSync("node", [path.join(here, "scan-urls.mjs"), ...targets], { cwd: root, stdio: "inherit" });
+  if (scan.status === 1) throw new Error("leak scan found a URL, domain or address in an export: see above");
+  if (scan.status !== 0) console.warn("leak scan skipped (tesseract missing); the render-time guard still ran");
+}
 console.log("done");

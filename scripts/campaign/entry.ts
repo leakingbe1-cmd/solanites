@@ -1,6 +1,6 @@
 // Browser-side half of `npm run campaign:render`: the Studio's renderer, driven frame by frame.
 import { CONTENT_PACK, packMarkdown } from "@/studio/contentPack";
-import { MASTER_CREATIVE, generate, defaultInput, graphicData } from "@/studio/copy";
+import { MASTER_CREATIVE, assertPrelaunchSafe, generate, defaultInput, graphicData } from "@/studio/copy";
 import { AD_DURATION, AD_FPS, CANVAS_FORMATS, FONT_LOADS, SOURCE_DURATION, STILLS, VIDEO_FORMAT_IDS, drawAdFrame, drawEndCard, drawStatic, type CanvasFormatId, type CreativeCopy, type FrameSource, type Graphic } from "@/studio/render/draw";
 
 export interface StillJob {
@@ -30,14 +30,16 @@ function size(id: CanvasFormatId) {
 
 const intro = generate(defaultInput("intro", "static")).creative;
 const stills: StillJob[] = [
-  ...CONTENT_PACK.filter((p) => p.asset.kind === "static").map((p) => ({
-    file: p.asset.file,
-    kind: "static" as const,
-    format: p.asset.format,
-    graphic: p.asset.graphic ?? "phoenix",
-    still: p.asset.still ?? STILLS.wingsRaised,
-    copy: { ...MASTER_CREATIVE, ...p.asset.copy },
-  })),
+  ...CONTENT_PACK.flatMap((p) => [p.asset, ...(p.altAssets ?? [])])
+    .filter((a) => a.kind === "static")
+    .map((a) => ({
+      file: a.file,
+      kind: "static" as const,
+      format: a.format,
+      graphic: a.graphic ?? "phoenix",
+      still: a.still ?? STILLS.wingsRaised,
+      copy: { ...MASTER_CREATIVE, ...a.copy },
+    })),
   ...(["landscape", "vertical", "square", "portrait"] as const).map((format) => ({
     file: `stills/endcard-${{ landscape: "16x9", vertical: "9x16", square: "1x1", portrait: "4x5" }[format]}.jpg`,
     kind: "endcard" as const,
@@ -46,11 +48,16 @@ const stills: StillJob[] = [
     still: STILLS.wingspan,
     copy: MASTER_CREATIVE,
   })),
-  { file: "stills/poster.jpg", kind: "static", format: "poster", graphic: "stats", still: STILLS.wingsRaised, copy: { ...intro, headline: "NOT JUST\nANOTHER *EGG.*", sub: "Hold $SLNT. Earn eggs. Hatch creatures that keep evolving." } },
+  { file: "stills/poster-4x5.jpg", kind: "static", format: "poster-4x5", graphic: "stats", still: STILLS.wingsRaised, copy: { ...intro, headline: "NOT JUST\nANOTHER *EGG.*", sub: `${intro.stats[0].value} species. One world. The story begins soon.` } },
+  { file: "stills/poster.jpg", kind: "static", format: "poster", graphic: "stats", still: STILLS.wingsRaised, copy: { ...intro, headline: "NOT JUST\nANOTHER *EGG.*", sub: `${intro.stats[0].value} species. One world. The story begins soon.` } },
   { file: "stills/square-1x1.jpg", kind: "static", format: "square", graphic: "stats", still: STILLS.wingspan, copy: { ...intro, headline: "YOUR *SOLANITE*\nIS WAITING.", eyebrow: "" } },
   { file: "stills/portrait-4x5.jpg", kind: "static", format: "portrait", graphic: "rarity", still: STILLS.wingspan, copy: { ...generate(defaultInput("rarity", "static")).creative, url: MASTER_CREATIVE.url } },
   { file: "stills/vertical-9x16.jpg", kind: "static", format: "vertical", graphic: "stages", still: STILLS.wingspan, copy: { ...generate(defaultInput("hatching", "static")).creative, url: MASTER_CREATIVE.url } },
 ];
+
+// The prelaunch rule is enforced before a single frame is drawn.
+assertPrelaunchSafe(MASTER_CREATIVE, "master advert copy");
+for (const job of stills) assertPrelaunchSafe(job.copy, job.file);
 
 const SL = {
   async ready() {

@@ -20,6 +20,20 @@ import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES, SPECIES_BY_ID, speciesOfRarity } from "@/lib/species";
 
 /**
+ * Campaign phase. While this is "prelaunch" (the teaser phase) nothing may
+ * reveal the website or the coin: URLs, preview links, contract addresses,
+ * launch dates and token details are refused by the renderer, the copy
+ * generator and the tests, and claims that need live egg tracking are held.
+ * Switching to "launch" is a deliberate, reviewed code change: that change is
+ * the authorisation for the official reveal.
+ */
+export const PHASE: "prelaunch" | "launch" = "prelaunch";
+export const PRELAUNCH = PHASE === "prelaunch";
+
+/** Teaser calls to action approved for the prelaunch phase. */
+export const TEASER_CTAS = ["Follow for the reveal", "The story begins soon", "Which creature would you hatch?"] as const;
+
+/**
  * No website URL is printed by default: the current campaign is a teaser for
  * X and the domain is going to change. Set one in the Studio's URL field once
  * it is final, and every caption and creative picks it up.
@@ -81,7 +95,14 @@ export interface Feature {
   line: string;
   /** Where the claim is verified in the codebase. */
   source: string;
+  /**
+   * Why this can't be promoted during the teaser phase, if it can't: it needs
+   * live holder tracking in production (unverified) or would reveal the site.
+   */
+  heldUntilLaunch?: string;
 }
+
+const NEEDS_TRACKING = "Needs live egg tracking in production (mint, Solana data, database), which is not verified.";
 
 export const FEATURES: Record<FeatureId, Feature> = {
   species: {
@@ -118,6 +139,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: `*1 EGG* PER ${FACTS.tokensPerEgg} ${symbol}`,
     line: `Every ${FACTS.tokensPerEgg} ${symbol} you hold backs one egg${FACTS.maxEggs === null ? ", with no cap per wallet" : ""}.`,
     source: "src/config/eggProgression.ts → tokensPerEgg",
+    heldUntilLaunch: NEEDS_TRACKING,
   },
   walletless: {
     id: "walletless",
@@ -125,6 +147,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: "*NO WALLET* NEEDED TO EXPLORE",
     line: "No wallet needed to explore. Eggs are tracked from public on-chain balances.",
     source: "src/app/page.tsx, src/app/api/holders",
+    heldUntilLaunch: "Describes using the website, which is not revealed yet.",
   },
   sealed: {
     id: "sealed",
@@ -132,6 +155,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: "RARITY *SEALED* AT BIRTH",
     line: "Each egg's rarity is sealed the moment it's earned. You find out when it hatches.",
     source: "README → Hatching: outcome sealed on the server",
+    heldUntilLaunch: NEEDS_TRACKING,
   },
   classified: {
     id: "classified",
@@ -146,6 +170,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: `FIRST EGG: *${FACTS.firstIncubation.toUpperCase()}*`,
     line: `Your first egg incubates in ${FACTS.firstIncubation}. Later eggs take longer.`,
     source: "src/config/eggProgression.ts → incubationScheduleMs",
+    heldUntilLaunch: NEEDS_TRACKING,
   },
   ascension: {
     id: "ascension",
@@ -153,6 +178,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: `ASCEND TO RANK *${FACTS.finalRank}*`,
     line: `After ${forms.at(-1)}, keep holding to climb Ascension ranks II to ${FACTS.finalRank}.`,
     source: "src/config/gameConfig.ts → ascensionRanksMs",
+    heldUntilLaunch: NEEDS_TRACKING,
   },
   rename: {
     id: "rename",
@@ -167,6 +193,7 @@ export const FEATURES: Record<FeatureId, Feature> = {
     callout: "TRY THE *HATCHERY* DEMO",
     line: "Try the Hatchery with a demo wallet. No tokens, no sign-up.",
     source: "src/services/wallet/demoWallet.ts",
+    heldUntilLaunch: "Points people to the website, which is not revealed yet.",
   },
   phoenix: {
     id: "phoenix",
@@ -178,3 +205,5 @@ export const FEATURES: Record<FeatureId, Feature> = {
 };
 
 export const FEATURE_IDS = Object.keys(FEATURES) as FeatureId[];
+/** Features that may be promoted in the current phase. */
+export const featureAllowed = (id: FeatureId) => !(PRELAUNCH && FEATURES[id].heldUntilLaunch);

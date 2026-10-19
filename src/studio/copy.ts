@@ -11,8 +11,8 @@ import { eggProgression } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { CANVAS_FORMATS, STILLS, type CanvasFormatId, type CreativeCopy, type Graphic, type GraphicData } from "./render/draw";
-import { FACTS, FEATURES, displayUrl, type FeatureId } from "./facts";
-import { X_LIMIT, lintClaims, xLength, type ClaimWarning } from "./xText";
+import { FACTS, FEATURES, PRELAUNCH, displayUrl, featureAllowed, type FeatureId } from "./facts";
+import { X_LIMIT, lintClaims, lintPrelaunch, revealsSite, xLength, type ClaimWarning } from "./xText";
 
 export type CampaignId = "intro" | "phoenix" | "hatching" | "collection" | "rarity" | "hatchery" | "community" | "launch" | "awareness";
 export type PlatformId = "x-post" | "x-thread" | "x-video" | "vertical-video" | "static" | "poster";
@@ -25,12 +25,12 @@ export interface Platform {
 }
 
 export const PLATFORMS: Record<PlatformId, Platform> = {
-  "x-post": { id: "x-post", label: "X post", kind: "static", formats: ["x-image", "square", "portrait"] },
+  "x-post": { id: "x-post", label: "X post", kind: "static", formats: ["x-image", "poster-4x5", "square", "portrait"] },
   "x-thread": { id: "x-thread", label: "X thread", kind: "static", formats: ["x-image", "square", "portrait"] },
   "x-video": { id: "x-video", label: "X video advert", kind: "video", formats: ["landscape", "square", "portrait"] },
   "vertical-video": { id: "vertical-video", label: "Vertical social video", kind: "video", formats: ["vertical"] },
   static: { id: "static", label: "Static image advert", kind: "static", formats: ["square", "portrait", "x-image", "vertical"] },
-  poster: { id: "poster", label: "Promotional poster", kind: "static", formats: ["poster"] },
+  poster: { id: "poster", label: "Promotional poster", kind: "static", formats: ["poster-4x5", "poster"] },
 };
 
 const n = FACTS.speciesCount;
@@ -72,6 +72,12 @@ interface Template {
   link: boolean;
   /** Features the support line already states; threads and captions skip them. */
   covered?: FeatureId[];
+  /** Overlay points for the "cta" and "choices" graphics (default: the feature labels). */
+  points?: string[];
+  /** Prelaunch teaser version of this template, merged over it while PHASE is "prelaunch". */
+  teaser?: Partial<Omit<Template, "teaser" | "label">>;
+  /** Set when the campaign can't run in the teaser phase at all. */
+  heldInPrelaunch?: string;
   /** Extra warning shown for this campaign. */
   note?: string;
 }
@@ -91,6 +97,11 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Enter the Hatchery",
     hashtags: ["#Solanites", "#Solana"],
     link: true,
+    teaser: {
+      openers: ["Solanites is a creature-collecting world on Solana.", "Something is about to hatch.", "Not just another egg."],
+      support: `${n} species. ${FACTS.rarityCount} rarity tiers. Every one of them starts inside an egg.`,
+      cta: "Follow for the reveal",
+    },
   },
   phoenix: {
     label: "Phoenix reveal",
@@ -104,6 +115,7 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Enter the Hatchery",
     hashtags: ["#Solanites", "#Solana"],
     link: true,
+    teaser: { support: `${FACTS.phoenix.name}, ${FACTS.phoenix.epithet}. One of ${FACTS.rarityChances.find((r) => r.id === "legendary")!.species} Legendary species waiting inside the eggs.`, cta: "Follow for the reveal" },
   },
   hatching: {
     label: "Egg hatching campaign",
@@ -117,6 +129,11 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Enter the Hatchery",
     hashtags: ["#Solanites"],
     link: true,
+    teaser: {
+      support: `It glows, cracks and stirs, from ${FACTS.eggStages[0]} to ${FACTS.eggStages.at(-1)}. Then it opens.`,
+      features: ["loop", "evolution", "species"],
+      cta: "The story begins soon",
+    },
   },
   collection: {
     label: "Species and collection",
@@ -130,6 +147,7 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Explore the Collection",
     hashtags: ["#Solanites"],
     link: true,
+    teaser: { cta: "The story begins soon" },
   },
   rarity: {
     label: "Rarity and discovery",
@@ -144,6 +162,8 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "See the odds",
     hashtags: ["#Solanites"],
     link: true,
+    teaser: { support: "Six tiers, from Common to Secret. Nobody chooses which one hatches.", features: ["rarity", "classified", "species"], cta: "Follow for the reveal" },
+    heldInPrelaunch: "The rarity odds and sealing describe live hatching, which needs production verification.",
   },
   hatchery: {
     label: "Hatchery promotion",
@@ -157,6 +177,8 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Enter the Hatchery",
     hashtags: ["#Solanites"],
     link: true,
+    teaser: { support: "Every egg wakes slowly. It glows, cracks and stirs before it opens.", features: ["loop", "rename", "species"], cta: "Follow for the reveal" },
+    heldInPrelaunch: "Promotes using the website's Hatchery, which isn't revealed yet.",
   },
   community: {
     label: "Community growth",
@@ -171,6 +193,14 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Reply with yours",
     hashtags: ["#Solanites"],
     link: false,
+    teaser: {
+      headlines: ["WHICH CREATURE WOULD YOU *HATCH?*", "WHAT WILL YOU *NAME* IT?", "WHICH BLOODLINE IS *YOURS?*"],
+      openers: ["Every legend starts somewhere. When your egg hatches, what are you hoping for?", "Every Solanite you hatch will carry a name you choose. What's yours called?", `${RARITY_LIST}. Which one are you hoping for, and why?`],
+      support: "Reply with your pick.",
+      graphic: "choices",
+      points: ["PHOENIX", "SOMETHING RARE", "THE UNKNOWN"],
+      cta: "Reply with your pick",
+    },
   },
   launch: {
     label: "Launch announcement",
@@ -185,6 +215,8 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     hashtags: ["#Solanites", "#Solana"],
     link: true,
     note: "Add the confirmed launch date and any official links in Campaign details. The generator never invents a date.",
+    teaser: { support: `${n} species are waiting. The reveal is coming.`, cta: "Follow for the reveal" },
+    heldInPrelaunch: "Launch announcements wait until you authorise the official reveal.",
   },
   awareness: {
     label: "General brand awareness",
@@ -198,6 +230,7 @@ export const CAMPAIGNS: Record<CampaignId, Template> = {
     cta: "Enter the Hatchery",
     hashtags: ["#Solanites", "#Solana"],
     link: true,
+    teaser: { cta: "Follow for the reveal" },
   },
 };
 
@@ -229,8 +262,15 @@ export interface GeneratedContent {
   notes: string[];
 }
 
+/** A campaign's template for the current phase (the teaser version during prelaunch). */
+export function template(id: CampaignId): Template {
+  const t = CAMPAIGNS[id];
+  const merged = PRELAUNCH && t.teaser ? { ...t, ...t.teaser } : t;
+  return { ...merged, features: merged.features.filter(featureAllowed) };
+}
+
 export function defaultInput(campaign: CampaignId = "intro", platform: PlatformId = "x-video"): StudioInput {
-  const t = CAMPAIGNS[campaign];
+  const t = template(campaign);
   return { campaign, platform, message: "", audience: "", features: [...t.features], cta: t.cta, url: "", details: "", variant: 0 };
 }
 
@@ -257,12 +297,14 @@ function fitPost(parts: { text: string; optional?: number }[]): string {
 }
 
 export function generate(input: StudioInput): GeneratedContent {
-  const t = CAMPAIGNS[input.campaign];
+  const t = template(input.campaign);
   const v = input.variant;
-  const chosen = (input.features.length ? input.features : t.features).map((id) => FEATURES[id]).filter(Boolean);
+  // held features are dropped while the teaser phase is on, whatever was picked
+  const chosen = (input.features.length ? input.features : t.features).filter(featureAllowed).map((id) => FEATURES[id]).filter(Boolean);
   // creatives show every chosen feature; text skips what the support line already says
   const feats = chosen.filter((f) => !t.covered?.includes(f.id));
-  const url = input.url.trim();
+  // no links of any kind before the official reveal
+  const url = PRELAUNCH ? "" : input.url.trim();
   const shownUrl = url ? displayUrl(url) : "";
   const cta = input.cta.trim() || t.cta;
   const message = input.message.trim();
@@ -308,10 +350,15 @@ export function generate(input: StudioInput): GeneratedContent {
       { value: String(FACTS.rarityCount), label: "rarity tiers" },
       { value: String(FACTS.formCount), label: "evolution forms" },
     ],
-    points: chosen.slice(0, 3).map((f) => f.label),
+    points: t.points ?? chosen.slice(0, 3).map((f) => f.label),
+    signoff: PRELAUNCH ? cta.toUpperCase() : "",
   };
 
   const notes: string[] = [];
+  if (PRELAUNCH && t.heldInPrelaunch) notes.push(`HOLD until the reveal: ${t.heldInPrelaunch}`);
+  if (PRELAUNCH && input.url.trim()) notes.push("The URL was left out: links are locked during the prelaunch teaser phase.");
+  const dropped = input.features.filter((id) => !featureAllowed(id));
+  if (dropped.length) notes.push(`Held until launch and left out: ${dropped.map((id) => FEATURES[id].label).join(", ")}.`);
   if (t.note && !details) notes.push(t.note);
   if (message || details) notes.push("Your main message and campaign details are used as written. Check any claims in them before posting.");
 
@@ -332,8 +379,22 @@ export function generate(input: StudioInput): GeneratedContent {
 
 /** Claim warnings across everything a draft would publish. */
 export function checkContent(c: Pick<GeneratedContent, "caption" | "thread" | "creative">): ClaimWarning[] {
-  const all = [c.caption, ...c.thread, c.creative.hook, c.creative.headline, c.creative.sub, c.creative.tagline, c.creative.cta, ...c.creative.callouts].join("\n");
-  return lintClaims(all);
+  const all = [c.caption, ...c.thread, ...creativeText(c.creative)].join("\n");
+  return [...lintClaims(all), ...(PRELAUNCH ? lintPrelaunch(all) : [])];
+}
+
+const creativeText = (c: CreativeCopy) => [c.hook, c.headline, c.sub, c.eyebrow, c.tagline, c.cta, c.url, c.signoff, ...c.callouts, ...c.points, ...c.stats.flatMap((s) => [s.value, s.label])];
+
+/**
+ * Render-time guard: refuses creative copy that would reveal the site or the
+ * coin during the teaser phase. The render script calls it for every asset, so
+ * no export can carry a URL by accident.
+ */
+export function assertPrelaunchSafe(c: CreativeCopy, label = "creative") {
+  if (!PRELAUNCH) return;
+  const text = creativeText(c).join("\n");
+  const problems = [...(c.url ? [{ match: c.url, reason: "URL field must be empty" }] : []), ...lintPrelaunch(text)];
+  if (problems.length || revealsSite(text)) throw new Error(`${label} breaks the prelaunch rule: ${problems.map((p) => `"${p.match}" (${p.reason})`).join("; ") || "reveals the site"}`);
 }
 
 export function graphicData(): GraphicData {

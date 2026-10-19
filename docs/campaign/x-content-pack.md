@@ -1,14 +1,49 @@
-# Solanites X content pack · Phoenix campaign
+# Solanites X content pack · Phoenix teaser campaign
 
-Drafts for review. Nothing here is posted automatically. Generated from `src/studio/contentPack.ts` by `npm run campaign:render`; every figure comes from the live game config.
+**PRELAUNCH TEASER PHASE.** Drafts for review only: nothing is posted or scheduled automatically. No website or preview links, contract addresses, launch dates or token details appear in any approved post or creative.
 
-Assets live in `public/campaign/` (also downloadable from the Content Studio at `/studio`).
+5 posts are approved in principle for the teaser phase; 4 are on hold until the official reveal and production verification. Every post still needs your sign-off before it goes out.
 
-## Post 1: Phoenix reveal
+Generated from `src/studio/contentPack.ts` by `npm run campaign:render`; every figure comes from the live game config. Assets live in `public/campaign/`.
 
-**Objective:** Establish the Phoenix as the face of Solanites before any explanation. Pure awareness: make people stop scrolling.  
-**When:** Day 1  
-**Creative:** `public/campaign/stills/x-01-phoenix-reveal.jpg`, Phoenix with raised wings on the right, headline on the left.  
+## Post 1: First post: which creature would you hatch?
+
+**Status:** APPROVED IN PRINCIPLE (teaser-safe)  
+**Objective:** Open @solanites_ with a question anyone can answer. Builds recognition and replies before anything is revealed.  
+**When:** Day 1 · first post  
+**Creative:** `public/campaign/stills/x-00-which-creature-4x5.jpg` (also `stills/x-00-which-creature-1x1.jpg`): 4:5 portrait: the Phoenix with three choices (Phoenix, Something rare, The unknown). A 1:1 version is included.  
+**CTA:** Reply with your pick
+
+```text
+Every legend starts somewhere. 🐦‍🔥
+
+28 creatures. One world. Your story hasn't begun yet.
+
+When your egg hatches, what are you hoping for?
+
+🔥 A Phoenix
+⚡ Something rare
+👁️ Something nobody has seen before
+
+Reply with your pick.
+
+SOLANITES. The beginning is near.
+```
+
+**Follow-up reply:**
+
+```text
+Phoenix pickers are aiming high: it's one of 6 Legendary species.
+
+Whatever you're hoping for, what would you name your first hatch? 👇
+```
+
+## Post 2: Phoenix reveal
+
+**Status:** APPROVED IN PRINCIPLE (teaser-safe)  
+**Objective:** Establish the Phoenix as the face of Solanites. Pure awareness: make people stop scrolling.  
+**When:** Day 2  
+**Creative:** `public/campaign/stills/x-01-phoenix-reveal.jpg`: Phoenix with raised wings on the right, headline on the left.  
 **CTA:** Follow for the reveal
 
 ```text
@@ -17,14 +52,67 @@ This is the face of Solanites.
 Pyraurum, Phoenix of the Golden Pyre. One of 6 Legendary species waiting inside the eggs.
 
 It burns, falls, and rises again. Brighter every time.
+
+Follow for the reveal.
 ```
 
-## Post 2: The hatchery
+## Post 3: Collection discovery
 
-**Objective:** Explain the core loop in one scannable post, so new followers understand what they would actually do.  
-**When:** Day 2  
-**Creative:** `public/campaign/stills/x-02-hatchery.jpg`, Incubation stepper (the four real egg stages and the four forms) beside the Phoenix.  
-**CTA:** Enter the Hatchery
+**Status:** APPROVED IN PRINCIPLE (teaser-safe)  
+**Objective:** Show the depth of the catalogue with the confirmed species count and seed the collecting instinct.  
+**When:** Day 3  
+**Creative:** `public/campaign/stills/x-03-collection.jpg`: All 13 elements as chips under the species count.  
+**CTA:** The story begins soon
+
+```text
+28 species. 13 elements. 4 forms each.
+
+From Mossling to Pyraurum, every Solanite has its own body plan and original art.
+
+4 Mythic and 2 Secret species stay classified until someone hatches one.
+
+How many will you find? The story begins soon.
+```
+
+## Post 4: Cinematic Phoenix film
+
+**Status:** APPROVED IN PRINCIPLE (teaser-safe)  
+**Objective:** Lead with the Phoenix film. Upload the MP4 natively so it autoplays.  
+**When:** Day 4  
+**Creative:** `public/campaign/ads/solanites-phoenix-16x9.mp4`: The 11.6 s Phoenix film, 16:9. The 1:1 and 4:5 cuts suit feed placements, 9:16 suits Stories.  
+**CTA:** Follow for the reveal
+
+```text
+Not just another egg.
+
+28 species to discover. 6 rarity tiers. Every one of them starts inside a shell.
+
+Follow for the reveal.
+```
+
+## Post 5: Community: name it
+
+**Status:** APPROVED IN PRINCIPLE (teaser-safe)  
+**Objective:** A second genuine conversation starter, around naming. Replies, not clicks.  
+**When:** Day 5  
+**Creative:** `public/campaign/stills/x-07-community.jpg`: Question card. Optional follow-up poll: which bloodline are you hoping for?  
+**CTA:** Reply with yours
+
+```text
+Every Solanite you hatch will carry a name you choose.
+
+What's the first name going on yours?
+```
+
+**Poll (optional reply):** Legendary / Mythic / Secret / Whatever hatches
+
+## Post 6: The hatchery (hold)
+
+**Status:** HOLD. Needs live egg tracking in production (token mint, Solana data, database), which is not verified, and names the token.  
+**Objective:** Explain the core loop once the Hatchery can be revealed.  
+**When:** After the reveal  
+**Creative:** `public/campaign/stills/x-02-hatchery.jpg`: Incubation stepper (the four real egg stages and the four forms) beside the Phoenix.  
+**CTA:** Enter the Hatchery (after the reveal)
 
 ```text
 Inside the Hatchery:
@@ -37,29 +125,13 @@ Inside the Hatchery:
 No wallet connection needed to look up eggs.
 ```
 
-## Post 3: Collection discovery
+## Post 7: Rarity (hold)
 
-**Objective:** Show the depth of the catalogue with the confirmed species count, and seed the collecting instinct.  
-**When:** Day 3  
-**Creative:** `public/campaign/stills/x-03-collection.jpg`, All 13 elements as chips under the species count.  
-**CTA:** Explore the Collection
-
-```text
-28 species. 13 elements. 4 forms each.
-
-From Mossling to Pyraurum, every Solanite has its own body plan and original art.
-
-4 Mythic and 2 Secret species stay classified until someone hatches one.
-
-How many can you find?
-```
-
-## Post 4: Rarity
-
-**Objective:** Explain the real rarity system with the published weights. Transparent, not hype: no outcome is promised.  
-**When:** Day 4  
-**Creative:** `public/campaign/stills/x-04-rarity.jpg`, The six tiers with their in-game colours and published hatch weights.  
-**CTA:** See the full rules
+**Status:** HOLD. Quotes hatch odds and server-side sealing, which describe live hatching. Needs production verification.  
+**Objective:** Explain the rarity system with the published weights once hatching is live.  
+**When:** After the reveal  
+**Creative:** `public/campaign/stills/x-04-rarity.jpg`: The six tiers with their in-game colours and hatch weights.  
+**CTA:** See the full rules (after the reveal)
 
 ```text
 6 bloodlines:
@@ -74,12 +146,13 @@ Secret 0.2%
 Each egg's rarity is sealed when it's earned and revealed when it hatches. Those are the published odds, and no outcome is guaranteed.
 ```
 
-## Post 5: Brand introduction
+## Post 8: Brand introduction (hold)
 
-**Objective:** The pinned explainer for people discovering the project for the first time.  
-**When:** Pin it  
-**Creative:** `public/campaign/stills/endcard-16x9.jpg`, The campaign end card: logo, key figures and the website.  
-**CTA:** Enter the Hatchery
+**Status:** HOLD. Needs live egg tracking in production (token mint, Solana data, database), which is not verified, and names the token.  
+**Objective:** The pinned explainer for launch day.  
+**When:** Launch day  
+**Creative:** `public/campaign/stills/endcard-16x9.jpg`: The campaign end card: logo, key figures and the teaser CTA.  
+**CTA:** Enter the Hatchery (after the reveal)
 
 ```text
 Solanites in one line:
@@ -91,84 +164,13 @@ Hold $SLNT, earn eggs, and hatch creatures that keep evolving for as long as you
 No wallet needed to explore.
 ```
 
-**Optional thread:**
+## Post 9: Website traffic (hold)
 
-1.
-
-```text
-Solanites is a creature-collecting world on Solana.
-
-Hold $SLNT and eggs arrive on their own. Hatch them, collect 28 species and watch each one grow through 4 forms.
-
-A quick thread ↓
-```
-
-2.
-
-```text
-28 species to discover across 13 elements.
-
-Each one has its own body plan, from a leaf-armoured quadruped to a sky whale to a phoenix in flight.
-```
-
-3.
-
-```text
-6 rarity tiers: Common, Rare, Epic, Legendary, Mythic and Secret.
-
-The rarer the creature, the bigger the reveal: Epic and above get light rays, Mythic a nebula, Secret prism rays.
-```
-
-4.
-
-```text
-Hatch your eggs, build your collection and watch every creature evolve.
-
-Eggs incubate, open when you choose to hatch them, then grow from Eggling to Ascended.
-```
-
-5.
-
-```text
-Your Solanite is waiting.
-
-#Solanites #Solana
-```
-
-## Post 6: Cinematic video launch
-
-**Objective:** Lead with the Phoenix film as the teaser. Upload natively for autoplay; add the link in a reply once the domain is final.  
-**When:** Day 5  
-**Creative:** `public/campaign/ads/solanites-phoenix-16x9.mp4`, The 11.6 s Phoenix advert, 16:9. Use the 1:1 or 4:5 cut if it's going into a feed ad.  
-**CTA:** Enter the Hatchery
-
-```text
-Not just another egg.
-
-28 species to discover. 6 rarity tiers. Every one of them starts inside a shell.
-```
-
-## Post 7: Community engagement
-
-**Objective:** Start a genuine conversation around a real feature (naming). Replies, not clicks, so the caption carries no link.  
-**When:** Day 6  
-**Creative:** `public/campaign/stills/x-07-community.jpg`, Question card. Optional follow-up poll: which bloodline are you hoping for?  
-**CTA:** Reply with yours
-
-```text
-You can name every Solanite you hatch.
-
-What's the first name going on yours?
-```
-
-**Poll (optional reply):** Legendary / Mythic / Secret / Whatever hatches
-
-## Post 8: Website traffic
-
-**Objective:** Direct response: give three concrete things to do on the site, none of which need a wallet. Add the final link (or point to the profile link) once the domain is settled.  
-**When:** Day 7  
-**Creative:** `public/campaign/stills/x-08-explore.jpg`, Three things to do on the site, plus the CTA button.  
-**CTA:** Enter the Hatchery
+**Status:** HOLD. Sends people to the website, which stays unrevealed until you authorise it. Add the official link then.  
+**Objective:** Direct response once the site is revealed: three things to do there.  
+**When:** After the reveal  
+**Creative:** `public/campaign/stills/x-08-explore.jpg`: Three things to do on the site, plus a CTA button.  
+**CTA:** Enter the Hatchery (after the reveal)
 
 ```text
 You don't need a wallet to look around.

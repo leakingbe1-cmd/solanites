@@ -14,6 +14,7 @@ Six teaser images for @solanites_, made to post before the official reveal. They
 | 4 | Fire is only the beginning | `export/4x5/04-fire-beginning.jpg` | `export/1x1/04-fire-beginning.jpg` |
 | 5 | What makes a creature legendary? | `export/4x5/05-legendary.jpg` | `export/1x1/05-legendary.jpg` |
 | 6 | The story is taking shape | `export/4x5/06-taking-shape.jpg` | `export/1x1/06-taking-shape.jpg` |
+| 7 | Holder distribution | `export/4x5/07-holder-distribution.jpg` | `export/1x1/07-holder-distribution.jpg` |
 
 Paths are relative to `campaign/x-teasers/`. Use the 4:5 versions on X; the 1:1 versions are for anywhere a square crop is forced.
 
@@ -128,6 +129,24 @@ Stay close. The reveal is coming.
 
 ```text
 Before we show you anything: what do you think Solanites is? Best guesses get a reply.
+```
+
+### Post 7 · Image 7 · Holder distribution
+
+**Image:** `export/4x5/07-holder-distribution.jpg`
+
+Post it only while the site's holder distribution page still says the same thing. Every line on the image is taken from that page (`src/app/claims/page.tsx` on `main`, `5e9952a`). It doesn't state an amount, a launch time or eligibility rules, because the page marks all three as pending.
+
+```text
+The locked developer supply goes back to holders.
+
+Split equally, two hours after launch. Who's eligible and how much will be published on the site.
+```
+
+**Follow-up reply:**
+
+```text
+Questions about how it'll work? Drop them below.
 ```
 
 ## Claims check

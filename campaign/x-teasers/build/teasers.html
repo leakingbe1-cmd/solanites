@@ -1,0 +1,341 @@
+<!doctype html>
+<!--
+  Solanites X teasers (prelaunch). Rendered by render.mjs: teasers.html?id=1..6&ratio=4x5|1x1
+  Teaser rule: nothing on a creative beyond its approved copy (see APPROVED in check.mjs).
+  check.mjs also blocks links, addresses, dates and token or financial wording on every render.
+-->
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Unbounded"; src: url("fonts/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; }
+  @font-face { font-family: "Inter"; src: url("fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+  @font-face { font-family: "JetBrains Mono"; src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+
+  :root {
+    --void: #05050a;
+    --gold-1: #fff3d6;
+    --gold-2: #ffd27a;
+    --gold-3: #f5a524;
+    --ember: #ff7a1a;
+    --purple: #9945ff;
+    --cyan: #00c2ff;
+    --mist: #a6a3c4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--void); }
+  #stage { position: relative; overflow: hidden; background: var(--void); }
+  .layer { position: absolute; inset: 0; pointer-events: none; }
+  .img { position: absolute; background-repeat: no-repeat; background-size: 100% 100%; }
+
+  .display { font-family: "Unbounded", sans-serif; text-transform: uppercase; color: #f4f1ff; }
+  .mono { font-family: "JetBrains Mono", monospace; text-transform: uppercase; }
+  .gold {
+    background: linear-gradient(180deg, var(--gold-1) 0%, var(--gold-2) 38%, var(--gold-3) 78%, #c96b12 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .shadow { filter: drop-shadow(0 4px 28px rgba(0,0,0,.85)) drop-shadow(0 0 2px rgba(0,0,0,.6)); }
+  .glow { filter: drop-shadow(0 0 22px rgba(255,150,40,.45)) drop-shadow(0 4px 24px rgba(0,0,0,.8)); }
+  .abs { position: absolute; }
+  .center-x { left: 0; right: 0; text-align: center; }
+
+  .lockup { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .lockup span { font-family: "Unbounded", sans-serif; font-weight: 600; color: #fff; letter-spacing: .32em; margin-right: -.32em; }
+
+  .card {
+    position: absolute; border-radius: 22px;
+    background: linear-gradient(180deg, rgba(20,16,30,.78), rgba(8,7,14,.86));
+    border: 1px solid rgba(255,200,120,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06), 0 20px 60px rgba(0,0,0,.6);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .card .idx { font-family: "JetBrains Mono", monospace; color: rgba(255,210,140,.6); letter-spacing: .3em; }
+  .card .label { font-family: "Unbounded", sans-serif; font-weight: 700; text-transform: uppercase; color: #fff; text-align: center; white-space: nowrap; line-height: 1.08; }
+  .card .label.two { min-height: 2.16em; display: flex; align-items: center; justify-content: center; }
+  .rule { position: absolute; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,200,120,.55), transparent); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+const P = new URLSearchParams(location.search);
+const ID = +(P.get("id") || 1);
+const RATIO = P.get("ratio") || "4x5";
+const W = 1440, H = RATIO === "1x1" ? 1440 : 1800;
+const SQ = RATIO === "1x1";
+const stage = document.getElementById("stage");
+stage.style.width = W + "px"; stage.style.height = H + "px";
+
+// Source images. Coordinates below are in the ORIGINAL pixel space of each source.
+const STILL = { src: ".cache/phoenix-still@2x.jpg", w: 2000, h: 1116, head: [1010, 380] };
+const FRAME = { src: ".cache/rebirth-frame@3x.jpg", w: 1280, h: 720, head: [655, 215] };
+
+function el(tag, cls, css = {}, html = "") {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  Object.assign(e.style, css);
+  if (html) e.innerHTML = html;
+  return e;
+}
+function add(e, parent = stage) { parent.appendChild(e); return e; }
+
+// Place a source so its anchor point (default: the head) lands at (x, y) at the given scale.
+function place(img, scale, x, y, css = {}, anchor = img.head) {
+  const d = el("div", "img", {
+    left: (x - anchor[0] * scale) + "px", top: (y - anchor[1] * scale) + "px",
+    width: img.w * scale + "px", height: img.h * scale + "px",
+    backgroundImage: `url("${img.src}")`, ...css,
+  });
+  // feather the source's own edges so no rectangle shows inside the frame
+  const f = "linear-gradient(180deg, transparent, #000 9%, #000 91%, transparent), linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent)";
+  d.style.webkitMaskImage = f; d.style.maskImage = f; d.style.webkitMaskComposite = "source-in"; d.style.maskComposite = "intersect";
+  return add(d);
+}
+
+// Seeded RNG so every render is identical.
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// Drifting embers. region = [x0, y0, x1, y1], bias pulls them toward the bottom.
+function embers({ seed = 1, count = 60, region = [0, 0, W, H], size = [1.2, 4], alpha = [.35, 1], blur = 0, hue = "warm" } = {}) {
+  const c = el("canvas", "layer"); c.width = W; c.height = H; add(c);
+  const g = c.getContext("2d"); const r = rng(seed);
+  if (blur) c.style.filter = `blur(${blur}px)`;
+  for (let i = 0; i < count; i++) {
+    const x = region[0] + r() * (region[2] - region[0]);
+    const y = region[1] + Math.pow(r(), .8) * (region[3] - region[1]);
+    const s = size[0] + Math.pow(r(), 2.4) * (size[1] - size[0]);
+    const a = alpha[0] + r() * (alpha[1] - alpha[0]);
+    const col = hue === "warm" ? (r() < .7 ? [255, 160, 60] : [255, 220, 150]) : [255, 190, 90];
+    const grd = g.createRadialGradient(x, y, 0, x, y, s * 4);
+    grd.addColorStop(0, `rgba(255,248,230,${a})`);
+    grd.addColorStop(.18, `rgba(${col},${a})`);
+    grd.addColorStop(1, `rgba(${col},0)`);
+    g.fillStyle = grd; g.beginPath(); g.arc(x, y, s * 4, 0, Math.PI * 2); g.fill();
+  }
+  return c;
+}
+
+// Smoke: fractal noise mapped to alpha, tinted, optionally masked.
+let fid = 0;
+function smoke({ seed = 3, freq = .0035, octaves = 5, color = [120, 110, 150], opacity = .5, gain = 1.6, cut = .55, mask = "", blend = "normal" } = {}) {
+  const id = "f" + (++fid);
+  const [r, g, b] = color.map(v => (v / 255).toFixed(3));
+  const svg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+    <filter id="${id}" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="${freq}" numOctaves="${octaves}" seed="${seed}" stitchTiles="stitch"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 ${r}  0 0 0 0 ${g}  0 0 0 0 ${b}  ${gain} 0 0 0 -${cut}"/>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#${id})"/>
+  </svg>`;
+  const d = el("div", "layer", { opacity, mixBlendMode: blend }, svg);
+  if (mask) { d.style.webkitMaskImage = mask; d.style.maskImage = mask; }
+  return add(d);
+}
+
+function glowSpot(x, y, r, color, opacity = 1, blend = "screen") {
+  return add(el("div", "layer", { background: `radial-gradient(${r}px ${r}px at ${x}px ${y}px, ${color}, transparent 70%)`, opacity, mixBlendMode: blend }));
+}
+function shade(css) { return add(el("div", "layer", { background: css })); }
+
+function grain(opacity = .07) {
+  const svg = `<svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg"><filter id="gr"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="9" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#gr)"/></svg>`;
+  add(el("div", "layer", { opacity, mixBlendMode: "overlay" }, svg));
+}
+function vignette(strength = .85) {
+  shade(`radial-gradient(ellipse 75% 70% at 50% 45%, transparent 45%, rgba(3,3,8,${strength}) 100%)`);
+}
+
+// Official mark from src/components/layout/Logo.tsx (same paths and gradient).
+function logoMark(size) {
+  const id = "lg" + (++fid);
+  return `<svg viewBox="0 0 40 40" width="${size}" height="${size}" style="display:block;filter:drop-shadow(0 0 ${size / 5}px rgba(0,194,255,.35))">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9945ff"/><stop offset=".55" stop-color="#00c2ff"/><stop offset="1" stop-color="#14f195"/></linearGradient></defs>
+    <path d="M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z" fill="none" stroke="url(#${id})" stroke-width="2"/>
+    <path d="M20,14 L25,21 L20,29 L15,21 Z" fill="url(#${id})"/>
+    <path d="M9,24 L14,22 L16,26 M31,24 L26,22 L24,26" fill="none" stroke="url(#${id})" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>`;
+}
+// Small brand lockup, same size and position on every teaser that is not the wordmark reveal.
+function lockup(bottom = SQ ? 54 : 66, size = 36, opacity = .92) {
+  return add(el("div", "lockup", { bottom: bottom + "px", opacity }, `${logoMark(size * 1.25)}<span style="font-size:${size * .82}px">SOLANITES</span>`));
+}
+
+// Text block; shrinks to fit maxW if needed.
+function text(html, { top, bottom, size, weight = 800, cls = "display shadow", tracking = "-.01em", lh = 1.06, maxW = W - 160, color, align = "center", left } = {}) {
+  const d = el("div", "abs " + cls, {
+    top: top != null ? top + "px" : "", bottom: bottom != null ? bottom + "px" : "",
+    left: left != null ? left + "px" : "0", right: left != null ? "" : "0",
+    textAlign: align, fontSize: size + "px", fontWeight: weight, letterSpacing: tracking, lineHeight: lh,
+    ...(color ? { color } : {}),
+  }, html);
+  add(d);
+  d.querySelectorAll("[data-line]").forEach(line => {
+    line.style.display = "inline-block"; line.style.whiteSpace = "nowrap";
+    let s = size;
+    while (line.getBoundingClientRect().width > maxW && s > 10) { s -= 2; line.style.fontSize = s + "px"; }
+  });
+  return d;
+}
+function rule(x, y, w) { return add(el("div", "rule", { left: x + "px", top: y + "px", width: w + "px" })); }
+
+// ── Icons (line art, gold) ─────────────────────────────────
+const ICON = {
+  flame: c => `<path d="M32 6c3 10 14 15 14 30a14 14 0 0 1-28 0c0-7 3-11 6-14 0 6 3 9 6 9-3-9 0-18 2-25z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/><path d="M32 34c2 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3-1-3 0-6 1-8z" fill="${c}" opacity=".9"/>`,
+  bolt: c => `<path d="M36 4 14 36h14l-4 24 26-34H35z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/>`,
+  eye: c => `<path d="M4 32s10-16 28-16 28 16 28 16-10 16-28 16S4 32 4 32z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/><circle cx="32" cy="32" r="9" fill="none" stroke="${c}" stroke-width="2.6"/><circle cx="32" cy="32" r="3.6" fill="${c}"/>`,
+  quill: c => `<path d="M50 6C30 10 18 26 14 50l-4 8M14 50c14-2 26-10 32-22l-12 2 14-10c2-4 3-9 4-14z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>`,
+  gem: c => `<path d="M18 10h28l12 14-26 32L6 24z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/><path d="M6 24h52M24 10l-6 14 14 32 14-32-6-14" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round" opacity=".75"/>`,
+  power: c => `<circle cx="32" cy="32" r="24" fill="none" stroke="${c}" stroke-width="2.6"/><path d="M35 12 22 35h10l-3 17 13-24H32z" fill="${c}" opacity=".95"/>`,
+  crescent: c => `<path d="M42 8a24 24 0 1 0 14 34A20 20 0 0 1 42 8z" fill="none" stroke="${c}" stroke-width="2.6" stroke-linejoin="round"/><circle cx="46" cy="22" r="2" fill="${c}"/><circle cx="54" cy="14" r="1.4" fill="${c}"/>`,
+};
+function icon(name, size, color, glow) {
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" style="display:block;overflow:visible;filter:drop-shadow(0 0 ${size / 6}px ${glow})">${ICON[name](color)}</svg>`;
+}
+
+const L = s => `<span data-line>${s}</span>`;
+
+// ── The six teasers ────────────────────────────────────────
+const TEASERS = {
+  // 1 · THE AWAKENING: tight, colossal, head emerging out of black.
+  1() {
+    const s = SQ ? 1.4 : 1.75, hy = SQ ? 470 : 660;
+    place(STILL, s, W / 2, hy, { filter: "contrast(1.08) saturate(1.05)" });
+    smoke({ seed: 11, freq: .0028, color: [70, 50, 110], opacity: .35, cut: .5 });
+    shade(`linear-gradient(180deg, rgba(5,5,10,.55) 0%, transparent 18%, transparent ${SQ ? 42 : 48}%, rgba(5,5,10,.92) ${SQ ? 70 : 72}%, #05050a ${SQ ? 84 : 86}%)`);
+    vignette(.9);
+    glowSpot(W / 2, hy, 260, "rgba(255,170,60,.35)", 1);
+    embers({ seed: 4, count: 70, region: [0, hy - 300, W, H - 120], size: [1, 3.6] });
+    embers({ seed: 5, count: 10, region: [0, 0, W, H], size: [5, 12], alpha: [.25, .55], blur: 6 });
+    grain();
+    text(L("EVERY LEGEND STARTS WITH AN"), { top: SQ ? 1000 : 1290, size: SQ ? 44 : 50, weight: 500, tracking: ".08em" });
+    text(L("AWAKENING."), { top: SQ ? 1068 : 1366, size: SQ ? 132 : 150, weight: 900, cls: "display gold glow", tracking: "-.02em", maxW: W - 140 });
+    lockup();
+  },
+
+  // 2 · WHICH CREATURE WOULD YOU HATCH? Phoenix above, three choices below.
+  2() {
+    const s = SQ ? .66 : .82, hy = SQ ? 300 : 370;
+    place(STILL, s, W / 2, hy, { filter: "contrast(1.06)" });
+    smoke({ seed: 21, freq: .003, color: [60, 50, 100], opacity: .5, cut: .52 });
+    shade(`linear-gradient(180deg, transparent ${SQ ? 30 : 32}%, rgba(5,5,10,.9) ${SQ ? 50 : 50}%, #05050a ${SQ ? 62 : 60}%)`);
+    vignette(.8);
+    embers({ seed: 7, count: 50, region: [0, 0, W, H * .55], size: [1, 3.2] });
+    grain(.06);
+    text(L("WHICH CREATURE") + "<br>" + L(`WOULD YOU <span class="gold">HATCH?</span>`), { top: SQ ? 720 : 900, size: SQ ? 84 : 96, weight: 800 });
+
+    const top = SQ ? 975 : 1200, ch = SQ ? 300 : 370, gap = 26, cw = (W - 120 - gap * 2) / 3;
+    const choices = [
+      ["01", "flame", "#ffb347", "rgba(255,140,40,.8)", "PHOENIX"],
+      ["02", "bolt", "#5fd8ff", "rgba(0,194,255,.75)", "SOMETHING<br>RARE"],
+      ["03", "eye", "#c7a6ff", "rgba(153,69,255,.8)", "THE<br>UNKNOWN"],
+    ];
+    choices.forEach(([idx, ic, col, glow, label], i) => {
+      const c = add(el("div", "card", { left: 60 + i * (cw + gap) + "px", top: top + "px", width: cw + "px", height: ch + "px", gap: SQ ? "16px" : "22px", borderColor: i === 0 ? "rgba(255,190,100,.5)" : "rgba(255,255,255,.12)" }));
+      c.innerHTML = `<div class="idx" style="font-size:${SQ ? 20 : 22}px">${idx}</div>${icon(ic, SQ ? 72 : 88, col, glow)}<div class="label two" style="font-size:${SQ ? 40 : 46}px">${label}</div>`;
+      const lab = c.querySelector(".label"); let fs = parseFloat(lab.style.fontSize);
+      while (lab.scrollWidth > cw - 40) { fs -= 1; lab.style.fontSize = fs + "px"; }
+    });
+    lockup();
+  },
+
+  // 3 · SOMETHING IS STIRRING: near-total darkness, a faint golden outline of wings.
+  3() {
+    const s = SQ ? .82 : .95, hy = SQ ? 610 : 760;
+    const p = place(STILL, s, W / 2, hy, { filter: "brightness(.55) contrast(2.7) saturate(1.35)", opacity: .62 });
+    const m = `radial-gradient(ellipse 50% 46% at 50% 44%, #000 0%, rgba(0,0,0,.55) 45%, transparent 80%)`;
+    p.style.webkitMaskImage = m; p.style.maskImage = m;
+    smoke({ seed: 31, freq: .0025, color: [24, 20, 40], opacity: .55, cut: .45 });
+    smoke({ seed: 32, freq: .005, color: [90, 60, 40], opacity: .1, cut: .6, blend: "screen" });
+    vignette(.97);
+    shade("rgba(3,3,7,.35)");
+    // the eyes catch light first
+    [-24, 24].forEach(dx => glowSpot(W / 2 + dx * s, hy - 6 * s, 26, "rgba(255,235,180,.95)", 1));
+    glowSpot(W / 2, hy - 6 * s, 120, "rgba(255,160,50,.35)", 1);
+    embers({ seed: 13, count: 22, region: [200, hy - 120, W - 200, H - 200], size: [1, 2.6], alpha: [.3, .9] });
+    embers({ seed: 14, count: 5, region: [0, 0, W, H], size: [6, 12], alpha: [.15, .35], blur: 8 });
+    grain(.08);
+    text(L("SOMETHING IS STIRRING") + "<br>" + L("IN THE DARKNESS."), { top: SQ ? 1080 : 1360, size: SQ ? 52 : 58, weight: 400, tracking: ".12em", lh: 1.5, cls: "display shadow", color: "rgba(255,226,170,.88)" });
+    lockup(undefined, 26, .6);
+  },
+
+  // 4 · FIRE IS ONLY THE BEGINNING: the rebirth vortex, wings fully open.
+  4() {
+    const s = SQ ? 1.45 : 1.62, hy = SQ ? 610 : 800;
+    // blurred extension of the same frame fills the space above and below
+    place(FRAME, s * 1.7, W / 2, hy, { filter: "blur(40px) brightness(.45) saturate(1.2)" });
+    const p = place(FRAME, s, W / 2, hy, { filter: "contrast(1.1) saturate(1.12)" });
+    const m = `linear-gradient(180deg, transparent 0%, #000 14%, #000 82%, transparent 100%), linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%)`;
+    p.style.webkitMaskImage = m; p.style.maskImage = m; p.style.webkitMaskComposite = "source-in"; p.style.maskComposite = "intersect";
+    glowSpot(W / 2, hy + 120, 520, "rgba(255,140,30,.35)", 1);
+    shade(`linear-gradient(180deg, rgba(5,5,10,.96) 0%, rgba(5,5,10,.75) ${SQ ? 15 : 14}%, transparent ${SQ ? 32 : 28}%, transparent 80%, rgba(5,5,10,.85) 100%)`);
+    embers({ seed: 41, count: 90, region: [0, 0, W, H], size: [1, 4.2] });
+    grain(.06);
+    text(L("FIRE IS ONLY"), { top: SQ ? 62 : 92, size: SQ ? 92 : 110, weight: 900, tracking: "-.02em" });
+    text(L(`<span class="gold">THE BEGINNING.</span>`), { top: SQ ? 166 : 214, size: SQ ? 92 : 110, weight: 900, tracking: "-.02em", cls: "display glow" });
+    lockup();
+  },
+
+  // 5 · WHAT MAKES A CREATURE LEGENDARY? Typographic, the Phoenix watching from above.
+  5() {
+    const s = SQ ? 1.35 : 1.7, hy = SQ ? 300 : 410;
+    const p = place(STILL, s, W / 2, hy, { filter: "brightness(.62) contrast(1.15)" });
+    const m = `radial-gradient(ellipse 46% 40% at 50% ${((hy + 40) / H * 100).toFixed(1)}%, #000 30%, transparent 100%)`;
+    p.style.webkitMaskImage = m; p.style.maskImage = m;
+    smoke({ seed: 51, freq: .003, color: [60, 45, 100], opacity: .55, cut: .5 });
+    shade(`linear-gradient(180deg, transparent 20%, rgba(5,5,10,.85) ${SQ ? 38 : 38}%, rgba(5,5,10,.95) 60%)`);
+    glowSpot(W * .15, H * .82, 500, "rgba(153,69,255,.12)", 1);
+    glowSpot(W * .88, H * .7, 460, "rgba(0,194,255,.08)", 1);
+    embers({ seed: 52, count: 40, region: [0, 0, W, H * .5], size: [1, 3] });
+    grain(.06);
+    text(L("WHAT MAKES A CREATURE"), { top: SQ ? 480 : 640, size: SQ ? 54 : 60, weight: 600, tracking: ".04em" });
+    text(L(`<span class="gold">LEGENDARY?</span>`), { top: SQ ? 550 : 718, size: SQ ? 136 : 154, weight: 900, tracking: "-.02em", cls: "display glow", maxW: W - 120 });
+
+    const opts = [["quill", "DESIGN"], ["gem", "RARITY"], ["power", "POWER"], ["crescent", "MYSTERY"]];
+    const top = SQ ? 830 : 1010, gap = SQ ? 20 : 24, cw = (W - 120 - gap) / 2, ch = SQ ? 186 : 230;
+    opts.forEach(([ic, label], i) => {
+      const x = 60 + (i % 2) * (cw + gap), y = top + Math.floor(i / 2) * (ch + gap);
+      add(el("div", "card", { left: x + "px", top: y + "px", width: cw + "px", height: ch + "px", flexDirection: "row", gap: SQ ? "28px" : "34px" },
+        `${icon(ic, SQ ? 70 : 84, "#ffc970", "rgba(255,150,40,.6)")}<div class="label" style="font-size:${SQ ? 42 : 48}px">${label}</div>`));
+    });
+    lockup();
+  },
+
+  // 6 · THE STORY IS TAKING SHAPE: Phoenix through smoke and cosmic light, the wordmark.
+  6() {
+    const s = SQ ? .74 : .9, hy = SQ ? 380 : 520;
+    place(STILL, s, W / 2, hy, { filter: "contrast(1.05) saturate(1.05)" });
+    // cosmic light behind the smoke
+    glowSpot(W * .2, hy - 140, 520, "rgba(153,69,255,.32)", 1);
+    glowSpot(W * .84, hy - 220, 460, "rgba(0,194,255,.2)", 1);
+    // dark smoke swallows the wing tips and the lower body; the head stays clear
+    smoke({ seed: 61, freq: .0024, octaves: 6, color: [8, 7, 14], opacity: 1, gain: 3.2, cut: .95,
+      mask: `radial-gradient(ellipse 22% ${SQ ? 16 : 13}% at 50% ${((hy - 40) / H * 100).toFixed(1)}%, transparent 0%, #000 100%)` });
+    smoke({ seed: 66, freq: .0016, octaves: 5, color: [6, 5, 12], opacity: .95, gain: 2.6, cut: .8,
+      mask: `linear-gradient(180deg, transparent ${SQ ? 34 : 34}%, #000 ${SQ ? 50 : 48}%)` });
+    // pale wisps catching the firelight
+    smoke({ seed: 62, freq: .004, octaves: 6, color: [205, 175, 160], opacity: .55, gain: 2.6, cut: 1.0, blend: "screen",
+      mask: `linear-gradient(180deg, transparent 5%, #000 25%, #000 ${SQ ? 55 : 50}%, transparent ${SQ ? 66 : 62}%)` });
+    shade(`linear-gradient(180deg, rgba(5,5,10,.6) 0%, transparent 16%, transparent ${SQ ? 38 : 40}%, rgba(5,5,10,.9) ${SQ ? 58 : 58}%, #05050a 78%)`);
+    vignette(.85);
+    embers({ seed: 64, count: 80, region: [0, 0, W, H * .75], size: [1, 3.8] });
+    embers({ seed: 65, count: 8, region: [0, 0, W, H], size: [6, 14], alpha: [.2, .45], blur: 7 });
+    grain(.07);
+
+    const base = SQ ? 860 : 1120;
+    add(el("div", "lockup", { top: base + "px", flexDirection: "column", gap: "26px" },
+      `${logoMark(SQ ? 96 : 112)}<span style="font-size:${SQ ? 96 : 108}px;font-weight:700;letter-spacing:.24em;margin-right:-.24em;text-shadow:0 0 40px rgba(255,170,60,.35),0 4px 30px rgba(0,0,0,.9)">SOLANITES</span>`));
+    text(L("THE STORY IS TAKING SHAPE."), { top: base + (SQ ? 268 : 300), size: SQ ? 42 : 46, weight: 500, tracking: ".08em" });
+    rule(W / 2 - 300, base + (SQ ? 360 : 400), 600);
+    text(L("FOLLOW FOR THE REVEAL."), { top: base + (SQ ? 388 : 432), size: SQ ? 34 : 38, weight: 400, tracking: ".3em", cls: "mono", color: "#ffd27a" });
+  },
+};
+
+document.fonts.ready.then(async () => {
+  await Promise.all([STILL.src, FRAME.src].map(src => new Promise(res => { const i = new Image(); i.onload = i.onerror = res; i.src = src; })));
+  TEASERS[ID]();
+  await document.fonts.ready;
+  requestAnimationFrame(() => requestAnimationFrame(() => { document.body.dataset.ready = "1"; }));
+});
+</script>
+</body>
+</html>

@@ -44,6 +44,8 @@ No reference image is passed, so the price stays the plain text-to-image rate. C
 **Price evidence for one image.** Two records from this account: `docs/phoenix-intro.md` records Nano Banana Pro **2K** stills at 20 credits each, and the creature-studio branch (`docs/creature-studio/decisions.md`) measured a Nano Banana Pro **1K** image at 20 credits by balance difference. Both are consistent with a flat 20 credits for 1K and 2K. The 2K price has not been confirmed by a balance difference in this session; the test will record one (balance before: 1,935).
 
 ### 1.4 Prompts (final drafts, not run)
+
+> **Superseded (2026-10-19).** Both prompts below are replaced by the hand-painted 2D prompt in `alignment.md` §3. See `alignment.md`.
 **16:9 desktop (test #1):**
 > Premium fantasy game key art, 16:9. A colossal phoenix of hammered molten gold in a three-quarter view, its body on the right third of the frame, turning its head to look toward the left of frame. Its head sits at the upper right third. The near wing rises high and to the right, cropped by the top edge. The far wing sweeps down and left and dissolves into darkness before the middle of the frame. Each feather is a distinct hammered-gold blade with a visible shaft and vanes; flame licks only along the feather edges. The eyes are white-gold with a defined iris and a narrow dark pupil, fierce and intelligent, not blown out. A thin glowing gold halo ring floats above the head. Three long tail plumes curve down to the right. One warm key light from the upper left, a thin violet rim light behind the silhouette, a deep black void. The left 40% of the frame is almost empty: near-black, a faint wisp of smoke, two or three small out-of-focus embers. Controlled highlights with no clipped areas, filmic contrast, extreme fine detail. No lightning, no lens flare, no glow haze, no text, no logo.
 
@@ -69,6 +71,8 @@ Note: an earlier version of `art-direction-v2.md` said the current still fell sh
 ---
 
 ## 2. One direction: The Celestial Atlas
+
+> **Superseded (2026-10-19).** "The Eclipse Vigil" turned out to be the website session's unified-direction page, not v1. It stays an informal description; the working name is The Celestial Atlas. Creature style rules come from the Creature Studio art bible. See `alignment.md`.
 "The Eclipse Vigil" does not appear in the repository or in either of my documents. I have taken it to mean the v1 direction (its eclipse lighting and its Vigil ring and loader). The two now merge into one system with **one name, The Celestial Atlas**, and three rules:
 
 | Rule | What it governs | Comes from |
@@ -89,6 +93,8 @@ Note: an earlier version of `art-direction-v2.md` said the current still fell sh
 ---
 
 ## 3. Mossling studies (Common · Verdant)
+
+> **Superseded (2026-10-19).** These studies conflict with the agreed Mossling identity (they drop the antlers and turn the moss bed into a stone shell). Use `docs/creature-studio/prototypes/mossling.md` instead. The SVG files are kept only as a record. See `alignment.md`.
 **Concept studies only. No final renders are commissioned; the ~200-credit prototype needs a separate review and approval.** Duskwing and Pyraurum are later candidates and have not been started.
 
 Files: `docs/design/mossling/stage-{1..4}.svg` (silhouettes) and `docs/design/mossling/expression-{1..4}.svg`.

@@ -59,6 +59,8 @@ Composition brief:
 - One warm key light from upper left, a thin violet rim light from behind. No lightning. The thin halo stays, because the sigil quotes it.
 - The tail is a few long, deliberate plumes curving down-right. It is not a mass of flame.
 
+
+> **Superseded (2026-10-19).** This photoreal draft is replaced by the hand-painted 2D prompt in `alignment.md` §3. See `alignment.md`.
 Draft prompt (for approval, not run):
 > Premium fantasy game key art. A colossal phoenix of hammered molten gold in a three-quarter view, turning its head toward the left of frame, its head at the upper right third. The near wing rises high and to the right, cropped by the top edge. The far wing sweeps down and left into darkness. Each feather is a distinct hammered-gold blade with a visible shaft and vanes; flame licks only at the feather edges. The eyes are white-gold with a defined iris and a narrow pupil, fierce and intelligent, not blown out. A thin glowing gold halo ring above the head. Three long tail plumes curve down to the right. Warm key light from the upper left, a thin violet rim light behind, deep black void, the left 40% of the frame almost empty with soft smoke and a few out-of-focus embers. Controlled highlights, no clipping, filmic contrast, extreme detail, 16:9. No lightning, no text, no logo.
 
@@ -104,6 +106,8 @@ The pointer carries a faint warm light (a 260px radial, `rgba(255,214,140,.07)`)
 ---
 
 ## 3. Creature redesign programme
+
+> **Superseded (2026-10-19).** Creature style, anatomy, prototypes and prompts now follow the Creature Studio art bible and prototype briefs on `creature-studio/art-direction`. The "museum sculpture" rendering rule, the ground-shadow rule, the Mossling brief and the Duskwing and Pyraurum prototypes below are withdrawn. See `alignment.md`.
 
 ### 3.1 What is wrong now (silhouette test of the current art)
 Rendered in solid black at 150px and 48px (the preview shows the full sheet):

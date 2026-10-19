@@ -34,7 +34,7 @@ The file is **not** an upscale. A detail test (downscale, re-upscale, measure th
 
 | Limit | Evidence | Impact |
 |---|---|---|
-| **Below the stated minimum** | 1116px tall, under the 1080 + headroom needed for a 1920 × 1080 crop, and the full image is shown, not a crop | Fails the 1920 × 1080 requirement on height once cropped to 16:9 |
+| **Barely above the minimum** | A 16:9 crop of 2000 × 1116 is 1984 × 1116, which meets 1920 × 1080 by only 3%. *(Corrected: an earlier version of this table said it fell short; it does not.)* | No headroom: any enlargement drops below native resolution |
 | **The site enlarges it** | The hero renders the image at 130% of viewport width on desktop and 230% on phones | The browser upscales it **1.25×** at 1920px, **1.66×** at 2560px, **1.87×** on a 1440px Retina laptop and **1.35×** on a 390px phone at 3× |
 | **Soft face** | At 100% the head is a smeared, low-frequency texture. There is no defined feather structure around the eyes or beak | The focal point is the weakest area of the image |
 | **Blown eyes and highlights** | 2.3% of pixels are clipped in at least one channel, concentrated in the eyes, crest and wing edges | The eyes read as two white blobs. There is no gaze and no character |

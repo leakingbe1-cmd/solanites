@@ -328,6 +328,44 @@ const TEASERS = {
     rule(W / 2 - 300, base + (SQ ? 360 : 400), 600);
     text(L("FOLLOW FOR THE REVEAL."), { top: base + (SQ ? 388 : 432), size: SQ ? 34 : 38, weight: 400, tracking: ".3em", cls: "mono", color: "#ffd27a" });
   },
+
+  // 7 · HOLDER DISTRIBUTION: the site's Rewards page (src/app/claims/page.tsx), in the campaign's look.
+  // Same claim and qualifiers as the page: planned, equal split, +2h after launch, details pending.
+  7() {
+    const s = SQ ? .7 : .9, hy = SQ ? 250 : 400;
+    place(STILL, s, W / 2, hy, { filter: "brightness(.8) contrast(1.08)" });
+    glowSpot(W * .18, hy + 120, 520, "rgba(153,69,255,.22)", 1);
+    glowSpot(W * .85, hy + 60, 460, "rgba(0,194,255,.14)", 1);
+    smoke({ seed: 71, freq: .003, color: [60, 50, 100], opacity: .45, cut: .52 });
+    shade(`linear-gradient(180deg, rgba(5,5,10,.5) 0%, transparent 14%, transparent ${SQ ? 22 : 30}%, rgba(5,5,10,.92) ${SQ ? 40 : 47}%, #05050a ${SQ ? 52 : 58}%)`);
+    vignette(.8);
+    embers({ seed: 72, count: 60, region: [0, 0, W, H * .5], size: [1, 3.4] });
+    grain(.06);
+
+    const k = SQ ? 520 : 880;
+    text(L("HOLDER REWARDS"), { top: k, size: SQ ? 24 : 26, weight: 400, tracking: ".42em", cls: "mono", color: "#14f195" });
+    text(L("LOCKED DEVELOPER SUPPLY"), { top: k + (SQ ? 50 : 56), size: SQ ? 66 : 74, weight: 800 });
+    text(L(`<span class="gold">RETURNS TO HOLDERS.</span>`), { top: k + (SQ ? 124 : 140), size: SQ ? 96 : 108, weight: 900, tracking: "-.02em", cls: "display glow", maxW: W - 120 });
+
+    // the page's timeline: launch, +2h, distribution
+    const ty = k + (SQ ? 300 : 340), tw = SQ ? 1080 : 1160, tx = (W - tw) / 2;
+    const node = (col, glow) => `<span style="display:flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;border:2px solid ${col};background:${glow};box-shadow:0 0 34px ${glow}"><span style="width:16px;height:16px;border-radius:50%;background:${col}"></span></span>`;
+    const label = t => `<span class="mono" style="font-size:${SQ ? 22 : 24}px;letter-spacing:.3em;margin-right:-.3em;color:#f4f1ff">${t}</span>`;
+    add(el("div", "abs", { left: tx + "px", top: ty + "px", width: tw + "px", display: "grid", gridTemplateColumns: "auto 1fr auto", alignItems: "start" },
+      `<div style="display:flex;flex-direction:column;align-items:center;gap:16px">${node("#9945ff", "rgba(153,69,255,.25)")}${label("LAUNCH")}</div>
+       <div style="position:relative;height:64px;margin:0 18px">
+         <div style="position:absolute;left:0;right:0;top:31px;height:2px;background:linear-gradient(90deg,#9945ff,#00c2ff,#14f195);opacity:.85"></div>
+         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+           <span style="padding:4px 26px;border-radius:999px;background:#0b0a14;font-family:Unbounded;font-weight:800;font-size:${SQ ? 72 : 82}px;line-height:1"><span style="background:linear-gradient(92deg,#c7a6ff,#9945ff 30%,#00c2ff 62%,#14f195);-webkit-background-clip:text;background-clip:text;color:transparent">+2h</span></span>
+         </div>
+       </div>
+       <div style="display:flex;flex-direction:column;align-items:center;gap:16px">${node("#14f195", "rgba(20,241,149,.18)")}${label("DISTRIBUTION")}</div>`));
+
+    text(L("SPLIT EQUALLY AMONG ELIGIBLE HOLDERS."), { top: ty + (SQ ? 168 : 196), size: SQ ? 34 : 38, weight: 500, tracking: ".04em" });
+    rule(W / 2 - 280, ty + (SQ ? 238 : 274), 560);
+    text(L("PLANNED · ELIGIBILITY AND AMOUNT TO BE PUBLISHED"), { top: ty + (SQ ? 262 : 302), size: SQ ? 22 : 24, weight: 400, tracking: ".2em", cls: "mono", color: "rgba(255,210,140,.85)" });
+    lockup();
+  },
 };
 
 document.fonts.ready.then(async () => {

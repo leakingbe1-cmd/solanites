@@ -12,7 +12,7 @@ import { checkSources, checkRenderedText } from "./check.mjs";
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT = join(HERE, "..", "export");
 
-const NAMES = { 1: "01-awakening", 2: "02-which-creature", 3: "03-stirring", 4: "04-fire-beginning", 5: "05-legendary", 6: "06-taking-shape" };
+const NAMES = { 1: "01-awakening", 2: "02-which-creature", 3: "03-stirring", 4: "04-fire-beginning", 5: "05-legendary", 6: "06-taking-shape", 7: "07-holder-distribution" };
 const SIZES = { "4x5": [1440, 1800], "1x1": [1440, 1440] };
 
 function loadPlaywright() {

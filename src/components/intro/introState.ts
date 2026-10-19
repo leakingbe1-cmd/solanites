@@ -3,7 +3,8 @@
  *
  * Only a non-sensitive "seen" flag is stored (localStorage). The intro shows
  * on a first visit that lands on the homepage or the Hatchery; deep links to
- * any other page are never interrupted. `?intro=1` forces it (replay / review).
+ * any other page are never interrupted. `?intro=1` forces it (replay / review);
+ * `?intro=video` forces it with the phoenix video (see src/config/intro.ts).
  */
 
 export const INTRO_STORAGE_KEY = "solanites:intro:v1";
@@ -31,4 +32,4 @@ export function replayIntro() {
  * see the cover at all. If storage is unavailable the intro is skipped rather
  * than shown on every load.
  */
-export const INTRO_BOOT_SCRIPT = `(function(){try{var q=new URLSearchParams(location.search).get("intro");var p=location.pathname.replace(/\\/$/,"")||"/";var due=q==="1"||(q!=="0"&&${JSON.stringify(INTRO_PATHS)}.indexOf(p)>-1&&!localStorage.getItem(${JSON.stringify(INTRO_STORAGE_KEY)}));if(due)document.documentElement.setAttribute(${JSON.stringify(INTRO_ATTR)},"")}catch(e){}})();`;
+export const INTRO_BOOT_SCRIPT = `(function(){try{var q=new URLSearchParams(location.search).get("intro");var p=location.pathname.replace(/\\/$/,"")||"/";var due=q==="1"||q==="video"||(q!=="0"&&${JSON.stringify(INTRO_PATHS)}.indexOf(p)>-1&&!localStorage.getItem(${JSON.stringify(INTRO_STORAGE_KEY)}));if(due)document.documentElement.setAttribute(${JSON.stringify(INTRO_ATTR)},"")}catch(e){}})();`;

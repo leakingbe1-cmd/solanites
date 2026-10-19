@@ -7,7 +7,9 @@ import { EggArt } from "@/components/egg/EggArt";
 import { LogoMark } from "@/components/layout/Logo";
 import { ParticleField } from "@/components/ui/ParticleField";
 import { gameConfig } from "@/config/gameConfig";
+import { PHOENIX_INTRO } from "@/config/intro";
 import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { PhoenixVideo } from "./PhoenixVideo";
 import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen } from "./introState";
 
 /**
@@ -28,6 +30,15 @@ const AUTO_CONTINUE_MS = 7500;
 const EXIT_MS = 650;
 const WORDMARK = "SOLANITES".split("");
 
+type Variant = "animated" | "video";
+
+/** The Runway phoenix video when it is enabled (or previewed with ?intro=video) and motion is welcome. */
+function chooseVariant(): Variant {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "animated";
+  if (PHOENIX_INTRO.enabled) return "video";
+  return new URLSearchParams(window.location.search).get("intro") === "video" ? "video" : "animated";
+}
+
 export function FirstVisitIntro() {
   const router = useRouter();
   const path = usePathname();
@@ -35,6 +46,7 @@ export function FirstVisitIntro() {
   const [leaving, setLeaving] = useState(false);
   const [run, setRun] = useState(0);
   const [replay, setReplay] = useState(false);
+  const [variant, setVariant] = useState<Variant>("animated");
   const root = useRef<HTMLDivElement>(null);
   const primary = useRef<HTMLButtonElement>(null);
   const held = useRef(false);
@@ -43,11 +55,15 @@ export function FirstVisitIntro() {
   // Shown when the pre-paint script marked this visit as due, or on replay.
   useEffect(() => {
     const html = document.documentElement;
-    if (html.hasAttribute(INTRO_ATTR)) setOpen(true);
+    if (html.hasAttribute(INTRO_ATTR)) {
+      setVariant(chooseVariant());
+      setOpen(true);
+    }
     const replay = () => {
       leavingRef.current = false;
       held.current = false;
       setReplay(true);
+      setVariant(chooseVariant());
       setLeaving(false);
       setRun((r) => r + 1);
       setOpen(true);
@@ -108,25 +124,77 @@ export function FirstVisitIntro() {
       behind.forEach((el) => el.removeAttribute("inert"));
       document.body.style.overflow = overflow;
     };
-  }, [open, close]);
+  }, [open, close, variant]);
+
+  // The video ended (or never started): hand over, or fall back to the animated intro.
+  const videoEnded = useCallback(() => close(), [close]);
+  const videoFailed = useCallback(() => {
+    setVariant("animated");
+    setRun((r) => r + 1);
+  }, []);
 
   // Without interaction the intro hands over to the page by itself. Never with
   // reduced motion, not while the pointer rests on the actions, and not once the
   // visitor has used the keyboard (the initial focus on Enter doesn't count).
   useEffect(() => {
-    if (!open || leaving) return;
+    if (!open || leaving || variant === "video") return; // the video hands over when it ends
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = window.setInterval(() => {
       if (!held.current) close();
     }, AUTO_CONTINUE_MS);
     return () => window.clearInterval(t);
-  }, [open, leaving, run, close]);
+  }, [open, leaving, run, close, variant]);
 
   if (!open) return null;
 
+  const actions = (
+    <div
+      className="sl-intro-actions flex w-full max-w-sm flex-col items-center gap-3 sm:max-w-none sm:flex-row sm:justify-center"
+      onPointerEnter={() => (held.current = true)}
+      onPointerLeave={() => (held.current = false)}
+    >
+      <button
+        ref={primary}
+        type="button"
+        onClick={() => close("/hatchery")}
+        className="sl-btn-primary w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto"
+      >
+        ENTER THE HATCHERY <span aria-hidden>→</span>
+      </button>
+      <button
+        type="button"
+        onClick={() => close()}
+        className="w-full whitespace-nowrap rounded-full border border-white/15 bg-black/30 px-7 py-4 text-xs uppercase tracking-[0.25em] text-mist backdrop-blur transition hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green sm:w-auto"
+      >
+        Skip intro
+      </button>
+    </div>
+  );
+
+  if (variant === "video")
+    return (
+      <div
+        key={`video-${run}`}
+        ref={root}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sl-intro-title"
+        className={`sl-intro fixed inset-0 z-[100] overflow-hidden bg-[#05040a] ${replay ? "is-replay" : ""} ${leaving ? "is-leaving" : ""}`}
+        data-intro-variant="video"
+      >
+        <h1 id="sl-intro-title" className="sr-only">
+          Solanites: a phoenix rises
+        </h1>
+        <PhoenixVideo onEnded={videoEnded} onFail={videoFailed} />
+        {/* actions over a soft bottom fade, usable from the first frame */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/70 to-transparent" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 flex justify-center px-5 pb-7 sm:pb-9">{actions}</div>
+      </div>
+    );
+
   return (
     <div
-      key={run}
+      key={`animated-${run}`}
       ref={root}
       role="dialog"
       aria-modal="true"
@@ -189,27 +257,7 @@ export function FirstVisitIntro() {
         </div>
 
         {/* actions: usable from the first frame */}
-        <div
-          className="sl-intro-actions flex w-full max-w-sm flex-col items-center gap-3 sm:max-w-none sm:flex-row sm:justify-center"
-          onPointerEnter={() => (held.current = true)}
-          onPointerLeave={() => (held.current = false)}
-        >
-          <button
-            ref={primary}
-            type="button"
-            onClick={() => close("/hatchery")}
-            className="sl-btn-primary w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto"
-          >
-            ENTER THE HATCHERY <span aria-hidden>→</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => close()}
-            className="w-full whitespace-nowrap rounded-full border border-white/15 px-7 py-4 text-xs uppercase tracking-[0.25em] text-mist transition hover:border-white/30 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green sm:w-auto"
-          >
-            Skip intro
-          </button>
-        </div>
+        {actions}
         <p className="sl-intro-actions -mt-3 hidden font-mono text-[10px] uppercase tracking-[0.3em] text-white/30 sm:block pointer-coarse:hidden">Press Esc to skip</p>
       </div>
     </div>

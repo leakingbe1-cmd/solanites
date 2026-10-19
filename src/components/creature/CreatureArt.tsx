@@ -242,7 +242,6 @@ function Backlight({ id }: { id: string }) {
 }
 
 /** The original ornaments (`ornament="legacy"`). */
-
 function Aura({ id, species, evo }: { id: string; species: Species; evo: number }) {
   const r = RARITIES[species.rarity];
   const rarity = species.rarity;

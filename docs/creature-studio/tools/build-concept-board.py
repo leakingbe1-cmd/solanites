@@ -58,7 +58,7 @@ def main():
     notes = json.loads(Path(sys.argv[3]).read_text()) if len(sys.argv) > 3 else {}
     rows, chosen = [], []
     for sid, name, tag, concepts in SPECIES:
-        cells = [cell("Original · Evolved (shipped SVG)", Image.open(base / f"{sid}-3.png"))]
+        cells = [cell("Original · Evolved (shipped SVG, site aura off)", Image.open(base / f"{sid}-3.png"))]
         for key, slug, title in concepts:
             f = REVIEW / f"{sid}-{key}-{slug}.png"
             im = Image.open(f) if f.exists() else None

@@ -2,6 +2,7 @@
 // species × stage to PNG, so redesigns can be compared against the originals.
 // Read-only with respect to the app: it imports components, never edits them.
 //   node docs/creature-studio/tools/render-baseline.mjs <outDir>
+// Set BASELINE_AURA=0 to render the creature without the app's rarity aura (for silhouette tests).
 import { build } from "esbuild";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -17,9 +18,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { SPECIES } from "@/lib/species";
 export const SPECIES_LIST = SPECIES.map(({ id, dex, name, rarity, element }) => ({ id, dex, name, rarity, element }));
-export function svg(id, stage) {
+export function svg(id, stage, aura) {
   const s = SPECIES.find((x) => x.id === id);
-  return renderToStaticMarkup(<CreatureArt species={s} stage={stage} animated={false} vector />);
+  return renderToStaticMarkup(<CreatureArt species={s} stage={stage} animated={false} showAura={aura} vector />);
 }`;
 const res = await build({
   stdin: { contents: entry, loader: "tsx", resolveDir: root },
@@ -38,7 +39,7 @@ const page = await browser.newPage({ viewport: { width: 400, height: 400 } });
 const manifest = [];
 for (const sp of mod.SPECIES_LIST) {
   for (let st = 0; st < 4; st++) {
-    const html = `<html><body style="margin:0;background:#07060d"><div style="width:400px;height:400px">${mod.svg(sp.id, st)}</div></body></html>`;
+    const html = `<html><body style="margin:0;background:#07060d"><div style="width:400px;height:400px">${mod.svg(sp.id, st, process.env.BASELINE_AURA !== "0")}</div></body></html>`;
     await page.setContent(html.replace("<svg", '<svg width="400" height="400"'));
     const file = `${sp.id}-${st + 1}.png`;
     await page.screenshot({ path: path.join(out, file) });

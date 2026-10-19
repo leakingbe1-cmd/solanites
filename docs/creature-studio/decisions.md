@@ -30,3 +30,11 @@ Standing constraints from the same review:
 **Measured cost:** the first generation (V-A) moved the balance from 2,035 to 2,015, so **nano-banana-pro at 1K costs 20 credits per image** in this workspace. Six concepts = 120 credits; all nine permitted images would be exactly 180.
 
 **Status (paused after 1 of ≤ 9 images, 20 of 180 credits spent):** V-A (Velynx Fence-walker) generated successfully, Runway task `d966d96d-da0c-44e3-9bce-f45fb74b1768`. It could not be downloaded: this cloud environment's network policy blocks Runway's output hosts `dnznrvs05pmza.cloudfront.net` and `d2jqrm6oza8nb6.cloudfront.net`. Generation is paused so no credits go on images that cannot be inspected, saved to the review folder or compared against the originals.
+
+## 2026-10-19 · V-A recovered and reviewed
+
+- Network: both Runway hosts now accept HTTPS (TLS verified; HTTP 401 without a token, as expected).
+- V-A recovered from the existing task `d966d96d-da0c-44e3-9bce-f45fb74b1768` (no new generation): `art/creature-studio/round-1/velynx-A-fence-walker.png`, PNG, **1024 × 1024**, RGB, 993,290 bytes, sha256 `bdfa9a51933efc02bf29d10f8dc33c19ed12693c6a09fc5ad709fd39e3c1d9da`, saved byte-for-byte as downloaded.
+- **Assessment: does not pass as briefed** (see `prototypes/round-1/notes.json` and the comparison board). Strong painted finish, face and silhouette; but quadruped instead of upright, missing glyph tile, weak rim light so the body vanishes in colour at 48 px.
+- **Credits:** balance now **1,935**. This work has spent 20 (V-A). The other 80 (2,015 → 1,935) are four image generations in the same Runway workspace at 20:35 UTC that this session did not make (three "Hand-painted 2D creature illustration…", one "Hand-painted 2D fantasy key art…"). Their source is not confirmed. The website builder's `design/creative-direction` branch (commit `83018c0`, 20:46 UTC) records the same 1,935 balance and says it had generated nothing.
+- Generation remains paused pending review.

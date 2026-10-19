@@ -1,0 +1,174 @@
+{
+  "generatedAt": "2026-10-19T15:50:14.265Z",
+  "source": "phoenix-source.mp4",
+  "videos": [
+    {
+      "file": "ads/solanites-phoenix-16x9.mp4",
+      "format": "landscape",
+      "width": 1920,
+      "height": 1080,
+      "frames": 278,
+      "audio": true,
+      "duration": 11.583333,
+      "bytes": 12424418
+    },
+    {
+      "file": "ads/solanites-phoenix-9x16.mp4",
+      "format": "vertical",
+      "width": 1080,
+      "height": 1920,
+      "frames": 278,
+      "audio": true,
+      "duration": 11.583333,
+      "bytes": 8214425
+    },
+    {
+      "file": "ads/solanites-phoenix-1x1.mp4",
+      "format": "square",
+      "width": 1080,
+      "height": 1080,
+      "frames": 278,
+      "audio": true,
+      "duration": 11.583333,
+      "bytes": 6968167
+    },
+    {
+      "file": "ads/solanites-phoenix-4x5.mp4",
+      "format": "portrait",
+      "width": 1080,
+      "height": 1350,
+      "frames": 278,
+      "audio": true,
+      "duration": 11.583333,
+      "bytes": 7471716
+    }
+  ],
+  "stills": [
+    {
+      "file": "stills/x-01-phoenix-reveal.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "phoenix",
+      "width": 1600,
+      "height": 900,
+      "bytes": 208536
+    },
+    {
+      "file": "stills/x-02-hatchery.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "stages",
+      "width": 1600,
+      "height": 900,
+      "bytes": 224755
+    },
+    {
+      "file": "stills/x-03-collection.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "species",
+      "width": 1600,
+      "height": 900,
+      "bytes": 228337
+    },
+    {
+      "file": "stills/x-04-rarity.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "rarity",
+      "width": 1600,
+      "height": 900,
+      "bytes": 225784
+    },
+    {
+      "file": "stills/x-07-community.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "question",
+      "width": 1600,
+      "height": 900,
+      "bytes": 246613
+    },
+    {
+      "file": "stills/x-08-explore.jpg",
+      "format": "x-image",
+      "kind": "static",
+      "graphic": "cta",
+      "width": 1600,
+      "height": 900,
+      "bytes": 215013
+    },
+    {
+      "file": "stills/endcard-16x9.jpg",
+      "format": "landscape",
+      "kind": "endcard",
+      "graphic": "stats",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 238351
+    },
+    {
+      "file": "stills/endcard-9x16.jpg",
+      "format": "vertical",
+      "kind": "endcard",
+      "graphic": "stats",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 208258
+    },
+    {
+      "file": "stills/endcard-1x1.jpg",
+      "format": "square",
+      "kind": "endcard",
+      "graphic": "stats",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 153996
+    },
+    {
+      "file": "stills/endcard-4x5.jpg",
+      "format": "portrait",
+      "kind": "endcard",
+      "graphic": "stats",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 173196
+    },
+    {
+      "file": "stills/poster.jpg",
+      "format": "poster",
+      "kind": "static",
+      "graphic": "stats",
+      "width": 1200,
+      "height": 1800,
+      "bytes": 274714
+    },
+    {
+      "file": "stills/square-1x1.jpg",
+      "format": "square",
+      "kind": "static",
+      "graphic": "stats",
+      "width": 1080,
+      "height": 1080,
+      "bytes": 217931
+    },
+    {
+      "file": "stills/portrait-4x5.jpg",
+      "format": "portrait",
+      "kind": "static",
+      "graphic": "rarity",
+      "width": 1080,
+      "height": 1350,
+      "bytes": 246106
+    },
+    {
+      "file": "stills/vertical-9x16.jpg",
+      "format": "vertical",
+      "kind": "static",
+      "graphic": "stages",
+      "width": 1080,
+      "height": 1920,
+      "bytes": 281403
+    }
+  ]
+}

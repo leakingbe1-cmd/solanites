@@ -1,3 +1,10 @@
+/** The mark's paths on its 40×40 artboard; also drawn by the campaign renderer (src/studio/render). */
+export const LOGO_PATHS = {
+  shell: "M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z",
+  gem: "M20,14 L25,21 L20,29 L15,21 Z",
+  wings: "M9,24 L14,22 L16,26 M31,24 L26,22 L24,26",
+};
+
 export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   return (
     <svg viewBox="0 0 40 40" className={className} aria-hidden>
@@ -8,9 +15,9 @@ export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
           <stop offset="1" stopColor="#14f195" />
         </linearGradient>
       </defs>
-      <path d="M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z" fill="none" stroke="url(#logo-g)" strokeWidth="2" />
-      <path d="M20,14 L25,21 L20,29 L15,21 Z" fill="url(#logo-g)" />
-      <path d="M9,24 L14,22 L16,26 M31,24 L26,22 L24,26" fill="none" stroke="url(#logo-g)" strokeWidth="1.5" strokeLinecap="round" />
+      <path d={LOGO_PATHS.shell} fill="none" stroke="url(#logo-g)" strokeWidth="2" />
+      <path d={LOGO_PATHS.gem} fill="url(#logo-g)" />
+      <path d={LOGO_PATHS.wings} fill="none" stroke="url(#logo-g)" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }

@@ -53,6 +53,16 @@ The full audit and species design matrix are in [`docs/creature-design.md`](docs
 
 Eggs (`src/components/egg/EggArt.tsx`) have three shell patterns and five hue sets, chosen by each egg's seed. Cracks appear progressively, the core pulses like a heartbeat, the creature's silhouette shows inside from Stage 3, and each stage has its own animation.
 
+## Phoenix campaign and Content Studio
+
+The Runway Phoenix clip (`public/campaign/phoenix-source.mp4`) is the campaign's hero asset. It is never regenerated: every advert and still is composed from it, with sharp typography drawn on top.
+
+- **Content Studio** at `/studio` (internal: not linked anywhere, `noindex`, and a 404 in production unless `SOLANITES_STUDIO=1`). Pick a campaign and platform, generate headline, callouts, X caption, thread and hashtags from verified project data, preview the creative live, download PNGs or record the advert with your copy, and copy everything. Template-based, so no API or cost.
+- **Rendered campaign** in `public/campaign/`: the advert in 16:9, 9:16, 1:1 and 4:5, X post images, end cards and a poster. Re-render with `npm run campaign:render` (needs ffmpeg).
+- **X content pack**: eight drafts in [`docs/campaign/x-content-pack.md`](docs/campaign/x-content-pack.md). Nothing is ever posted automatically.
+
+Details: [`docs/campaign/README.md`](docs/campaign/README.md).
+
 ## First-visit intro
 
 A short, skippable intro (`src/components/intro/`) plays on a first visit that lands on `/` or `/hatchery`. Deep links to other pages never show it. Entering or skipping stores a non-sensitive `solanites:intro:v1` flag in localStorage, so later visits go straight in. It respects reduced motion and has no audio.

@@ -26,3 +26,7 @@ pgdata/
 
 # Intro video masters (large, rebuilt by scripts/phoenix-intro.sh); web files live in public/intro
 art/intro/master-*.mp4
+
+# hero masters (scripts/hero-art.mjs publishes them to public/hero/eclipse)
+art/hero/*
+!art/hero/README.md

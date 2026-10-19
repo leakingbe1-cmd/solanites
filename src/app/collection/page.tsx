@@ -120,7 +120,7 @@ export default function CollectionPage() {
                   <div className="sl-portrait-cone" aria-hidden />
                   <div className="sl-portrait-floor" aria-hidden />
                   <div className="sl-portrait-art relative h-full w-full">
-                    <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden && ["legendary", "mythic", "secret"].includes(s.rarity)} animated={!hidden} />
+                    <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden && ["legendary", "mythic", "secret"].includes(s.rarity)} animated={false} />
                   </div>
                   <div className="sl-portrait-grade" aria-hidden />
                 </div>

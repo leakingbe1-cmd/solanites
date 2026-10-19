@@ -15,6 +15,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { detailCheck } from "./lib/image-quality.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "art/creatures");
@@ -26,7 +27,8 @@ const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 const designs = JSON.parse(readFileSync(path.join(ROOT, "src/data/creatureDesigns.json"), "utf8"));
 const STAGES = designs.stageNames.map((s) => s.toLowerCase()); // eggling, hatchling, evolved, ascended
 const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec;
-const MIN_INPUT = 768;
+/** Approved baseline: 2048 px masters, so the 1024 delivery is always a reduction, never an enlargement. */
+const MIN_INPUT = 2048;
 /** Classified until discovered — they also get a silhouette asset so the full art is never needed to show "???". */
 const CLASSIFIED = new Set(["astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"]);
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
@@ -52,6 +54,11 @@ async function inspect(file) {
     if (ratio < 0.8 || ratio > 1.25) warnings.push(`not square (${meta.width}×${meta.height}); it will be letterboxed`);
   }
   if (!transparent) warnings.push("no transparency; it will be shown with a soft vignette on the dark card");
+  if (meta.width && meta.height) {
+    const detail = await detailCheck(file);
+    if (detail.verdict === "upscaled") problems.push(`measures as upscaled (${detail.psnr} dB round trip): supply the native output`);
+    else if (detail.verdict === "low-detail") warnings.push(`little fine detail (${detail.psnr} dB): check face, edges and material at 100%`);
+  }
   return { meta, transparent, problems, warnings };
 }
 

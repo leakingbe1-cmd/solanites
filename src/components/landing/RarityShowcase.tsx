@@ -55,7 +55,7 @@ export function RarityShowcase() {
                 style={{ "--sl-glow": classified ? `${meta.color}55` : meta.glow } as React.CSSProperties}
                 aria-hidden
               >
-                <CreatureArt species={s} stage={2} silhouette={classified} showAura={!classified} />
+                <CreatureArt species={s} stage={2} silhouette={classified} showAura={!classified} animated={false} />
                 {r === "secret" && <span className="absolute inset-0 grid place-items-center font-display text-4xl text-bone/80">?</span>}
               </span>
               <span className="relative mt-1 flex flex-1 flex-col">

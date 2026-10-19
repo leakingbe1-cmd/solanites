@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 
 // Motes rising from the platform: [x % across the platform, delay s, duration s].
 const MOTES: [number, number, number][] = [
-  [30, 0, 6.5], [42, 2.4, 7.5], [55, 1.1, 6], [64, 3.6, 8], [72, 0.6, 7], [48, 4.8, 6.8],
+  [38, 0, 9], [57, 3.2, 10.5], [68, 6.1, 9.5],
 ];
 
 export function HatcheryChamber({ children, className = "" }: { children: ReactNode; className?: string }) {

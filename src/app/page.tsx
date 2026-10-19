@@ -26,7 +26,7 @@ export default function Home() {
           <div className="max-w-xl text-center lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
-              <p className="sl-eyebrow">Genesis Hatchery · Season 0</p>
+              <p className="sl-eyebrow is-gilt">Genesis Hatchery · Season 0</p>
             </div>
             <h1 className="sl-awake-in sl-display-xl mt-6 text-bone" style={{ animationDelay: "0.25s" }}>
               A world waiting to <span className="sl-phx-gold italic">awaken.</span>

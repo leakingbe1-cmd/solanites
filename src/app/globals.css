@@ -114,7 +114,7 @@ body {
   line-height: 1.2;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(232, 183, 92, 0.85);
+  color: var(--color-dust);
 }
 .sl-eyebrow::before {
   content: "";
@@ -122,7 +122,16 @@ body {
   height: 5px;
   flex: none;
   transform: rotate(45deg);
+  background: currentColor;
+  opacity: 0.7;
+}
+/* Gold is an accent with a job (§ colour): only the hero's eyebrow is gilt. */
+.sl-eyebrow.is-gilt {
+  color: rgba(232, 183, 92, 0.85);
+}
+.sl-eyebrow.is-gilt::before {
   background: var(--color-gilt);
+  opacity: 1;
 }
 .sl-label {
   font-family: var(--font-sans);
@@ -252,12 +261,16 @@ body {
   filter: brightness(0) drop-shadow(0 0 1px rgba(160, 150, 255, 0.55)) drop-shadow(0 0 12px rgba(120, 90, 255, 0.25));
 }
 
+/* Light moves, matter waits: grounded creatures breathe from their feet, they do not bob. */
 .is-animated .sl-bob {
-  animation: sl-bob 5s ease-in-out infinite;
+  animation: sl-breathe 5s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
 }
 /* Raster creature artwork (art/creatures → public/creatures) */
 .is-animated .sl-creature-img {
-  animation: sl-bob 5s ease-in-out infinite;
+  animation: sl-breathe 5s ease-in-out infinite;
+  transform-origin: 50% 88%;
 }
 .sl-vignette {
   -webkit-mask-image: radial-gradient(circle at 50% 48%, #000 52%, transparent 71%);
@@ -333,8 +346,12 @@ body {
   50% { transform: translateY(-9px); }
 }
 @keyframes sl-hover {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(-1deg); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes sl-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  50% { transform: scale(1.006, 1.014); }
 }
 @keyframes sl-undulate {
   0%, 100% { transform: translateY(0); }
@@ -1094,7 +1111,7 @@ body {
   position: absolute;
   inset: 6px;
   border-radius: 3px;
-  border: 1px solid rgba(232, 183, 92, 0.12);
+  border: 1px solid rgba(236, 228, 214, 0.06);
   pointer-events: none;
   transition: border-color 320ms var(--ease-out);
 }
@@ -1199,4 +1216,10 @@ html[data-realm="how-it-works"] .sl-realm-violet {
   transform-origin: 50% 50%;
   background: linear-gradient(90deg, transparent, rgba(232, 183, 92, 0.55) 25%, var(--color-flare) 50%, rgba(232, 183, 92, 0.55) 75%, transparent);
   box-shadow: 0 0 8px rgba(232, 183, 92, 0.45);
+}
+
+/* The approved Eclipse Phoenix carries its own eclipse and light: the overlays that
+   were placed on the retired still (ring, pulse, glow, embers) stand down. */
+.sl-phx[data-art="eclipse"] :is(.sl-phx-pulse, .sl-phx-glow, .sl-phx-eclipse, .sl-phx-current, .sl-phx-embers) {
+  display: none;
 }

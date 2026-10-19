@@ -51,7 +51,7 @@ export default function LeaderboardPage() {
                 <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full opacity-25 blur-3xl" style={{ background: meta.color }} />
                 <span className={`relative font-display text-xl sm:text-3xl ${rank === 1 ? "sl-phx-gold" : "text-[#f6d488]/55"}`}>#{rank}</span>
                 <div className={`relative ${rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"}`}>
-                  <CreatureArt species={e.species} stage={e.evoStage} />
+                  <CreatureArt species={e.species} stage={e.evoStage} animated={false} />
                 </div>
                 <p className="relative truncate font-display text-sm text-bone sm:text-lg">{e.nickname ?? e.species.name}</p>
                 <p className="relative font-mono text-[10px] text-mist sm:text-xs">{shortAddress(e.wallet)}</p>

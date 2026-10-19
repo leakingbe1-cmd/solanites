@@ -60,7 +60,7 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
         </span>
       </div>
       <div className="sl-art-host relative mx-auto mt-1 aspect-square w-full max-w-[240px]" style={{ "--sl-glow": meta.glow } as React.CSSProperties}>
-        <CreatureArt species={s} stage={evo.stage} />
+        <CreatureArt species={s} stage={evo.stage} animated={false} />
         {celebrate && (
           <span role="status" className="sl-pop absolute inset-x-0 top-3 mx-auto w-fit rounded-full px-3 py-1 font-display text-xs text-black" style={{ background: meta.color }}>
             {celebrate}

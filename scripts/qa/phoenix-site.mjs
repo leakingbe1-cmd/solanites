@@ -3,7 +3,7 @@
 //   npm run build && npx next start -p 3100 &
 //   node scripts/qa/phoenix-site.mjs <screenshot-dir> [base-url]
 //
-// The first-visit intro (restored), the homepage awakening for returning visitors (interactive
+// The first-visit intro (switched off), the homepage awakening for returning visitors (interactive
 // at once, waits for its image, fallbacks, reduced motion, no JavaScript), the approved art
 // canon's presentation rules (W1–W2) on every route, media resolution, the sigil, the Hatchery
 // chamber, the Collection bestiary, the hero at six widths, the main routes, Holder Rewards,
@@ -31,56 +31,38 @@ async function ctx(opts = {}, init) {
 }
 const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderboard", "/claims"];
 
-// 0. The first-visit intro (restored): shown once on the homepage, skippable, remembered,
-//    replayable, never on deep links, and canon-clean in its reduced-motion form.
-{
-  const [c, p] = await ctx();
-  await p.goto(B + "/", { waitUntil: "domcontentloaded" });
-  const shown = await p.waitForSelector('[role="dialog"].sl-intro', { timeout: 8000 }).then(() => true).catch(() => false);
-  ok("intro: shows on a first visit to the homepage", shown);
-  const v = await p.evaluate(() => ({ variant: document.querySelector(".sl-intro")?.getAttribute("data-intro-variant"), video: document.querySelectorAll(".sl-intro video").length }));
-  ok("intro: phoenix video variant by default", v.variant === "video" && v.video >= 1, JSON.stringify(v));
-  ok("intro: Enter the Hatchery and Skip are available at once", (await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).count()) === 1 && (await p.getByRole("button", { name: /Skip intro/ }).count()) === 1);
-  await p.screenshot({ path: `${out}/intro-first-visit.png` });
-  await p.keyboard.press("Escape");
-  const closed = await p.waitForSelector(".sl-intro", { state: "detached", timeout: 3000 }).then(() => true).catch(() => false);
-  ok("intro: Escape skips it", closed);
-  ok("intro: remembered after it closes", (await p.evaluate(() => localStorage.getItem("solanites:intro:v1"))) !== null);
-  await p.reload({ waitUntil: "networkidle" });
-  await p.waitForTimeout(1200);
-  ok("intro: not shown again to a returning visitor", (await p.locator(".sl-intro").count()) === 0);
-  await p.locator("footer").getByRole("button", { name: /intro/i }).click();
-  const replayed = await p.waitForSelector(".sl-intro", { timeout: 3000 }).then(() => true).catch(() => false);
-  ok("intro: replay from the footer", replayed);
-  await p.getByRole("button", { name: /Skip intro/ }).click();
-  await p.waitForSelector(".sl-intro", { state: "detached", timeout: 3000 }).catch(() => {});
-  await c.close();
-}
-{
-  const [c, p] = await ctx({ reducedMotion: "reduce" });
+// 0. The first-visit intro is switched off (owner decision, src/config/intro.ts): a first visit,
+//    with or without reduced motion, lands straight on the Phoenix still and its headline. No
+//    overlay, boot attribute, intro media request or replay button anywhere.
+for (const opts of [{}, { reducedMotion: "reduce" }, { viewport: { width: 390, height: 844 }, deviceScaleFactor: 3 }]) {
+  const label = opts.reducedMotion ? "reduced motion" : opts.viewport ? "390" : "1440";
+  const [c, p] = await ctx(opts);
+  const mediaReqs = [];
+  p.on("request", (r) => /\.(mp4|webm|mov)(\?|$)|\/intro\//.test(r.url()) && mediaReqs.push(r.url()));
   await p.goto(B + "/", { waitUntil: "networkidle" });
-  await p.waitForSelector(".sl-intro", { timeout: 6000 }).catch(() => {});
+  await p.waitForTimeout(1500);
   const st = await p.evaluate(() => ({
-    variant: document.querySelector(".sl-intro")?.getAttribute("data-intro-variant") ?? "animated",
-    open: !!document.querySelector(".sl-intro"),
-    video: document.querySelectorAll(".sl-intro video").length,
-    canvas: document.querySelectorAll(".sl-intro canvas").length,
-    blobs: [...document.querySelectorAll(".sl-intro *")].filter((e) => /blur\((\d{2,})px\)/.test(getComputedStyle(e).filter)).length,
-    halo: document.querySelectorAll(".sl-intro-halo").length,
+    overlay: document.querySelectorAll(".sl-intro, [role='dialog']").length,
+    boot: document.documentElement.hasAttribute("data-sl-intro"),
+    video: document.querySelectorAll("video").length,
+    still: !!document.querySelector(".sl-phx-art img"),
+    art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity,
+    replay: [...document.querySelectorAll("button")].filter((b) => /intro/i.test(b.textContent ?? "")).length,
   }));
-  ok("intro, reduced motion: still frame, no video", st.open && st.variant !== "video" && st.video === 0, JSON.stringify(st));
-  ok("intro, reduced motion: no particle field, nebula blobs or halo (canon W2)", st.canvas === 0 && st.blobs === 0 && st.halo === 0, JSON.stringify(st));
-  await p.screenshot({ path: `${out}/intro-reduced-motion.png` });
-  await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).click();
-  await p.waitForURL("**/hatchery", { timeout: 5000 }).catch(() => {});
-  ok("intro, reduced motion: Enter the Hatchery navigates", p.url().endsWith("/hatchery"));
+  ok(`intro off (${label}): a first visit opens straight on the Phoenix still`, st.overlay === 0 && !st.boot && st.video === 0 && st.still && st.art === "1", JSON.stringify(st));
+  ok(`intro off (${label}): no intro video or poster requested`, mediaReqs.length === 0, mediaReqs.join(", "));
+  ok(`intro off (${label}): headline in place`, (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim().toUpperCase() === "A WORLD WAITING TO AWAKEN.");
+  ok(`intro off (${label}): no replay-intro button`, st.replay === 0, String(st.replay));
+  await p.screenshot({ path: `${out}/home-first-visit-${label.replace(/ /g, "-")}.png` });
+  await p.goto(B + "/hatchery", { waitUntil: "networkidle" });
+  ok(`intro off (${label}): none on the Hatchery either, and no replay link there`, (await p.locator(".sl-intro").count()) === 0 && (await p.getByRole("button", { name: /intro/i }).count()) === 0);
   await c.close();
 }
 {
   const [c, p] = await ctx();
-  await p.goto(B + "/collection", { waitUntil: "networkidle" });
+  await p.goto(B + "/?intro=1", { waitUntil: "networkidle" });
   await p.waitForTimeout(800);
-  ok("intro: never interrupts a deep link", (await p.locator(".sl-intro").count()) === 0);
+  ok("intro off: ?intro=1 does not bring it back", (await p.locator(".sl-intro").count()) === 0);
   await c.close();
 }
 
@@ -178,7 +160,7 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
 }
 
 // 2. Media resolution in the browser (returning visitor): no video on any route; every raster
-//    image's native size recorded. The first-visit intro's own video is covered in section 0.
+//    image's native size recorded. The intro video is switched off (section 0 checks that it is never requested).
 {
   const [c, p] = await ctx({}, SEEN);
   const found = [];

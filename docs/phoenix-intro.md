@@ -1,14 +1,15 @@
 # Phoenix intro (Runway)
 
-> **Retired from the website.** The first-visit video intro was removed: its footage is native 720p,
-> below the site's 1080p rule (see `docs/animation-asset-audit.md`), and the homepage now plays the
-> awakening in place without blocking the page. This guide is kept for the source footage and the
-> build script; new native 1080p footage is planned in `docs/runway-production-plan.md`.
+> **Switched off (owner decision, 19 Oct).** The whole first-visit intro is off
+> (`FIRST_VISIT_INTRO.enabled` and `PHOENIX_INTRO.enabled` in `src/config/intro.ts`): its footage
+> is native 720p, so the homepage opens straight onto the approved Phoenix still. Nothing is
+> requested from `public/intro/`, and the replay buttons are hidden. The code and files are kept
+> for a genuine native 1080p replacement, quoted in `docs/intro-1080p-quote.md` (not yet approved).
 
 The cinematic phoenix intro is generated with Runway, finished locally with
 `scripts/phoenix-intro.sh`, and shown by the existing first-visit intro.
 
-- **Site switch:** `src/config/intro.ts` → `PHOENIX_INTRO.enabled` (**on**: first visits to `/` and `/hatchery` see the video).
+- **Site switch:** `src/config/intro.ts` → `FIRST_VISIT_INTRO.enabled` and `PHOENIX_INTRO.enabled` (both **off**).
 - **Preview or replay:** add `?intro=video` (video) or `?intro=1` (whichever variant applies) to the URL.
 - **Fallback:** if the video can't play (missing file, autoplay blocked, slow network), the
   animated intro plays instead. Reduced motion always gets the animated intro's still frame.

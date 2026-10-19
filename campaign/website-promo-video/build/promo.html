@@ -1,0 +1,372 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Solanites website promo</title>
+<style>
+@font-face { font-family: "Unbounded"; src: url("../../x-gameplay-infographics/build/fonts/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; }
+@font-face { font-family: "Inter"; src: url("../../x-gameplay-infographics/build/fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../x-gameplay-infographics/build/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+:root { --purple: #9945ff; --cyan: #00c2ff; --green: #14f195; --gold: #ffc94a; --mist: #a6a3c4; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #000; overflow: hidden; }
+#stage { position: relative; overflow: hidden; background: #030308; font-family: "Inter", sans-serif; color: #ecebf7; }
+.layer, .abs { position: absolute; }
+.layer { inset: 0; }
+img { display: block; }
+.cover { position: absolute; object-fit: cover; }
+.nebula { background:
+  radial-gradient(55% 45% at 78% 22%, rgba(153,69,255,.42), transparent 70%),
+  radial-gradient(45% 40% at 15% 80%, rgba(0,194,255,.22), transparent 70%),
+  radial-gradient(40% 35% at 55% 100%, rgba(255,160,60,.10), transparent 70%),
+  linear-gradient(180deg, #07061a, #040410 60%, #07051a); }
+.vignette { background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.72) 100%); }
+.h { font-family: "Unbounded"; font-weight: 800; text-transform: uppercase; color: #fff; line-height: .98; text-align: center; letter-spacing: .01em;
+  text-shadow: 0 4px 30px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.9); white-space: nowrap; }
+.grad { background: linear-gradient(90deg, #b07bff, #00c2ff 55%, #14f195); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 4px 24px rgba(0,0,0,.8)); }
+.gold { background: linear-gradient(90deg, #fff1b8, #ffc94a 45%, #ff8a3d); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 4px 24px rgba(0,0,0,.85)); }
+.kicker { font-family: "JetBrains Mono"; letter-spacing: .32em; text-transform: uppercase; color: var(--green); white-space: nowrap; text-shadow: 0 2px 12px rgba(0,0,0,.9); }
+.label { font-family: "JetBrains Mono"; letter-spacing: .22em; text-transform: uppercase; color: rgba(236,235,247,.78); white-space: nowrap; text-shadow: 0 1px 8px rgba(0,0,0,.95); }
+.panel { position: absolute; border-radius: 26px; overflow: hidden; background: #05050c;
+  box-shadow: 0 40px 120px rgba(0,0,0,.75), 0 0 80px rgba(153,69,255,.28), 0 0 0 1.5px rgba(255,255,255,.14); }
+.panel img { position: absolute; left: 0; top: 0; width: 100%; }
+.panel::after { content: ""; position: absolute; inset: 0; border-radius: 26px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,.10), transparent 35%); }
+.tag { position: absolute; font-family: "JetBrains Mono"; letter-spacing: .2em; text-transform: uppercase; color: #ffd36b; white-space: nowrap;
+  background: rgba(10,8,4,.8); border: 1px solid rgba(255,201,74,.5); border-radius: 999px; }
+.name { font-family: "Unbounded"; font-weight: 700; color: #fff; text-transform: uppercase; white-space: nowrap; text-align: center; text-shadow: 0 2px 14px rgba(0,0,0,.9); }
+.sub { font-family: "JetBrains Mono"; letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; text-align: center; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+// ── setup ────────────────────────────────────────────────────────────────
+const q = new URLSearchParams(location.search);
+const RATIO = q.get("ratio") || "16x9";
+const [W, H] = { "16x9": [1920, 1080], "9x16": [1080, 1920], "1x1": [1080, 1080] }[RATIO];
+const V = RATIO === "9x16", SQ = RATIO === "1x1", WIDE = RATIO === "16x9";
+const FPS = 30, DUR = 27.0;
+// Edit points (seconds). audio.py uses the same numbers.
+const T = { s2: 4.6, s3: 10.2, home: 10.2, coll: 12.4, detail: 14.6, hatch: 16.6, reveal: 17.5, s4: 19.2, logo: 23.0, end: 27.0 };
+const stage = document.getElementById("stage");
+stage.style.width = W + "px"; stage.style.height = H + "px";
+const U = Math.min(W, H) / 1080;               // type scale unit
+const ART = n => `../source/art/${n}.webp`;
+const SITE = n => `../source/site/${n}.jpg`;
+const FRAME = (clip, i) => `.cache/frames/${clip}-${String(i).padStart(4, "0")}.jpg`;
+
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = k => (k = clamp(k), k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const out = k => 1 - Math.pow(1 - clamp(k), 3);
+const ramp = (t, a, b) => clamp((t - a) / (b - a));
+// visible between [a,d], fading in over [a,b] and out over [c,d]
+const vis = (t, a, b, c, d) => Math.min(ramp(t, a, b), 1 - ramp(t, c, d));
+
+function el(tag, cls, parent = stage, html = "") { const e = document.createElement(tag); if (cls) e.className = cls; e.innerHTML = html; parent.appendChild(e); return e; }
+function css(e, o) { for (const k in o) e.style[k] = typeof o[k] === "number" && !["opacity", "zIndex"].includes(k) ? o[k] + "px" : o[k]; return e; }
+function img(src, cls = "", parent = stage) { const i = el("img", cls, parent); i.src = src; i.decoding = "sync"; return i; }
+
+// ── layers ───────────────────────────────────────────────────────────────
+const L = {};
+L.nebula = el("div", "layer nebula");
+L.footBg = img(FRAME("clip-1-awakening", 1), "cover"); // blurred fill for 9:16 / 1:1
+L.foot = img(FRAME("clip-1-awakening", 1), "cover");
+L.scene2 = el("div", "layer");
+L.scene3 = el("div", "layer");
+L.fx = el("canvas", "layer"); L.fx.width = W; L.fx.height = H;
+L.text = el("div", "layer");
+L.vig = el("div", "layer vignette");
+L.flash = el("div", "layer");
+L.grain = el("canvas", "layer"); L.grain.width = W / 2; L.grain.height = H / 2; css(L.grain, { width: W, height: H, opacity: .07, mixBlendMode: "overlay" });
+
+// footage framing: 16:9 fills; tall/square formats show the full wingspan larger than "fit",
+// over a blurred, darkened copy so there are never black bars.
+const FG_W = WIDE ? W : (V ? W * 1.42 : W * 1.3);
+const FG_H = FG_W * 9 / 16;
+css(L.foot, { width: FG_W, height: FG_H, left: (W - FG_W) / 2, top: WIDE ? 0 : (H - FG_H) / 2 - (V ? H * .04 : 0) });
+if (WIDE) L.footBg.style.display = "none";
+else css(L.footBg, { width: H * 16 / 9 * 1.1, height: H * 1.1, left: (W - H * 16 / 9 * 1.1) / 2, top: -H * .05, filter: "blur(28px) brightness(.55) saturate(1.2)" });
+// soft edges where the sharp footage meets the blurred fill
+if (!WIDE) L.foot.style.maskImage = L.foot.style.webkitMaskImage = "linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%)";
+
+// ── scene 1 / 4 text ─────────────────────────────────────────────────────
+const HOOK = el("div", "abs h", L.text, `Every legend<br><span class="gold">starts somewhere.</span>`);
+css(HOOK, { fontSize: (WIDE ? 84 : V ? 64 : 62) * (WIDE ? 1 : U), width: W, left: 0, top: WIDE ? H * .70 : V ? H * .70 : H * .70 });
+const SCRIM = el("div", "abs", L.text);
+const STORY = el("div", "abs h", L.text, `Your story<br><span class="grad" style="background:linear-gradient(90deg,#c9a2ff,#5fd8ff 55%,#4dffb5);-webkit-background-clip:text;background-clip:text">hasn't begun yet.</span>`);
+css(STORY, { fontSize: (WIDE ? 84 : V ? 64 : 60) * (WIDE ? 1 : U), width: W, left: 0, top: WIDE ? H * .70 : V ? H * .70 : H * .70 });
+const CINE = el("div", "abs label", L.text, "Cinematic artwork");
+css(CINE, { fontSize: 19 * Math.max(U, .9), right: 40 * U, bottom: 34 * U });
+
+// end card
+const LOGO_SVG = `<svg viewBox="0 0 40 40" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9945ff"/><stop offset=".55" stop-color="#00c2ff"/><stop offset="1" stop-color="#14f195"/></linearGradient></defs>
+<path d="M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z" fill="none" stroke="url(#lg)" stroke-width="2"/>
+<path d="M20,14 L25,21 L20,29 L15,21 Z" fill="url(#lg)"/><path d="M9,24 L14,22 L16,26 M31,24 L26,22 L24,26" fill="none" stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+const END = el("div", "layer", L.text);
+const ring = el("div", "abs", END);
+const ring2 = el("div", "abs", END);
+const mark = el("div", "abs", END, LOGO_SVG);
+const word = el("div", "abs h", END, "Solanites");
+const near = el("div", "abs kicker", END, "The beginning is near.");
+const MK = (WIDE ? 150 : 150) * (WIDE ? 1 : U * 1.05);
+const cy = H * (V ? .44 : .42);
+css(mark, { width: MK, height: MK, left: W / 2 - MK / 2, top: cy - MK - 40 * U, filter: "drop-shadow(0 0 30px rgba(153,69,255,.9)) drop-shadow(0 0 60px rgba(0,194,255,.5))" });
+css(word, { fontSize: (WIDE ? 128 : V ? 100 : 100) * (WIDE ? 1 : U), width: W, left: 0, top: cy, letterSpacing: ".14em", fontWeight: 700,
+  background: "linear-gradient(180deg, #fff 30%, #ffd98a 70%, #ffb23d)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", textShadow: "none",
+  filter: "drop-shadow(0 0 26px rgba(255,190,80,.55)) drop-shadow(0 6px 30px rgba(0,0,0,.8))" });
+css(near, { fontSize: (WIDE ? 44 : V ? 46 : 40) * (WIDE ? 1 : U), width: W, left: 0, textAlign: "center", top: cy + (WIDE ? 175 : 165 * U), color: "#ffe2a0", letterSpacing: ".3em" });
+[ring, ring2].forEach((r, i) => css(r, { borderRadius: "50%", left: W / 2, top: cy - MK / 2 + 20 * U, width: 10, height: 10,
+  border: `${i ? 2 : 4}px solid ${i ? "rgba(153,69,255,.9)" : "rgba(255,201,74,.95)"}`, boxShadow: i ? "0 0 40px rgba(153,69,255,.9), inset 0 0 40px rgba(153,69,255,.6)" : "0 0 50px rgba(255,190,80,.9), inset 0 0 50px rgba(255,190,80,.5)" }));
+
+// ── scene 2: in-game creatures ───────────────────────────────────────────
+const S2 = { forms: [], trio: [], wall: [] };
+const s2Kicker = el("div", "abs kicker", L.scene2, "In-game artwork · Pyraurum");
+const s2Label = el("div", "abs label", L.scene2, "In-game artwork");
+css(s2Kicker, { fontSize: 30 * (WIDE ? 1 : U * 1.05), width: W, textAlign: "center", left: 0, top: V ? H * .2 : H * .13 });
+css(s2Label, { fontSize: 19 * Math.max(U, .9), right: 40 * U, bottom: 34 * U });
+const FORMS = ["Eggling", "Hatchling", "Evolved", "Ascended"];
+FORMS.forEach((f, i) => {
+  const box = el("div", "abs", L.scene2);
+  const glow = el("div", "abs", box); const a = img(ART(`c-pyraurum-${i}`), "abs", box);
+  const n = el("div", "abs name", box, f);
+  S2.forms.push({ box, glow, a, n });
+});
+const TRIO = [["c-zephrax-3", "Zephrax", "Epic · Storm", "#d64bff"], ["c-velynx-3", "Velynx", "Legendary · Shadow", "#ffc94a"], ["c-cryovant-3", "Cryovant", "Rare · Crystal", "#5b8cff"]];
+TRIO.forEach(([src, name, sub, c]) => {
+  const box = el("div", "abs", L.scene2);
+  const glow = el("div", "abs", box); const a = img(ART(src), "abs", box);
+  const n = el("div", "abs name", box, name); const s = el("div", "abs sub", box, sub);
+  s.style.color = c;
+  S2.trio.push({ box, glow, a, n, s, c });
+});
+const WALL = ["mossling","driftfin","pallow","glimmeray","sproutwyrm","frostkit","abyssal-vael","stormquill","duskwing","cryovant","emberlisk","neonyx","aurorath","zephrax","prismara","nyxara","aurelion","solvanth","pyraurum","aurelith","velynx","thalor","astravex","orbelith","eventide","helivane","genesis","nullborn"];
+const CLASSIFIED = new Set(["astravex","orbelith","eventide","helivane","genesis","nullborn"]);
+const wallBox = el("div", "abs", L.scene2);
+WALL.forEach(id => S2.wall.push(img(ART(`c-${id}-2${CLASSIFIED.has(id) ? "-sil" : ""}`), "abs", wallBox)));
+const WALL_TXT = el("div", "abs h", L.scene2, `28 species.<br><span class="grad">One world.</span>`);
+css(WALL_TXT, { fontSize: (WIDE ? 120 : V ? 104 : 96) * (WIDE ? 1 : U), width: W, left: 0 });
+
+// ── scene 3: the website ─────────────────────────────────────────────────
+const s3Kicker = el("div", "abs kicker", L.scene3, "A look inside the website");
+css(s3Kicker, { fontSize: 30 * (WIDE ? 1 : U * 1.05), width: W, textAlign: "center", left: 0, top: V ? 170 : SQ ? 48 : 52 });
+const s3Label = el("div", "abs label", L.scene3, "Real site captures");
+css(s3Label, { fontSize: 19 * Math.max(U, .9), right: 40 * U, bottom: 34 * U });
+const shotTitle = el("div", "abs h", L.scene3);
+css(shotTitle, { fontSize: (WIDE ? 66 : V ? 70 : 56) * (WIDE ? 1 : U), width: W, left: 0, lineHeight: 1.05 });
+const shotSub = el("div", "abs sub", L.scene3);
+css(shotSub, { fontSize: (WIDE ? 28 : V ? 30 : 26) * (WIDE ? 1 : U), width: W, left: 0, color: "#cfcde6" });
+function panel(src, parent = L.scene3) { const p = el("div", "panel", parent); const i = img(src, "", p); return { p, i }; }
+const P = {
+  heroText: panel(SITE(V ? "m-hero" : "d-hero-text")),
+  heroEgg: panel(SITE("d-hero-egg")),
+  coll: panel(SITE(V ? "m-collection" : "d-collection")),
+  detail: panel(SITE("d-detail-ascended")),
+  forms: panel(SITE("d-detail-forms")),
+  hatch: el("div", "panel", L.scene3),
+};
+const charge = img(SITE(V ? "m-charge" : "d-charge"), "", P.hatch);
+const reveals = [1, 2, 3, 4, 5, 6, 7, 8].map(k => img(SITE(`${V ? "m" : "d"}-reveal-${k}`), "", P.hatch));
+[charge, ...reveals].forEach(i => css(i, { position: "absolute", left: 0, top: 0, width: "100%", height: "100%", objectFit: "cover" }));
+reveals.forEach(i => css(i, { transform: V ? "scale(1.15)" : "scale(1.3)", transformOrigin: "50% 40%" }));
+const demoTag = el("div", "tag", L.scene3, "Hatchery demo · simulated data");
+css(demoTag, { fontSize: 20 * Math.max(U, .95), padding: `${8 * Math.max(U, .9)}px ${18 * Math.max(U, .9)}px` });
+
+// ── particles + grain ────────────────────────────────────────────────────
+let seed = 99; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+const EMBERS = Array.from({ length: 170 }, () => ({ x: rnd(), y: rnd(), v: .03 + rnd() * .09, s: .6 + rnd() * 2.6, sway: rnd() * 6.28, hue: rnd(), tw: rnd() * 6.28 }));
+const fx = L.fx.getContext("2d");
+function particles(t, amount, rise = 1) {
+  fx.clearRect(0, 0, W, H);
+  if (amount <= 0) return;
+  fx.globalCompositeOperation = "lighter";
+  for (const p of EMBERS) {
+    const y = ((p.y - p.v * t * rise) % 1 + 1) % 1;
+    const x = p.x + .015 * Math.sin(t * .6 + p.sway);
+    const r = p.s * U * (WIDE ? 1.6 : 1.5);
+    const a = amount * (.35 + .65 * Math.abs(Math.sin(t * 1.3 + p.tw)));
+    const c = p.hue < .55 ? [255, 180, 80] : p.hue < .8 ? [170, 110, 255] : [80, 220, 255];
+    const g = fx.createRadialGradient(x * W, y * H, 0, x * W, y * H, r * 3);
+    g.addColorStop(0, `rgba(${c},${a})`); g.addColorStop(.35, `rgba(${c},${a * .35})`); g.addColorStop(1, `rgba(${c},0)`);
+    fx.fillStyle = g; fx.fillRect(x * W - r * 3, y * H - r * 3, r * 6, r * 6);
+  }
+}
+const GRAIN = Array.from({ length: 4 }, () => { const c = document.createElement("canvas"); c.width = W / 2; c.height = H / 2; const g = c.getContext("2d"); const d = g.createImageData(c.width, c.height);
+  for (let i = 0; i < d.data.length; i += 4) { const v = rnd() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; } g.putImageData(d, 0, 0); return c; });
+
+// ── per-frame layout ─────────────────────────────────────────────────────
+async function setFrame(imgEl, src) { if (!imgEl.src.endsWith(src)) { imgEl.src = src; await imgEl.decode().catch(() => {}); } }
+
+function layoutScene2(t) {
+  const on = vis(t, T.s2 - .05, T.s2 + .25, T.s3 - .45, T.s3 + .05);
+  L.scene2.style.opacity = on;
+  L.scene2.style.display = on > 0 ? "" : "none";
+  if (!on) return;
+  // beat A: four forms of Pyraurum, 4.6 → 6.7
+  const A = vis(t, T.s2, T.s2 + .3, 6.45, 6.75);
+  s2Kicker.style.opacity = A;
+  const cols = V ? 2 : 4, size = WIDE ? 400 : V ? 470 : 300;
+  const gapX = WIDE ? 440 : V ? 500 : 255, gapY = 610;
+  S2.forms.forEach((f, i) => {
+    const k = out(ramp(t, T.s2 + .1 + i * .28, T.s2 + .75 + i * .28));
+    const cx = V ? W / 2 + (i % 2 - .5) * gapX : W / 2 + (i - 1.5) * gapX;
+    const cyy = V ? H * .36 + Math.floor(i / 2) * gapY * U * .9 : H * (SQ ? .5 : .52);
+    const s = size * (1 + .04 * (t - T.s2));
+    css(f.box, { left: cx - s / 2, top: cyy - s / 2 + (1 - k) * 60, width: s, height: s, opacity: A * k });
+    css(f.a, { left: 0, top: 0, width: s, height: s });
+    css(f.glow, { left: -s * .2, top: -s * .2, width: s * 1.4, height: s * 1.4, background: "radial-gradient(circle, rgba(255,160,60,.35), transparent 62%)" });
+    css(f.n, { fontSize: (WIDE ? 38 : V ? 42 : 32) * (WIDE ? 1 : U), width: s, left: 0, top: s * .98, color: i === 3 ? "#ffd98a" : "#fff" });
+  });
+  // beat B: three Ascended creatures, 6.6 → 8.5
+  const B = vis(t, 6.55, 6.9, 8.25, 8.55);
+  S2.trio.forEach((c, i) => {
+    const k = out(ramp(t, 6.6 + i * .18, 7.2 + i * .18));
+    const s = (WIDE ? 520 : V ? 560 : 360) * (i === 1 ? 1.12 : 1);
+    const cx = V ? W / 2 : W / 2 + (i - 1) * (WIDE ? 560 : 345);
+    const cyy = V ? H * (.24 + i * .27) : H * .47;
+    const drift = (t - 6.6) * (i - 1) * (V ? 0 : 18);
+    css(c.box, { left: cx - s / 2 + drift + (V ? (i - 1) * 0 : 0), top: cyy - s / 2 + (1 - k) * 80, width: s, height: s + 120, opacity: B * k });
+    css(c.a, { left: 0, top: 0, width: s, height: s });
+    css(c.glow, { left: -s * .15, top: -s * .15, width: s * 1.3, height: s * 1.3, background: `radial-gradient(circle, ${c.c}55, transparent 62%)` });
+    if (V) { css(c.a, { left: -s * .18, width: s * .82, height: s * .82, top: s * .05 }); css(c.n, { fontSize: 58 * U, width: s, left: s * .4, top: s * .28, textAlign: "left" }); css(c.s, { fontSize: 26 * U, width: s, left: s * .41, top: s * .28 + 76 * U, textAlign: "left" }); }
+    else { css(c.n, { fontSize: (WIDE ? 48 : 36) * (WIDE ? 1 : U), width: s, left: 0, top: s * .96 }); css(c.s, { fontSize: (WIDE ? 24 : 20) * (WIDE ? 1 : U), width: s, left: 0, top: s * .96 + (WIDE ? 62 : 50) }); }
+  });
+  // beat C: the wall of all 28 (Mythic/Secret as silhouettes) under the headline, 8.3 → 10.2
+  const C = vis(t, 8.3, 8.65, T.s3 - .3, T.s3 + .05);
+  const [wc, wr] = V ? [4, 7] : [7, 4];
+  const cell = WIDE ? 230 : V ? 250 : 150;
+  const zoom = lerp(1.18, 1.0, ease(ramp(t, 8.3, 10.0))) * (1 + .5 * ease(ramp(t, T.s3 - .45, T.s3)));
+  css(wallBox, { left: W / 2 - wc * cell / 2, top: H / 2 - wr * cell / 2, width: wc * cell, height: wr * cell, opacity: C * .62, transform: `scale(${zoom})`, filter: `blur(${(1 - ramp(t, 8.3, 8.9)) * 6}px)` });
+  S2.wall.forEach((im, i) => { const k = out(ramp(t, 8.3 + (i % 9) * .04, 8.8 + (i % 9) * .04));
+    css(im, { left: (i % wc) * cell, top: Math.floor(i / wc) * cell, width: cell, height: cell, opacity: k }); });
+  css(WALL_TXT, { top: H / 2 - (WIDE ? 120 : V ? 104 : 96) * (WIDE ? 1 : U), opacity: vis(t, 8.55, 8.95, T.s3 - .3, T.s3), transform: `scale(${lerp(1.06, 1, out(ramp(t, 8.55, 9.4)))})` });
+  s2Label.style.opacity = on;
+}
+
+function place(panelObj, x, y, w, h, opacity, scale = 1, rotY = 0, imgY = 0, imgH = null) {
+  css(panelObj.p ?? panelObj, { left: x, top: y, width: w, height: h, opacity, display: opacity > 0 ? "" : "none",
+    transform: `perspective(2200px) rotateY(${rotY}deg) scale(${scale})` });
+  if (panelObj.i) css(panelObj.i, { top: -imgY, ...(imgH ? { height: imgH } : {}) });
+}
+
+function layoutScene3(t) {
+  const on = vis(t, T.s3 - .1, T.s3 + .3, T.s4 - .25, T.s4);
+  L.scene3.style.opacity = on;
+  L.scene3.style.display = on > 0 ? "" : "none";
+  if (!on) return;
+  s3Kicker.style.opacity = on;
+  const shots = [
+    [T.home, T.coll, "Home", "Your Solanite is waiting"],
+    [T.coll, T.detail, "The Collection", "28 species to discover"],
+    [T.detail, T.hatch, "Species detail", "Every form, stats and lore"],
+    [T.hatch, T.s4, "The Hatchery", "Watch it hatch"],
+  ];
+  const cur = shots.findIndex(([a, b]) => t >= a && t < b);
+  const [a, b, title, sub] = shots[Math.max(0, cur)];
+  const tv = vis(t, a + .15, a + .45, b - .3, b - .05);
+  shotTitle.innerHTML = title; shotSub.innerHTML = sub;
+  const ty = V ? H - 360 : SQ ? H - 196 : H - 196;
+  css(shotTitle, { top: ty, opacity: tv, transform: `translateY(${(1 - out(ramp(t, a + .15, a + .6))) * 20}px)` });
+  css(shotSub, { top: ty + (WIDE ? 80 : V ? 90 : 68) * (WIDE ? 1 : U), opacity: tv });
+  const fade = (x0, x1) => vis(t, x0, x0 + .35, x1 - .3, x1);
+  const prog = (x0, x1) => ease(ramp(t, x0, x1));
+
+  // 1 · home: headline panel + egg panel
+  { const o = fade(T.home, T.coll), k = prog(T.home, T.coll), s = lerp(.96, 1.03, k);
+    if (WIDE) { place(P.heroText, 170, 170, 880, 548, o, s, 6); place(P.heroEgg, 1130, 120, 600, 672, o, s * 1.02, -8); }
+    else if (V) { place(P.heroText, 60, 300, 960, 428, o, s, 0); place(P.heroEgg, 240, 780, 600, 672, o, s, 0); }
+    else { place(P.heroText, 50, 190, 560, 349, o, s, 6); place(P.heroEgg, 650, 120, 380, 426, o, s, -7); } }
+  // 2 · collection: real full-page capture, scrolled
+  { const o = fade(T.coll, T.detail), k = prog(T.coll, T.detail);
+    if (WIDE) { const w = 1400, h = 690, ih = w * 5410 / 3440; place(P.coll, (W - w) / 2, 130, w, h, o, lerp(.97, 1, k), 0, lerp(0, ih * .42, k)); }
+    else if (V) { const w = 860, h = 1160, ih = w * 8740 / 1290; place(P.coll, (W - w) / 2, 280, w, h, o, lerp(.97, 1, k), 0, lerp(0, ih * .55, k)); }
+    else { const w = 940, h = 600, ih = w * 5410 / 3440; place(P.coll, (W - w) / 2, 120, w, h, o, lerp(.97, 1, k), 0, lerp(0, ih * .4, k)); } }
+  // 3 · species detail: Ascended form + the four forms
+  { const o = fade(T.detail, T.hatch), k = prog(T.detail, T.hatch), s = lerp(.97, 1.04, k);
+    if (WIDE) { place(P.detail, 140, 190, 1060, 416, o, s, 5); place(P.forms, 1240, 270, 560, 287, o * ramp(t, T.detail + .3, T.detail + .7), s, -6); }
+    else if (V) { place(P.detail, 40, 360, 1000, 393, o, s); place(P.forms, 90, 820, 900, 461, o * ramp(t, T.detail + .3, T.detail + .7), s); }
+    else { place(P.detail, 40, 170, 760, 299, o, s, 4); place(P.forms, 560, 470, 480, 246, o * ramp(t, T.detail + .3, T.detail + .7), s, -5); } }
+  // 4 · hatch: charge-up, flash, then the real reveal frames
+  { const o = fade(T.hatch, T.s4 + .3), k = prog(T.hatch, T.s4);
+    const [w, h] = WIDE ? [1200, 690] : V ? [860, 1160] : [880, 600];
+    const shake = t < T.reveal ? Math.sin(t * 90) * 3 * ramp(t, T.hatch, T.reveal) : 0;
+    place(P.hatch, (W - w) / 2 + shake, (V ? 280 : WIDE ? 130 : 120), w, h, o, lerp(.96, 1.04, k));
+    charge.style.opacity = 1 - ramp(t, T.reveal - .05, T.reveal + .1);
+    const r = ramp(t, T.reveal, T.s4) * (reveals.length - 1);
+    reveals.forEach((im, i) => im.style.opacity = t < T.reveal ? 0 : clamp(1 - Math.abs(r - i)));
+    css(demoTag, { left: (W - w) / 2 + 24, top: (V ? 280 : WIDE ? 130 : 120) + 22, opacity: o }); }
+}
+
+async function render(t) {
+  const fi = Math.round(t * FPS);
+  // footage: clip 1 for the hook, clip 2 (from 3.2 s, slowed slightly) for the finale
+  let src = null, footOn = 0, bright = 1, blur = 0;
+  if (t < T.s2 + .4) { src = FRAME("clip-1-awakening", clamp(Math.floor(t * 24) + 1, 1, 121)); footOn = 1 - ramp(t, T.s2 - .05, T.s2 + .25); }
+  else if (t >= T.s4 - .3) {
+    const k = ramp(t, T.s4, T.end - 1.2);
+    src = FRAME("clip-2-rebirth", clamp(Math.floor((3.2 + k * 6.75) * 24) + 1, 1, 241));
+    footOn = ramp(t, T.s4 - .3, T.s4 + .1);
+    bright = lerp(1, .42, ease(ramp(t, T.logo - .5, T.logo + .6)));
+    blur = 3 * ease(ramp(t, T.logo - .2, T.logo + .8));
+  }
+  if (src) { await Promise.all([setFrame(L.foot, src), WIDE ? null : setFrame(L.footBg, src)]); }
+  // Clip 1 is letterboxed inside its frame until source frame 70 (2.92 s): start zoomed past the bars,
+  // then pull back to the full frame as the bars disappear and the wings open. Clip 2 gets a slow push-in.
+  const zoom = t < T.s2 + .4 ? lerp(1.345, 1, ease(ramp(t, 2.95, 4.3))) : lerp(1, 1.07, ease(ramp(t, T.s4, T.logo)));
+  L.foot.style.transform = L.footBg.style.transform = `scale(${zoom})`;
+  if (!WIDE) {
+    // tall/square: hide the letterbox edge inside the wider soft fade while clip 1 still has bars
+    const k = t < T.s2 + .4 ? ease(ramp(t, 2.95, 3.9)) : 1;
+    const a0 = lerp(13, 0, k), a1 = lerp(27, 14, k);
+    const m = `linear-gradient(180deg, transparent 0%, transparent ${a0}%, #000 ${a1}%, #000 ${100 - a1}%, transparent ${100 - a0}%, transparent 100%)`;
+    L.foot.style.maskImage = L.foot.style.webkitMaskImage = m;
+  }
+  css(L.foot, { opacity: footOn, filter: `brightness(${bright * lerp(.2, 1, ramp(t, 0, .9))}) blur(${blur}px) contrast(1.05) saturate(1.08)` });
+  L.footBg.style.opacity = WIDE ? 0 : footOn * lerp(.2, 1, ramp(t, 0, .9)) * bright;
+  L.nebula.style.opacity = clamp(vis(t, T.s2 - .2, T.s2 + .2, T.s4 - .2, T.s4 + .2));
+
+  // hook + story + end card
+  css(HOOK, { opacity: vis(t, .9, 1.6, 4.0, 4.5), letterSpacing: `${lerp(.12, .01, out(ramp(t, .9, 3.2)))}em`, transform: `translateY(${(1 - out(ramp(t, .9, 1.8))) * 16}px)` });
+  { const st = STORY.getBoundingClientRect(); const sv = vis(t, 19.6, 20.3, 22.4, 22.9);
+    css(SCRIM, { left: 0, width: W, top: st.top - st.height * .9, height: st.height * 2.8, opacity: sv,
+      background: "radial-gradient(60% 50% at 50% 50%, rgba(3,2,10,.82), rgba(3,2,10,.55) 55%, transparent 100%)" }); }
+  css(STORY, { opacity: vis(t, 19.75, 20.4, 22.4, 22.9), letterSpacing: `${lerp(.1, .01, out(ramp(t, 19.75, 21.8)))}em`, transform: `translateY(${(1 - out(ramp(t, 19.75, 20.6))) * 16}px)` });
+  CINE.style.opacity = Math.max(vis(t, .6, 1.2, T.s2 - .2, T.s2), vis(t, T.s4, T.s4 + .4, T.logo - .2, T.logo + .2)) * .8;
+  const e = ramp(t, T.logo, T.logo + .9);
+  END.style.opacity = t < T.logo - .05 ? 0 : 1;
+  css(mark, { opacity: out(ramp(t, T.logo + .05, T.logo + .5)), transform: `scale(${lerp(1.35, 1, out(e))})` });
+  css(word, { opacity: out(ramp(t, T.logo + .2, T.logo + .8)), letterSpacing: `${lerp(WIDE ? .34 : .2, .14, out(ramp(t, T.logo + .2, T.logo + 1.6)))}em` });
+  css(near, { opacity: out(ramp(t, T.logo + 1.1, T.logo + 1.8)) });
+  [ring, ring2].forEach((r, i) => { const k = out(ramp(t, T.logo + i * .12, T.logo + 1.5 + i * .3)); const d = lerp(20, (WIDE ? 1500 : 1400) * (WIDE ? 1 : U * 1.1), k);
+    css(r, { width: d, height: d, marginLeft: -d / 2, marginTop: -d / 2, opacity: (1 - k) * (t >= T.logo ? 1 : 0) }); });
+
+  layoutScene2(t);
+  layoutScene3(t);
+
+  // flashes at the act changes and the logo
+  const fl = Math.max(.9 * Math.exp(-Math.abs(t - T.s2) * 9), .7 * Math.exp(-Math.abs(t - T.reveal) * 12), .85 * Math.exp(-Math.abs(t - T.s4) * 8), .9 * Math.exp(-Math.max(0, t - T.logo) * 4) * (t >= T.logo - .03 ? 1 : 0));
+  L.flash.style.background = `radial-gradient(circle at 50% ${t > T.logo - .1 ? 42 : 50}%, rgba(255,240,200,${fl}), rgba(255,170,80,${fl * .5}) 35%, rgba(153,69,255,${fl * .25}) 65%, transparent 85%)`;
+  L.flash.style.mixBlendMode = "screen";
+
+  particles(t, t < T.s2 ? ramp(t, .2, 2.5) * .9 : t < T.s4 ? .55 : .8 + .4 * ramp(t, T.logo, T.logo + .5), t > T.logo ? 1.8 : 1);
+  const gctx = L.grain.getContext("2d"); gctx.drawImage(GRAIN[fi % 4], 0, 0);
+  document.body.dataset.t = t;
+}
+
+window.render = render;
+window.META = { W, H, FPS, DUR, T };
+// Load every image sequentially (many large decodes at once can fail); only a missing file counts as broken.
+(async () => {
+  await document.fonts.ready;
+  for (const i of [...document.images]) {
+    if (!i.complete) await new Promise(r => { i.onload = i.onerror = r; });
+    if (!i.naturalWidth) { document.body.dataset.broken = (document.body.dataset.broken || "") + " " + i.src; continue; }
+    await i.decode().catch(() => {});
+  }
+  await render(Number(q.get("t") || 0));
+  document.body.dataset.ready = "1";
+})();
+</script>
+</body>
+</html>

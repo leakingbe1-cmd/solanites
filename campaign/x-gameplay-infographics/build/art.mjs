@@ -1,6 +1,7 @@
 // Exports genuine Solanites artwork (the site's own CreatureArt / EggArt
 // components) as transparent PNGs into ../source/art for the infographics.
 //   node campaign/x-gameplay-infographics/build/art.mjs
+//   node …/art.mjs --out <dir> --items c:mossling:2,c:astravex:2:sil,…   (any other set, e.g. for the promo video)
 import { build } from "esbuild";
 import postcss from "postcss";
 import tailwind from "@tailwindcss/postcss";
@@ -12,8 +13,10 @@ import { loadPlaywright } from "./lib.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(HERE, "../../..");
-const OUT = join(HERE, "..", "source", "art");
+const arg = name => { const i = process.argv.indexOf(`--${name}`); return i > 0 ? process.argv[i + 1] : null; };
+const OUT = resolve(arg("out") ?? join(HERE, "..", "source", "art"));
 const TMP = join(HERE, ".harness");
+const CUSTOM = arg("items");
 
 // Everything the five graphics use. Mythic and Secret species are only ever exported as silhouettes.
 export const ITEMS = [...new Set([
@@ -28,6 +31,8 @@ export const ITEMS = [...new Set([
   // eggs: dormant, cracking, stirring (with silhouette), ready
   "e:1:3", "e:2:3", "e:3:3:pyraurum", "e:4:3:pyraurum",
 ])];
+const RUN = CUSTOM ? [...new Set(CUSTOM.split(","))] : ITEMS;
+if (CUSTOM && RUN.some(i => /^c:(astravex|orbelith|eventide|helivane|genesis|nullborn):/.test(i) && !i.endsWith(":sil"))) throw new Error("Mythic and Secret species may only be exported as silhouettes");
 
 const js = await build({
   entryPoints: [join(HERE, "harness.tsx")], bundle: true, write: false, format: "iife", target: "es2020", jsx: "automatic", logLevel: "warning",
@@ -42,11 +47,11 @@ writeFileSync(join(TMP, "harness.html"), `<!doctype html><meta charset="utf-8"><
 const { chromium } = loadPlaywright();
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1700, height: 1200 }, deviceScaleFactor: 1.25 }); // 1000 px tiles: the largest use is ~640 px
-await page.goto(pathToFileURL(join(TMP, "harness.html")).href + "?items=" + ITEMS.join(","));
+await page.goto(pathToFileURL(join(TMP, "harness.html")).href + "?items=" + RUN.join(","));
 await page.waitForSelector("body[data-ready='1']");
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
-for (const item of ITEMS) {
+for (const item of RUN) {
   const file = join(OUT, item.replace(/:/g, "-") + ".png");
   await page.locator(`[data-item="${item}"]`).screenshot({ path: file, omitBackground: true });
   // WebP keeps the alpha channel at a fraction of the PNG size

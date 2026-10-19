@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Solanites promo poster</title>
+<style>
+@font-face { font-family: "Unbounded"; src: url("../../x-gameplay-infographics/build/fonts/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("../../x-gameplay-infographics/build/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; }
+#stage { position: relative; width: 1440px; height: 1800px; overflow: hidden; background: #030308; color: #fff; }
+.abs { position: absolute; }
+#bg { left: -460px; top: 0; width: 2360px; height: 1316px; object-fit: cover; filter: blur(30px) brightness(.45); }
+#ph { left: -230px; top: 120px; width: 1900px; height: 1060px; object-fit: cover;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 74%, transparent 100%); mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 74%, transparent 100%); }
+#fade { inset: 0; background: linear-gradient(180deg, rgba(3,3,8,.75) 0%, transparent 16%, transparent 52%, rgba(3,3,8,.9) 72%, #030308 82%); }
+#glow { left: 0; right: 0; top: 1120px; height: 700px; background: radial-gradient(50% 45% at 50% 40%, rgba(153,69,255,.35), transparent 70%); }
+.kicker { font-family: "JetBrains Mono"; letter-spacing: .34em; text-transform: uppercase; text-align: center; width: 1440px; left: 0; }
+#hook { top: 90px; font-size: 30px; color: #ffe2a0; text-shadow: 0 2px 16px #000; }
+#mark { left: 650px; top: 1250px; width: 140px; height: 140px; filter: drop-shadow(0 0 30px rgba(153,69,255,.9)) drop-shadow(0 0 60px rgba(0,194,255,.5)); }
+#word { top: 1420px; width: 1440px; left: 0; text-align: center; font-family: "Unbounded"; font-weight: 700; font-size: 132px; letter-spacing: .14em; padding-left: .14em;
+  background: linear-gradient(180deg, #fff 30%, #ffd98a 70%, #ffb23d); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 26px rgba(255,190,80,.5)) drop-shadow(0 6px 30px rgba(0,0,0,.8)); }
+#near { top: 1600px; font-size: 40px; color: #ffe2a0; letter-spacing: .3em; }
+#cine { position: absolute; right: 40px; bottom: 32px; font-family: "JetBrains Mono"; font-size: 18px; letter-spacing: .22em; color: rgba(236,235,247,.7); text-transform: uppercase; }
+</style></head><body>
+<div id="stage">
+  <img id="bg" class="abs" src="../../x-teasers/source/phoenix-still.png">
+  <img id="ph" class="abs" src="../../x-teasers/source/phoenix-still.png">
+  <div id="fade" class="abs"></div><div id="glow" class="abs"></div>
+  <div id="hook" class="abs kicker">Every legend starts somewhere.</div>
+  <div id="mark" class="abs"><svg viewBox="0 0 40 40" width="100%" height="100%"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9945ff"/><stop offset=".55" stop-color="#00c2ff"/><stop offset="1" stop-color="#14f195"/></linearGradient></defs><path d="M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z" fill="none" stroke="url(#lg)" stroke-width="2"/><path d="M20,14 L25,21 L20,29 L15,21 Z" fill="url(#lg)"/><path d="M9,24 L14,22 L16,26 M31,24 L26,22 L24,26" fill="none" stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+  <div id="word" class="abs">SOLANITES</div>
+  <div id="near" class="abs kicker">The beginning is near.</div>
+  <div id="cine">Cinematic artwork</div>
+</div>
+<script>Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode())]).then(() => document.body.dataset.ready = "1");</script>
+</body></html>

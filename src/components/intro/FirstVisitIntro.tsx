@@ -8,7 +8,9 @@ import { LogoMark } from "@/components/layout/Logo";
 import { ParticleField } from "@/components/ui/ParticleField";
 import { gameConfig } from "@/config/gameConfig";
 import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
-import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen } from "./introState";
+import { introVideoConfig, type IntroMode } from "@/config/intro";
+import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen, requestedIntroMode } from "./introState";
+import { PhoenixVideoIntro } from "./PhoenixVideoIntro";
 
 /**
  * Cinematic, skippable first-visit intro: about six seconds of sequence, then it
@@ -20,7 +22,22 @@ import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen } from "./introState";
  * frame; Escape skips. The page loads normally underneath and is shown as the
  * intro fades. With reduced motion the finished frame appears at once and
  * nothing moves or auto-advances.
+ *
+ * Video mode (src/config/intro.ts) plays the Phoenix film instead. It is used
+ * when enabled in config or previewed with `?intro=video`, never with reduced
+ * motion or data saver on, and falls back to this classic sequence whenever the
+ * film can't start.
  */
+
+function pickMode(): IntroMode {
+  const asked = requestedIntroMode();
+  if (asked === "classic") return "classic";
+  if (asked !== "video" && !introVideoConfig.enabled) return "classic";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "classic";
+  const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (conn?.saveData) return "classic";
+  return "video";
+}
 
 const FEATURED = SPECIES_BY_ID["pyraurum"];
 const ASCENDED = gameConfig.evolution.names.length - 1;
@@ -35,6 +52,7 @@ export function FirstVisitIntro() {
   const [leaving, setLeaving] = useState(false);
   const [run, setRun] = useState(0);
   const [replay, setReplay] = useState(false);
+  const [mode, setMode] = useState<IntroMode>("classic");
   const root = useRef<HTMLDivElement>(null);
   const primary = useRef<HTMLButtonElement>(null);
   const held = useRef(false);
@@ -43,13 +61,17 @@ export function FirstVisitIntro() {
   // Shown when the pre-paint script marked this visit as due, or on replay.
   useEffect(() => {
     const html = document.documentElement;
-    if (html.hasAttribute(INTRO_ATTR)) setOpen(true);
+    if (html.hasAttribute(INTRO_ATTR)) {
+      setMode(pickMode());
+      setOpen(true);
+    }
     const replay = () => {
       leavingRef.current = false;
       held.current = false;
       setReplay(true);
       setLeaving(false);
       setRun((r) => r + 1);
+      setMode(pickMode());
       setOpen(true);
     };
     window.addEventListener(INTRO_REPLAY_EVENT, replay);
@@ -108,21 +130,37 @@ export function FirstVisitIntro() {
       behind.forEach((el) => el.removeAttribute("inert"));
       document.body.style.overflow = overflow;
     };
-  }, [open, close]);
+  }, [open, close, mode]);
 
   // Without interaction the intro hands over to the page by itself. Never with
   // reduced motion, not while the pointer rests on the actions, and not once the
   // visitor has used the keyboard (the initial focus on Enter doesn't count).
   useEffect(() => {
-    if (!open || leaving) return;
+    if (!open || leaving || mode !== "classic") return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const t = window.setInterval(() => {
       if (!held.current) close();
     }, AUTO_CONTINUE_MS);
     return () => window.clearInterval(t);
-  }, [open, leaving, run, close]);
+  }, [open, leaving, run, close, mode]);
 
   if (!open) return null;
+
+  if (mode === "video") {
+    return (
+      <div
+        key={`v${run}`}
+        ref={root}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="sl-intro-title"
+        aria-describedby="sl-intro-desc"
+        className={`sl-intro fixed inset-0 z-[100] overflow-hidden bg-black ${replay ? "is-replay" : ""} ${leaving ? "is-leaving" : ""}`}
+      >
+        <PhoenixVideoIntro onClose={close} onFail={() => setMode("classic")} primaryRef={primary} held={held} />
+      </div>
+    );
+  }
 
   return (
     <div

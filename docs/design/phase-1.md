@@ -1,6 +1,6 @@
 # Phase 1: Phoenix key art, unified direction, Mossling studies
 
-Status: **phoenix generation not started. 0 of 180 credits spent.** See §1.3 for why.
+Status: **network blocker resolved and downloads verified (§1.3). Phoenix generation not started; 0 of 180 credits spent. Waiting for explicit approval of the single 20-credit 16:9 test.**
 
 ---
 
@@ -26,10 +26,22 @@ Status: **phoenix generation not started. 0 of 180 credits spent.** See §1.3 fo
 
 No reference image is passed, so the price stays the plain text-to-image rate. Continuity with the intro video comes from the prompt's material description. If you want the new key art to match the intro video's bird exactly, the intro would be re-cut later; that is not part of this phase.
 
-### 1.3 Blocker: I cannot see what Runway generates
-This environment's network policy blocks Runway's file host, **`dnznrvs05pmza.cloudfront.net`**. I can start a generation, but I cannot download the result to measure its pixels, run the crop tests or even look at it. I have therefore **not generated anything**: reporting on an image I cannot inspect would not meet the review you asked for.
+### 1.3 Network: resolved and verified
+**History.** This session's network policy blocked Runway's file hosts, so generated images could not be downloaded or inspected. No generation was attempted while blocked.
 
-To unblock: in the environment's settings (the cloud environment menu in the session title bar → Edit → Network access), add `dnznrvs05pmza.cloudfront.net` under Allowed domains, keeping "Allow package managers" ticked. Steps: https://code.claude.com/docs/en/cloud-environments#network-access
+**Current state (checked after the environment update):**
+| Check | Result |
+|---|---|
+| Environment this session uses | `env_01Aq4r7HxjuNMJZ2xaVKohrb`, named **Default** (the only environment on the account) |
+| Updated network policy applied to this session? | **Yes.** `dnznrvs05pmza.cloudfront.net` and `d2jqrm6oza8nb6.cloudfront.net` now reach CloudFront (unsigned requests get CloudFront's own 401; before the change the proxy refused the connection with 403). No new proxy denials since the change |
+| Fresh session needed? | **No.** This session is already on the updated Default environment |
+| Existing V-A concept (Runway task `d966d96d…`) retrievable? | **Yes.** Downloaded and inspected: 1024 × 1024 PNG, 993 KB, renders correctly |
+| Phoenix output path retrievable? | **Yes.** The original phoenix still (task `47944db5…`, same model and same host a new phoenix would use) downloaded: **2752 × 1536** PNG, 6.2 MB. It is the same image as the repo's 2000 × 1116 copy (downscaled) |
+| Credit balance before any phoenix test | 1,935 |
+
+**The original at full size still fails the composition checks** (QA script): 3.0% clipped highlights and 16.1% mean luminance in the headline zone. Recovering it fixes resolution only, which supports regenerating rather than just swapping in the larger file.
+
+**Price evidence for one image.** Two records from this account: `docs/phoenix-intro.md` records Nano Banana Pro **2K** stills at 20 credits each, and the creature-studio branch (`docs/creature-studio/decisions.md`) measured a Nano Banana Pro **1K** image at 20 credits by balance difference. Both are consistent with a flat 20 credits for 1K and 2K. The 2K price has not been confirmed by a balance difference in this session; the test will record one (balance before: 1,935).
 
 ### 1.4 Prompts (final drafts, not run)
 **16:9 desktop (test #1):**

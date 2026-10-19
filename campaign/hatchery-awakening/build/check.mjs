@@ -37,6 +37,10 @@ for (const [file, [w, h]] of Object.entries(EXPECT)) {
   if (!a || a.codec_name !== "aac" || +a.channels !== 2) problems.push(`${file}: no stereo AAC audio`);
   if (dur < 15 || dur > 20) problems.push(`${file}: duration ${dur}s outside 15–20 s`);
   // decode the whole file to prove it plays end to end
+  // the decoded audio must not clip (AAC can overshoot the mastered peak)
+  const peak = +(/Peak level dB:\s*(-?[\d.]+|-inf)/.exec(execFileSync("sh", ["-c", `ffmpeg -hide_banner -i "${p}" -vn -af astats=metadata=0 -f null - 2>&1 | grep "Peak level dB" | tail -1`], { encoding: "utf8" }))?.[1] ?? 0);
+  if (!(peak < -0.5)) problems.push(`${file}: decoded audio peaks at ${peak} dBFS`);
+  else console.log(`  decoded audio peak ${peak} dBFS`);
   try { execFileSync("ffmpeg", ["-v", "error", "-xerror", "-i", p, "-f", "null", "-"]); } catch (e) { problems.push(`${file}: decode error`); }
   const textLog = p.replace(/\.mp4$/, ".text.json");
   const { drawn, approved } = JSON.parse(readFileSync(textLog, "utf8"));

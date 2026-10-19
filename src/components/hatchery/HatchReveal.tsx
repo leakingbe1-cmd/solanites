@@ -86,7 +86,7 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
       <div className="relative flex h-full flex-col items-center justify-center px-4">
         {phase === "charge" && (
           <div className="flex flex-col items-center">
-            <p className="sl-fade-in mb-6 font-mono text-[11px] uppercase tracking-[0.5em] text-white/60">Something is breaking through…</p>
+            <p className="sl-fade-in mb-6 font-mono text-[11px] uppercase tracking-[0.5em] text-bone/60">Something is breaking through…</p>
             <div className="h-[46vh] max-h-[420px] w-[80vw] max-w-[360px]" style={{ filter: `drop-shadow(0 0 60px ${meta.glow})` }}>
               <EggArt stage={4} seed={seed} hatching inside={species} />
             </div>
@@ -101,14 +101,14 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
             <div className="sl-pop relative mt-2 aspect-square w-[78vw] max-w-[400px]" style={{ animationDelay: "0.05s" }}>
               <CreatureArt species={species} stage={0} />
             </div>
-            <h2 className="sl-fade-up font-display text-4xl font-bold tracking-tight text-white sm:text-5xl" style={{ animationDelay: "0.5s" }}>
+            <h2 className="sl-fade-up sl-display-l text-bone" style={{ animationDelay: "0.5s" }}>
               {species.name}
             </h2>
             <p className="sl-fade-up mt-2 text-mist" style={{ animationDelay: "0.65s" }}>
               {species.epithet}
             </p>
             <div className="sl-fade-up mt-5 flex flex-wrap justify-center gap-2" style={{ animationDelay: "0.8s" }}>
-              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/80">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-bone/80">
                 {ELEMENT_GLYPH[species.element]} {species.element}
               </span>
               {species.personality.map((p) => (
@@ -118,10 +118,10 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
               ))}
             </div>
             <div className="sl-fade-up mt-9 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "1s" }}>
-              <button onClick={onView} className="sl-btn-primary rounded-full px-8 py-3.5 font-display text-xs font-semibold tracking-[0.2em] text-white">
+              <button onClick={onView} className="sl-btn-outline rounded-full px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] text-bone">
                 MEET YOUR SOLANITE
               </button>
-              <button onClick={onClose} className="rounded-full border border-white/15 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+              <button onClick={onClose} className="rounded-full border border-white/15 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
                 Back to Hatchery
               </button>
             </div>

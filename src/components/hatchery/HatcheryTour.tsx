@@ -56,7 +56,7 @@ export function HatcheryTour({ steps, onClose }: { steps: TourStep[]; onClose: (
       {rect && (
         <div
           aria-hidden
-          className="pointer-events-none fixed z-[60] rounded-3xl ring-2 ring-sol-green/80 transition-all duration-300"
+          className="pointer-events-none fixed z-[60] rounded-md ring-2 ring-sol-green/80 transition-all duration-300"
           style={{ top: rect.top - pad, left: rect.left - pad, width: rect.width + pad * 2, height: rect.height + pad * 2, boxShadow: "0 0 0 9999px rgba(3,2,8,0.62), 0 0 40px rgba(20,241,149,0.25)" }}
         />
       )}
@@ -65,25 +65,25 @@ export function HatcheryTour({ steps, onClose }: { steps: TourStep[]; onClose: (
         tabIndex={-1}
         role="dialog"
         aria-label={`Hatchery tour, step ${i + 1} of ${steps.length}`}
-        className="fixed inset-x-4 z-[61] mx-auto max-w-md rounded-2xl border border-white/10 bg-[#100e1c] p-5 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.8)] outline-none sm:inset-x-auto sm:w-[26rem]"
+        className="fixed inset-x-4 z-[61] mx-auto max-w-md rounded-md border border-white/10 bg-[#100e1c] p-5 shadow-[0_24px_80px_-12px_rgba(0,0,0,0.8)] outline-none sm:inset-x-auto sm:w-[26rem]"
         style={cardPosition(rect, pad)}
       >
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-sol-green/80">
           Step {i + 1} of {steps.length}
         </p>
-        <h2 className="mt-2 font-display text-lg text-white">{step.title}</h2>
+        <h2 className="mt-2 font-display text-lg text-bone">{step.title}</h2>
         <p className="mt-2 text-sm leading-relaxed text-mist">{step.body}</p>
         <div className="mt-4 flex items-center justify-between gap-3">
-          <button type="button" onClick={onClose} className="text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+          <button type="button" onClick={onClose} className="text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
             Close
           </button>
           <div className="flex gap-2">
             {i > 0 && (
-              <button type="button" onClick={() => setI(i - 1)} className="rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.15em] text-mist transition hover:text-white">
+              <button type="button" onClick={() => setI(i - 1)} className="rounded-full border border-white/15 px-4 py-2 text-xs uppercase tracking-[0.15em] text-mist transition hover:text-bone">
                 Back
               </button>
             )}
-            <button type="button" onClick={() => (last ? onClose() : setI(i + 1))} className="sl-btn-primary rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white">
+            <button type="button" onClick={() => (last ? onClose() : setI(i + 1))} className="sl-btn-outline rounded-full px-5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-bone">
               {last ? "Done" : "Next"}
             </button>
           </div>

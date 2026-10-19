@@ -39,7 +39,7 @@ export function EggCard({
       }}
       onKeyDown={(e) => e.key === "Enter" && onOpen()}
       onMouseEnter={() => sfx.hover()}
-      className={`sl-card-hover group relative cursor-pointer overflow-hidden rounded-3xl border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 outline-none focus-visible:ring-2 focus-visible:ring-sol-purple ${
+      className={`sl-card-hover group relative cursor-pointer overflow-hidden rounded-md border bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 outline-none focus-visible:ring-2 focus-visible:ring-gilt ${
         ready ? "border-sol-green/40 shadow-[0_0_60px_-20px_rgba(20,241,149,0.6)]" : "border-white/[0.07] hover:border-white/15"
       }`}
     >
@@ -47,7 +47,7 @@ export function EggCard({
         <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Egg #{String(index + 1).padStart(2, "0")}</span>
         <span
           className={`rounded-full px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider ${
-            paused ? "bg-amber-400/10 text-amber-300" : ready ? "bg-sol-green/15 text-sol-green" : "bg-white/5 text-white/70"
+            paused ? "bg-amber-400/10 text-amber-300" : ready ? "bg-sol-green/15 text-sol-green" : "bg-white/5 text-bone/70"
           }`}
         >
           {badge ?? (paused ? "Paused" : EGG_STAGE_NAMES[stage])}
@@ -58,10 +58,10 @@ export function EggCard({
       </div>
       <div className="mt-3">
         <div className="flex items-baseline justify-between">
-          <span className="font-display text-2xl text-white">{(progress * 100).toFixed(1)}%</span>
+          <span className="font-display text-2xl text-bone">{(progress * 100).toFixed(1)}%</span>
           <span className="font-mono text-xs text-mist">{ready ? "Ready" : `${formatDuration(timeToHatch(record, gameConfig))} left`}</span>
         </div>
-        <ProgressBar value={progress} className="mt-2.5" colors={ready ? ["#14f195", "#9fffd8"] : paused ? ["#6b6b80", "#a0a0b0"] : ["#9945ff", "#14f195"]} />
+        <ProgressBar value={progress} className="mt-2.5" colors={ready ? ["#14f195", "#9fffd8"] : paused ? ["#6b6b80", "#a0a0b0"] : ["#a8692a", "#f6d488"]} />
         <p className="mt-2.5 font-mono text-[10px] uppercase tracking-wider text-mist/60">{footnote ?? `Held ${formatDuration(record.incubationMs)}`}</p>
       </div>
       {ready && (
@@ -70,7 +70,7 @@ export function EggCard({
             e.stopPropagation();
             onHatch();
           }}
-          className="sl-btn-primary mt-4 w-full rounded-2xl py-3 font-display text-xs font-semibold tracking-[0.25em] text-white"
+          className="sl-btn-gold mt-4 w-full rounded-full py-3 font-sans text-xs font-semibold tracking-[0.25em]"
         >
           HATCH NOW
         </button>

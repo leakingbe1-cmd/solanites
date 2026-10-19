@@ -27,15 +27,15 @@ export default function LeaderboardPage() {
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Hall of Keepers</p>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Leaderboard</h1>
+          <p className="sl-eyebrow">Hall of Keepers</p>
+          <h1 className="mt-3 sl-display-l text-bone">Leaderboard</h1>
           <p className="mx-auto mt-4 max-w-lg text-mist">The most devoted keepers in the Hatchery.</p>
           <p className="mx-auto mt-4 inline-block rounded-full border border-amber-400/20 bg-amber-400/5 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-300/90">Simulated data · prototype</p>
         </div>
 
         <div className="mx-auto mt-10 flex w-fit gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
           {TABS.map((x) => (
-            <button key={x.id} onClick={() => setTab(x.id)} className={`rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-white" : "text-mist hover:text-white"}`}>
+            <button key={x.id} onClick={() => setTab(x.id)} className={`rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-bone" : "text-mist hover:text-bone"}`}>
               {x.label}
             </button>
           ))}
@@ -47,13 +47,13 @@ export default function LeaderboardPage() {
             const rank = i === 1 ? 1 : i === 0 ? 2 : 3;
             const meta = RARITIES[e.species.rarity];
             return (
-              <div key={`${tab}-${e.wallet}`} className={`sl-fade-up sl-plate relative flex flex-col items-center rounded-3xl p-3 text-center sm:p-6 ${rank === 1 ? "sl-podium-first pb-8 sm:pb-12" : ""}`} style={{ animationDelay: `${rank * 0.1}s` }}>
+              <div key={`${tab}-${e.wallet}`} className={`sl-fade-up sl-plate relative flex flex-col items-center rounded-md p-3 text-center sm:p-6 ${rank === 1 ? "sl-podium-first pb-8 sm:pb-12" : ""}`} style={{ animationDelay: `${rank * 0.1}s` }}>
                 <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full opacity-25 blur-3xl" style={{ background: meta.color }} />
                 <span className={`relative font-display text-xl sm:text-3xl ${rank === 1 ? "sl-phx-gold" : "text-[#f6d488]/55"}`}>#{rank}</span>
                 <div className={`relative ${rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"}`}>
                   <CreatureArt species={e.species} stage={e.evoStage} />
                 </div>
-                <p className="relative truncate font-display text-sm text-white sm:text-lg">{e.nickname ?? e.species.name}</p>
+                <p className="relative truncate font-display text-sm text-bone sm:text-lg">{e.nickname ?? e.species.name}</p>
                 <p className="relative font-mono text-[10px] text-mist sm:text-xs">{shortAddress(e.wallet)}</p>
                 <p className="relative mt-2 font-mono text-[10px] uppercase tracking-wider sm:text-xs" style={{ color: meta.color }}>
                   {t.metric(e)}
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
         </div>
 
         {/* table */}
-        <div className="sl-panel mt-10 overflow-hidden rounded-3xl">
+        <div className="sl-panel mt-10 overflow-hidden rounded-md">
           <div className="hidden grid-cols-[60px_1.4fr_1fr_1fr_1fr] gap-4 border-b border-white/5 bg-white/[0.02] px-6 py-3 font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60 md:grid">
             <span>Rank</span>
             <span>Solanite</span>
@@ -80,13 +80,13 @@ export default function LeaderboardPage() {
                   <CreatureArt species={e.species} stage={e.evoStage} animated={false} showAura={false} />
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm text-white">{e.nickname ?? e.species.name}</p>
+                  <p className="truncate text-sm text-bone">{e.nickname ?? e.species.name}</p>
                   <RarityBadge rarity={e.species.rarity} />
                 </div>
               </div>
               <span className="hidden font-mono text-xs text-mist md:block">{shortAddress(e.wallet)}</span>
-              <span className="hidden text-sm text-white/80 md:block">{gameConfig.evolution.names[e.evoStage]}</span>
-              <span className="text-right font-mono text-xs text-white/80">{tab === "evolved" ? `${e.growthDays}d` : `${e.heldDays}d`}</span>
+              <span className="hidden text-sm text-bone/80 md:block">{gameConfig.evolution.names[e.evoStage]}</span>
+              <span className="text-right font-mono text-xs text-bone/80">{tab === "evolved" ? `${e.growthDays}d` : `${e.heldDays}d`}</span>
             </div>
           ))}
         </div>

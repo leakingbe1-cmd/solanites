@@ -24,8 +24,8 @@ export function HatcheryChamber({ children, className = "" }: { children: ReactN
         <defs>
           <linearGradient id="sl-chamber-arch" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#f6d488" stopOpacity="0.7" />
-            <stop offset="0.7" stopColor="#9945ff" stopOpacity="0.25" />
-            <stop offset="1" stopColor="#9945ff" stopOpacity="0" />
+            <stop offset="0.7" stopColor="#a8692a" stopOpacity="0.25" />
+            <stop offset="1" stopColor="#a8692a" stopOpacity="0" />
           </linearGradient>
         </defs>
       </svg>

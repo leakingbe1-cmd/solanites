@@ -46,14 +46,14 @@ export default function CollectionPage() {
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Solanidex</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Collection</h1>
+            <p className="sl-eyebrow">The Solanidex</p>
+            <h1 className="mt-3 sl-display-l text-bone">The Collection</h1>
             <p className="mt-4 max-w-xl text-mist">Every known Solanite, catalogued by the Hatchery. Some signatures remain classified — the only way to reveal them is to hatch one yourself.</p>
           </div>
-          <div className="sl-glass w-full rounded-2xl p-5 lg:w-80">
+          <div className="sl-glass w-full rounded-md p-5 lg:w-80">
             <div className="flex items-baseline justify-between">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your discoveries</p>
-              <p className="font-display text-2xl text-white">
+              <p className="font-display text-2xl text-bone">
                 {ownedCount}
                 <span className="text-base text-mist">/{SPECIES.length}</span>
               </p>
@@ -103,11 +103,9 @@ export default function CollectionPage() {
                   setOpen(s);
                 }}
                 onMouseEnter={() => sfx.hover()}
-                className="sl-card-hover sl-plate group relative overflow-hidden rounded-3xl p-3 text-left sm:p-5"
+                className="sl-card-hover sl-plate group relative overflow-hidden rounded-md p-3 text-left sm:p-5"
                 style={{ "--card-glow": hidden ? "rgba(110,90,255,0.45)" : meta.glow, "--tier": hidden ? "#6b6888" : meta.color } as React.CSSProperties}
               >
-                <div className="absolute inset-x-0 top-0 h-px opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${hidden ? "#666" : meta.color}, transparent)` }} />
-                <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-[0.18] blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ background: hidden ? "#5b4bff" : meta.color }} />
                 <div className="relative flex items-center justify-between gap-2">
                   <span className="font-mono text-[10px] tracking-[0.2em] text-[#f6d488]/70">№ {String(s.dex).padStart(3, "0")}</span>
                   {/* rarity tier as pips (one for Common … six for Secret), not colour alone */}
@@ -117,13 +115,18 @@ export default function CollectionPage() {
                     ))}
                   </span>
                 </div>
-                <div className="sl-art-host relative aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
-                  <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden} animated={!hidden} />
-                  {hidden && <span className="absolute inset-0 grid place-items-center font-display text-3xl text-white/70">?</span>}
+                {/* interim lighting around the current SVG creature (the creature art itself is being redesigned separately) */}
+                <div className="sl-portrait sl-art-host aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
+                  <div className="sl-portrait-cone" aria-hidden />
+                  <div className="sl-portrait-floor" aria-hidden />
+                  <div className="sl-portrait-art relative h-full w-full">
+                    <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden && ["legendary", "mythic", "secret"].includes(s.rarity)} animated={!hidden} />
+                  </div>
+                  <div className="sl-portrait-grade" aria-hidden />
                 </div>
                 <div className="relative border-t border-white/[0.06] pt-3">
                   <div className="flex items-baseline justify-between gap-2">
-                    <p className="truncate font-display text-base text-white sm:text-xl">{hidden ? "???" : s.name}</p>
+                    <p className="truncate font-display text-base text-bone sm:text-xl">{hidden ? "???" : s.name}</p>
                     <span className={`shrink-0 font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : hidden ? "Classified" : "Catalogued"}</span>
                   </div>
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
@@ -162,7 +165,7 @@ function FilterChip({ active, onClick, color, children }: { active: boolean; onC
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full border px-4 py-1.5 text-xs transition ${active ? "border-white/30 bg-white/10 text-white" : "border-white/10 text-mist hover:text-white"}`}
+      className={`shrink-0 rounded-full border px-4 py-1.5 text-xs transition ${active ? "border-white/30 bg-white/10 text-bone" : "border-white/10 text-mist hover:text-bone"}`}
       style={active && color ? { borderColor: `${color}88`, color, background: `${color}14` } : undefined}
     >
       {children}

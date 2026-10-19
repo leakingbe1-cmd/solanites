@@ -157,19 +157,18 @@ export function TrackedHatchery({ address }: { address: string }) {
         {view.source === "fixture" && <FixtureBanner />}
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="min-w-0">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Tracked automatically · no wallet connected</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Hatchery</h1>
+            <p className="sl-eyebrow">Tracked automatically · no wallet connected</p>
+            <h1 className="mt-3 sl-display-l text-bone">The Hatchery</h1>
             <p className="mt-3 break-all font-mono text-xs text-mist">{address}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
             <span className="relative flex h-2 w-2" aria-hidden>
-              {!stale && lastVerified !== null && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-60" />}
               <span className={`relative inline-flex h-2 w-2 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} />
             </span>
             <span data-testid="verification-status">
               {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
             </span>
-            <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-white">
+            <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-bone">
               Change address
             </button>
           </div>
@@ -183,13 +182,13 @@ export function TrackedHatchery({ address }: { address: string }) {
           />
           <Stat label="Eggs earned" value={String(view.counts.earned)} sub={`${view.counts.incubating} incubating · ${view.counts.queued} queued · ${view.counts.ready} ready`} accent={view.counts.earned ? "#14f195" : undefined} />
           <Stat label="Hatched" value={String(view.counts.hatched)} sub="Solanites revealed" />
-          <div className="sl-glass rounded-2xl p-4">
+          <div className="sl-glass rounded-md p-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Next egg</p>
             {view.holdings.excluded ? (
-              <p className="mt-2 font-display text-xl text-white">Not eligible</p>
+              <p className="mt-2 font-display text-xl text-bone">Not eligible</p>
             ) : (
               <>
-                <p className="mt-2 font-display text-xl text-white">+{toNext.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                <p className="mt-2 font-display text-xl text-bone">+{toNext.toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                 <ProgressBar value={1 - toNext / unit} className="mt-2" />
               </>
             )}
@@ -216,18 +215,18 @@ export function TrackedHatchery({ address }: { address: string }) {
         </div>
 
         {milestone && (
-          <div className="sl-glass mt-6 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between" data-testid="next-milestone">
+          <div className="sl-glass mt-6 flex flex-col gap-3 rounded-md p-4 sm:flex-row sm:items-center sm:justify-between" data-testid="next-milestone">
             <div className="min-w-0 flex-1">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-sol-green/80">Next milestone</p>
-              <p className="mt-1 font-display text-lg text-white">{milestone.text}</p>
+              <p className="mt-1 font-display text-lg text-bone">{milestone.text}</p>
               {milestone.progress !== null && milestone.inMs > 0 && <ProgressBar value={milestone.progress} className="mt-2 max-w-md" label="Progress to the next milestone" />}
             </div>
             {milestoneEgg ? (
-              <button onClick={() => hatch(milestoneEgg, recordOf(milestoneEgg))} className="sl-btn-primary shrink-0 rounded-full px-6 py-3 font-display text-xs font-semibold tracking-[0.2em] text-white">
+              <button onClick={() => hatch(milestoneEgg, recordOf(milestoneEgg))} className="sl-btn-gold shrink-0 rounded-full px-6 py-3 font-sans text-xs font-semibold tracking-[0.2em] text-bone">
                 REVEAL
               </button>
             ) : (
-              <p className="shrink-0 font-mono text-2xl tabular-nums text-white" data-testid="next-milestone-in">
+              <p className="shrink-0 font-mono text-2xl tabular-nums text-bone" data-testid="next-milestone-in">
                 {formatDuration(milestone.inMs)}
               </p>
             )}
@@ -254,7 +253,7 @@ export function TrackedHatchery({ address }: { address: string }) {
             })}
           </div>
         ) : (
-          <p className="rounded-3xl border border-white/5 p-10 text-center text-mist">
+          <p className="rounded-md border border-white/5 p-10 text-center text-mist">
             {view.counts.earned ? "Every egg has hatched." : `Hold ${formatNumber(unit)} ${gameConfig.token.symbol} to earn your first egg. It hatches ${formatSpan(incubationMsFor(1))} after it appears, and the creature is fully grown ${formatSpan(initialGrowthMsFor(1))} after that.`}
           </p>
         )}
@@ -267,7 +266,7 @@ export function TrackedHatchery({ address }: { address: string }) {
             ))}
           </div>
         ) : (
-          <p className="rounded-3xl border border-white/5 p-10 text-center text-mist">No Solanites hatched yet.</p>
+          <p className="rounded-md border border-white/5 p-10 text-center text-mist">No Solanites hatched yet.</p>
         )}
 
         <p className="mt-16 text-xs leading-relaxed text-mist/70">
@@ -312,13 +311,13 @@ export function TrackedHatchery({ address }: { address: string }) {
 
 function Note({ children, tone }: { children: React.ReactNode; tone?: "warn" }) {
   return (
-    <p className={`rounded-2xl border p-4 text-sm leading-relaxed ${tone === "warn" ? "border-amber-400/25 bg-amber-400/[0.06] text-amber-100/90" : "border-white/10 bg-white/[0.03] text-mist"}`}>{children}</p>
+    <p className={`rounded-md border p-4 text-sm leading-relaxed ${tone === "warn" ? "border-amber-400/25 bg-amber-400/[0.06] text-amber-100/90" : "border-white/10 bg-white/[0.03] text-mist"}`}>{children}</p>
   );
 }
 
 function FixtureBanner() {
   return (
-    <div role="status" className="mb-6 rounded-2xl border border-amber-400/40 bg-amber-400/10 p-4 text-sm text-amber-100">
+    <div role="status" className="mb-6 rounded-md border border-amber-400/40 bg-amber-400/10 p-4 text-sm text-amber-100">
       <strong className="font-semibold">Fixture data.</strong> This server is running in local fixture mode: these holders, balances and eggs are test data, not real {gameConfig.token.symbol} holders.
     </div>
   );
@@ -330,16 +329,16 @@ function Shell({ address, onExit, onRetry, error }: { address: string; onExit():
     <div className="relative min-h-screen pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Tracked address</p>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white">The Hatchery</h1>
+        <p className="sl-eyebrow">Tracked address</p>
+        <h1 className="mt-3 sl-display-l text-bone">The Hatchery</h1>
         <p className="mt-3 break-all font-mono text-xs text-mist">{shortAddress(address)}</p>
         {!error ? (
           <div className="mt-10" aria-busy="true">
             <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-mist/70">Reading this address from Solana…</p>
-            <div className="mt-4 h-40 animate-pulse rounded-3xl bg-white/[0.03]" />
+            <div className="mt-4 h-40 animate-pulse rounded-md bg-white/[0.03]" />
           </div>
         ) : (
-          <div role="alert" className="mt-10 rounded-3xl border border-amber-400/25 bg-amber-400/[0.06] p-6 text-amber-100/90">
+          <div role="alert" className="mt-10 rounded-md border border-amber-400/25 bg-amber-400/[0.06] p-6 text-amber-100/90">
             <p className="font-display text-lg text-amber-200">{notLive ? "Automatic tracking isn't switched on yet" : "Couldn't load this address"}</p>
             <p className="mt-2 text-sm leading-relaxed">
               {notLive ? "Egg tracking starts once the official token mint, a Solana data provider and the database are configured for this site. No eggs are shown rather than made-up ones." : error.message}
@@ -348,17 +347,17 @@ function Shell({ address, onExit, onRetry, error }: { address: string; onExit():
         )}
         <div className="mt-6 flex flex-wrap gap-3">
           {error && !notLive && onRetry && (
-            <button onClick={onRetry} className="sl-btn-primary rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <button onClick={onRetry} className="sl-btn-outline rounded-full px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-bone">
               Try again
             </button>
           )}
-          <button onClick={onExit} className="rounded-full border border-white/15 px-6 py-3 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+          <button onClick={onExit} className="rounded-full border border-white/15 px-6 py-3 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
             {error ? "Use another address" : "Back"}
           </button>
         </div>
         {notLive && (
           <p className="mt-6 text-sm leading-relaxed text-mist">
-            Meanwhile, the demo shows how incubation, hatching and evolution work with simulated data. Use another address, then choose <span className="text-white">Explore the demo</span>.
+            Meanwhile, the demo shows how incubation, hatching and evolution work with simulated data. Use another address, then choose <span className="text-bone">Explore the demo</span>.
           </p>
         )}
       </div>

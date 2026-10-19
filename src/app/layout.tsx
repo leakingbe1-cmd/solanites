@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import "@fontsource-variable/unbounded";
+import "@fontsource-variable/cormorant";
+import "@fontsource-variable/cormorant/wght-italic.css";
 import "@fontsource-variable/inter";
 import "@fontsource/jetbrains-mono/400.css";
 import "./globals.css";
@@ -7,6 +8,7 @@ import { HatcheryProvider } from "@/state/HatcheryProvider";
 import { Nav } from "@/components/layout/Nav";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { RealmLight } from "@/components/layout/RealmLight";
+import { HorizonLine } from "@/components/layout/HorizonLine";
 import { CosmicBackdrop } from "@/components/layout/CosmicBackdrop";
 import { Footer } from "@/components/layout/Footer";
 import { INDEXING_ENABLED } from "@/config/indexing";
@@ -31,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <RealmLight />
         <HatcheryProvider>
           <Nav />
+          <HorizonLine />
           <main className="relative">
             <PageTransition>{children}</PageTransition>
           </main>

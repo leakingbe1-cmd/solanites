@@ -45,7 +45,7 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
         onOpen();
       }}
       onMouseEnter={() => sfx.hover()}
-      className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
+      className="sl-card-hover group relative overflow-hidden rounded-md border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
       style={{ "--card-glow": meta.glow, ...(celebrate ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 40px -8px ${meta.color}` } : {}) } as React.CSSProperties}
     >
       <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-30 blur-3xl transition group-hover:opacity-60" style={{ background: meta.color }} />
@@ -67,14 +67,14 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
           </span>
         )}
       </div>
-      <p className="relative font-display text-xl text-white">{record.nickname ?? s.name}</p>
+      <p className="relative font-display text-xl text-bone">{record.nickname ?? s.name}</p>
       <p className="relative text-xs text-mist">
         {evo.label} form · {record.nickname ? s.name : s.epithet}
       </p>
       <div className="relative mt-4">
         <div className="flex justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-mist/70">
           <span>{next}</span>
-          <span className="tabular-nums text-white/80" data-testid="creature-next-in">
+          <span className="tabular-nums text-bone/80" data-testid="creature-next-in">
             {evo.isFinal ? "MAX" : paused ? "—" : formatDuration(evo.toNextMs)}
           </span>
         </div>

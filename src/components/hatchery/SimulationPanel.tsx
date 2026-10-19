@@ -13,7 +13,7 @@ export function SimulationPanel() {
   const max = h.config.token.tokensPerEgg * ((h.config.eggs.maxEggsPerWallet ?? 9) + 1);
 
   return (
-    <section className="rounded-3xl border border-dashed border-amber-300/25 bg-amber-300/[0.03] p-5 sm:p-6">
+    <section className="rounded-md border border-dashed border-amber-300/25 bg-amber-300/[0.03] p-5 sm:p-6">
       <button onClick={() => setOpen((o) => !o)} className="flex w-full items-center justify-between text-left">
         <span>
           <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-amber-300/90">Prototype simulation controls</span>
@@ -30,7 +30,7 @@ export function SimulationPanel() {
                 <button
                   key={o.value}
                   onClick={() => h.setSpeed(o.value)}
-                  className={`rounded-xl border px-3 py-2 text-xs transition ${h.speed === o.value ? "border-sol-purple/60 bg-sol-purple/15 text-white" : "border-white/10 text-mist hover:text-white"}`}
+                  className={`rounded-xl border px-3 py-2 text-xs transition ${h.speed === o.value ? "border-gilt/60 bg-gilt/10 text-bone" : "border-white/10 text-mist hover:text-bone"}`}
                 >
                   {o.label}
                 </button>
@@ -45,19 +45,19 @@ export function SimulationPanel() {
                 ["+1 day", TIME.DAY],
                 ["+7 days", 7 * TIME.DAY],
               ].map(([l, ms]) => (
-                <button key={l} disabled={!h.isDemo} onClick={() => h.warp(ms as number)} className="rounded-xl border border-white/10 px-2 py-2 text-xs text-mist transition hover:text-white disabled:opacity-40">
+                <button key={l} disabled={!h.isDemo} onClick={() => h.warp(ms as number)} className="rounded-xl border border-white/10 px-2 py-2 text-xs text-mist transition hover:text-bone disabled:opacity-40">
                   {l}
                 </button>
               ))}
             </div>
-            <button onClick={h.resetDemo} disabled={!h.isDemo} className="mt-2 w-full rounded-xl border border-white/10 py-2 text-xs text-mist transition hover:text-white disabled:opacity-40">
+            <button onClick={h.resetDemo} disabled={!h.isDemo} className="mt-2 w-full rounded-xl border border-white/10 py-2 text-xs text-mist transition hover:text-bone disabled:opacity-40">
               Reset demo collection
             </button>
           </div>
           <div>
             <div className="flex items-baseline justify-between">
               <p className="text-xs uppercase tracking-widest text-mist/70">Mock balance</p>
-              <p className="font-mono text-sm text-white">{formatNumber(h.balance)}</p>
+              <p className="font-mono text-sm text-bone">{formatNumber(h.balance)}</p>
             </div>
             <input
               type="range"
@@ -67,10 +67,10 @@ export function SimulationPanel() {
               value={h.balance}
               disabled={!h.isDemo}
               onChange={(e) => h.setDemoBalance(Number(e.target.value))}
-              className="mt-4 w-full accent-[#9945ff]"
+              className="mt-4 w-full accent-[#e8b75c]"
               aria-label="Mock token balance"
             />
-            <p className="mt-2 text-xs leading-relaxed text-mist/70">Drop below {formatNumber(h.records.length * h.config.token.tokensPerEgg)} to see what happens to unbacked eggs (policy: <span className="text-white/80">{h.config.policies.belowThreshold}</span>).</p>
+            <p className="mt-2 text-xs leading-relaxed text-mist/70">Drop below {formatNumber(h.records.length * h.config.token.tokensPerEgg)} to see what happens to unbacked eggs (policy: <span className="text-bone/80">{h.config.policies.belowThreshold}</span>).</p>
           </div>
         </div>
       )}

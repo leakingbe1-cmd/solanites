@@ -38,9 +38,9 @@ export default function HowItWorksPage() {
     <div className="relative pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Rules of the Hatchery</p>
-        <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl">
-          Sustained holding is the only thing that <span className="sl-gradient-text">makes them grow.</span>
+        <p className="sl-eyebrow">The Rules of the Hatchery</p>
+        <h1 className="mt-3 max-w-3xl sl-display-l text-bone">
+          Sustained holding is the only thing that <span className="italic">makes them grow.</span>
         </h1>
         <HowSteps />
 
@@ -53,14 +53,14 @@ export default function HowItWorksPage() {
 
         <div id="rules" className="mt-28 scroll-mt-28">
           <SectionHeading eyebrow="Current configuration" title="Gameplay rules.">
-            Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-white/80">src/config/eggProgression.ts</code> and <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-white/80">src/config/gameConfig.ts</code>, and is enforced on the server.
+            Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/eggProgression.ts</code> and <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/gameConfig.ts</code>, and is enforced on the server.
           </SectionHeading>
-          <div className="sl-panel mt-10 overflow-hidden rounded-3xl">
+          <div className="sl-panel mt-10 overflow-hidden rounded-md">
             {rules.map(([k, v, note]) => (
               <div key={k} className="grid gap-1 border-b border-white/[0.05] px-5 py-4 last:border-0 sm:grid-cols-[1fr_1.4fr] sm:gap-6 sm:px-7">
                 <p className="text-sm text-mist">{k}</p>
                 <div>
-                  <p className="text-sm text-white">{v}</p>
+                  <p className="text-sm text-bone">{v}</p>
                   {note && <p className="mt-1 text-xs text-mist/60">{note}</p>}
                 </div>
               </div>
@@ -69,8 +69,8 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="mt-20 grid gap-4 lg:grid-cols-[1fr_1fr]">
-          <div className="rounded-3xl border border-white/[0.07] bg-white/[0.02] p-6 sm:p-8">
-            <h3 className="font-display text-xl text-white">Hatch probabilities</h3>
+          <div className="rounded-md border border-white/[0.07] bg-white/[0.02] p-6 sm:p-8">
+            <h3 className="font-display text-xl text-bone">Hatch probabilities</h3>
             <p className="mt-2 text-sm text-mist">Rarity is sealed when the egg is granted and revealed when it hatches.</p>
             <div className="mt-6 space-y-3">
               {RARITY_ORDER.map((r) => (
@@ -79,16 +79,16 @@ export default function HowItWorksPage() {
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                     <div className="h-full rounded-full" style={{ width: `${Math.max(1.5, chances[r] * 100)}%`, background: `linear-gradient(90deg, ${RARITIES[r].color2}, ${RARITIES[r].color})` }} />
                   </div>
-                  <span className="text-right font-mono text-xs text-white/70">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
+                  <span className="text-right font-mono text-xs text-bone/70">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="rounded-3xl border border-sol-purple/20 bg-sol-purple/[0.04] p-6 sm:p-8">
-            <h3 className="font-display text-xl text-white">How the rules are kept</h3>
+          <div className="rounded-md border border-sol-purple/20 bg-sol-purple/[0.04] p-6 sm:p-8">
+            <h3 className="font-display text-xl text-bone">How the rules are kept</h3>
             <ul className="mt-5 space-y-3 text-sm leading-relaxed text-mist">
               <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
-              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
+              <li>◇ The demo wallet is <span className="text-bone">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
               <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
               <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its eligibility, amount and process will be published before it happens.</li>
             </ul>
@@ -96,7 +96,7 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="mt-20 text-center">
-          <Link href="/hatchery" className="sl-btn-gold inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
+          <Link href="/hatchery" className="sl-btn-gold inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-sans text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

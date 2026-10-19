@@ -37,7 +37,7 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
   await p.goto(B + "/", { waitUntil: "commit" });
   await p.waitForSelector("h1");
   ok("home: no first-visit overlay or video", (await p.locator('[role="dialog"]').count()) === 0 && (await p.locator("video").count()) === 0);
-  ok("home: headline", (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim() === "A WORLD WAITING TO AWAKEN.");
+  ok("home: headline", (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim().toUpperCase() === "A WORLD WAITING TO AWAKEN.");
   const t0 = Date.now();
   await p.getByRole("link", { name: /EXPLORE SOLANITES/ }).click({ timeout: 3000 });
   await p.waitForURL("**/collection");
@@ -290,8 +290,8 @@ for (const [name, vp, mobile] of [["320", { width: 320, height: 640 }, true], ["
 {
   const [c, p] = await ctx({ reducedMotion: "reduce" }, SEEN);
   await p.goto(B + "/collection", { waitUntil: "networkidle" });
-  const rm = await p.evaluate(() => ({ stars: getComputedStyle(document.querySelector(".sl-cosmos-stars")).animationName, glints: getComputedStyle(document.querySelector(".sl-cosmos-glints")).animationName, embers: getComputedStyle(document.querySelector(".sl-cosmos-embers")).display }));
-  ok("reduced motion: backdrop still, embers hidden", rm.stars === "none" && rm.glints === "none" && rm.embers === "none", JSON.stringify(rm));
+  const rm = await p.evaluate(() => ({ stars: getComputedStyle(document.querySelector(".sl-cosmos-stars")).animationName, glints: getComputedStyle(document.querySelector(".sl-cosmos-glints")).animationName, embers: document.querySelectorAll(".sl-cosmos-embers").length, realm: getComputedStyle(document.querySelector(".sl-realm-gold")).animationName }));
+  ok("reduced motion: backdrop still, no embers", rm.stars === "none" && rm.glints === "none" && rm.embers === 0, JSON.stringify(rm));
   await c.close();
 }
 

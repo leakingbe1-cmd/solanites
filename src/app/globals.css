@@ -1,18 +1,59 @@
 @import "tailwindcss";
 
+/* Design tokens: docs/design/creative-direction.md §2. Older names (abyss, panel, mist,
+   sol-*) remain as aliases so existing markup keeps working during the migration. */
 @theme {
-  --font-display: "Unbounded Variable", "Unbounded", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cormorant Variable", "Cormorant", ui-serif, Georgia, serif;
   --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-void: #05050a;
-  --color-abyss: #0a0a14;
-  --color-panel: #0e0d1a;
+  /* ground */
+  --color-void: #07060a;
+  --color-umbra: #0f0d14;
+  --color-basalt: #17141d;
+  --color-rim: rgba(239, 232, 218, 0.09);
+  --color-rim-strong: rgba(239, 232, 218, 0.18);
+  /* text */
+  --color-bone: #efe8da;
+  --color-vellum: #bdb3a3;
+  --color-dust: #8c8374;
+  /* gilt */
+  --color-flare: #fff1c9;
+  --color-gilt: #e8b75c;
+  --color-gilt-deep: #a8692a;
+  --color-ember: #f08a3c;
+  --color-cinder: #9a2f1e;
+  /* atmosphere */
+  --color-eclipse: #7d5cf0;
+  --color-eclipse-soft: #a48cff;
+  --color-eclipse-deep: #241a4d;
+  --color-aurora: #46c9b0;
+  /* chain: the Solgem spark and on-chain indicators only */
+  --color-chain-1: #9945ff;
+  --color-chain-2: #00c2ff;
+  --color-chain-3: #14f195;
+
+  /* aliases kept for existing markup */
+  --color-abyss: #0f0d14;
+  --color-panel: #17141d;
+  --color-mist: #bdb3a3;
   --color-sol-purple: #9945ff;
-  --color-sol-green: #14f195;
+  --color-sol-green: #46c9b0;
   --color-sol-blue: #00c2ff;
   --color-sol-pink: #ff3df2;
-  --color-mist: #a6a3c4;
+}
+
+/* Motion tokens (§4.1) */
+:root {
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-in: cubic-bezier(0.55, 0, 1, 0.45);
+  --ease-unveil: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-instant: 120ms;
+  --dur-quick: 240ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+  --dur-epic: 1600ms;
 }
 
 :root {
@@ -26,14 +67,74 @@ html {
 
 body {
   background: var(--color-void);
-  color: #ecebf7;
+  color: var(--color-bone);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
 ::selection {
-  background: rgba(153, 69, 255, 0.45);
+  background: rgba(232, 183, 92, 0.35);
+}
+
+/* ── Type (§2.3): Cormorant for display, Inter for text, JetBrains Mono for small data ── */
+.font-display {
+  font-weight: 500;
+  font-feature-settings: "lnum" 1;
+}
+.sl-display-xl {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3.25rem, 1.6rem + 6.4vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: -0.015em;
+}
+.sl-display-l {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.75rem, 1.8rem + 3.6vw, 5.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+}
+.sl-display-m {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2.125rem, 1.6rem + 2vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+}
+/* Eyebrow: gilt label with the Solgem bullet */
+.sl-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(232, 183, 92, 0.85);
+}
+.sl-eyebrow::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  flex: none;
+  transform: rotate(45deg);
+  background: var(--color-gilt);
+}
+.sl-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+/* Focus is always visible, in gilt */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 1px solid var(--color-gilt);
+  outline-offset: 3px;
 }
 
 /* ── Atmosphere ─────────────────────────────────────────── */
@@ -94,28 +195,6 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-}
-
-.sl-btn-primary {
-  position: relative;
-  background: linear-gradient(100deg, #9945ff, #6b5bff 45%, #00c2ff 80%, #14f195);
-  background-size: 200% 100%;
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12) inset,
-    0 10px 40px -10px rgba(153, 69, 255, 0.8),
-    0 0 60px -20px rgba(20, 241, 149, 0.6);
-  transition:
-    background-position 0.6s ease,
-    transform 0.2s ease,
-    box-shadow 0.3s ease;
-}
-.sl-btn-primary:hover {
-  background-position: 100% 0;
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.2) inset,
-    0 16px 50px -10px rgba(153, 69, 255, 0.9),
-    0 0 80px -10px rgba(20, 241, 149, 0.7);
 }
 
 .sl-card-hover {
@@ -699,42 +778,42 @@ body {
   color: transparent;
   filter: drop-shadow(0 0 24px rgba(255, 170, 60, 0.35));
 }
+/* Buttons (§2.6). Gilded: the one primary action per viewport. Outline: secondary. */
 .sl-btn-gold {
-  background: linear-gradient(180deg, #ffe7a3 0%, #f2b84b 55%, #d98f22 100%);
-  color: #120a02;
-  box-shadow:
-    0 0 0 1px rgba(255, 240, 200, 0.5) inset,
-    0 12px 40px -12px rgba(255, 160, 40, 0.85),
-    0 0 70px -18px rgba(255, 190, 90, 0.7);
+  background: linear-gradient(180deg, var(--color-flare) 0%, var(--color-gilt) 48%, var(--color-gilt-deep) 100%);
+  color: #140c03;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
   transition:
-    transform 0.2s ease,
-    box-shadow 0.3s ease,
-    filter 0.3s ease;
+    filter var(--dur-quick) ease,
+    box-shadow var(--dur-quick) ease,
+    transform var(--dur-instant) ease;
 }
 .sl-btn-gold:hover {
-  transform: translateY(-1px);
   filter: brightness(1.06);
   box-shadow:
-    0 0 0 1px rgba(255, 245, 215, 0.7) inset,
-    0 16px 50px -10px rgba(255, 160, 40, 0.95),
-    0 0 90px -10px rgba(255, 190, 90, 0.8);
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 0 0 6px rgba(232, 183, 92, 0.08);
 }
-/* a quiet outlined partner to the gold button */
-.sl-btn-ghost {
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(5, 5, 10, 0.35);
-  color: #ecebf7;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+.sl-btn-gold:disabled {
+  filter: saturate(0.4) brightness(0.7);
+  cursor: not-allowed;
+}
+.sl-btn-outline {
+  border: 1px solid var(--color-rim-strong);
+  background: transparent;
+  color: var(--color-bone);
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    color 0.2s ease;
+    border-color var(--dur-quick) ease,
+    color var(--dur-quick) ease,
+    transform var(--dur-instant) ease;
 }
-.sl-btn-ghost:hover {
-  border-color: rgba(246, 212, 136, 0.55);
-  background: rgba(246, 212, 136, 0.06);
-  color: #fff;
+.sl-btn-outline:hover {
+  border-color: rgba(232, 183, 92, 0.5);
+  color: var(--color-flare);
+}
+.sl-btn-gold:active,
+.sl-btn-outline:active {
+  transform: scale(0.98);
 }
 
 /* paused while scrolled away (HeroSection marks it) */
@@ -773,11 +852,10 @@ body {
 }
 .sl-cosmos-nebula {
   background:
-    radial-gradient(42% 36% at 12% 8%, rgba(153, 69, 255, 0.2), transparent 70%),
-    radial-gradient(36% 32% at 88% 18%, rgba(0, 194, 255, 0.13), transparent 70%),
-    radial-gradient(40% 34% at 78% 78%, rgba(110, 60, 255, 0.12), transparent 70%),
-    radial-gradient(34% 30% at 18% 82%, rgba(0, 170, 220, 0.09), transparent 70%),
-    radial-gradient(28% 22% at 50% 52%, rgba(255, 170, 70, 0.035), transparent 70%);
+    radial-gradient(50% 40% at 50% -6%, rgba(255, 200, 120, 0.07), transparent 70%),
+    radial-gradient(42% 36% at 10% 12%, rgba(125, 92, 240, 0.14), transparent 70%),
+    radial-gradient(36% 32% at 90% 30%, rgba(70, 201, 176, 0.06), transparent 70%),
+    radial-gradient(48% 40% at 70% 90%, rgba(36, 26, 77, 0.45), transparent 70%);
 }
 .sl-cosmos-stars {
   position: absolute;
@@ -816,34 +894,12 @@ body {
   to { transform: translate3d(0, -420px, 0); }
 }
 .sl-cosmos-glints {
-  background-image:
-    radial-gradient(2px 2px at 14% 22%, rgba(255, 255, 255, 0.9), transparent),
-    radial-gradient(2px 2px at 86% 16%, rgba(220, 205, 255, 0.85), transparent),
-    radial-gradient(2px 2px at 63% 78%, rgba(200, 235, 255, 0.8), transparent),
-    radial-gradient(2px 2px at 33% 88%, rgba(255, 228, 180, 0.75), transparent),
-    radial-gradient(2px 2px at 92% 58%, rgba(255, 255, 255, 0.7), transparent);
-  animation: sl-cosmos-glint 6s ease-in-out infinite alternate;
+  background-image: radial-gradient(2px 2px at 86% 16%, rgba(255, 241, 201, 0.85), transparent);
+  animation: sl-cosmos-glint 14s ease-in-out infinite alternate;
 }
 @keyframes sl-cosmos-glint {
-  0%, 55% { opacity: 0.2; }
-  100% { opacity: 0.9; }
-}
-.sl-cosmos-embers span {
-  position: absolute;
-  bottom: -8px;
-  border-radius: 9999px;
-  background: #ffc46b;
-  box-shadow: 0 0 6px 2px rgba(255, 160, 50, 0.55);
-  opacity: 0;
-  animation-name: sl-cosmos-ember;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-@keyframes sl-cosmos-ember {
-  0% { transform: translate3d(0, 0, 0); opacity: 0; }
-  10% { opacity: 0.55; }
-  75% { opacity: 0.3; }
-  100% { transform: translate3d(var(--drift), -105vh, 0); opacity: 0; }
+  0%, 60% { opacity: 0.2; }
+  100% { opacity: 0.85; }
 }
 .sl-cosmos-vignette {
   background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(3, 2, 8, 0.65) 100%);
@@ -853,23 +909,20 @@ body {
   .sl-cosmos-glints {
     animation: none;
   }
-  .sl-cosmos-embers {
-    display: none;
-  }
 }
 
 /* ── Navigation: one indicator that slides between links ── */
 .sl-nav-indicator {
   position: absolute;
-  bottom: -2px;
+  bottom: -6px;
   left: 0;
-  height: 2px;
-  border-radius: 9999px;
-  background: linear-gradient(90deg, var(--color-sol-purple), var(--color-sol-blue), var(--color-sol-green));
-  box-shadow: 0 0 12px rgba(0, 194, 255, 0.55);
+  height: 5px;
+  background: var(--color-gilt);
+  box-shadow: 0 0 8px rgba(232, 183, 92, 0.6);
+  /* a Solgem: the 5px square is rotated inside the translate the script sets */
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
   transition:
-    transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    width 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform var(--dur-quick) var(--ease-out),
     opacity 200ms ease;
 }
 
@@ -909,49 +962,43 @@ body {
 }
 
 /* ── The Solanites sigil (components/brand/Sigil.tsx) ──
-   Drawn in once: the ring and egg trace in, the corona arc follows, the feathers
-   and crest unfold, the gem lights last. Strokes use pathLength=1. */
+   Drawn in once: the ring and the egg trace, the ticks and halo appear, the
+   feathers fan out, and the gem ignites last. Strokes use pathLength=1. */
 .sl-sigil.is-drawing .sl-sigil-ring,
-.sl-sigil.is-drawing .sl-sigil-eclipse,
-.sl-sigil.is-drawing .sl-sigil-egg {
+.sl-sigil.is-drawing .sl-sigil-egg,
+.sl-sigil.is-drawing .sl-sigil-halo {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: sl-sigil-draw 1.4s cubic-bezier(0.6, 0, 0.2, 1) forwards;
+  animation: sl-sigil-draw 1.4s var(--ease-unveil) forwards;
 }
-.sl-sigil.is-drawing .sl-sigil-ring { animation-duration: 1.8s; }
-.sl-sigil.is-drawing .sl-sigil-egg { animation-delay: 0.25s; }
-.sl-sigil.is-drawing .sl-sigil-eclipse { animation-delay: 0.9s; animation-duration: 0.9s; }
-.sl-sigil.is-drawing .sl-sigil-wings path,
-.sl-sigil.is-drawing .sl-sigil-crest path {
+.sl-sigil.is-drawing .sl-sigil-ring { animation-duration: 1.6s; }
+.sl-sigil.is-drawing .sl-sigil-egg { animation-delay: 0.2s; }
+.sl-sigil.is-drawing .sl-sigil-halo { animation-delay: 0.9s; animation-duration: 0.8s; }
+.sl-sigil.is-drawing .sl-sigil-wings path {
   opacity: 0;
-  animation: sl-fade-in 0.7s ease forwards;
+  animation: sl-fade-in 0.7s var(--ease-out) forwards;
 }
-.sl-sigil.is-drawing .sl-sigil-ticks,
-.sl-sigil.is-drawing .sl-sigil-orbit { opacity: 0; animation: sl-fade-in 0.8s ease 0.9s forwards; }
-.sl-sigil.is-drawing .sl-sigil-gem { opacity: 0; animation: sl-sigil-gem 0.9s ease 1.5s forwards; }
+.sl-sigil.is-drawing .sl-sigil-ticks { opacity: 0; animation: sl-fade-in 0.8s ease 0.6s forwards; }
+.sl-sigil.is-drawing .sl-sigil-gem { opacity: 0; animation: sl-sigil-gem 0.9s ease 1.4s forwards; }
 @keyframes sl-sigil-draw {
   to { stroke-dashoffset: 0; }
 }
 @keyframes sl-sigil-gem {
   0% { opacity: 0; }
-  60% { opacity: 1; filter: drop-shadow(0 0 6px rgba(0, 194, 255, 0.9)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 5px rgba(240, 138, 60, 0.9)); }
   100% { opacity: 1; filter: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sl-sigil.is-drawing *,
   .sl-sigil.is-drawing .sl-sigil-ring,
-  .sl-sigil.is-drawing .sl-sigil-eclipse,
   .sl-sigil.is-drawing .sl-sigil-egg,
+  .sl-sigil.is-drawing .sl-sigil-halo,
   .sl-sigil.is-drawing .sl-sigil-wings path,
-  .sl-sigil.is-drawing .sl-sigil-crest path,
   .sl-sigil.is-drawing .sl-sigil-ticks,
-  .sl-sigil.is-drawing .sl-sigil-orbit,
   .sl-sigil.is-drawing .sl-sigil-gem {
     animation: none;
     stroke-dashoffset: 0;
     opacity: 1;
   }
-  .sl-sigil.is-drawing .sl-sigil-orbit { opacity: 0.35; }
 }
 
 /* ── The Hatchery chamber (components/hatchery/HatcheryChamber.tsx) ──
@@ -1033,45 +1080,43 @@ body {
   }
 }
 
-/* ── Collection: bestiary plates ──
-   A dark plate with an inset hairline frame; on hover or keyboard focus a single
-   soft band of light sweeps across once. --tier is the rarity colour. */
+/* ── Plates (§2.5): the signature card. A rim border and an inner gilt rule inset 6px
+   that warms on hover or focus; a single soft band of light sweeps across once. Cards
+   never move: only the creature inside does. --tier is the rarity colour. */
 .sl-plate {
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background:
-    radial-gradient(120% 70% at 50% 0%, rgba(255, 255, 255, 0.045), transparent 60%),
-    linear-gradient(180deg, #0d0c18 0%, #07070e 100%);
+  border-radius: 6px;
+  border: 1px solid var(--color-rim);
+  background: linear-gradient(180deg, #120f17 0%, var(--color-umbra) 40%, #0b0a0f 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 241, 201, 0.06);
 }
 .sl-plate::after {
   content: "";
   position: absolute;
   inset: 6px;
-  border-radius: 20px;
-  border: 1px solid rgba(246, 212, 136, 0.08);
+  border-radius: 3px;
+  border: 1px solid rgba(232, 183, 92, 0.12);
   pointer-events: none;
-  transition: border-color 0.3s ease;
+  transition: border-color 320ms var(--ease-out);
 }
 .sl-plate::before {
   content: "";
   position: absolute;
   inset: -20% -60%;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 244, 214, 0.07) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 226, 168, 0.06) 50%, transparent 60%);
   transform: translateX(-60%);
   pointer-events: none;
   z-index: 1;
 }
-.sl-plate:hover::after,
-.sl-plate:focus-visible::after {
-  border-color: rgba(246, 212, 136, 0.22);
+.sl-plate:is(:hover, :focus-visible)::after {
+  border-color: rgba(232, 183, 92, 0.35);
 }
-.sl-plate:hover::before,
-.sl-plate:focus-visible::before {
+.sl-plate:is(:hover, :focus-visible)::before {
   transform: translateX(60%);
-  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 0.9s var(--ease-out);
 }
-.sl-plate:focus-visible {
-  outline: 2px solid rgba(246, 212, 136, 0.7);
-  outline-offset: 3px;
+.sl-plate.sl-card-hover:is(:hover, :focus-visible) {
+  transform: none;
+  box-shadow: inset 0 1px 0 rgba(255, 241, 201, 0.08);
 }
 .sl-pip {
   width: 5px;
@@ -1082,14 +1127,50 @@ body {
 .sl-pip[data-on] {
   background: var(--tier);
   border-color: var(--tier);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--tier) 60%, transparent);
 }
 @media (prefers-reduced-motion: reduce) {
-  .sl-plate:hover::before,
-  .sl-plate:focus-visible::before {
+  .sl-plate:is(:hover, :focus-visible)::before {
     transition: none;
     transform: translateX(-60%);
   }
+}
+
+/* ── Creature portrait (§2.7), an interim light treatment for the current SVG creatures:
+   a warm key-light cone from 11 o'clock, a contact shadow, and a grade toward the
+   Phoenix's lighting. Not the final creature art (a separate workstream). */
+.sl-portrait {
+  position: relative;
+}
+.sl-portrait-cone {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(60% 55% at 42% 0%, rgba(255, 226, 168, 0.2), transparent 70%);
+  opacity: 0.65;
+  transition: opacity 320ms var(--ease-out);
+  pointer-events: none;
+}
+.sl-portrait-floor {
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  bottom: 8%;
+  height: 8%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.6), transparent);
+  pointer-events: none;
+}
+.sl-portrait-grade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(255, 226, 168, 0.18) 0%, transparent 45%, rgba(125, 92, 240, 0.22) 100%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.sl-portrait-art {
+  filter: saturate(0.86) contrast(1.06);
+}
+.group:is(:hover, :focus-visible) .sl-portrait-cone {
+  opacity: 1;
 }
 
 /* ── Realm light: the same world, lit a little differently in each area ── */
@@ -1097,9 +1178,9 @@ body {
   opacity: 0;
   transition: opacity 900ms ease;
 }
-.sl-realm-gold { background: radial-gradient(50% 40% at 50% 100%, rgba(246, 190, 100, 0.12), transparent 70%); }
-.sl-realm-cyan { background: radial-gradient(45% 40% at 85% 10%, rgba(0, 194, 255, 0.1), transparent 70%); }
-.sl-realm-violet { background: radial-gradient(50% 40% at 20% 30%, rgba(153, 69, 255, 0.12), transparent 70%); }
+.sl-realm-gold { background: radial-gradient(50% 40% at 50% 100%, rgba(246, 190, 100, 0.08), transparent 70%); }
+.sl-realm-cyan { background: radial-gradient(45% 40% at 85% 10%, rgba(70, 201, 176, 0.07), transparent 70%); }
+.sl-realm-violet { background: radial-gradient(50% 40% at 20% 30%, rgba(125, 92, 240, 0.09), transparent 70%); }
 html[data-realm="hatchery"] .sl-realm-gold,
 html[data-realm="claims"] .sl-realm-gold,
 html[data-realm="leaderboard"] .sl-realm-gold,
@@ -1110,4 +1191,12 @@ html[data-realm="how-it-works"] .sl-realm-violet {
 /* the leader's plate carries a warmer gold frame */
 .sl-podium-first::after {
   border-color: rgba(246, 212, 136, 0.28);
+}
+
+/* The horizon line (layout/HorizonLine.tsx): gilt light, brightest at the centre */
+.sl-horizon {
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  background: linear-gradient(90deg, transparent, rgba(232, 183, 92, 0.55) 25%, var(--color-flare) 50%, rgba(232, 183, 92, 0.55) 75%, transparent);
+  box-shadow: 0 0 8px rgba(232, 183, 92, 0.45);
 }

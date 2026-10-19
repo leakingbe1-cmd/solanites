@@ -11,11 +11,10 @@
  * the final frame is the resting state, and reduced motion shows it at once.
  */
 
-// Deterministic embers: [left %, size px, duration s, delay s, drift px].
+// Eight embers rising from the Phoenix's body only: [left %, size px, duration s, delay s, drift px].
 const EMBERS: [number, number, number, number, number][] = [
-  [8, 3, 9, 2.2, 30], [17, 2, 11, 5.5, -20], [26, 4, 8, 3.2, 25], [34, 2, 12, 8, -35], [41, 3, 9.5, 4.4, 18],
-  [47, 2, 10, 9.5, -15], [53, 4, 8.5, 2.6, 30], [58, 2, 11.5, 6.8, -25], [63, 3, 9, 5, 20], [68, 2, 12.5, 10.2, -18],
-  [73, 4, 8, 7.4, 28], [79, 2, 10.5, 3.8, -30], [85, 3, 9.5, 8.6, 22], [92, 2, 11, 4.9, -16],
+  [46, 3, 9, 2.2, 20], [50, 2, 11, 5.5, -16], [54, 3, 8.5, 3.2, 18], [58, 2, 12, 7.6, -22],
+  [62, 3, 9.5, 4.4, 14], [66, 2, 10, 9.2, -12], [70, 3, 8.8, 2.8, 20], [74, 2, 11.5, 6.4, -18],
 ];
 
 export function PhoenixHero() {

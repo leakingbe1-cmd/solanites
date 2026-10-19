@@ -30,12 +30,12 @@ export default function HatcheryPage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <Sigil draw className="h-9 w-9" />
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Loading your Hatchery…</p>
+            <p className="sl-eyebrow">Loading your Hatchery…</p>
           </div>
-          <div className="mt-4 h-12 w-64 animate-pulse rounded-2xl bg-white/[0.04]" />
+          <div className="mt-4 h-12 w-64 animate-pulse rounded-md bg-white/[0.04]" />
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-2xl bg-white/[0.03]" />
+              <div key={i} className="h-24 animate-pulse rounded-md bg-white/[0.03]" />
             ))}
           </div>
         </div>
@@ -64,17 +64,16 @@ export default function HatcheryPage() {
         {/* header */}
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">{h.isDemo ? "Demo session · simulated data" : "Experimental live session"}</p>
-            <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Hatchery</h1>
+            <p className="sl-eyebrow">{h.isDemo ? "Demo session · simulated data" : "Experimental live session"}</p>
+            <h1 className="mt-3 sl-display-l text-bone">The Hatchery</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green" />
             </span>
             Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · ×{formatNumber(h.speed)}
             {h.isDemo && (
-              <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-white">
+              <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-bone">
                 Exit demo
               </button>
             )}
@@ -82,7 +81,7 @@ export default function HatcheryPage() {
         </div>
 
         {h.isDemo && (
-          <div role="note" className="mt-6 flex flex-col gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90 sm:flex-row sm:items-center sm:justify-between">
+          <div role="note" className="mt-6 flex flex-col gap-3 rounded-md border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
               <strong className="font-semibold text-amber-200">Demo.</strong> The balance, eggs and creatures here are simulated and kept only in this browser. Nothing is read from or written to Solana.
               The two grown creatures are a fixed sample; demo eggs use the same rarity odds as real eggs, rolled in your browser, so they say nothing about real hatch results.
@@ -103,13 +102,13 @@ export default function HatcheryPage() {
             accent={eligible ? "#14f195" : "#ffb84d"}
           />
           <Stat label="Collection" value={cfg.eggs.maxEggsPerWallet === null ? String(h.records.length) : `${h.records.length} / ${cfg.eggs.maxEggsPerWallet}`} sub={`${eggs.length} incubating · ${creatures.length} hatched`} />
-          <div className="sl-glass rounded-2xl p-4">
+          <div className="sl-glass rounded-md p-4">
             <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Next egg</p>
             {toNext === 0 ? (
-              <p className="mt-2 font-display text-xl text-white">Max reached</p>
+              <p className="mt-2 font-display text-xl text-bone">Max reached</p>
             ) : (
               <>
-                <p className="mt-2 font-display text-xl text-white">+{formatNumber(toNext)}</p>
+                <p className="mt-2 font-display text-xl text-bone">+{formatNumber(toNext)}</p>
                 <ProgressBar value={1 - toNext / cfg.token.tokensPerEgg} className="mt-2" />
               </>
             )}
@@ -117,7 +116,7 @@ export default function HatcheryPage() {
         </div>
 
         {unbacked > 0 && (
-          <div className="mt-4 flex items-start gap-3 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90">
+          <div className="mt-4 flex items-start gap-3 rounded-md border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90">
             <span className="mt-0.5 text-amber-300">⚠</span>
             <p>
               Your balance backs {h.allowedEggs} of {h.records.length} Solanites. {unbacked} {unbacked === 1 ? "is" : "are"} dormant —{" "}
@@ -136,17 +135,17 @@ export default function HatcheryPage() {
           {h.canClaim && (
             <button
               onClick={h.claimEgg}
-              className="sl-card-hover group flex min-h-[380px] flex-col items-center justify-center rounded-3xl border border-dashed border-sol-green/40 bg-sol-green/[0.03] p-6 text-center transition hover:bg-sol-green/[0.06]"
+              className="sl-card-hover group flex min-h-[380px] flex-col items-center justify-center rounded-md border border-dashed border-sol-green/40 bg-sol-green/[0.03] p-6 text-center transition hover:bg-sol-green/[0.06]"
             >
               <span className="grid h-16 w-16 place-items-center rounded-full border border-sol-green/40 text-3xl text-sol-green transition group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(20,241,149,0.4)]">+</span>
-              <span className="mt-5 font-display text-lg text-white">Claim new egg</span>
+              <span className="mt-5 font-display text-lg text-bone">Claim new egg</span>
               <span className="mt-2 text-sm text-mist">Your balance qualifies for {h.allowedEggs - h.records.length} more.</span>
             </button>
           )}
           {Array.from({ length: lockedSlots }).map((_, i) => (
-            <div key={i} className="flex min-h-[380px] flex-col items-center justify-center rounded-3xl border border-white/[0.05] bg-white/[0.01] p-6 text-center">
-              <svg viewBox="0 0 24 24" className="h-8 w-8 text-white/20" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
-              <p className="mt-4 font-display text-white/50">Locked slot</p>
+            <div key={i} className="flex min-h-[380px] flex-col items-center justify-center rounded-md border border-white/[0.05] bg-white/[0.01] p-6 text-center">
+              <svg viewBox="0 0 24 24" className="h-8 w-8 text-bone/20" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+              <p className="mt-4 font-display text-bone/50">Locked slot</p>
               <p className="mt-1 text-xs text-mist/50">Hold {formatNumber((Math.max(h.allowedEggs, h.records.length) + i + 1) * cfg.token.tokensPerEgg)} tokens</p>
             </div>
           ))}
@@ -162,7 +161,7 @@ export default function HatcheryPage() {
             ))}
           </div>
         ) : (
-          <p className="rounded-3xl border border-white/5 p-10 text-center text-mist">No Solanites yet. Your first hatch is waiting.</p>
+          <p className="rounded-md border border-white/5 p-10 text-center text-mist">No Solanites yet. Your first hatch is waiting.</p>
         )}
 
         <div className="mt-16">

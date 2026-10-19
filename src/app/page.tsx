@@ -7,7 +7,6 @@ import { StageTimeline } from "@/components/landing/StageTimeline";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
-import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
 import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
@@ -27,20 +26,20 @@ export default function Home() {
           <div className="max-w-xl text-center lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
-              <p className="font-mono text-[11px] uppercase tracking-[0.4em] text-[#f6d488]/80">Genesis Hatchery · Season 0</p>
+              <p className="sl-eyebrow">Genesis Hatchery · Season 0</p>
             </div>
-            <h1 className="sl-awake-in mt-6 font-display text-[2.5rem] font-bold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-7xl" style={{ animationDelay: "0.25s" }}>
-              A WORLD WAITING TO <span className="sl-phx-gold">AWAKEN.</span>
+            <h1 className="sl-awake-in sl-display-xl mt-6 text-bone" style={{ animationDelay: "0.25s" }}>
+              A world waiting to <span className="sl-phx-gold italic">awaken.</span>
             </h1>
             <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              {SPECIES.length} creatures sleep in sealed eggs. <span className="text-white">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
+              {SPECIES.length} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
             </p>
             <div className="sl-awake-in mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
-              <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em]">
+              <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
                 EXPLORE SOLANITES
                 <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
               </Link>
-              <Link href="/hatchery" className="sl-btn-ghost whitespace-nowrap rounded-full px-7 py-4 font-display text-sm font-semibold tracking-[0.2em]">
+              <Link href="/hatchery" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
                 ENTER THE HATCHERY
               </Link>
             </div>
@@ -49,35 +48,30 @@ export default function Home() {
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
               No wallet needed to explore.
             </p>
-            {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
-            <dl
-              className="sl-awake-in mx-auto mt-10 grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/10 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
-              style={{ animationDelay: "0.7s" }}
-            >
-              {[
-                { value: formatNumber(gameConfig.token.tokensPerEgg), label: `${gameConfig.token.symbol} per egg` },
-                { value: String(SPECIES.length), label: "species to find" },
-                { value: String(RARITY_ORDER.length), label: "rarity tiers" },
-              ].map((stat, i) => (
-                <div key={stat.label} className={`flex min-w-0 flex-col rounded-2xl border border-white/[0.08] bg-black/30 px-4 py-3.5 text-center backdrop-blur-sm lg:text-left ${i === 0 ? "col-span-2 sm:col-span-1" : ""}`}>
-                  <dt className="mt-1 text-[10px] uppercase leading-snug tracking-[0.18em] text-mist/70">{stat.label}</dt>
-                  <dd className="order-first whitespace-nowrap font-display text-2xl font-semibold tabular-nums text-white">{stat.value}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
         </div>
-        <a href="#rarities" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-white md:flex">
+        <a href="#rarities" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
       </HeroSection>
 
-      <CreatureMarquee />
-
       {/* ── RARITIES ── */}
       <section id="rarities" className="relative py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* the three facts, as a borderless stat strip (§2.6) */}
+          <dl className="mb-20 grid grid-cols-3 divide-x divide-white/10 text-center">
+            {[
+              { value: formatNumber(gameConfig.token.tokensPerEgg), label: `${gameConfig.token.symbol} per egg` },
+              { value: String(SPECIES.length), label: "Species" },
+              { value: String(RARITY_ORDER.length), label: "Bloodlines" },
+            ].map((stat) => (
+              <div key={stat.label} className="flex min-w-0 flex-col px-1 sm:px-2">
+                <dt className="sl-label order-last break-words mt-2 text-dust">{stat.label}</dt>
+                <dd className="font-display text-2xl tabular-nums min-[400px]:text-3xl text-bone sm:text-5xl">{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
           <SectionHeading eyebrow="The Bloodlines" title={<>Six tiers of rarity.<br className="hidden sm:block" /> One shared origin.</>}>
             Every Solanite carries a Solgem — a fragment of the chain that birthed it. What surrounds that gem is up to fate, and to how long you hold.
           </SectionHeading>
@@ -132,11 +126,11 @@ export default function Home() {
             <div className="absolute inset-x-2 bottom-3 top-6 rounded-full bg-sol-green/20 blur-3xl" />
             <EggArt stage={3} progress={0.9} seed={9} inside={SPECIES_BY_ID["genesis"]} className="relative h-full w-full" />
           </div>
-          <h2 className="font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl">
-            Something is <span className="sl-gradient-text">stirring</span>.
+          <h2 className="sl-display-l text-bone">
+            Something is <span className="italic">stirring</span>.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg text-mist">Your egg is already warm. Step inside, check on it daily, and be there the moment it opens.</p>
-          <Link href="/hatchery" className="sl-btn-gold mt-10 inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
+          <Link href="/hatchery" className="sl-btn-gold mt-10 inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-sans text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

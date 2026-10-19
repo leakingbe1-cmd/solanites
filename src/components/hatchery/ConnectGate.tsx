@@ -49,8 +49,8 @@ export function ConnectGate() {
             <EggArt stage={1} seed={2} />
           </HatcheryChamber>
           <div className="text-center md:text-left">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Hatchery</p>
-            <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">Your eggs find you.</h1>
+            <p className="sl-eyebrow">The Hatchery</p>
+            <h1 className="mt-4 sl-display-l text-bone">Your eggs find you.</h1>
             <p className="mt-5 text-lg leading-relaxed text-mist">
               Every {formatNumber(h.config.token.tokensPerEgg)} {h.config.token.symbol} you hold earns an egg, tracked automatically from Solana once holder tracking is live. There&apos;s nothing to connect. Paste your
               public address to see your eggs.
@@ -68,9 +68,9 @@ export function ConnectGate() {
                 autoComplete="off"
                 spellCheck={false}
                 maxLength={60}
-                className="min-w-0 flex-1 rounded-2xl border border-white/10 bg-black/30 px-4 py-3.5 font-mono text-sm text-white outline-none placeholder:text-mist/50 focus:border-sol-purple"
+                className="min-w-0 flex-1 rounded-md border border-white/10 bg-black/30 px-4 py-3.5 font-mono text-sm text-bone outline-none placeholder:text-mist/50 focus:border-gilt"
               />
-              <button type="submit" disabled={!address.trim()} className="sl-btn-primary rounded-2xl px-7 py-3.5 font-display text-xs font-semibold tracking-[0.2em] text-white disabled:opacity-50">
+              <button type="submit" disabled={!address.trim()} className="sl-btn-gold rounded-full px-7 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] disabled:opacity-50">
                 FIND MY EGGS
               </button>
             </form>
@@ -84,7 +84,7 @@ export function ConnectGate() {
             </p>
 
             {fixtures.length > 0 && (
-              <div className="mt-6 rounded-2xl border border-amber-400/30 bg-amber-400/[0.06] p-4 text-left">
+              <div className="mt-6 rounded-md border border-amber-400/30 bg-amber-400/[0.06] p-4 text-left">
                 <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-amber-300">Local fixture wallets · test data, not real holders</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {fixtures.map((f) => (
@@ -97,7 +97,7 @@ export function ConnectGate() {
             )}
 
             <div className="mt-8 flex flex-col items-center gap-3 border-t border-white/5 pt-6 sm:flex-row md:justify-start" data-tour="demo">
-              <button onClick={() => h.connect("demo")} className="shrink-0 whitespace-nowrap rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-white">
+              <button onClick={() => h.connect("demo")} className="shrink-0 whitespace-nowrap rounded-full border border-white/15 px-7 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
                 Explore the demo
               </button>
               <p className="max-w-xs text-xs leading-relaxed text-amber-200/70">
@@ -106,7 +106,7 @@ export function ConnectGate() {
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-mist md:justify-start">
-              <button type="button" onClick={() => setTouring(true)} className="underline-offset-4 transition hover:text-white hover:underline">
+              <button type="button" onClick={() => setTouring(true)} className="underline-offset-4 transition hover:text-bone hover:underline">
                 New here? Take the 3-step tour
               </button>
             </div>

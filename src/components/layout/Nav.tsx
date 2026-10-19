@@ -28,7 +28,7 @@ export function Nav() {
   useLayoutEffect(() => {
     const place = () => {
       const el = activeHref ? linksRef.current?.querySelector<HTMLElement>(`[data-href="${activeHref}"]`) : null;
-      setIndicator((prev) => (el ? { x: el.offsetLeft + 16, w: el.offsetWidth - 32, on: true, ready: prev.ready || prev.on } : { ...prev, on: false }));
+      setIndicator((prev) => (el ? { x: el.offsetLeft + el.offsetWidth / 2 - 2.5, w: 5, on: true, ready: prev.ready || prev.on } : { ...prev, on: false }));
     };
     place();
     window.addEventListener("resize", place);
@@ -58,7 +58,7 @@ export function Nav() {
                 href={l.href}
                 data-href={l.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative whitespace-nowrap rounded-full px-4 py-2 text-[13px] tracking-wide transition-colors duration-200 ${active ? "text-white" : "text-mist hover:text-white"}`}
+                className={`relative whitespace-nowrap rounded-full px-4 py-2 text-[13px] tracking-wide transition-colors duration-200 ${active ? "text-bone" : "text-mist hover:text-bone"}`}
               >
                 {l.label}
               </Link>
@@ -76,7 +76,7 @@ export function Nav() {
             onClick={h.toggleSound}
             aria-label={h.sound ? "Mute sound" : "Enable sound"}
             title={h.sound ? "Sound on" : "Sound off"}
-            className="sl-glass hidden h-10 w-10 place-items-center rounded-full text-mist transition hover:text-white sm:grid"
+            className="sl-glass hidden h-10 w-10 place-items-center rounded-full text-mist transition hover:text-bone sm:grid"
           >
             {h.sound ? (
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 9v6h4l5 4V5L8 9H4z" /><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" strokeLinecap="round" /></svg>
@@ -99,7 +99,7 @@ export function Nav() {
               key={l.href}
               href={l.href}
               aria-current={l.href === activeHref ? "page" : undefined}
-              className={`flex items-center gap-3 border-b border-white/5 py-4 font-display text-lg transition-colors ${l.href === activeHref ? "text-white" : "text-mist"}`}
+              className={`flex items-center gap-3 border-b border-white/5 py-4 font-display text-lg transition-colors ${l.href === activeHref ? "text-bone" : "text-mist"}`}
             >
               <span className={`h-5 w-0.5 rounded-full bg-gradient-to-b from-sol-purple to-sol-blue transition-opacity ${l.href === activeHref ? "opacity-100" : "opacity-0"}`} aria-hidden />
               {l.label}

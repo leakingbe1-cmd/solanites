@@ -14,23 +14,23 @@ export function Footer() {
           </p>
         </div>
         <div className="text-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">Explore</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/40">Explore</p>
           <ul className="mt-4 space-y-2.5 text-mist">
-            <li><Link className="hover:text-white" href="/hatchery">Hatchery</Link></li>
-            <li><Link className="hover:text-white" href="/collection">Collection</Link></li>
-            <li><Link className="hover:text-white" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-white" href="/claims">Holder Rewards</Link></li>
+            <li><Link className="hover:text-bone" href="/hatchery">Hatchery</Link></li>
+            <li><Link className="hover:text-bone" href="/collection">Collection</Link></li>
+            <li><Link className="hover:text-bone" href="/leaderboard">Leaderboard</Link></li>
+            <li><Link className="hover:text-bone" href="/claims">Holder Rewards</Link></li>
           </ul>
         </div>
         <div className="text-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">Learn</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/40">Learn</p>
           <ul className="mt-4 space-y-2.5 text-mist">
-            <li><Link className="hover:text-white" href="/how-it-works">How It Works</Link></li>
-            <li><Link className="hover:text-white" href="/how-it-works#rules">Gameplay Rules</Link></li>
+            <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
+            <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
           </ul>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/30">
+      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/30">
         <Sigil className="h-10 w-10 opacity-80" />
         © Solanites · Built on conviction
       </div>

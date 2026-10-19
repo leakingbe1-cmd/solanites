@@ -232,6 +232,8 @@ Delete `.sl-btn-primary` (the purple gradient) after migrating the nav CTA to Ou
 **Nav:** see §3.7.
 
 ### 2.7 Imagery and lighting rules (for all creature, egg and environment art)
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, C1–C3, C6, W1, W2: hand-painted 2D; warm gold key `#FFE2A8` from the upper left; restrained violet rim; no ground, contact shadow, floor glint, light cone or aura behind artwork, in the art or on the website. Rules 3 and 4 and the `CreaturePortrait` cone/floor/grade below are void). Kept as a record only.
+
 1. **Key light:** warm (`#ffe2a8`), from 11 o'clock, above the subject.
 2. **Rim light:** violet (`#7d5cf0` at 40–60%), from behind and lower right.
 3. **Ground:** every creature and egg stands on something: a contact shadow (an ellipse of `rgba(0,0,0,.6)` blurred 12px, 70% of the subject's width) plus a faint gilt floor glint. Nothing floats in a void unless it is a flying or swimming species. Even those get a soft shadow 24px below.
@@ -267,15 +269,21 @@ plus `filter: saturate(.86) contrast(1.06)` on the art. This one grade pulls the
 *Mobile:* horizontal scroll-snap row, plate width 72vw, with the next plate peeking 12vw. Do not stack six cards vertically.
 
 **Act III, Incubation ("Watch it come alive").** Keep the five-stage row, but put each egg on a **pedestal** (a low ellipse in `basalt` with a gilt rim highlight) under its own light cone. Light intensity increases left to right (cone opacity .05 → .16). The connecting line becomes a 1px gilt hairline with celestial-ring ticks at each stage. Stage labels: `label` "STAGE I" (roman numerals), then `title` "Acquired", then `small` copy. Remove the `bg-abyss/60` band and the `border-y`. Use the ornament divider instead.
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, W1: no pedestals or light cones under eggs). Kept as a record only.
+
 *Mobile:* vertical timeline, with the eggs at 96px on the left and the text on the right.
 
 **Act IV, Evolution ("One creature. Four forms.").** Keep `EvolutionShowcase`, but present the four forms as a **museum frieze**: one baseline, a shared floor shadow, the forms growing left to right, and roman numerals I–IV beneath in gilt. The unselected forms are not grey blobs. Show them at full colour with 0.55 brightness, so the active form is "lit" by the key light and the others stand in shadow. The species tabs become chips (§2.6).
 
 **Act V, Call ("Something is stirring").** A single egg on a pedestal, centred in a large dark field, with one light cone from above. The headline is in `display-l`, with no gradient text. Below it sits the Gilded CTA. Remove `ParticleField` and the 42rem purple blur disc. Add 12 slow embers rising from the egg only.
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, W1: no pedestal or light cone under the egg). Kept as a record only.
+
 
 Remove the `CreatureMarquee` strip, or restyle it as a quiet "frieze" (no names, no badges, 48px creature silhouettes in `dust` tone that light to full colour on hover). A scrolling strip of tiny icons cheapens the hero-to-content transition. My recommendation is to remove it.
 
 ### 3.2 Hatchery: "The Nest" (signature environment)
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, W1: the pedestals, light cones and floor under eggs in this section are void; eggs get no ground). Kept as a record only.
+
 This is the place users return to daily. It should feel like entering a sanctum.
 
 - **Header:** eyebrow `◆ YOUR HATCHERY` (or `◆ DEMO HATCHERY · SIMULATED` in demo), `display-l` "The Hatchery", and to the right a **status line** in `data` type: `● Eligible · 5,200,000 $SLNT · Next egg in 800,000`. The aurora dot is static, with no ping.

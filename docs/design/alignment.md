@@ -1,5 +1,7 @@
 # Alignment: one art bible, one set of prompts
 
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, approved 2026-10-19, commit `1fe74a1` on `creature-studio/art-direction`). The canon now wins over this file everywhere. In particular, the lighting row in §2 (warm-neutral key, cyan-violet rim) is replaced by C2/C3 (warm gold `#FFE2A8` key, restrained violet rim), and "the app may draw one soft contact shadow" is replaced by W1 (no shadows in presentation either). The phoenix prompt in §3 needs a canon check before any approval: its lighting already matches C2/C3, and it has no halo). Kept as a record only.
+
 Recorded 2026-10-19. Applies to everything on `design/creative-direction`. Where any older document on this branch disagrees with this file, this file wins.
 
 ## 1. Which document is authoritative
@@ -9,7 +11,7 @@ Recorded 2026-10-19. Applies to everything on `design/creative-direction`. Where
 | Creature art: style, anatomy, faces, lighting, materials, glow budget, composition, thumbnail tests | **Creature Studio art bible** | `docs/creature-studio/art-bible.md` on `creature-studio/art-direction` |
 | Species identity and generation prompts (Velynx, Mossling, Cryovant, then the rest) | **Creature Studio prototype briefs** | `docs/creature-studio/prototypes/*.md` on the same branch |
 | Phoenix key art | Hand-painted 2D under the same art bible (§2, §5–§7), with the prompt in §3 below | this file |
-| Website UI: tokens, type, motion, Celestial Atlas motifs (constellations, Threshold horizon, 12-tick ring, restrained engraving) | `creative-direction.md` + `art-direction-v2.md` §2, as amended in §2 below | this branch |
+| Website UI: tokens, type, motion, Celestial Atlas motifs (constellations, 12-tick ring, restrained engraving; UI only, never under artwork) | `creative-direction.md` + `art-direction-v2.md` §2, as amended in §2 below | this branch |
 
 This branch does not keep its own creature prompts or creature style rules any more.
 
@@ -28,7 +30,7 @@ This branch does not keep its own creature prompts or creature style rules any m
 
 **Pending owner decision (not adopted here):** the proposed shared canon on `creature-studio/art-direction` (`docs/canon/solanites-art-canon.md`, status PROPOSED) would set the key light to warm gold `#ffe2a8` from the upper left and the rim to a restrained violet (`#7d5cf0` family) from behind and lower right, replacing the art bible's warm-neutral key and cyan-violet rim. It also proposes one shared credit ledger, workspace-wide budgets, and a pause on all paid generation. If it is approved, it supersedes this file wherever they differ, and the phoenix prompt in §3 already uses a warm gold key and a blue-violet rim.
 
-Kept unchanged: palette tokens, Cormorant/Inter type, motion tokens, the sigil, constellations, the Threshold horizon, the 12-tick ring, restrained gold engraving, and the labelling rule (existing / temporary / proposed / study / not yet made).
+Kept unchanged: palette tokens, Cormorant/Inter type, motion tokens, the sigil, constellations, the 12-tick ring, restrained gold engraving, and the labelling rule (existing / temporary / proposed / study / not yet made).
 
 ## 3. Phoenix key art: the single prompt
 Built on the website session's Eclipse Phoenix prompt (Runway task `a0a5fc33…`, which already follows the art bible). It changes one thing: the composition, so the left 40% stays dark.

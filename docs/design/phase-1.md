@@ -17,6 +17,8 @@ Status: **network blocker resolved and downloads verified (§1.3). Phoenix gener
 | Native 9:16 | Supported by the model. If Runway rejects the ratio, the request fails before any charge |
 
 ### 1.2 Planned batch (ceiling 180 credits)
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, G1–G4: one shared 180-credit budget across all three workstreams; all paid generation paused; each image needs its own owner approval). Kept as a record only.
+
 | # | Output | Credits | Runs |
 |---|---|---|---|
 | 1 | 16:9 test, 2K, one image | 20 | **Only this one, then stop and report** |
@@ -71,6 +73,8 @@ Note: an earlier version of `art-direction-v2.md` said the current still fell sh
 ---
 
 ## 2. One direction: The Celestial Atlas
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, C6, W1: "the world sits on the Threshold horizon" and "eggs stand on the Threshold with a contact shadow" are void. Constellations, engraving and the 12-tick ring remain UI-only devices). Kept as a record only.
+
 
 > **Superseded (2026-10-19).** "The Eclipse Vigil" turned out to be the website session's unified-direction page, not v1. It stays an informal description; the working name is The Celestial Atlas. Creature style rules come from the Creature Studio art bible. See `alignment.md`.
 "The Eclipse Vigil" does not appear in the repository or in either of my documents. I have taken it to mean the v1 direction (its eclipse lighting and its Vigil ring and loader). The two now merge into one system with **one name, The Celestial Atlas**, and three rules:

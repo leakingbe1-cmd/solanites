@@ -91,6 +91,8 @@ Each species gets a constellation of 6–8 stars whose outline traces its **Asce
 - The Collection page header can show all 28 constellations as a sky map, lit as you discover each one.
 
 ### 2.3 The Threshold
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, C6, W1: no horizon line under creatures, eggs or the phoenix. A horizon may only appear as a UI divider or page-transition line, never as ground for a subject). Kept as a record only.
+
 "Between worlds" becomes a literal horizon. Hero, Hatchery and reveal compositions place a **horizon line at 62% of the frame**: cosmos above (cool, violet, stars), obsidian ground below (warm, gold-lit). Creatures and eggs stand *on* the line. The page transition's gold horizon line (v1 §4.3) is the same line, so navigating feels like crossing it.
 
 ### 2.4 The lantern (desktop only)
@@ -125,6 +127,8 @@ The SVG portrait wrapper (v1 §2.7) stays as a **temporary treatment** until rep
 3. **A line of action.** Three-quarter views with a readable gesture. Frontal symmetry only for Mythic "deity" forms.
 4. **Species-specific eyes** (shape, lids, pupils). Personality is in the eyes and the posture, not in the accessories.
 5. **Scale progression:** Eggling ≈ 40% of frame height, Hatchling 55%, Evolved 75%, Ascended 90%+ (Ascended may break the frame).
+> **Superseded by the approved art canon** (`docs/canon/solanites-art-canon.md`, C13: stage framing is 45 / 60 / 78 / 88% of the frame, ±3, measured with `docs/canon/measure-framing.py`). Kept as a record only.
+
 6. **Rendering target:** stylised realism, a "collectible sculpture under museum light". Same key light as the phoenix (warm, upper left), violet rim, a contact shadow on a matte obsidian ground. **Not** glowing chibi, **not** flat vector.
 7. **Solgem:** one per creature, in a fixed anatomical place per species, growing with stage.
 8. **Delivery:** 1024 × 1024 WebP with alpha per stage, ≤ 400 KB, through the existing pipeline (`scripts/creature-art.mjs`, `src/data/creatureAssets.json`). No code change is needed to swap them in.

@@ -12,7 +12,7 @@ import { buildSignInMessage, verifyWalletSignature } from "./siws";
 export interface ClaimsConfig {
   launchAtMs: number | null;
   openAfterMs: number;
-  /** Domain bound into the sign-in message, e.g. "solanites.vercel.app". */
+  /** Domain bound into the sign-in message: the site's own host name, e.g. "example.com". */
   domain: string | null;
   /** HMAC secret for claim sessions (32+ characters). */
   sessionSecret: string | null;

@@ -4,8 +4,8 @@
 #
 #   scripts/check-prelaunch-urls.sh        exits 1 and lists every match
 #
-# Scans the publication paths only. Internal technical config (env examples, workflows,
-# server code) is out of scope: it is not public and must keep working.
+# Two scans: campaign paths must contain no web address at all, and every other tracked
+# file (the repository is public) must not name a Vercel deployment host.
 # Run automatically by scripts/promo-assets.sh; rendered images and videos are checked
 # visually, since they contain no text to search.
 set -euo pipefail
@@ -17,9 +17,13 @@ PATTERN='https?://|www\.|\b[a-z0-9-]+\.(vercel\.app|app|com|io|xyz|net|org|fun|g
 hits="$(grep -rnIiE "$PATTERN" "${PATHS[@]}" 2>/dev/null \
   | grep -v '^docs/marketing/prelaunch-rules.md:' \
   | grep -vE '^scripts/[a-z-]+\.(sh|mjs):[0-9]+:.*(PATTERN|URL_PATTERN)' || true)"
+# The whole public tree: no deployment host anywhere (the rules document quotes the patterns).
+hosts="$(git grep -nIiE '[a-z0-9-]+\.vercel\.app' -- . ':!package-lock.json' ':!docs/marketing/prelaunch-rules.md' 2>/dev/null || true)"
+[ -n "$hosts" ] && hits="${hits:+$hits
+}$hosts"
 if [ -n "$hits" ]; then
   echo "PRELAUNCH URL RULE: web addresses found in campaign files:" >&2
   echo "$hits" >&2
   exit 1
 fi
-echo "Prelaunch URL check: no web addresses in campaign files."
+echo "Prelaunch URL check: no web addresses in campaign files, no deployment host in the repository."

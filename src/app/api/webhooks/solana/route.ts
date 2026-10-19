@@ -1,5 +1,6 @@
 import "server-only";
 import { fail, failFromError, noStore, readJson, secretMatches } from "@/server/http";
+import { log } from "@/server/log";
 import { getRuntime } from "@/server/runtime";
 
 export const runtime = "nodejs";
@@ -16,7 +17,11 @@ const SIGNATURE = /^[1-9A-HJ-NP-Za-km-z]{64,90}$/;
  * Authorization header.
  */
 export async function POST(req: Request) {
-  if (!process.env.SOLANITES_WEBHOOK_SECRET) return fail(503, "NOT_CONFIGURED", "SOLANITES_WEBHOOK_SECRET is not set.");
+  // Unset secret: refuse like a wrong one, so the public can't tell what is configured. The log says why.
+  if (!process.env.SOLANITES_WEBHOOK_SECRET) {
+    log.warn("webhook.not_configured", { missing: "SOLANITES_WEBHOOK_SECRET" });
+    return fail(401, "UNAUTHORIZED", "Unauthorized.");
+  }
   if (!secretMatches(req.headers.get("authorization"), process.env.SOLANITES_WEBHOOK_SECRET)) return fail(401, "UNAUTHORIZED", "Unauthorized.");
   const parsed = await readJson(req, 1_000_000);
   if (!parsed.ok) return parsed.response;

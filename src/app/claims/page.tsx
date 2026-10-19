@@ -15,7 +15,7 @@ export default function ClaimsPage() {
           instructions provided here.
         </p>
         <p className="mt-4 text-lg leading-relaxed text-mist">
-          Your eggs are tracked automatically through your public Solana address. A wallet connection will only be required if you need to submit a refund claim.
+          Once holder tracking is live, your eggs are tracked automatically through your public Solana address. A wallet connection will only be required if you need to submit a refund claim.
         </p>
         <ClaimsPanel />
       </div>

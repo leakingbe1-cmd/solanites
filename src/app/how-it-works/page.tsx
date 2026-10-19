@@ -4,7 +4,6 @@ import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { describeGrowthSchedule, describeSchedule, eggProgression } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { CLAIMS_OPEN_AFTER_MS } from "@/config/launch";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { formUnlockText, rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
@@ -18,7 +17,7 @@ export default function HowItWorksPage() {
   const prog = eggProgression;
   const rules: [string, string, string][] = [
     ["Tokens required per egg", `${formatNumber(cfg.token.tokensPerEgg)} ${cfg.token.symbol}`, `${((cfg.token.tokensPerEgg / cfg.token.totalSupply) * 100).toFixed(2)}% of the ${formatNumber(cfg.token.totalSupply)} supply. Eggs = verified balance ÷ ${formatNumber(cfg.token.tokensPerEgg)}, rounded down`],
-    ["How holdings are tracked", "Automatically, from Solana", "No wallet connection or sign-up. All of a wallet's token accounts are counted once, at finalized commitment"],
+    ["How holdings are tracked", "Automatically, from Solana", "Once holder tracking is live. No wallet connection or sign-up. All of a wallet's token accounts are counted once, at finalized commitment"],
     ["Maximum eggs per wallet", prog.maxEggsPerWallet === null ? "No cap" : String(prog.maxEggsPerWallet), "One egg for every full million held"],
     ["Incubation", describeSchedule(prog), prog.incubationMode === "sequential" ? "One egg incubates at a time. Timers run on the server clock, including while you are offline" : "Every egg starts incubating when earned, on the server clock"],
     ["If your balance drops", "Earned eggs are kept", "They keep incubating. New eggs need tokens that have not already earned one"],
@@ -31,7 +30,7 @@ export default function HowItWorksPage() {
       "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
-    ["Launch fee claims", `Open ${CLAIMS_OPEN_AFTER_MS / 3_600_000} hours after launch`, "Separate from eggs: only claims ask you to connect a wallet"],
+    ["Launch fee claims", "Coming soon", "Separate from eggs. Details are published before claims open; only claims ask you to connect a wallet"],
   ];
 
   return (

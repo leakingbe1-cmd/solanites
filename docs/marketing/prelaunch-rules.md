@@ -17,10 +17,12 @@ explicitly approves the official launch URL.**
 - Enforced by `scripts/check-prelaunch-urls.sh`, which `scripts/promo-assets.sh` runs before
   every build, and by a guard in `scripts/promo-overlays.mjs` that refuses to render any
   overlay containing a web address.
-- Internal technical configuration (environment examples, CI workflows, server code) is not
-  public and is out of scope. Removing the URL from campaign material does **not** make the
-  deployment private: that needs Vercel access settings (see the deployment notes in the
-  latest status report).
+- The GitHub repository is currently **public**, so code, docs, branches and history are
+  visible to anyone. `scripts/check-prelaunch-urls.sh` therefore scans every tracked file.
+  Earlier commits still contain the address; only rewriting history or making the
+  repository private removes that.
+- Removing the URL from campaign material does **not** make the deployment private: that
+  needs Vercel Deployment Protection.
 
 ## Also never include before launch
 

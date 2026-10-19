@@ -54,7 +54,7 @@ export function ConnectGate() {
             <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Hatchery</p>
             <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">Your eggs find you.</h1>
             <p className="mt-5 text-lg leading-relaxed text-mist">
-              Every {formatNumber(h.config.token.tokensPerEgg)} {h.config.token.symbol} you hold earns an egg, tracked automatically from Solana. There&apos;s nothing to connect. Paste your
+              Every {formatNumber(h.config.token.tokensPerEgg)} {h.config.token.symbol} you hold earns an egg, tracked automatically from Solana once holder tracking is live. There&apos;s nothing to connect. Paste your
               public address to see your eggs.
             </p>
 

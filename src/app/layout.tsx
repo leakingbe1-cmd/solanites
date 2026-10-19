@@ -8,10 +8,13 @@ import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { FirstVisitIntro } from "@/components/intro/FirstVisitIntro";
 import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
+import { INDEXING_ENABLED } from "@/config/indexing";
 
 export const metadata: Metadata = {
   title: "Solanites — Your Solanite Is Waiting",
   description: "Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.",
+  // Prelaunch: ask crawlers not to index (see src/config/indexing.ts).
+  robots: INDEXING_ENABLED ? undefined : { index: false, follow: false },
 };
 
 export const viewport: Viewport = {

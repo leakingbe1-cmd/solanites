@@ -6,7 +6,8 @@
 export interface WalletLookupResult {
   address: string;
   token: {
-    mint: string;
+    /** null until the launch is public (see src/server/disclosure.ts). */
+    mint: string | null;
     tokenProgram: "spl-token" | "spl-token-2022";
     decimals: number;
   };
@@ -14,6 +15,7 @@ export interface WalletLookupResult {
     amountBase: string;
     amount: string;
     frozenAmount: string;
+    /** Empty until the launch is public: account addresses name the mint on-chain. */
     tokenAccounts: { address: string; amount: string; state: "initialized" | "frozen" }[];
   };
   eggs: {

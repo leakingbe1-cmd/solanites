@@ -1,5 +1,6 @@
 import "server-only";
 import { ConfigError, readServerConfig } from "@/server/config";
+import { launchIsPublic, publicWalletLookup } from "@/server/disclosure";
 import { rateLimit } from "@/server/http";
 import { log } from "@/server/log";
 import { checkSolanaAddress } from "@/server/solana/address";
@@ -48,7 +49,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ address:
 
   try {
     const result = await svc.lookup(check.address);
-    return Response.json(result, { headers: { "cache-control": "no-store" } });
+    return Response.json(publicWalletLookup(result, launchIsPublic()), { headers: { "cache-control": "no-store" } });
   } catch (e) {
     if (e instanceof RpcUnavailableError) return fail(503, "RPC_UNAVAILABLE", "Solana data is temporarily unavailable. No balance is shown rather than a possibly wrong one — please retry shortly.");
     if (e instanceof MintError) {

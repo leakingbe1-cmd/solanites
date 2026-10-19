@@ -10,7 +10,7 @@ export function HowSteps() {
     {
       n: "1",
       title: "Hold the qualifying amount",
-      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} you hold earns one egg. Holdings are tracked automatically from the blockchain, with no wallet connection needed.`,
+      text: `Every ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} you hold earns one egg. Once holder tracking is live, holdings are tracked automatically from the blockchain, with no wallet connection needed.`,
       icon: (
         <path d="M12 3l7 4v6c0 4-3 7-7 8-4-1-7-4-7-8V7l7-4z M9 12l2 2 4-4" />
       ),

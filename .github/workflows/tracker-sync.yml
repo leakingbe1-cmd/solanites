@@ -2,10 +2,13 @@
 # deployed /api/cron/sync endpoint. Vercel's own cron (vercel.json) runs it
 # once a day as a backstop, which is all the Hobby plan allows.
 #
-# Setup (GitHub → Settings → Secrets and variables → Actions):
-#   variable SOLANITES_SYNC_URL = https://solanites.vercel.app/api/cron/sync
-#   secret   CRON_SECRET        = the same value as CRON_SECRET in Vercel
-# Until both exist, the job skips with a notice. Scheduled workflows only run
+# Setup (GitHub → Settings → Secrets and variables → Actions), both as SECRETS so
+# they are masked in the public run logs:
+#   secret SOLANITES_SYNC_URL = https://<your production host>/api/cron/sync
+#   secret CRON_SECRET        = the same value as CRON_SECRET in Vercel
+# (A SOLANITES_SYNC_URL variable also works, but variables are printed in logs.)
+# Until both exist, the job skips with a notice. The log shows only the HTTP status
+# and summary counts, never the response body. Scheduled workflows only run
 # from the default branch (main). GitHub may delay scheduled runs at busy times.
 name: Tracker sync
 
@@ -27,15 +30,17 @@ jobs:
     steps:
       - name: Call the sync endpoint
         env:
-          SYNC_URL: ${{ vars.SOLANITES_SYNC_URL }}
+          SYNC_URL: ${{ secrets.SOLANITES_SYNC_URL || vars.SOLANITES_SYNC_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           if [ -z "$SYNC_URL" ] || [ -z "$CRON_SECRET" ]; then
-            echo "::notice::Tracker sync is not set up yet (needs variable SOLANITES_SYNC_URL and secret CRON_SECRET). Skipping."
+            echo "::notice::Tracker sync is not set up yet (needs secrets SOLANITES_SYNC_URL and CRON_SECRET). Skipping."
             exit 0
           fi
           code=$(curl -sS -o response.json -w '%{http_code}' --max-time 90 -H "Authorization: Bearer $CRON_SECRET" "$SYNC_URL" || echo "000")
-          echo "HTTP $code"; cat response.json 2>/dev/null; echo
+          # Counts only: the body lists holder addresses and error details.
+          echo "HTTP $code"
+          jq -r '"status=\(.status // "?") ownersSynced=\(.ownersSynced // 0) eggsIssued=\(.eggsIssued // 0) errors=\((.errors // []) | length)"' response.json 2>/dev/null || true
           if [ "$code" != "200" ]; then
             echo "::error::Tracker sync failed with HTTP $code. Check /api/health and the Vercel function logs (event sync.failed)."
             exit 1

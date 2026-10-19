@@ -1,5 +1,6 @@
 import "server-only";
 import { fail, failFromError, noStore, secretMatches } from "@/server/http";
+import { log } from "@/server/log";
 import { getRuntime } from "@/server/runtime";
 
 export const runtime = "nodejs";
@@ -13,7 +14,11 @@ export const maxDuration = 60;
  * Requires `Authorization: Bearer $CRON_SECRET`.
  */
 async function handle(req: Request) {
-  if (!process.env.CRON_SECRET) return fail(503, "NOT_CONFIGURED", "CRON_SECRET is not set.");
+  // Unset secret: refuse like a wrong one, so the public can't tell what is configured. The log says why.
+  if (!process.env.CRON_SECRET) {
+    log.warn("cron.not_configured", { missing: "CRON_SECRET" });
+    return fail(401, "UNAUTHORIZED", "Unauthorized.");
+  }
   const auth = req.headers.get("authorization");
   if (!secretMatches(auth?.replace(/^Bearer\s+/i, "") ?? null, process.env.CRON_SECRET)) return fail(401, "UNAUTHORIZED", "Unauthorized.");
   try {

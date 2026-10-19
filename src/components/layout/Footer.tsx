@@ -10,7 +10,7 @@ export function Footer() {
           <Logo />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist">Discover your creature. Hatch the extraordinary. A creature-collecting universe where Solanites grow stronger through their evolution.</p>
           <p className="mt-6 max-w-sm rounded-xl border border-amber-400/15 bg-amber-400/5 p-3 text-xs leading-relaxed text-amber-200/80">
-            Eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet and the leaderboard use simulated data. Solanites never asks for a seed phrase or private key.
+            Once holder tracking is live, eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet and the leaderboard use simulated data. Solanites never asks for a seed phrase or private key.
           </p>
         </div>
         <div className="text-sm">

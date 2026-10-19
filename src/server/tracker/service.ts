@@ -14,6 +14,9 @@ import { pruneRateLimits } from "../rateLimitShared";
 import { qualifyingMs } from "./growth";
 import { applyTransferCredit, eggsToAward } from "./ledger";
 
+/** What the public holder view says about a failed sync; the raw error stays in the database and logs. */
+const PUBLIC_SYNC_ERROR = "The last update for this address didn't complete. It will retry automatically.";
+
 /** Eggs and holding history only ever use finalized data, so a rolled-back block can't award an egg. */
 const COMMITMENT: Commitment = "finalized";
 
@@ -483,7 +486,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         incubationMode: config.progression.incubationMode,
         initialGrowthScheduleMs: config.progression.initialGrowthScheduleMs,
       },
-      sync: { lastSyncedAt: row ? num(row.last_sync_ms) : null, pending: row ? row.needs_sync : false, error: row?.last_sync_error ?? null },
+      sync: { lastSyncedAt: row ? num(row.last_sync_ms) : null, pending: row ? row.needs_sync : false, error: row?.last_sync_error ? PUBLIC_SYNC_ERROR : null },
     };
   }
 

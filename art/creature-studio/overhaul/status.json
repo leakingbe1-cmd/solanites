@@ -1,0 +1,266 @@
+{
+ "aurelion-1": {
+  "task": "3cef7f5c-3322-49f7-a73f-8fed26b60bae",
+  "raw": "art/creature-studio/overhaul/raw/aurelion-1-3cef7f5c.png",
+  "scale": 0.634,
+  "c9": [
+   142,
+   94
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurelion-2": {
+  "task": "7eda7f90-5e09-4619-bc1d-535f3a538944",
+  "raw": "art/creature-studio/overhaul/raw/aurelion-2-7eda7f90.png",
+  "scale": 0.697,
+  "c9": [
+   125,
+   75
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurelion-3": {
+  "task": "b3d2b04f-6598-497b-abac-33b5984ad3b4",
+  "raw": "art/creature-studio/overhaul/raw/aurelion-3-b3d2b04f.png",
+  "scale": 1.106,
+  "c9": [
+   128,
+   91
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "aurelion-4": {
+  "task": "f5d5d348-2e4f-4383-bc66-052fa5110ad5",
+  "raw": "art/creature-studio/overhaul/raw/aurelion-4-f5d5d348.png",
+  "scale": 1.025,
+  "c9": [
+   150,
+   111
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "driftfin-1": {
+  "task": "e1a830ba-ac63-4bde-898b-d48d17e0d9e1",
+  "raw": "art/creature-studio/overhaul/raw/driftfin-1-e1a830ba.png",
+  "scale": 0.524,
+  "c9": [
+   132,
+   100
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "driftfin-2": {
+  "task": "a8b607c6-554d-4778-b83d-fdd0852d0a2a",
+  "raw": "art/creature-studio/overhaul/raw/driftfin-2-a8b607c6.png",
+  "scale": 0.697,
+  "c9": [
+   126,
+   80
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "driftfin-3": {
+  "task": "b6613308-0feb-4534-b6fd-0f322ef453fa",
+  "raw": "art/creature-studio/overhaul/raw/driftfin-3-b6613308.png",
+  "scale": 0.904,
+  "c9": [
+   124,
+   76
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "driftfin-4": {
+  "task": "8ed472e0-deec-486e-86f7-653327ff64d8",
+  "raw": "art/creature-studio/overhaul/raw/driftfin-4-8ed472e0.png",
+  "scale": 1.024,
+  "c9": [
+   142,
+   88
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "frostkit-1": {
+  "task": "394a5c49-1e60-45e6-b45a-ea0ef377a39b",
+  "raw": "art/creature-studio/overhaul/raw/frostkit-1-394a5c49.png",
+  "scale": 0.523,
+  "c9": [
+   189,
+   130
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "frostkit-2": {
+  "task": "463769af-a090-4f50-aa64-c7ddd6440067",
+  "raw": "art/creature-studio/overhaul/raw/frostkit-2-463769af.png",
+  "scale": 0.695,
+  "c9": [
+   176,
+   106
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "frostkit-3": {
+  "task": "70795a73-caa0-45c9-ac89-5003b3f2da5e",
+  "raw": "art/creature-studio/overhaul/raw/frostkit-3-70795a73.png",
+  "scale": 1.103,
+  "c9": [
+   174,
+   105
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "frostkit-4": {
+  "task": "ce29ffaa-cf10-4512-a82b-ca88e8a9ff4b",
+  "raw": "art/creature-studio/overhaul/raw/frostkit-4-ce29ffaa.png",
+  "scale": 1.022,
+  "c9": [
+   181,
+   111
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "glimmeray-1": {
+  "task": "09815a5d-8b85-4362-9336-00fe3c2a197d",
+  "raw": "art/creature-studio/overhaul/raw/glimmeray-1-09815a5d.png",
+  "scale": 0.527,
+  "c9": [
+   158,
+   108
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "glimmeray-2": {
+  "task": "06bb957c-76e3-4634-9256-0825f1dbbc14",
+  "raw": "art/creature-studio/overhaul/raw/glimmeray-2-06bb957c.png",
+  "scale": 0.698,
+  "c9": [
+   138,
+   95
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "glimmeray-3": {
+  "task": "76d73cf5-d1c5-49e7-8bef-bf7caae1a474",
+  "raw": "art/creature-studio/overhaul/raw/glimmeray-3-76d73cf5.png",
+  "scale": 0.909,
+  "c9": [
+   146,
+   101
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "glimmeray-4": {
+  "task": "b9026a80-00c3-4815-99f1-a4b1c656f83d",
+  "raw": "art/creature-studio/overhaul/raw/glimmeray-4-b9026a80.png",
+  "scale": 1.024,
+  "c9": [
+   145,
+   100
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "mossling-1": {
+  "task": "3e30749c-d589-4e58-8739-9d7421b84734",
+  "raw": "art/creature-studio/overhaul/raw/mossling-1-3e30749c.png",
+  "scale": 0.636,
+  "c9": [
+   158,
+   111
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "mossling-2": {
+  "task": "2e9ecd39-dedc-4660-a6ea-856fb440cda4",
+  "raw": "art/creature-studio/overhaul/raw/mossling-2-2e9ecd39.png",
+  "scale": 0.847,
+  "c9": [
+   126,
+   90
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "mossling-3": {
+  "task": "3ba886a4-fe55-4086-9b0a-c245eb2ebe84",
+  "raw": "art/creature-studio/overhaul/raw/mossling-3-3ba886a4.png",
+  "scale": 0.907,
+  "c9": [
+   117,
+   86
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "mossling-4": {
+  "task": "0583e354-1ae3-4fc6-a5db-d3a404266d74",
+  "raw": "art/creature-studio/overhaul/raw/mossling-4-0583e354.png",
+  "scale": 1.246,
+  "c9": [
+   114,
+   74
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "pallow-1": {
+  "task": "f8d65718-5051-4844-a99f-64c2a81a225d",
+  "raw": "art/creature-studio/overhaul/raw/pallow-1-f8d65718.png",
+  "scale": 0.536,
+  "c9": [
+   196,
+   120
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pallow-2": {
+  "task": "f28d61d7-a1a9-4c2f-8538-cc86569cbcdd",
+  "raw": "art/creature-studio/overhaul/raw/pallow-2-f28d61d7.png",
+  "scale": 0.7,
+  "c9": [
+   169,
+   109
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pallow-3": {
+  "task": "4e0b95b5-00a6-4b31-bb41-dcf1baf0100d",
+  "raw": "art/creature-studio/overhaul/raw/pallow-3-4e0b95b5.png",
+  "scale": 0.906,
+  "c9": [
+   162,
+   105
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pallow-4": {
+  "task": "8206b4de-973f-42a2-bd21-06725f890680",
+  "raw": "art/creature-studio/overhaul/raw/pallow-4-8206b4de.png",
+  "scale": 1.029,
+  "c9": [
+   178,
+   114
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ }
+}

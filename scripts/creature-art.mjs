@@ -23,6 +23,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SRC = path.join(ROOT, "art/creatures");
 const OUT = path.join(ROOT, "public/creatures");
 const MANIFEST = path.join(ROOT, "src/data/creatureAssets.json");
+/** Classified (Mythic/Secret) painted stages: server-only data URLs, never files under public/. */
+const CLASSIFIED_ART = path.join(ROOT, "src/server/classified/art.json");
+const CLASSIFIED_SIZE = 768;
 const CHECKLIST = path.join(ROOT, "docs/creature-art/checklist.md");
 const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 
@@ -111,6 +114,24 @@ async function perceptualHash(file) {
   return Array.from(data, (v) => (v > mean ? "1" : "0")).join("");
 }
 
+/**
+ * Mean absolute RGB difference (0–255) of two images at 64×64. The silhouette hash alone can't
+ * tell two stages of one species apart (same pose and framing); a resized or re-encoded copy
+ * stays under ~1 here, while different paintings of the same creature measure ~9 or more.
+ */
+const COPY_PIXEL_DIFF = 3;
+async function pixels(file) {
+  return sharp(file).flatten({ background: "#000" }).resize(64, 64, { fit: "fill" }).removeAlpha().raw().toBuffer();
+}
+function pixelDiff(a, b) {
+  let d = 0;
+  for (let i = 0; i < a.length; i++) d += Math.abs(a[i] - b[i]);
+  return d / a.length;
+}
+async function isCopy(hash, px, seenEntry) {
+  return hamming(hash, seenEntry.hash) <= DUPLICATE_DISTANCE && pixelDiff(px, seenEntry.px) < COPY_PIXEL_DIFF;
+}
+
 function hamming(a, b) {
   let d = 0;
   for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) d++;
@@ -149,8 +170,8 @@ async function run(mode) {
   if (write && existsSync(OUT)) rmSync(OUT, { recursive: true });
   const manifest = { generated: "scripts/creature-art.mjs", spec: designs.style.spec, species: {} };
   const rows = [];
-  /** Perceptual hash → file: the same artwork may not stand in for two stages or species. */
-  const seen = new Map();
+  /** Every accepted file so far: the same artwork may not stand in for two stages or species. */
+  const seen = [];
   let supplied = 0;
   let ok = 0;
   let invalid = 0;
@@ -169,10 +190,9 @@ async function run(mode) {
       const rel = path.relative(ROOT, file);
       if (!info.problems.length) {
         const hash = await perceptualHash(file);
-        for (const [other, otherFile] of seen) {
-          if (hamming(hash, other) <= DUPLICATE_DISTANCE) info.problems.push(`same image as ${otherFile} (resized or re-encoded copy)`);
-        }
-        seen.set(hash, rel);
+        const px = await pixels(file);
+        for (const e of seen) if (await isCopy(hash, px, e)) info.problems.push(`same image as ${e.rel} (resized or re-encoded copy)`);
+        seen.push({ hash, px, rel });
       }
       if (info.problems.length) {
         invalid++;
@@ -190,7 +210,48 @@ async function run(mode) {
     manifest.species[id] = stages;
     rows.push(`| ${id} | ${cells.join(" | ")} |`);
   }
-  const total = Object.keys(designs.species).length * 4;
+  // Classified species: same validation, but the output is embedded in the server-only module
+  // and sent only inside a disclosed bundle. No public file, thumbnail, silhouette or manifest entry.
+  const classifiedArt = { generated: "scripts/creature-art.mjs", note: "Classified painted stages as data URLs. Server only: never copy these into public/ or src/data.", species: {} };
+  for (const id of Object.keys(classifiedDesigns.species)) {
+    const stages = [];
+    for (let n = 0; n < 4; n++) {
+      const file = findSource(id, n);
+      if (!file) {
+        stages.push(null);
+        continue;
+      }
+      supplied++;
+      const info = await inspect(file, n);
+      const rel = path.relative(ROOT, file);
+      if (!info.problems.length) {
+        const hash = await perceptualHash(file);
+        const px = await pixels(file);
+        for (const e of seen) if (await isCopy(hash, px, e)) info.problems.push(`same image as ${e.rel} (resized or re-encoded copy)`);
+        seen.push({ hash, px, rel });
+      }
+      if (info.problems.length) {
+        invalid++;
+        stages.push(null);
+        console.error(`✗ ${rel}: ${info.problems.join("; ")}`);
+        continue;
+      }
+      ok++;
+      for (const w of info.warnings) console.warn(`! ${rel}: ${w}`);
+      if (!write) {
+        stages.push(null);
+        continue;
+      }
+      const bg = info.transparent ? { r: 0, g: 0, b: 0, alpha: 0 } : { r: 5, g: 5, b: 10, alpha: 1 };
+      const webp = await sharp(file).rotate().resize(CLASSIFIED_SIZE, CLASSIFIED_SIZE, { fit: "contain", background: bg }).webp({ quality: 84, alphaQuality: 90, effort: 5 }).toBuffer();
+      const src = `data:image/webp;base64,${webp.toString("base64")}`;
+      stages.push({ src, thumb: src, alpha: info.transparent });
+    }
+    classifiedArt.species[id] = stages;
+  }
+  if (write) writeFileSync(CLASSIFIED_ART, JSON.stringify(classifiedArt, null, 2) + "\n");
+
+  const total = (Object.keys(designs.species).length + Object.keys(classifiedDesigns.species).length) * 4;
   const summary = `${ok} of ${total} stage assets supplied and valid · ${total - supplied} missing · ${invalid} invalid`;
   console.log(summary);
   if (write) {

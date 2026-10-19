@@ -1,0 +1,42 @@
+{
+  "generated": "scripts/creature-art.mjs",
+  "note": "Classified painted stages as data URLs. Server only: never copy these into public/ or src/data.",
+  "species": {
+    "astravex": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "orbelith": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "eventide": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "helivane": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "genesis": [
+      null,
+      null,
+      null,
+      null
+    ],
+    "nullborn": [
+      null,
+      null,
+      null,
+      null
+    ]
+  }
+}

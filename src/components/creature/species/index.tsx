@@ -1,3 +1,4 @@
+import { registerStageAssets, type StageAsset } from "@/lib/creatureAssets";
 import { sealed } from "./sealed";
 import type { Renderer } from "../kit";
 import { aurelion } from "./aurelion";
@@ -63,6 +64,8 @@ export interface ClassifiedArt {
   stageFit?: [number, number, number, number];
   shadow?: number;
   halo?: [number, number, number];
+  /** Painted stages (data URLs), when approved artwork exists; otherwise the vector stages are drawn. */
+  images?: (StageAsset | null)[];
 }
 
 /** Stands in for the per-instance SVG id inside server-rendered classified art. */
@@ -70,7 +73,8 @@ export const ART_ID_TOKEN = "__SLID__";
 
 /** Makes a classified species drawable in this browser, from art the server sent. */
 export function registerClassifiedArt(id: string, art: ClassifiedArt): void {
-  const { stages, ...shape } = art;
+  const { stages, images, ...shape } = art;
+  if (images?.some(Boolean)) registerStageAssets(id, images);
   RENDERERS[id] = {
     ...shape,
     render: (c) => <g dangerouslySetInnerHTML={{ __html: stages[c.evo].split(ART_ID_TOKEN).join(c.id) }} />,

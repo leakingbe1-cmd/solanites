@@ -16,11 +16,22 @@ export interface StageAsset {
 
 const SPECIES = (manifest as { species: Record<string, (StageAsset | null)[]> }).species;
 
+/**
+ * Painted stages that arrived from the server at runtime: a classified species' art travels
+ * only inside its disclosed bundle (src/server/classified), never as a public file or a
+ * manifest entry, so it can't be listed or guessed.
+ */
+const RUNTIME: Record<string, (StageAsset | null)[]> = {};
+
+export function registerStageAssets(speciesId: string, stages: (StageAsset | null)[]): void {
+  RUNTIME[speciesId] = stages;
+}
+
 export function stageAsset(speciesId: string, stage: number): StageAsset | null {
-  return SPECIES[speciesId]?.[stage] ?? null;
+  return (RUNTIME[speciesId] ?? SPECIES[speciesId])?.[stage] ?? null;
 }
 
 /** Number of real stage assets supplied for a species (0–4). */
 export function assetCount(speciesId: string): number {
-  return (SPECIES[speciesId] ?? []).filter(Boolean).length;
+  return (RUNTIME[speciesId] ?? SPECIES[speciesId] ?? []).filter(Boolean).length;
 }

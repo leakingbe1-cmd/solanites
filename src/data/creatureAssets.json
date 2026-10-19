@@ -9,10 +9,30 @@
   },
   "species": {
     "mossling": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/mossling/1-eggling.webp",
+        "thumb": "/creatures/mossling/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 30334
+      },
+      {
+        "src": "/creatures/mossling/2-hatchling.webp",
+        "thumb": "/creatures/mossling/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 48536
+      },
+      {
+        "src": "/creatures/mossling/3-evolved.webp",
+        "thumb": "/creatures/mossling/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 129686
+      },
+      {
+        "src": "/creatures/mossling/4-ascended.webp",
+        "thumb": "/creatures/mossling/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 140510
+      }
     ],
     "driftfin": [
       null,

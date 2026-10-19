@@ -135,9 +135,12 @@ const browser = await chromium.launch();
   const text = await p.locator("body").innerText();
   const shown = names.filter((n) => text.toLowerCase().includes(n.toLowerCase()));
   ok("owner browser: Developer Mode lists all 28 species, the 6 classified by name", species >= 28 && shown.length === 6, `${species} entries; named ${shown.length}`);
-  // real art: many shapes, and not the generic sealed seal-stone (its outline starts "M200,82 L274,200")
+  // real art: painted art embedded by the server (a data URL, never a public file), or a vector
+  // drawing with many shapes that isn't the generic sealed seal-stone (its outline starts "M200,82 L274,200")
   const drawn = await p.evaluate((ids) => ids.filter((id) => {
-    const svg = document.querySelector(`[data-species="${id}"] svg`);
+    const el = document.querySelector(`[data-species="${id}"]`);
+    if (el?.querySelector('img[src^="data:image/webp;base64,"]')) return true;
+    const svg = el?.querySelector("svg");
     return svg && svg.querySelectorAll("path,circle,ellipse,polygon,rect").length > 25 && !svg.innerHTML.includes("M200,82 L274,200");
   }), ids);
   ok("owner browser: every classified species is drawn with its real art", drawn.length === 6, drawn.join(","));

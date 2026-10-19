@@ -206,8 +206,9 @@ for (const [name, vp, mobile] of [
   await p.goto(B + "/");
   await p.waitForTimeout(600);
   await p.evaluate(() => window.scrollTo(0, 3000));
-  await p.waitForTimeout(600);
-  ok("hero: animations pause while scrolled away", await p.evaluate(() => document.querySelector("section[data-offscreen]") !== null));
+  // IntersectionObserver reports asynchronously; wait for it rather than a fixed delay.
+  const paused = await p.waitForFunction(() => document.querySelector("section[data-offscreen]") !== null, null, { timeout: 3000 }).then(() => true, () => false);
+  ok("hero: animations pause while scrolled away", paused);
   await c.close();
 }
 
@@ -222,8 +223,31 @@ for (const [name, vp, mobile] of [
   await p.locator("main button").filter({ hasText: "Mossling" }).first().click();
   await p.waitForTimeout(500);
   ok("collection: creature detail opens", await p.getByRole("dialog").isVisible().catch(() => false));
+  await c.close();
+}
+
+// 7. Holder rewards (/claims): the planned distribution, readable on desktop and phones.
+for (const [name, vp, mobile] of [["1440", { width: 1440, height: 900 }, false], ["390", { width: 390, height: 844 }, true], ["320", { width: 320, height: 640 }, true]]) {
+  const [c, p] = await ctx({ viewport: vp, isMobile: mobile, hasTouch: mobile }, SEEN);
   await p.goto(B + "/claims", { waitUntil: "networkidle" });
-  ok("claims: explains its wallet requirement", /wallet/i.test(await p.locator("main").innerText()));
+  const main = (await p.locator("main").innerText()).replace(/\s+/g, " ");
+  ok(`rewards ${name}: heading and two-hour rule`, (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim() === "Locked developer supply returns to holders." && main.includes("Two hours after launch, the locked developer supply will be divided equally among eligible holders."));
+  ok(`rewards ${name}: clock is the launch, not the visit`, main.includes("It does not depend on when you visit this page."));
+  ok(`rewards ${name}: status and pending terms`, /scheduled after launch/i.test(main) && (main.match(/\bPENDING\b/gi) ?? []).length === 3);
+  ok(`rewards ${name}: no refund wording or claim action`, !/refund|fee claim/i.test(main) && (await p.locator("main button, main form").count()) === 0);
+  const sw = await p.evaluate(() => document.documentElement.scrollWidth);
+  ok(`rewards ${name}: no horizontal overflow`, sw <= vp.width, String(sw));
+  const h = await p.getByText("+2h").boundingBox();
+  ok(`rewards ${name}: +2h timing at the top of the page`, h && h.y + h.height <= vp.height * 1.15, h ? `bottom ${Math.round(h.y + h.height)} / ${vp.height}` : "missing");
+  await p.screenshot({ path: `${out}/rewards-${name}.png`, fullPage: true });
+  await c.close();
+}
+{
+  const [c, p] = await ctx({}, SEEN);
+  await p.goto(B + "/");
+  ok("nav: Rewards link goes to the holder rewards page", (await p.locator("header").getByRole("link", { name: "Rewards", exact: true }).count()) >= 1);
+  await p.goto(B + "/claims");
+  ok("footer: Holder Rewards link", (await p.locator("footer").getByRole("link", { name: "Holder Rewards" }).count()) === 1);
   await c.close();
 }
 

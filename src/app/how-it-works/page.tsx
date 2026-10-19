@@ -7,6 +7,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { formUnlockText, rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
+import { HOLDER_DISTRIBUTION_HOURS } from "@/config/holderDistribution";
 
 export const metadata = { title: "How It Works — Solanites" };
 
@@ -30,7 +31,7 @@ export default function HowItWorksPage() {
       "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
-    ["Launch fee claims", "Coming soon", "Separate from eggs. Details are published before claims open; only claims ask you to connect a wallet"],
+    ["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The locked developer supply, divided equally among eligible holders. Eligibility, the final amount and the process are pending and will be published first"],
   ];
 
   return (
@@ -87,9 +88,9 @@ export default function HowItWorksPage() {
             <h3 className="font-display text-xl text-white">How the rules are kept</h3>
             <ul className="mt-5 space-y-3 text-sm leading-relaxed text-mist">
               <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
-              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or claims.</li>
+              <li>◇ The demo wallet is <span className="text-white">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
               <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
-              <li>◇ Fee claims, if a refund programme is confirmed, ask your wallet to sign a one-time message. Connecting alone is never enough.</li>
+              <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its eligibility, amount and process will be published before it happens.</li>
             </ul>
           </div>
         </div>

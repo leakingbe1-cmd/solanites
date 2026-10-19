@@ -19,7 +19,7 @@ export function Footer() {
             <li><Link className="hover:text-white" href="/hatchery">Hatchery</Link></li>
             <li><Link className="hover:text-white" href="/collection">Collection</Link></li>
             <li><Link className="hover:text-white" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-white" href="/claims">Fee Claims</Link></li>
+            <li><Link className="hover:text-white" href="/claims">Holder Rewards</Link></li>
           </ul>
         </div>
         <div className="text-sm">

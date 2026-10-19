@@ -36,7 +36,7 @@ export default function Home() {
             <p className="sl-fade-up mx-auto mt-5 max-w-lg text-lg leading-relaxed text-mist sm:mt-7 sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
               Discover your creature. Hatch the extraordinary. <span className="text-white">Watch your Solanite grow stronger through its evolution.</span>
             </p>
-            {/* walletless exploration: true for everything except launch fee claims (the only wallet sign-in on the site) */}
+            {/* walletless exploration: nothing on the site asks for a wallet today */}
             <div className="sl-fade-up mx-auto mt-5 max-w-lg sm:mt-7 lg:mx-0" style={{ animationDelay: "0.48s" }}>
               <p className="sl-glass inline-flex items-center gap-2.5 rounded-full py-2 pl-3 pr-4 text-sm font-medium text-white">
                 <span className="relative flex h-2 w-2" aria-hidden>

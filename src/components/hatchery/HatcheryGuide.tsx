@@ -32,14 +32,14 @@ export function HatcheryGuide() {
       key: "wallet",
       eyebrow: "Wallets",
       title: "No wallet needed for eggs",
-      body: "Viewing and hatching eggs only needs a public address. Nothing here asks for a signature, seed phrase or private key. Only launch fee claims ask you to sign in with a wallet, on the Claims page.",
+      body: "Viewing and hatching eggs only needs a public address. Nothing here asks for a signature, seed phrase or private key.",
       art: (
         <svg viewBox="0 0 64 64" className="h-full w-full text-sol-green/80" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M32 6l20 9v15c0 13-9 22-20 27C21 52 12 43 12 30V15l20-9z" />
           <path d="M23 32l6 6 12-13" />
         </svg>
       ),
-      link: { href: "/claims", label: "About claims" },
+      link: { href: "/claims", label: "Holder rewards" },
     },
   ];
   return (

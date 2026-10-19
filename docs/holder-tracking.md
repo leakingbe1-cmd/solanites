@@ -207,3 +207,38 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 9. **Rarity verifiability:** whether to add the commit-reveal scheme above.
 10. **Token ticker:** confirmed as `$SLNT` (`gameConfig.token.symbol`, display only). Tracking never uses the name, only `SOLANITES_MINT`; the mint address itself is still to be provided.
 11. **Early progression:** confirm the incubation (1 min → 12 h) and growing-up (1 min → 6 h) schedules, and that Evolved/Ascended and the Ascension ranks should count from maturity.
+
+## 7. Holder distribution (planned, not implemented)
+
+**Rule shown on `/claims`:** two hours after the official launch, the locked developer supply
+allocated for redistribution is divided equally among eligible holders
+(`src/config/holderDistribution.ts`). Eligibility, the final amount and the process are marked
+pending on the page.
+
+**What exists today that it could build on**
+
+- The tracker knows every holder's current verified balance (`holders`, `token_accounts`), with a
+  full reconciliation of all token accounts of the mint, and a change log (`holder_changes`).
+- Project wallets can be excluded (`SOLANITES_EXCLUDED_OWNERS`, off-curve owners).
+- The launch time is server configuration (`SOLANITES_LAUNCH_AT`), hidden from public APIs until
+  the launch is public.
+
+**What is missing before it can work**
+
+1. **The locked developer supply.** Nothing in the code identifies it: no lock or vesting
+   account, amount or release mechanism. It needs the actual on-chain arrangement (a lock or
+   vesting program, or a multisig wallet), and its address configured and excluded from eligibility.
+2. **Eligibility rules.** With an equal share per wallet, splitting holdings across many wallets
+   multiplies the payout, so the rules need a minimum balance (and possibly a minimum holding time)
+   plus a decision on how to treat obvious splits. Pools, exchanges and project wallets must be excluded.
+3. **A snapshot at exactly launch + 2 h.** The tracker keeps current balances, not balances at a
+   chosen moment, and the scheduler runs every 10 minutes at best (GitHub Actions, not configured
+   yet) or once a day (Vercel Hobby cron). It needs a snapshot job pinned to a finalized slot at the
+   two-hour mark, stored immutably and published (for example as a list with a hash) so holders
+   can check it.
+4. **Payout.** Nothing sends tokens. It needs a signing process that keeps keys off the web server
+   (a multisig approving a batch, or a distribution or claim program), retry-safe batching,
+   transaction fees, and a record per wallet.
+5. **Published terms.** The page must keep eligibility, the amount and the process marked pending
+   until they are decided and published.
+

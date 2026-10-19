@@ -101,12 +101,12 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
 | Rarity weights | Common 60 · Rare 25 · Epic 10 · Legendary 3.8 · Mythic 1 · Secret 0.2 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
-| Launch fee claims | Open 6 hours after launch; the only place a wallet is connected |
+| Holder distribution | Planned: 2 hours after launch, the locked developer supply divided equally among eligible holders. Eligibility, amount and process pending; not implemented |
 
-## Holder tracking, eggs and fee claims
+## Holder tracking, eggs and holder rewards
 
 - **Eggs (no wallet connection):** the server tracks every holder from Solana (`/api/cron/sync`, `/api/webhooks/solana`), issues eggs into Postgres and serves them at `GET /api/holders/:address`. The Hatchery's **Find my eggs** takes a public address.
-- **Fee claims:** `/claims` opens 6 hours after `SOLANITES_LAUNCH_AT`. The wallet signs a message, verified on the server; one claim per wallet per period. **No refund policy is defined yet, so no amount is quoted, and payouts are not implemented.**
+- **Holder rewards (`/claims`):** presents the planned holder distribution (`src/config/holderDistribution.ts`). **Nothing distributes yet**: see "Holder distribution" in `docs/holder-tracking.md` for what is still needed. The earlier launch-fee claim backend (`/api/claims/*`) remains in the code, unused by the site.
 
 Architecture, audit, configuration (env checklist, scheduler, `/api/health`), staging plan, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 

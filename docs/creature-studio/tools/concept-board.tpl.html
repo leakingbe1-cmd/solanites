@@ -1,0 +1,44 @@
+<title>Solanites Round 1 Concepts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: one row per species, original first, concepts after; 48 px readability strip under each image. Dark-only to match the Solanites cards. */
+:root {
+  --void: #07060d; --panel: #100e1a; --line: #24203a; --ink: #ecebf5; --muted: #9a97b3; --teal: #2ee8d8;
+  --display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--void); color: var(--ink); font: 15px/1.6 var(--body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 40px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: grid; gap: 44px; }
+h1, h2 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap: balance; }
+h1 { font-size: clamp(26px, 4.5vw, 38px); line-height: 1.15; }
+h2 { font-size: 20px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: baseline; }
+h2 span, .eyebrow { font: 12px var(--mono); color: var(--muted); letter-spacing: 0.08em; }
+.eyebrow { text-transform: uppercase; letter-spacing: 0.14em; }
+.summary { display: grid; gap: 10px; max-width: 72ch; color: var(--muted); }
+.summary p { margin: 0; }
+section { display: grid; gap: 14px; min-width: 0; }
+.row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.c { margin: 0; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.c > img { width: 100%; max-width: 100%; aspect-ratio: 1; border-radius: 10px; border: 1px solid var(--line); display: block; background: var(--void); }
+.ph { aspect-ratio: 1; border: 1px dashed var(--line); border-radius: 10px; display: grid; place-items: center; color: var(--muted); font: 12px var(--mono); }
+.t48 { display: flex; gap: 8px; align-items: center; }
+.t48 img { border-radius: 6px; border: 1px solid var(--line); }
+.t48 span, figcaption span { font: 11px var(--mono); color: var(--muted); }
+figcaption { display: flex; justify-content: space-between; gap: 8px; font-weight: 500; }
+.note { margin: 0; font-size: 14px; color: var(--muted); }
+</style>
+<div class="wrap">
+  <header style="display:grid;gap:12px">
+    <div class="eyebrow">Solanites · Creature Studio · Round 1 · review only, not in production</div>
+    <h1>Round 1 concepts beside the originals</h1>
+    <div class="summary">{{SUMMARY}}</div>
+  </header>
+  {{ROWS}}
+  {{GROUP}}
+</div>

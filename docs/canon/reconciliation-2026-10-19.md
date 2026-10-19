@@ -49,7 +49,7 @@ Balance went from 2,015 (after V-A) to 1,935, a drop of 80, matching four images
 - `design/creative-direction` commits `83018c0` (20:46) and `ed422c6` (20:51) say "0 of 180 credits spent" and record the balance as 1,935.
 - The Runway task records available to this session do not include who started a task, or from which client.
 
-No conclusion is drawn about who initiated them.
+**Update (verified ~20:57 UTC):** the transcript of the website session "Solanites interactive website" (`session_01Qca9PBkzcSh9jGSXfnMYCN`, branch `design/eclipse-vigil-code`, not on GitHub) lists all four task IDs as its own "Concept Round One" and records "Actual cost: 80 of 180" from a starting balance of 2,015. That is a **third workstream** generating creature concepts. See `generation-ledger.md`.
 
 **Observation relevant to the Velynx problem:** `fb118638` asked for an "upright digitigrade feline… standing on its toes" and it is also on all fours. With V-A, that is two independent generations that read this wording as a four-legged cat (§3).
 
@@ -72,6 +72,10 @@ Mandatory for every Velynx concept:
 | **Reference images** | The shipped Evolved render tagged `@pose` with "match the upright two-legged stance of @pose". V-A tagged `@finish` with "use @finish for paint handling only, not for pose or anatomy". |
 
 Acceptance checks before showing a Velynx concept as a candidate: forelimbs off the ground; head above both shoulders; four fingers visible on at least one hand; the ear notch visible in the 48 px black-fill; C9 met; glyph tile under one hind foot; emission ≤ 10%; no letters in glyphs.
+
+## 3a. Design branch alignment (commit `dfe90a6`, 20:56 UTC)
+
+`design/creative-direction` now names `docs/creature-studio/art-bible.md` and `prototypes/*.md` as the authority for creature art. It retracts the sculpture style, the ground-in-artwork rule, its Mossling brief and studies, and its Duskwing/Pyraurum prototypes, and it moves its phoenix prompt to hand-painted 2D with no halo. That resolves conflicts 1, 2, 5 (phoenix), 7, 8 and 12 on that branch. **One gap remains:** it adopts the art bible's *current* lighting text (warm-neutral key, cyan-violet rim), which the owner has now asked to change to a warm gold key and a restrained violet rim. Once the canon is approved and the art bible updated, that branch follows automatically.
 
 ## 4. Exact changes required before the next concept can be approved
 

@@ -27,11 +27,13 @@ Reference prompt:
 
 | # | Scene | Status | Mode |
 |---|---|---|---|
-| 1 | Awakening + emergence: darkness, embers, the phoenix forms, eyes ignite | **not generated** | image→video, end frame = reference |
+| 1 | Awakening + emergence: darkness, embers, the phoenix forms, eyes ignite | **generated** (5 s): opening still `3aba2fd9-47f2-4386-926a-d828468e1f9a` → video, see below | image→video, start = dark still, end = reference |
 | 2 | Wings open + rebirth burst + settle | **generated**: task `2095f8b0-af2c-4ee6-bf58-d5c6167859e4` (10 s, 720p, with audio) | image→video, start frame = reference |
 | 3 | SOLANITES reveal + hold | added by the script (no generation) | wordmark in the site's Unbounded font |
 
-**Shot 1 prompt** (use the reference as the *last* frame, so it lands exactly on shot 2's first frame):
+**Shot 1 opening still** (16:9, 2K): "Almost complete darkness: a vast pitch-black void seen through a cinematic camera. A few tiny glowing orange embers float in the foreground, out of focus. Far in the distance at the centre, a faint warm golden glow barely breaks the darkness, with thin wisps of swirling smoke and a subtle hint of violet energy around it. Deep blacks, extreme low key lighting, film grain, mysterious and ominous, premium VFX quality. No creature visible yet, no text, no logo."
+
+**Shot 1 prompt** (start frame = the opening still, end frame = the reference, so it lands exactly on shot 2's first frame):
 
 > Almost complete darkness in a vast black void. Tiny embers drift slowly through the frame; a faint golden glow appears in the far distance with swirling smoke and subtle violet energy. The camera glides slowly forward. A gigantic phoenix silhouette gathers out of the darkness, its eyes ignite with intense golden light, then flames spread across its head, body and individual feathers until the molten-gold phoenix is fully revealed with wings spread. Slow, ominous, cinematic; deep blacks, volumetric smoke, film-quality VFX. No text.
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { STOCK_LINKS } from "@/config/stockLinks";
+import { STOCK_LINKS } from "@/server/market/stockLinks";
 import { createPgliteDb } from "../db/pglite";
 import { migrate } from "../db/schema";
 import type { Db } from "../db/types";

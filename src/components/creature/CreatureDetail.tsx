@@ -11,6 +11,7 @@ import { formatDuration, formatSpan } from "@/lib/format";
 import { evolutionOf, formUnlockText, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, SPECIES, statsAt, type Species } from "@/lib/species";
+import { CreatureMarketPanel } from "@/components/market/CreatureMarketPanel";
 import { useHatchery } from "@/state/HatcheryProvider";
 
 interface CreatureDetailProps {
@@ -22,11 +23,13 @@ interface CreatureDetailProps {
   onSelectSpecies?: (s: Species) => void;
   onPrev?: () => void;
   onNext?: () => void;
+  /** Public address whose hatched creature this is (tracked Hatchery); unlocks a classified species' market link. */
+  ownerAddress?: string | null;
 }
 
 const STATUS_LABEL: Record<Discovery, string> = { owned: "Discovered by you", catalogued: "Catalogued", classified: "Classified" };
 
-export function CreatureDetail({ species, record, onRename, onSelectSpecies, onPrev, onNext }: CreatureDetailProps) {
+export function CreatureDetail({ species, record, onRename, onSelectSpecies, onPrev, onNext, ownerAddress }: CreatureDetailProps) {
   const h = useHatchery();
   const names = gameConfig.evolution.names;
   const discovery = discoveryOf(species, h.discovered);
@@ -224,6 +227,9 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
           )}
         </div>
       </div>
+
+      {/* ── linked stock (information only; never recolours the art) ── */}
+      {!hidden && <CreatureMarketPanel key={species.id} speciesId={species.id} accent={species.palette.accent} owner={record ? ownerAddress : null} className="mt-6" />}
 
       {/* ── related ── */}
       {related.length > 0 && (

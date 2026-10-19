@@ -1,21 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { CreatureArt } from "@/components/creature/CreatureArt";
 import type { GrowthEntry } from "@/lib/market/growth";
 import type { MarketRange } from "@/lib/market/types";
 import { RARITIES } from "@/lib/rarity";
-import { SPECIES } from "@/lib/species";
 import { CreatureMarketPanel } from "./CreatureMarketPanel";
 
 /**
- * Owner test view (see app/dev/market). Read-only: every request goes to /api/dev/market,
- * which checks the dev token on the server. Nothing is drawn, including classified species,
- * until that check passes. The token stays in this tab's session storage only.
+ * Market links section of Developer Mode (/studio/dev). Read-only: every request goes to
+ * /studio/dev/market, which the middleware and the route itself guard with the owner
+ * credentials and the DEVELOPER_MODE=off switch. Species names, rarities and accents come
+ * from that endpoint, so classified species never reach the public bundle through here.
  */
 
 interface LinkDiag {
   speciesId: string;
+  name: string;
+  rarity: keyof typeof RARITIES | null;
+  accent: string;
   ticker: string;
   company: string;
   exchange: string;
@@ -32,70 +34,41 @@ interface Diag {
   links: LinkDiag[];
 }
 
-const TOKEN_KEY = "solanites:dev-token";
-const STAGES = ["Eggling", "Hatchling", "Evolved", "Ascended"];
+const ENDPOINT = "/studio/dev/market";
 
 export function MarketInspector() {
-  const [token, setToken] = useState("");
   const [diag, setDiag] = useState<Diag | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState(SPECIES[0].id);
-  const [stage, setStage] = useState(3);
+  const [selected, setSelected] = useState<string | null>(null);
   const [sim, setSim] = useState("2.5, -1.8, 0.6");
   const [simOut, setSimOut] = useState<{ entries: GrowthEntry[]; vigour: { value: number; label: string } } | null>(null);
 
-  const headers = useCallback((): HeadersInit => (token ? { authorization: `Bearer ${token}` } : {}), [token]);
-
   const load = useCallback(async () => {
     setError(null);
-    const r = await fetch("/api/dev/market", { headers: headers() }).catch(() => null);
+    const r = await fetch(ENDPOINT, { cache: "no-store" }).catch(() => null);
     if (!r) return setError("The server couldn't be reached.");
-    if (r.status === 404) return setError("Not authorised. Enter the dev token (or run locally in fixture mode).");
-    if (!r.ok) return setError((await r.json().catch(() => null))?.error?.message ?? `Error ${r.status}`);
-    setDiag((await r.json()) as Diag);
-  }, [headers]);
-
-  useEffect(() => {
-    try {
-      setToken(sessionStorage.getItem(TOKEN_KEY) ?? "");
-    } catch {
-      /* storage unavailable */
-    }
+    if (!r.ok) return setError((await r.json().catch(() => null))?.error?.message ?? `Market diagnostics unavailable (${r.status}).`);
+    const d = (await r.json()) as Diag;
+    setDiag(d);
+    setSelected((s) => s ?? d.links[0]?.speciesId ?? null);
   }, []);
+
   useEffect(() => {
     load();
   }, [load]);
 
   const runSim = async () => {
-    const r = await fetch(`/api/dev/market?simulate=${encodeURIComponent(sim)}`, { headers: headers() });
+    const r = await fetch(`${ENDPOINT}?simulate=${encodeURIComponent(sim)}`, { cache: "no-store" });
     if (r.ok) setSimOut(await r.json());
   };
 
-  const species = SPECIES.find((s) => s.id === selected)!;
   const link = diag?.links.find((l) => l.speciesId === selected);
-  const fetchSnapshot = (range: MarketRange, signal: AbortSignal) => fetch(`/api/dev/market?species=${encodeURIComponent(selected)}&range=${range}`, { headers: headers(), signal });
+  const fetchSnapshot = (range: MarketRange, signal: AbortSignal) => fetch(`${ENDPOINT}?species=${encodeURIComponent(selected ?? "")}&range=${range}`, { signal, cache: "no-store" });
 
   return (
-    <main className="mx-auto max-w-6xl px-4 pb-24 pt-28 sm:px-6">
-      <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-dust">Owner tools · read only</p>
-      <h1 className="mt-2 font-display text-4xl text-bone">Market links</h1>
-      <p className="mt-2 max-w-2xl text-sm text-vellum">Every Solanite&apos;s linked stock, data status and growth calculation, including classified species. Nothing here can change game state, ownership, odds or rewards.</p>
-
-      <form
-        className="mt-6 flex max-w-md gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          try {
-            sessionStorage.setItem(TOKEN_KEY, token);
-          } catch {
-            /* storage unavailable */
-          }
-          load();
-        }}
-      >
-        <input type="password" value={token} onChange={(e) => setToken(e.target.value)} placeholder="Dev token" autoComplete="off" className="min-w-0 flex-1 rounded-full border border-rim bg-umbra px-4 py-2 text-sm text-bone placeholder:text-dust" />
-        <button className="rounded-full border border-rim-strong px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-bone">Load</button>
-      </form>
+    <section aria-labelledby="dev-market" className="mt-16">
+      <h2 id="dev-market" className="sl-label text-dust">Market links</h2>
+      <p className="mt-2 max-w-2xl text-sm text-vellum">Every Solanite&apos;s linked stock, data status and growth calculation, including classified species. Read-only: nothing here changes game state, ownership, odds or rewards.</p>
       {error && <p className="mt-3 text-sm text-gilt">{error}</p>}
 
       {diag && (
@@ -113,46 +86,36 @@ export function MarketInspector() {
                   </tr>
                 </thead>
                 <tbody>
-                  {SPECIES.map((s) => {
-                    const l = diag.links.find((x) => x.speciesId === s.id);
-                    return (
-                      <tr key={s.id} onClick={() => setSelected(s.id)} className={`cursor-pointer border-t border-rim ${s.id === selected ? "bg-white/[0.06]" : "hover:bg-white/[0.03]"}`}>
-                        <td className="px-3 py-2">
-                          <span className="text-bone">{s.name}</span> <span style={{ color: RARITIES[s.rarity].color }} className="font-mono text-[10px] uppercase">{RARITIES[s.rarity].label}</span>
-                        </td>
-                        <td className="px-3 py-2 font-mono text-vellum">
-                          {l?.ticker} {l?.review && <span title={l.review} className="text-gilt">⚑</span>}
-                        </td>
-                        <td className="px-3 py-2 text-vellum">
-                          {l?.latestSession ? `${l.latestSession} · ${l.latestClose}` : "—"} {l && !l.upToDate && <span className="text-gilt">behind</span>} {l?.state.lastErrorCode && <span className="text-gilt">{l.state.lastErrorCode}</span>}
-                        </td>
-                        <td className="px-3 py-2 text-right tabular-nums text-bone">{l?.growth ? `${l.growth.value} ${l.growth.label}` : "—"}</td>
-                      </tr>
-                    );
-                  })}
+                  {diag.links.map((l) => (
+                    <tr key={l.speciesId} onClick={() => setSelected(l.speciesId)} className={`cursor-pointer border-t border-rim ${l.speciesId === selected ? "bg-white/[0.06]" : "hover:bg-white/[0.03]"}`}>
+                      <td className="px-3 py-2">
+                        <span className="text-bone">{l.name}</span>{" "}
+                        {l.rarity && (
+                          <span style={{ color: RARITIES[l.rarity].color }} className="font-mono text-[10px] uppercase">
+                            {RARITIES[l.rarity].label}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-3 py-2 font-mono text-vellum">
+                        {l.ticker} {l.review && <span title={l.review} className="text-gilt">⚑</span>}
+                      </td>
+                      <td className="px-3 py-2 text-vellum">
+                        {l.latestSession ? `${l.latestSession} · ${l.latestClose}` : "—"} {!l.upToDate && <span className="text-gilt">behind</span>} {l.state.lastErrorCode && <span className="text-gilt">{l.state.lastErrorCode}</span>}
+                      </td>
+                      <td className="px-3 py-2 text-right tabular-nums text-bone">{l.growth ? `${l.growth.value} ${l.growth.label}` : "—"}</td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
 
             <div className="min-w-0">
-              <div className="rounded-2xl border border-rim bg-umbra/60 p-5">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h2 className="font-display text-2xl text-bone">{species.name}</h2>
-                  <div className="flex gap-1">
-                    {STAGES.map((n, i) => (
-                      <button key={n} onClick={() => setStage(i)} className={`rounded-full px-3 py-1 font-mono text-[10px] uppercase tracking-[0.14em] ${stage === i ? "bg-white/10 text-bone" : "text-dust hover:text-bone"}`}>
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="mx-auto mt-3 aspect-square max-w-[260px]">
-                  <CreatureArt species={species} stage={stage} animated={false} />
-                </div>
-                {link?.review && <p className="mt-3 text-xs text-gilt">Review: {link.review}</p>}
-              </div>
-              <CreatureMarketPanel key={selected} speciesId={selected} accent={species.palette.accent} fetchSnapshot={fetchSnapshot} className="mt-4" />
-
+              {link && (
+                <>
+                  {link.review && <p className="mb-3 text-xs text-gilt">Review: {link.review}</p>}
+                  <CreatureMarketPanel key={link.speciesId} speciesId={link.speciesId} accent={link.accent} fetchSnapshot={fetchSnapshot} />
+                </>
+              )}
               <div className="mt-4 rounded-2xl border border-rim p-5">
                 <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Growth calculator (hypothetical, never stored)</p>
                 <div className="mt-3 flex gap-2">
@@ -169,6 +132,6 @@ export function MarketInspector() {
           </div>
         </>
       )}
-    </main>
+    </section>
   );
 }

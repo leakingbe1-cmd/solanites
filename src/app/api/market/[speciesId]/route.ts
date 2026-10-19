@@ -1,7 +1,6 @@
 import "server-only";
-import { CLASSIFIED_RARITIES } from "@/lib/discovery";
 import { MARKET_RANGES, type MarketRange } from "@/lib/market/types";
-import { SPECIES_BY_ID } from "@/lib/species";
+import { ALL_SPECIES_BY_ID, isClassifiedId } from "@/server/classified";
 import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
 import { log } from "@/server/log";
@@ -23,13 +22,15 @@ const notFound = () => fail(404, "NOT_FOUND", "Not found.");
  * the range, and its Market Vigour. Reads stored data; it never triggers a provider fetch except
  * the 1D chart, which is cached per session and limited by a shared per-minute budget.
  *
- * Mythic and Secret species are classified: their link is only returned with `owner`, the
- * public address of a wallet that has hatched one (checked against holder tracking). Unknown
- * and unproven classified species get the same 404, so the response reveals nothing.
+ * Mythic and Secret species are classified: their link is only returned with `owner`, a
+ * public address that holder tracking shows has hatched one, the same rule the holder API
+ * uses to disclose a hatched classified species. An address is public, so this is not proof
+ * that the caller controls that wallet. Unknown and undisclosed classified species get the
+ * same 404, so the response reveals nothing.
  */
 export async function GET(req: Request, { params }: { params: Promise<{ speciesId: string }> }) {
   const speciesId = decodeURIComponent((await params).speciesId);
-  const species = SPECIES_BY_ID[speciesId];
+  const species = ALL_SPECIES_BY_ID[speciesId];
   if (!species) return notFound();
   const url = new URL(req.url);
   const rangeParam = url.searchParams.get("range") ?? "1M";
@@ -39,7 +40,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   const limited = await rateLimit(req, "market-view", 60, 60_000);
   if (limited) return limited;
 
-  const classified = CLASSIFIED_RARITIES.includes(species.rarity);
+  const classified = isClassifiedId(speciesId);
   try {
     const rt = await getMarketRuntime();
     if (classified) {
@@ -52,7 +53,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
     return Response.json(snap, { headers });
   } catch (e) {
     if (e instanceof ConfigError) {
-      // Not set up yet: classified links still need proof of ownership, which needs the database.
+      // Not set up yet: disclosing a classified link needs the hatch record, which needs the database.
       if (classified) return notFound();
       return Response.json(unavailableSnapshot(speciesId, range, Date.now()), { headers: noStore });
     }

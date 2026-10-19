@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { STOCK_LINKS, stockLinkOf } from "@/config/stockLinks";
+import { STOCK_LINKS, stockLinkOf } from "@/server/market/stockLinks";
 import { RARITIES } from "@/lib/rarity";
-import { SPECIES } from "@/lib/species";
+import { ALL_SPECIES as SPECIES } from "@/server/classified";
 
 describe("creature → stock links", () => {
   it("every one of the 28 catalogue species has exactly one link, and nothing else does", () => {

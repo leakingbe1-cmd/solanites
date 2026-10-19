@@ -1,5 +1,5 @@
 import "server-only";
-import { MARKET_DATA_SOURCE, STOCK_LINKS, stockLinkOf, type StockLink } from "@/config/stockLinks";
+import { MARKET_DATA_SOURCE, STOCK_LINKS, stockLinkOf, type StockLink } from "@/server/market/stockLinks";
 import { latestCompletedSession, marketStatus, previousTradingDay } from "@/lib/market/calendar";
 import { GROWTH_RULES, growthEntries, vigourOf, type GrowthEntry } from "@/lib/market/growth";
 import type { ChartPoint, DataStatus, MarketChart, MarketQuote, MarketRange, MarketSnapshot } from "@/lib/market/types";

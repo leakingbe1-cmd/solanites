@@ -8,7 +8,8 @@ beforeAll(() => {
   process.env.SOLANITES_FIXTURES = "1";
   process.env.CRON_SECRET = "cron-secret-for-tests";
   delete process.env.MASSIVE_API_KEY;
-  delete process.env.SOLANITES_DEV_TOKEN;
+  delete process.env.STUDIO_BASIC_AUTH;
+  delete process.env.DEVELOPER_MODE;
 });
 
 const req = (url: string, init?: RequestInit) => new Request(`http://localhost:3000${url}`, init);
@@ -68,30 +69,41 @@ describe("market routes", () => {
     expect((await GET(req(`/api/market/orbelith?owner=${owner}`), params("orbelith"))).status).toBe(404);
   });
 
-  it("owner diagnostics: open in local fixture mode, covering all 28 species, and read-only", async () => {
-    const { GET } = await import("@/app/api/dev/market/route");
-    const res = await GET(req("/api/dev/market"));
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.links).toHaveLength(28);
-    expect(body.links.map((l: { ticker: string }) => l.ticker)).toContain("COIN");
-    const sim = await (await GET(req("/api/dev/market?simulate=2.5,-1.8"))).json();
-    expect(sim.entries.map((e: { points: number }) => e.points)).toEqual([10, -7.2]);
-    expect(sim.vigour.value).toBe(52.8);
+  const STUDIO = "owner:correct-horse-battery-staple-test";
+  const basic = (v: string) => ({ authorization: `Basic ${btoa(v)}` });
+
+  it("Developer Mode market diagnostics: owner credentials see all 28 species, read-only", async () => {
+    const { GET } = await import("@/app/studio/dev/market/route");
+    process.env.STUDIO_BASIC_AUTH = STUDIO;
+    try {
+      const res = await GET(req("/studio/dev/market", { headers: basic(STUDIO) }));
+      expect(res.status).toBe(200);
+      const body = await res.json();
+      expect(body.links).toHaveLength(28);
+      expect(body.links.map((l: { ticker: string }) => l.ticker)).toContain("COIN");
+      expect(body.links.find((l: { speciesId: string }) => l.speciesId === "genesis")).toMatchObject({ name: "GENESIS", rarity: "secret" });
+      const sim = await (await GET(req("/studio/dev/market?simulate=2.5,-1.8", { headers: basic(STUDIO) }))).json();
+      expect(sim.entries.map((e: { points: number }) => e.points)).toEqual([10, -7.2]);
+      expect(sim.vigour.value).toBe(52.8);
+    } finally {
+      delete process.env.STUDIO_BASIC_AUTH;
+    }
   });
 
-  it("owner diagnostics are invisible elsewhere without the dev token, and refuse a wrong or empty one", async () => {
-    const { GET } = await import("@/app/api/dev/market/route");
-    process.env.SOLANITES_FIXTURES = "0";
+  it("Developer Mode market diagnostics reuse the studio gate: 404 when off or unconfigured, 401 for wrong credentials", async () => {
+    const { GET } = await import("@/app/studio/dev/market/route");
+    // No secret configured: invisible, even in fixture mode.
+    expect((await GET(req("/studio/dev/market?simulate=1"))).status).toBe(404);
+    process.env.STUDIO_BASIC_AUTH = STUDIO;
     try {
-      expect((await GET(req("/api/dev/market?simulate=1"))).status).toBe(404);
-      expect((await GET(req("/api/dev/market?simulate=1", { headers: { authorization: "Bearer " } }))).status).toBe(404);
-      process.env.SOLANITES_DEV_TOKEN = "dev-token-for-tests";
-      expect((await GET(req("/api/dev/market?simulate=1", { headers: { authorization: "Bearer nope" } }))).status).toBe(404);
-      expect((await GET(req("/api/dev/market?simulate=1", { headers: { authorization: "Bearer dev-token-for-tests" } }))).status).toBe(200);
+      expect((await GET(req("/studio/dev/market?simulate=1"))).status).toBe(401);
+      expect((await GET(req("/studio/dev/market?simulate=1", { headers: basic("owner:wrong-password-wrong-password") }))).status).toBe(401);
+      expect((await GET(req("/studio/dev/market?simulate=1", { headers: { authorization: "Bearer anything" } }))).status).toBe(401);
+      process.env.DEVELOPER_MODE = "off";
+      expect((await GET(req("/studio/dev/market?simulate=1", { headers: basic(STUDIO) }))).status).toBe(404);
     } finally {
-      process.env.SOLANITES_FIXTURES = "1";
-      delete process.env.SOLANITES_DEV_TOKEN;
+      delete process.env.STUDIO_BASIC_AUTH;
+      delete process.env.DEVELOPER_MODE;
     }
   });
 });

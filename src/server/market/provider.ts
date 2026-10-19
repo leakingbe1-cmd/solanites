@@ -1,5 +1,5 @@
 import "server-only";
-import { STOCK_LINKS } from "@/config/stockLinks";
+import { STOCK_LINKS } from "@/server/market/stockLinks";
 import { exchangeClock, isTradingDay, previousTradingDay } from "@/lib/market/calendar";
 
 /**

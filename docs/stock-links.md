@@ -10,9 +10,10 @@ Market data never changes:
 
 Nothing here is investment advice, and owning a Solanite has nothing to do with owning shares.
 
-- **Source of truth:** `src/config/stockLinks.ts`, which is server-only. To remap a species, edit that file. No UI component holds a ticker.
+- **Source of truth:** `src/server/market/stockLinks.ts`, which is server-only. To remap a species, edit that file. No UI component holds a ticker.
 - **Verification:** tickers, exchanges and legal names were checked against public listings on 19 Oct 2026, using web search because the container's network policy blocks the exchange and data-provider hosts. Re-verify against live data once those hosts are allowed (see *Network* below).
 - **Classified species:** Mythic and Secret links are never sent to the browser bundle. `/api/market/:id` returns the same 404 as an unknown species unless `?owner=` names an address with a verified hatch of that species in the `eggs` table.
+  - **⚠ Limitation:** this is not proof of ownership. Wallet addresses are public, so anyone who knows the address of someone who hatched a Mythic or Secret species can see that species' stock link. Making it owner-only needs proof of wallet control (a signed message or a signed-in session), which is not built.
 
 ## Mapping
 
@@ -42,12 +43,7 @@ Every row shows the ticker chip ringed in the species' palette accent and the ch
 | 20 | Aurelith | Legendary | NEM | Newmont Corporation | NYSE | Materials · gold mining | Shell of gold; largest gold miner |
 | 21 | Velynx | Legendary | ADBE | Adobe Inc. | Nasdaq | Information technology · creative software | The Glyphwalker; tools of type and image |
 | 22 | Thalor | Legendary | JPM | JPMorgan Chase & Co. | NYSE | Financials · banking | Steadfast fortress in the deep |
-| 23 | Astravex | Mythic 🔒 | GOOGL | Alphabet Inc. (Class A) | Nasdaq | Communication services · search and AI | Antlers map every star |
-| 24 | Orbelith | Mythic 🔒 | RKLB | Rocket Lab Corporation | Nasdaq | Industrials · space launch and spacecraft | Circles a world in orbit |
-| 25 | Eventide | Mythic 🔒 | LLY | Eli Lilly and Company | NYSE | Health care · pharmaceuticals | Silent, vast and merciful: medicine |
-| 26 | Helivane | Mythic 🔒 | LMT | Lockheed Martin Corporation | NYSE | Industrials · aerospace and defence | Raptor of the high sky |
-| 27 | GENESIS | Secret 🔒 | COIN | Coinbase Global, Inc. | Nasdaq | Financials · digital asset exchange | Slot Zero, genesis of the chain |
-| 28 | Ø NULLBORN | Secret 🔒 | GME | GameStop Corp. | NYSE | Consumer discretionary · specialty retail | The market's most famous anomaly |
+| 23–28 | *Six Mythic and Secret species* | | | | | | Classified: listed only in `src/server/market/stockLinks.ts`, never in public docs, bundles or responses |
 
 **Data source (all rows):** Massive (formerly Polygon.io) stock aggregates, US consolidated tape.
 
@@ -58,9 +54,8 @@ Every row shows the ticker chip ringed in the species' palette accent and the ch
 - **⚑ CMCSA:** Comcast announced a separation into two companies (Q2 2026 results). Re-check which company keeps CMCSA and Peacock when the split completes.
 - **XOM:** the legal name is now ExxonMobil Holdings Corporation (holding-company reorganisation, July 2026). Ticker and exchange are unchanged.
 - **PLTR:** listed on Nasdaq since November 2024.
-- **RKLB:** the legal name is Rocket Lab Corporation.
 
-The owner test view (`/dev/market`) shows ⚑ next to flagged rows.
+The Market links section of Developer Mode (`/studio/dev`) shows ⚑ next to flagged rows.
 
 ## Market Vigour formula (rules v1)
 
@@ -167,7 +162,7 @@ cron /api/cron/market (CRON_SECRET) ──► service.runScheduled ──► sto
                                                            │  market_daily_bars, market_growth_ledger (immutable),
                                                            │  market_intraday, market_ticker_state
 browser ─► /api/market/:speciesId (60/min/IP, CDN cache 2 min) ─► service.snapshot (DB reads only)
-owner   ─► /api/dev/market (fixture or SOLANITES_DEV_TOKEN, read-only) ─► diagnostics / snapshot / simulate
+owner   ─► /studio/dev/market (Developer Mode auth + DEVELOPER_MODE=off switch, read-only) ─► diagnostics / snapshot / simulate
 ```
 
 Page views never call the provider, so traffic cannot exhaust the provider quota. The API key exists only in server environment variables. It is never placed in URLs, logs or error messages, and the built client bundle was checked to contain no tickers for classified species and no environment variable names.
@@ -182,8 +177,6 @@ Page views never call the provider, so traffic cannot exhaust the provider quota
 | `MARKET_CALLS_PER_MINUTE` | Server env | Provider budget; default 4. |
 | `DATABASE_URL` | Server env | Postgres; the existing variable. |
 | `CRON_SECRET` | Server env | The existing variable; protects `/api/cron/market`. |
-| `SOLANITES_DEV_TOKEN` | Server env (secret) | Enables the read-only owner test view. |
-| `SOLANITES_DEV_PAGES` | Server env | `1` serves `/dev/market` in production (it still needs the token). |
 
 No production environment variables were changed on this branch.
 

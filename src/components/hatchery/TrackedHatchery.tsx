@@ -282,7 +282,7 @@ export function TrackedHatchery({ address }: { address: string }) {
       <Modal open={!!inspected} onClose={() => setInspect(null)} label="Inspect" wide={inspected?.status === "hatched"}>
         {inspected &&
           (inspected.status === "hatched" && inspected.speciesId ? (
-            <CreatureDetail key={inspected.id} species={SPECIES_BY_ID[inspected.speciesId]} record={recordOf(inspected)} />
+            <CreatureDetail key={inspected.id} species={SPECIES_BY_ID[inspected.speciesId]} record={recordOf(inspected)} ownerAddress={address} />
           ) : (
             <EggInspector
               record={recordOf(inspected)}

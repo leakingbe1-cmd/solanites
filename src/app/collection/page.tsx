@@ -104,6 +104,7 @@ export default function CollectionPage() {
                 }}
                 onMouseEnter={() => sfx.hover()}
                 className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-transparent p-3 text-left hover:border-white/15 sm:p-4"
+                style={{ "--card-glow": hidden ? "rgba(110,90,255,0.45)" : meta.glow } as React.CSSProperties}
               >
                 <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${hidden ? "#666" : meta.color}, transparent)` }} />
                 <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-25 blur-3xl transition group-hover:opacity-50" style={{ background: hidden ? "#5b4bff" : meta.color }} />

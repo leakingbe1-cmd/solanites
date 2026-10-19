@@ -23,7 +23,7 @@ export default function LeaderboardPage() {
   const podium = [rows[1], rows[0], rows[2]];
 
   return (
-    <div className="relative min-h-screen pt-24 lg:pt-28">
+    <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
         <div className="text-center">
@@ -64,7 +64,7 @@ export default function LeaderboardPage() {
         </div>
 
         {/* table */}
-        <div className="mt-10 overflow-hidden rounded-3xl border border-white/[0.07]">
+        <div className="sl-panel mt-10 overflow-hidden rounded-3xl">
           <div className="hidden grid-cols-[60px_1.4fr_1fr_1fr_1fr] gap-4 border-b border-white/5 bg-white/[0.02] px-6 py-3 font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60 md:grid">
             <span>Rank</span>
             <span>Solanite</span>

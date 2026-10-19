@@ -15,11 +15,12 @@ export function LogoMark({ className = "h-8 w-8" }: { className?: string }) {
   );
 }
 
-export function Logo() {
+/** `narrowMarkOnly`: under 360px wide show the mark alone (the header, where buttons share the row). */
+export function Logo({ narrowMarkOnly = false }: { narrowMarkOnly?: boolean }) {
   return (
     <span className="flex items-center gap-2.5">
       <LogoMark className="h-7 w-7 sm:h-8 sm:w-8" />
-      <span className="font-display text-[13px] font-semibold tracking-[0.16em] sm:text-[15px] sm:tracking-[0.22em] text-white">SOLANITES</span>
+      <span className={`font-display text-[13px] font-semibold tracking-[0.16em] text-white sm:text-[15px] sm:tracking-[0.22em] ${narrowMarkOnly ? "max-[359px]:hidden" : ""}`}>SOLANITES</span>
     </span>
   );
 }

@@ -146,7 +146,7 @@ export default function Home() {
             Something is <span className="sl-gradient-text">stirring</span>.
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg text-mist">Your egg is already warm. Step inside, check on it daily, and be there the moment it opens.</p>
-          <Link href="/hatchery" className="sl-btn-primary mt-10 inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] text-white sm:px-9 sm:tracking-[0.2em]">
+          <Link href="/hatchery" className="sl-btn-gold mt-10 inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

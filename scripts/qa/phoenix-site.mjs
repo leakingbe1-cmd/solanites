@@ -77,13 +77,21 @@ const video = (p) =>
   await p.screenshot({ path: `${out}/intro-phone-02-wordmark.png` });
   const sw = await p.evaluate(() => document.documentElement.scrollWidth);
   ok("phone: no horizontal overflow during the intro", sw <= 390, String(sw));
-  await p.getByRole("button", { name: "Skip intro" }).tap();
-  await p.waitForTimeout(900);
-  ok("phone: Skip closes the intro", !(await dialog(p).isVisible()));
-  await p.screenshot({ path: `${out}/home-phone-after-skip.png` });
+  await dialog(p).waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
+  ok("phone: hands over to the homepage after the video ends", !(await dialog(p).isVisible()));
   await p.reload();
   await p.waitForTimeout(900);
   ok("phone: not shown again on a repeat visit", !(await dialog(p).isVisible()));
+  await c.close();
+}
+{
+  const [c, p] = await ctx({ ...devices["iPhone 13"], defaultBrowserType: undefined });
+  await p.goto(B + "/");
+  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 1, null, { timeout: 15000 });
+  await p.getByRole("button", { name: "Skip intro" }).tap();
+  await p.waitForTimeout(900);
+  ok("phone: Skip closes the intro mid-video", !(await dialog(p).isVisible()));
+  await p.screenshot({ path: `${out}/home-phone-after-skip.png` });
   await c.close();
 }
 
@@ -248,6 +256,70 @@ for (const [name, vp, mobile] of [["1440", { width: 1440, height: 900 }, false],
   ok("nav: Rewards link goes to the holder rewards page", (await p.locator("header").getByRole("link", { name: "Rewards", exact: true }).count()) >= 1);
   await p.goto(B + "/claims");
   ok("footer: Holder Rewards link", (await p.locator("footer").getByRole("link", { name: "Holder Rewards" }).count()) === 1);
+  await c.close();
+}
+
+// 8. Site-wide overhaul: stable backdrop, page transitions, sliding nav indicator, history.
+const ROUTES = [["/hatchery", "Hatchery"], ["/collection", "Collection"], ["/how-it-works", "How It Works"], ["/leaderboard", "Leaderboard"], ["/claims", "Rewards"]];
+{
+  const [c, p] = await ctx({}, SEEN);
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  ok("backdrop: rendered behind the page", (await p.locator(".sl-cosmos").count()) === 1);
+  await p.evaluate(() => { document.querySelector(".sl-cosmos").dataset.qaMark = "kept"; });
+  const xs = [];
+  for (const [path, label] of ROUTES) {
+    await p.locator("header").getByRole("link", { name: label, exact: true }).first().click();
+    await p.waitForURL("**" + path);
+    // Let the indicator finish sliding or fading in before sampling it.
+    await p.waitForFunction(() => getComputedStyle(document.querySelector('[data-testid="nav-indicator"]')).opacity === "1", null, { timeout: 2000 }).catch(() => {});
+    await p.waitForTimeout(350);
+    const st = await p.evaluate(() => {
+      const ind = document.querySelector('[data-testid="nav-indicator"]');
+      const cur = document.querySelector('header a[aria-current="page"]');
+      return { kept: document.querySelector(".sl-cosmos")?.dataset.qaMark === "kept", backdrops: document.querySelectorAll(".sl-cosmos").length, transitions: Number(document.querySelector("[data-page-transition]")?.dataset.transitions ?? 0), x: ind ? new DOMMatrix(getComputedStyle(ind).transform).m41 : null, on: ind ? getComputedStyle(ind).opacity : null, current: cur?.textContent?.trim() };
+    });
+    xs.push(st.x);
+    ok(`nav ${label}: client navigation keeps the same backdrop (no remount)`, st.kept && st.backdrops === 1);
+    ok(`nav ${label}: page transition played`, st.transitions === xs.length, `${st.transitions} transitions after ${xs.length} navigations`);
+    ok(`nav ${label}: indicator visible and marks the current link`, st.on === "1" && st.current === label, `${st.current} opacity ${st.on}`);
+  }
+  ok("nav: indicator moves between links", new Set(xs.map((x) => Math.round(x))).size === ROUTES.length, xs.map((x) => Math.round(x)).join(","));
+  await p.goBack();
+  await p.waitForURL("**/leaderboard");
+  ok("history: back returns to the previous page", (await p.locator("h1").first().innerText()).includes("Leaderboard"));
+  await p.goForward();
+  await p.waitForURL("**/claims");
+  ok("history: forward works", (await p.locator("h1").first().innerText()).includes("Locked developer supply"));
+  await p.reload({ waitUntil: "networkidle" });
+  ok("history: refresh keeps the page", (await p.locator("h1").first().innerText()).includes("Locked developer supply"));
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  await p.waitForTimeout(400);
+  ok("nav: indicator hidden on the homepage", (await p.evaluate(() => getComputedStyle(document.querySelector('[data-testid="nav-indicator"]')).opacity)) === "0");
+  await c.close();
+}
+for (const [name, vp, mobile] of [["320", { width: 320, height: 640 }, true], ["390", { width: 390, height: 844 }, true], ["1440", { width: 1440, height: 900 }, false]]) {
+  const [c, p] = await ctx({ viewport: vp, isMobile: mobile, hasTouch: mobile }, SEEN);
+  for (const [path] of [["/"], ...ROUTES]) {
+    const r = await p.goto(B + path, { waitUntil: "networkidle" });
+    await p.waitForTimeout(350);
+    const sw = await p.evaluate(() => document.documentElement.scrollWidth);
+    ok(`layout ${name} ${path}: loads directly, no horizontal overflow`, r.status() === 200 && sw <= vp.width, `${r.status()} / ${sw}`);
+    const clash = await p.evaluate(() => {
+      const r = (el) => el?.getBoundingClientRect();
+      const logo = r(document.querySelector('header a[aria-label="Solanites home"]'));
+      const right = [...document.querySelectorAll("header nav > div:last-child > *")].map(r).filter((b) => b && b.width > 0);
+      return right.some((b) => logo && b.left < logo.right - 0.5);
+    });
+    ok(`layout ${name} ${path}: header logo and buttons don't overlap`, !clash);
+    if (name !== "1440" || path !== "/") await p.screenshot({ path: `${out}/page-${name}${path === "/" ? "-home" : path.replace(/\//g, "-")}.png` });
+  }
+  await c.close();
+}
+{
+  const [c, p] = await ctx({ reducedMotion: "reduce" }, SEEN);
+  await p.goto(B + "/collection", { waitUntil: "networkidle" });
+  const rm = await p.evaluate(() => ({ stars: getComputedStyle(document.querySelector(".sl-cosmos-stars")).animationName, glints: getComputedStyle(document.querySelector(".sl-cosmos-glints")).animationName, embers: getComputedStyle(document.querySelector(".sl-cosmos-embers")).display }));
+  ok("reduced motion: backdrop still, embers hidden", rm.stars === "none" && rm.glints === "none" && rm.embers === "none", JSON.stringify(rm));
   await c.close();
 }
 

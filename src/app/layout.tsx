@@ -5,6 +5,8 @@ import "@fontsource/jetbrains-mono/400.css";
 import "./globals.css";
 import { HatcheryProvider } from "@/state/HatcheryProvider";
 import { Nav } from "@/components/layout/Nav";
+import { PageTransition } from "@/components/layout/PageTransition";
+import { CosmicBackdrop } from "@/components/layout/CosmicBackdrop";
 import { Footer } from "@/components/layout/Footer";
 import { FirstVisitIntro } from "@/components/intro/FirstVisitIntro";
 import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
@@ -29,9 +31,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: INTRO_BOOT_SCRIPT }} />
       </head>
       <body className="sl-noise min-h-screen">
+        {/* fixed behind every page; lives in the layout so navigation never restarts it */}
+        <CosmicBackdrop />
         <HatcheryProvider>
           <Nav />
-          <main className="relative">{children}</main>
+          <main className="relative">
+            <PageTransition>{children}</PageTransition>
+          </main>
           <Footer />
           <FirstVisitIntro />
         </HatcheryProvider>

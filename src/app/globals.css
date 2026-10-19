@@ -66,6 +66,7 @@ body {
 .sl-glass {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.015));
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -122,9 +123,6 @@ body {
     transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
     border-color 0.35s,
     box-shadow 0.35s;
-}
-.sl-card-hover:hover {
-  transform: translateY(-2px);
 }
 
 /* ── Creature hover response ──────────────────────────────
@@ -720,5 +718,149 @@ html[data-sl-intro]::after {
   }
   .sl-phx-embers {
     display: none;
+  }
+}
+
+/* ── Site-wide cosmic backdrop (CosmicBackdrop, fixed in the root layout) ──
+   The nebulae are static paint. Only small or tiled layers move, and only by
+   transform or opacity. Stars drift by exactly one tile per loop, so the seam
+   never shows. */
+.sl-cosmos {
+  background: radial-gradient(120% 90% at 50% 0%, #0b0918 0%, var(--color-void) 60%);
+}
+.sl-cosmos-nebula {
+  background:
+    radial-gradient(42% 36% at 12% 8%, rgba(153, 69, 255, 0.2), transparent 70%),
+    radial-gradient(36% 32% at 88% 18%, rgba(0, 194, 255, 0.13), transparent 70%),
+    radial-gradient(40% 34% at 78% 78%, rgba(110, 60, 255, 0.12), transparent 70%),
+    radial-gradient(34% 30% at 18% 82%, rgba(0, 170, 220, 0.09), transparent 70%),
+    radial-gradient(28% 22% at 50% 52%, rgba(255, 170, 70, 0.035), transparent 70%);
+}
+.sl-cosmos-stars {
+  position: absolute;
+  inset: 0 0 -420px 0;
+  will-change: transform;
+}
+.sl-cosmos-stars-far {
+  bottom: -260px;
+  background-size: 260px 260px;
+  background-image:
+    radial-gradient(1px 1px at 18px 32px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 92px 120px, rgba(200, 190, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 160px 48px, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 230px 190px, rgba(170, 220, 255, 0.45), transparent),
+    radial-gradient(1px 1px at 60px 220px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 132px 238px, rgba(220, 200, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 204px 96px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 248px 14px, rgba(190, 230, 255, 0.35), transparent);
+  animation: sl-cosmos-drift-far 160s linear infinite;
+}
+.sl-cosmos-stars-near {
+  background-size: 420px 420px;
+  background-image:
+    radial-gradient(1.5px 1.5px at 40px 60px, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 210px 150px, rgba(210, 190, 255, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 330px 40px, rgba(180, 225, 255, 0.6), transparent),
+    radial-gradient(1.5px 1.5px at 120px 300px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 380px 270px, rgba(255, 226, 170, 0.55), transparent),
+    radial-gradient(1.5px 1.5px at 280px 390px, rgba(255, 255, 255, 0.45), transparent);
+  animation: sl-cosmos-drift-near 100s linear infinite;
+}
+@keyframes sl-cosmos-drift-far {
+  to { transform: translate3d(0, -260px, 0); }
+}
+@keyframes sl-cosmos-drift-near {
+  to { transform: translate3d(0, -420px, 0); }
+}
+.sl-cosmos-glints {
+  background-image:
+    radial-gradient(2px 2px at 14% 22%, rgba(255, 255, 255, 0.9), transparent),
+    radial-gradient(2px 2px at 86% 16%, rgba(220, 205, 255, 0.85), transparent),
+    radial-gradient(2px 2px at 63% 78%, rgba(200, 235, 255, 0.8), transparent),
+    radial-gradient(2px 2px at 33% 88%, rgba(255, 228, 180, 0.75), transparent),
+    radial-gradient(2px 2px at 92% 58%, rgba(255, 255, 255, 0.7), transparent);
+  animation: sl-cosmos-glint 6s ease-in-out infinite alternate;
+}
+@keyframes sl-cosmos-glint {
+  0%, 55% { opacity: 0.2; }
+  100% { opacity: 0.9; }
+}
+.sl-cosmos-embers span {
+  position: absolute;
+  bottom: -8px;
+  border-radius: 9999px;
+  background: #ffc46b;
+  box-shadow: 0 0 6px 2px rgba(255, 160, 50, 0.55);
+  opacity: 0;
+  animation-name: sl-cosmos-ember;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes sl-cosmos-ember {
+  0% { transform: translate3d(0, 0, 0); opacity: 0; }
+  10% { opacity: 0.55; }
+  75% { opacity: 0.3; }
+  100% { transform: translate3d(var(--drift), -105vh, 0); opacity: 0; }
+}
+.sl-cosmos-vignette {
+  background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(3, 2, 8, 0.65) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-cosmos-stars,
+  .sl-cosmos-glints {
+    animation: none;
+  }
+  .sl-cosmos-embers {
+    display: none;
+  }
+}
+
+/* ── Navigation: one indicator that slides between links ── */
+.sl-nav-indicator {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  height: 2px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--color-sol-purple), var(--color-sol-blue), var(--color-sol-green));
+  box-shadow: 0 0 12px rgba(0, 194, 255, 0.55);
+  transition:
+    transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 200ms ease;
+}
+
+/* ── Shared surfaces ── */
+/* Panels: glass with a faint top highlight and depth. */
+.sl-panel {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 60px -32px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+/* Cards that respond to hover: lift, a brighter edge and a restrained glow (the creature's
+   rarity colour where a card sets --card-glow, purple otherwise). */
+.sl-card-hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 18px 40px -28px rgba(0, 0, 0, 0.9);
+}
+.sl-card-hover:hover,
+.sl-card-hover:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 24px 56px -30px var(--card-glow, rgba(153, 69, 255, 0.55)),
+    0 0 40px -18px rgba(0, 194, 255, 0.3);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sl-card-hover:hover,
+  .sl-card-hover:focus-visible {
+    transform: none;
   }
 }

@@ -55,7 +55,7 @@ export default function HowItWorksPage() {
           <SectionHeading eyebrow="Current configuration" title="Gameplay rules.">
             Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-white/80">src/config/eggProgression.ts</code> and <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-white/80">src/config/gameConfig.ts</code>, and is enforced on the server.
           </SectionHeading>
-          <div className="mt-10 overflow-hidden rounded-3xl border border-white/[0.07]">
+          <div className="sl-panel mt-10 overflow-hidden rounded-3xl">
             {rules.map(([k, v, note]) => (
               <div key={k} className="grid gap-1 border-b border-white/[0.05] px-5 py-4 last:border-0 sm:grid-cols-[1fr_1.4fr] sm:gap-6 sm:px-7">
                 <p className="text-sm text-mist">{k}</p>
@@ -96,7 +96,7 @@ export default function HowItWorksPage() {
         </div>
 
         <div className="mt-20 text-center">
-          <Link href="/hatchery" className="sl-btn-primary inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] text-white sm:px-9 sm:tracking-[0.2em]">
+          <Link href="/hatchery" className="sl-btn-gold inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-display text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">
             ENTER THE HATCHERY →
           </Link>
         </div>

@@ -1,0 +1,2576 @@
+{
+  "generatedBy": "docs/creature-studio/tools/build-asset-map.mjs",
+  "stageNames": [
+    "Eggling",
+    "Hatchling",
+    "Evolved",
+    "Ascended"
+  ],
+  "counts": {
+    "species": 28,
+    "stageSlots": 112,
+    "byRarity": {
+      "common": 6,
+      "rare": 5,
+      "epic": 5,
+      "legendary": 6,
+      "mythic": 4,
+      "secret": 2
+    }
+  },
+  "sharedReferences": [
+    "docs/creature-art/reference/overview-sheet.webp",
+    "docs/creature-art/reference/mossling-detail.webp",
+    "docs/creature-art/reference/species/mythic-unknown.webp"
+  ],
+  "species": [
+    {
+      "id": "mossling",
+      "dex": 1,
+      "name": "Mossling",
+      "epithet": "The Patient Sprout",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Verdant",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Patient",
+        "Curious",
+        "Loyal"
+      ],
+      "palette": {
+        "body": "#3fbf7f",
+        "bodyLight": "#a8f0c4",
+        "bodyDark": "#145c43",
+        "belly": "#d8f7d0",
+        "wing": "#2f9e6c",
+        "wingEdge": "#b6ffd8",
+        "accent": "#14f195",
+        "eye": "#e8ff6b",
+        "horn": "#e9dcc0"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/mossling.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.mossling",
+        "referenceStrip": "docs/creature-art/reference/species/mossling.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/mossling.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/mossling/1-eggling.png",
+            "public": "public/creatures/mossling/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/mossling/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/mossling.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/mossling/2-hatchling.png",
+            "public": "public/creatures/mossling/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/mossling/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/mossling.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/mossling/3-evolved.png",
+            "public": "public/creatures/mossling/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/mossling/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/mossling.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/mossling/4-ascended.png",
+            "public": "public/creatures/mossling/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/mossling/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "driftfin",
+      "dex": 2,
+      "name": "Driftfin",
+      "epithet": "Tide-Whisperer",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Tidal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Calm",
+        "Playful",
+        "Wandering"
+      ],
+      "palette": {
+        "body": "#3b9dff",
+        "bodyLight": "#a9dcff",
+        "bodyDark": "#123e7a",
+        "belly": "#dff3ff",
+        "wing": "#55c3ff",
+        "wingEdge": "#c9f2ff",
+        "accent": "#6ff7ff",
+        "eye": "#ffffff",
+        "horn": "#dbeeff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/driftfin.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.driftfin",
+        "referenceStrip": "docs/creature-art/reference/species/driftfin.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/driftfin.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/driftfin/1-eggling.png",
+            "public": "public/creatures/driftfin/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/driftfin/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/driftfin.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/driftfin/2-hatchling.png",
+            "public": "public/creatures/driftfin/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/driftfin/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/driftfin.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/driftfin/3-evolved.png",
+            "public": "public/creatures/driftfin/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/driftfin/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/driftfin.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/driftfin/4-ascended.png",
+            "public": "public/creatures/driftfin/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/driftfin/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pallow",
+      "dex": 3,
+      "name": "Pallow",
+      "epithet": "The Pearl Herald",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Lumen",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Gentle",
+        "Proud",
+        "Hopeful"
+      ],
+      "palette": {
+        "body": "#e8ecf7",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#8d97b8",
+        "belly": "#ffffff",
+        "wing": "#d6def5",
+        "wingEdge": "#ffffff",
+        "accent": "#9ad7ff",
+        "eye": "#5fb8ff",
+        "horn": "#ffffff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/pallow.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.pallow",
+        "referenceStrip": "docs/creature-art/reference/species/pallow.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/pallow.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pallow/1-eggling.png",
+            "public": "public/creatures/pallow/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pallow/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/pallow.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pallow/2-hatchling.png",
+            "public": "public/creatures/pallow/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pallow/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/pallow.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pallow/3-evolved.png",
+            "public": "public/creatures/pallow/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pallow/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/pallow.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pallow/4-ascended.png",
+            "public": "public/creatures/pallow/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pallow/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "glimmeray",
+      "dex": 4,
+      "name": "Glimmeray",
+      "epithet": "Shallows Drifter",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Tidal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Serene",
+        "Shy",
+        "Graceful"
+      ],
+      "palette": {
+        "body": "#5cc8e8",
+        "bodyLight": "#c6f4ff",
+        "bodyDark": "#1b5f80",
+        "belly": "#eafcff",
+        "wing": "#47b5dd",
+        "wingEdge": "#d8fbff",
+        "accent": "#8ffff0",
+        "eye": "#ffffff",
+        "horn": "#cdefff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/glimmeray.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.glimmeray",
+        "referenceStrip": "docs/creature-art/reference/species/glimmeray.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/glimmeray.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/glimmeray/1-eggling.png",
+            "public": "public/creatures/glimmeray/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/glimmeray/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/glimmeray.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/glimmeray/2-hatchling.png",
+            "public": "public/creatures/glimmeray/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/glimmeray/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/glimmeray.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/glimmeray/3-evolved.png",
+            "public": "public/creatures/glimmeray/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/glimmeray/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/glimmeray.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/glimmeray/4-ascended.png",
+            "public": "public/creatures/glimmeray/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/glimmeray/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sproutwyrm",
+      "dex": 5,
+      "name": "Sproutwyrm",
+      "epithet": "Coil of the Canopy",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Verdant",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Stubborn",
+        "Warm",
+        "Hungry"
+      ],
+      "palette": {
+        "body": "#69c95a",
+        "bodyLight": "#c8f5a8",
+        "bodyDark": "#245a24",
+        "belly": "#f0ffd8",
+        "wing": "#8be07a",
+        "wingEdge": "#e6ffd0",
+        "accent": "#c7ff5e",
+        "eye": "#fff38a",
+        "horn": "#c9a676"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/sproutwyrm.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.sproutwyrm",
+        "referenceStrip": "docs/creature-art/reference/species/sproutwyrm.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/sproutwyrm.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/sproutwyrm/1-eggling.png",
+            "public": "public/creatures/sproutwyrm/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/sproutwyrm/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/sproutwyrm.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/sproutwyrm/2-hatchling.png",
+            "public": "public/creatures/sproutwyrm/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/sproutwyrm/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/sproutwyrm.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/sproutwyrm/3-evolved.png",
+            "public": "public/creatures/sproutwyrm/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/sproutwyrm/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/sproutwyrm.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/sproutwyrm/4-ascended.png",
+            "public": "public/creatures/sproutwyrm/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/sproutwyrm/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "frostkit",
+      "dex": 6,
+      "name": "Frostkit",
+      "epithet": "Little Glacier",
+      "rarity": "common",
+      "rarityLabel": "Common",
+      "element": "Frost",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Brave",
+        "Clumsy",
+        "Bright"
+      ],
+      "palette": {
+        "body": "#d9ecff",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#6f8fb8",
+        "belly": "#f4fbff",
+        "wing": "#b7d8ff",
+        "wingEdge": "#ffffff",
+        "accent": "#7fd4ff",
+        "eye": "#3aa0ff",
+        "horn": "#eaf6ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/frostkit.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.frostkit",
+        "referenceStrip": "docs/creature-art/reference/species/frostkit.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/frostkit.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/frostkit/1-eggling.png",
+            "public": "public/creatures/frostkit/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/frostkit/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/frostkit.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/frostkit/2-hatchling.png",
+            "public": "public/creatures/frostkit/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/frostkit/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/frostkit.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/frostkit/3-evolved.png",
+            "public": "public/creatures/frostkit/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/frostkit/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/frostkit.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/frostkit/4-ascended.png",
+            "public": "public/creatures/frostkit/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/frostkit/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "abyssal-vael",
+      "dex": 7,
+      "name": "Vael",
+      "epithet": "Of the Abyssal Trench",
+      "rarity": "rare",
+      "rarityLabel": "Rare",
+      "element": "Tidal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Solemn",
+        "Ancient",
+        "Watchful"
+      ],
+      "palette": {
+        "body": "#1f3fbf",
+        "bodyLight": "#5d86ff",
+        "bodyDark": "#08113f",
+        "belly": "#6fd4ff",
+        "wing": "#2a5cff",
+        "wingEdge": "#79e8ff",
+        "accent": "#38f4ff",
+        "eye": "#9dfcff",
+        "horn": "#a8c2ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/vael.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.abyssal-vael",
+        "referenceStrip": "docs/creature-art/reference/species/abyssal-vael.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/vael.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/abyssal-vael/1-eggling.png",
+            "public": "public/creatures/abyssal-vael/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/abyssal-vael/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/vael.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/abyssal-vael/2-hatchling.png",
+            "public": "public/creatures/abyssal-vael/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/abyssal-vael/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/vael.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/abyssal-vael/3-evolved.png",
+            "public": "public/creatures/abyssal-vael/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/abyssal-vael/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/vael.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/abyssal-vael/4-ascended.png",
+            "public": "public/creatures/abyssal-vael/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/abyssal-vael/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "stormquill",
+      "dex": 8,
+      "name": "Stormquill",
+      "epithet": "Thunder's Courier",
+      "rarity": "rare",
+      "rarityLabel": "Rare",
+      "element": "Storm",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Restless",
+        "Fierce",
+        "Quick"
+      ],
+      "palette": {
+        "body": "#5a3bd6",
+        "bodyLight": "#a58bff",
+        "bodyDark": "#1e0f5c",
+        "belly": "#cbbdff",
+        "wing": "#6b46ff",
+        "wingEdge": "#7ef9ff",
+        "accent": "#7ef9ff",
+        "eye": "#e9ff7a",
+        "horn": "#d8ccff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/stormquill.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.stormquill",
+        "referenceStrip": "docs/creature-art/reference/species/stormquill.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/stormquill.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/stormquill/1-eggling.png",
+            "public": "public/creatures/stormquill/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/stormquill/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/stormquill.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/stormquill/2-hatchling.png",
+            "public": "public/creatures/stormquill/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/stormquill/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/stormquill.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/stormquill/3-evolved.png",
+            "public": "public/creatures/stormquill/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/stormquill/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/stormquill.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/stormquill/4-ascended.png",
+            "public": "public/creatures/stormquill/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/stormquill/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "duskwing",
+      "dex": 9,
+      "name": "Duskwing",
+      "epithet": "Twilight Sentinel",
+      "rarity": "rare",
+      "rarityLabel": "Rare",
+      "element": "Shadow",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Guarded",
+        "Loyal",
+        "Mysterious"
+      ],
+      "palette": {
+        "body": "#4a2a8c",
+        "bodyLight": "#8b63d9",
+        "bodyDark": "#170a33",
+        "belly": "#b89cff",
+        "wing": "#3a1f78",
+        "wingEdge": "#c78bff",
+        "accent": "#b46bff",
+        "eye": "#ff9df5",
+        "horn": "#1b1030"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/duskwing.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.duskwing",
+        "referenceStrip": "docs/creature-art/reference/species/duskwing.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/duskwing.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/duskwing/1-eggling.png",
+            "public": "public/creatures/duskwing/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/duskwing/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/duskwing.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/duskwing/2-hatchling.png",
+            "public": "public/creatures/duskwing/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/duskwing/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/duskwing.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/duskwing/3-evolved.png",
+            "public": "public/creatures/duskwing/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/duskwing/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/duskwing.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/duskwing/4-ascended.png",
+            "public": "public/creatures/duskwing/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/duskwing/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "cryovant",
+      "dex": 10,
+      "name": "Cryovant",
+      "epithet": "Shard Glider",
+      "rarity": "rare",
+      "rarityLabel": "Rare",
+      "element": "Crystal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Precise",
+        "Cold",
+        "Elegant"
+      ],
+      "palette": {
+        "body": "#1b4fa8",
+        "bodyLight": "#6fb6ff",
+        "bodyDark": "#0a1c4a",
+        "belly": "#bff3ff",
+        "wing": "#2463c9",
+        "wingEdge": "#a8fbff",
+        "accent": "#7affff",
+        "eye": "#ffffff",
+        "horn": "#c9f4ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/cryovant.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.cryovant",
+        "referenceStrip": "docs/creature-art/reference/species/cryovant.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/cryovant.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/cryovant/1-eggling.png",
+            "public": "public/creatures/cryovant/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/cryovant/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/cryovant.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/cryovant/2-hatchling.png",
+            "public": "public/creatures/cryovant/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/cryovant/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/cryovant.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/cryovant/3-evolved.png",
+            "public": "public/creatures/cryovant/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/cryovant/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/cryovant.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/cryovant/4-ascended.png",
+            "public": "public/creatures/cryovant/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/cryovant/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "emberlisk",
+      "dex": 11,
+      "name": "Emberlisk",
+      "epithet": "Kiln-Hearted",
+      "rarity": "rare",
+      "rarityLabel": "Rare",
+      "element": "Ember",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Hot-headed",
+        "Generous",
+        "Bold"
+      ],
+      "palette": {
+        "body": "#3a1f5c",
+        "bodyLight": "#7a4aa8",
+        "bodyDark": "#150a24",
+        "belly": "#ff9b5c",
+        "wing": "#4b2370",
+        "wingEdge": "#ff7a3d",
+        "accent": "#ff6a2b",
+        "eye": "#ffd36b",
+        "horn": "#2a1638"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/emberlisk.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.emberlisk",
+        "referenceStrip": "docs/creature-art/reference/species/emberlisk.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/emberlisk.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/emberlisk/1-eggling.png",
+            "public": "public/creatures/emberlisk/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/emberlisk/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/emberlisk.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/emberlisk/2-hatchling.png",
+            "public": "public/creatures/emberlisk/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/emberlisk/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/emberlisk.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/emberlisk/3-evolved.png",
+            "public": "public/creatures/emberlisk/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/emberlisk/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/emberlisk.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/emberlisk/4-ascended.png",
+            "public": "public/creatures/emberlisk/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/emberlisk/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "neonyx",
+      "dex": 12,
+      "name": "Neonyx",
+      "epithet": "The Lantern Wyrm",
+      "rarity": "epic",
+      "rarityLabel": "Epic",
+      "element": "Lumen",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Radiant",
+        "Vain",
+        "Electric"
+      ],
+      "palette": {
+        "body": "#2a0f4a",
+        "bodyLight": "#6a2bb0",
+        "bodyDark": "#0c0418",
+        "belly": "#ff6bf0",
+        "wing": "#3b1170",
+        "wingEdge": "#ff5cf0",
+        "accent": "#ff4df5",
+        "eye": "#6bfff6",
+        "horn": "#ff9df8"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/neonyx.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.neonyx",
+        "referenceStrip": "docs/creature-art/reference/species/neonyx.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/neonyx.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/neonyx/1-eggling.png",
+            "public": "public/creatures/neonyx/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/neonyx/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/neonyx.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/neonyx/2-hatchling.png",
+            "public": "public/creatures/neonyx/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/neonyx/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/neonyx.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/neonyx/3-evolved.png",
+            "public": "public/creatures/neonyx/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/neonyx/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/neonyx.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/neonyx/4-ascended.png",
+            "public": "public/creatures/neonyx/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/neonyx/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aurorath",
+      "dex": 13,
+      "name": "Aurorath",
+      "epithet": "Veil of Northern Fire",
+      "rarity": "epic",
+      "rarityLabel": "Epic",
+      "element": "Aether",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Dreamy",
+        "Wise",
+        "Distant"
+      ],
+      "palette": {
+        "body": "#0b3b44",
+        "bodyLight": "#1fa59a",
+        "bodyDark": "#03151a",
+        "belly": "#7bfff0",
+        "wing": "#0d5c5e",
+        "wingEdge": "#d36bff",
+        "accent": "#14f1d9",
+        "eye": "#ffffff",
+        "horn": "#b9fff6"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/aurorath.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.aurorath",
+        "referenceStrip": "docs/creature-art/reference/species/aurorath.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/aurorath.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurorath/1-eggling.png",
+            "public": "public/creatures/aurorath/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurorath/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/aurorath.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurorath/2-hatchling.png",
+            "public": "public/creatures/aurorath/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurorath/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/aurorath.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurorath/3-evolved.png",
+            "public": "public/creatures/aurorath/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurorath/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/aurorath.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurorath/4-ascended.png",
+            "public": "public/creatures/aurorath/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurorath/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "zephrax",
+      "dex": 14,
+      "name": "Zephrax",
+      "epithet": "Coil of Living Current",
+      "rarity": "epic",
+      "rarityLabel": "Epic",
+      "element": "Storm",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Wild",
+        "Brilliant",
+        "Impatient"
+      ],
+      "palette": {
+        "body": "#0e1f4d",
+        "bodyLight": "#2f5fd6",
+        "bodyDark": "#050a1f",
+        "belly": "#5cf6ff",
+        "wing": "#173a8a",
+        "wingEdge": "#5cf6ff",
+        "accent": "#4dfcff",
+        "eye": "#fffb8a",
+        "horn": "#c7fbff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/zephrax.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.zephrax",
+        "referenceStrip": "docs/creature-art/reference/species/zephrax.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/zephrax.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/zephrax/1-eggling.png",
+            "public": "public/creatures/zephrax/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/zephrax/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/zephrax.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/zephrax/2-hatchling.png",
+            "public": "public/creatures/zephrax/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/zephrax/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/zephrax.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/zephrax/3-evolved.png",
+            "public": "public/creatures/zephrax/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/zephrax/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/zephrax.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/zephrax/4-ascended.png",
+            "public": "public/creatures/zephrax/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/zephrax/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "prismara",
+      "dex": 15,
+      "name": "Prismara",
+      "epithet": "Refractor Queen",
+      "rarity": "epic",
+      "rarityLabel": "Epic",
+      "element": "Crystal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Regal",
+        "Dazzling",
+        "Fickle"
+      ],
+      "palette": {
+        "body": "#3a1460",
+        "bodyLight": "#9a4dff",
+        "bodyDark": "#12051f",
+        "belly": "#ffd0ff",
+        "wing": "#5a1f9a",
+        "wingEdge": "#6bfff1",
+        "accent": "#ff7af6",
+        "eye": "#ffffff",
+        "horn": "#ffe1ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/prismara.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.prismara",
+        "referenceStrip": "docs/creature-art/reference/species/prismara.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/prismara.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/prismara/1-eggling.png",
+            "public": "public/creatures/prismara/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/prismara/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/prismara.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/prismara/2-hatchling.png",
+            "public": "public/creatures/prismara/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/prismara/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/prismara.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/prismara/3-evolved.png",
+            "public": "public/creatures/prismara/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/prismara/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/prismara.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/prismara/4-ascended.png",
+            "public": "public/creatures/prismara/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/prismara/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "nyxara",
+      "dex": 26,
+      "name": "Nyxara",
+      "epithet": "The Ribbon of Dusk",
+      "rarity": "epic",
+      "rarityLabel": "Epic",
+      "element": "Shadow",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Elusive",
+        "Graceful",
+        "Curious"
+      ],
+      "palette": {
+        "body": "#2a2350",
+        "bodyLight": "#5a4c9a",
+        "bodyDark": "#0d0a22",
+        "belly": "#c9bff2",
+        "wing": "#4b2f9e",
+        "wingEdge": "#b69bff",
+        "accent": "#a98bff",
+        "eye": "#ffd27a",
+        "horn": "#7d6ae0"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/nyxara.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.nyxara",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/nyxara.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nyxara/1-eggling.png",
+            "public": "public/creatures/nyxara/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nyxara/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/nyxara.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nyxara/2-hatchling.png",
+            "public": "public/creatures/nyxara/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nyxara/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/nyxara.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nyxara/3-evolved.png",
+            "public": "public/creatures/nyxara/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nyxara/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/nyxara.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nyxara/4-ascended.png",
+            "public": "public/creatures/nyxara/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nyxara/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aurelion",
+      "dex": 16,
+      "name": "Aurelion",
+      "epithet": "Sovereign of the Gilded Slot",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Solar",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Majestic",
+        "Just",
+        "Unyielding"
+      ],
+      "palette": {
+        "body": "#e0a52a",
+        "bodyLight": "#fff1a8",
+        "bodyDark": "#6b3d06",
+        "belly": "#fff6d0",
+        "wing": "#c9821c",
+        "wingEdge": "#fff3a0",
+        "accent": "#ffe066",
+        "eye": "#ffffff",
+        "horn": "#fff7da"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/aurelion.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.aurelion",
+        "referenceStrip": "docs/creature-art/reference/species/aurelion.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/aurelion.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelion/1-eggling.png",
+            "public": "public/creatures/aurelion/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelion/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/aurelion.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelion/2-hatchling.png",
+            "public": "public/creatures/aurelion/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelion/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/aurelion.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelion/3-evolved.png",
+            "public": "public/creatures/aurelion/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelion/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/aurelion.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelion/4-ascended.png",
+            "public": "public/creatures/aurelion/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelion/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "solvanth",
+      "dex": 17,
+      "name": "Solvanth",
+      "epithet": "The Sunscale Leviathan",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Solar",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Ancient",
+        "Benevolent",
+        "Vast"
+      ],
+      "palette": {
+        "body": "#e8b23a",
+        "bodyLight": "#fff0b0",
+        "bodyDark": "#7a4308",
+        "belly": "#ffe9a6",
+        "wing": "#ffcb52",
+        "wingEdge": "#fff6c7",
+        "accent": "#ffd34d",
+        "eye": "#ff5a2b",
+        "horn": "#fff0c8"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/solvanth.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.solvanth",
+        "referenceStrip": "docs/creature-art/reference/species/solvanth.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/solvanth.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/solvanth/1-eggling.png",
+            "public": "public/creatures/solvanth/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/solvanth/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/solvanth.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/solvanth/2-hatchling.png",
+            "public": "public/creatures/solvanth/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/solvanth/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/solvanth.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/solvanth/3-evolved.png",
+            "public": "public/creatures/solvanth/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/solvanth/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/solvanth.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/solvanth/4-ascended.png",
+            "public": "public/creatures/solvanth/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/solvanth/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "pyraurum",
+      "dex": 18,
+      "name": "Pyraurum",
+      "epithet": "Phoenix of the Golden Pyre",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Ember",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Undying",
+        "Passionate",
+        "Proud"
+      ],
+      "palette": {
+        "body": "#e89a2a",
+        "bodyLight": "#ffe08a",
+        "bodyDark": "#7a2a06",
+        "belly": "#fff1c4",
+        "wing": "#ff9a2a",
+        "wingEdge": "#fff2a0",
+        "accent": "#ffcf3d",
+        "eye": "#ffffff",
+        "horn": "#fff4cc"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/pyraurum.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.pyraurum",
+        "referenceStrip": "docs/creature-art/reference/species/pyraurum.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/pyraurum.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pyraurum/1-eggling.png",
+            "public": "public/creatures/pyraurum/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pyraurum/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/pyraurum.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pyraurum/2-hatchling.png",
+            "public": "public/creatures/pyraurum/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pyraurum/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/pyraurum.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pyraurum/3-evolved.png",
+            "public": "public/creatures/pyraurum/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pyraurum/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/pyraurum.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/pyraurum/4-ascended.png",
+            "public": "public/creatures/pyraurum/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/pyraurum/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "aurelith",
+      "dex": 19,
+      "name": "Aurelith",
+      "epithet": "The Gilded Tide",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Solar",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Serene",
+        "Regal",
+        "Generous"
+      ],
+      "palette": {
+        "body": "#d79a24",
+        "bodyLight": "#fff0a0",
+        "bodyDark": "#5c3204",
+        "belly": "#fff8dc",
+        "wing": "#e6a62c",
+        "wingEdge": "#fffbe0",
+        "accent": "#ffe27a",
+        "eye": "#ffffff",
+        "horn": "#fff4cf"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/aurelith.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.aurelith",
+        "referenceStrip": "docs/creature-art/reference/species/aurelith.webp",
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/aurelith.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelith/1-eggling.png",
+            "public": "public/creatures/aurelith/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelith/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/aurelith.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelith/2-hatchling.png",
+            "public": "public/creatures/aurelith/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelith/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/aurelith.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelith/3-evolved.png",
+            "public": "public/creatures/aurelith/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelith/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/aurelith.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/aurelith/4-ascended.png",
+            "public": "public/creatures/aurelith/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/aurelith/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "velynx",
+      "dex": 25,
+      "name": "Velynx",
+      "epithet": "The Glyphwalker",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Shadow",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Confident",
+        "Mysterious",
+        "Mischievous"
+      ],
+      "palette": {
+        "body": "#23262f",
+        "bodyLight": "#4a5060",
+        "bodyDark": "#08090d",
+        "belly": "#2c303b",
+        "wing": "#0f5a5c",
+        "wingEdge": "#3ef2e0",
+        "accent": "#2ee8d8",
+        "eye": "#9d7bff",
+        "horn": "#19b8a8"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/velynx.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.velynx",
+        "referenceStrip": "docs/creature-art/reference/velynx-inspiration.png",
+        "extraReference": "docs/creature-art/reference/velynx-inspiration.png"
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/velynx.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/velynx/1-eggling.png",
+            "public": "public/creatures/velynx/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/velynx/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/velynx.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/velynx/2-hatchling.png",
+            "public": "public/creatures/velynx/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/velynx/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/velynx.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/velynx/3-evolved.png",
+            "public": "public/creatures/velynx/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/velynx/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/velynx.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/velynx/4-ascended.png",
+            "public": "public/creatures/velynx/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/velynx/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "thalor",
+      "dex": 27,
+      "name": "Thalor",
+      "epithet": "The Deepwarden",
+      "rarity": "legendary",
+      "rarityLabel": "Legendary",
+      "element": "Tidal",
+      "classifiedUntilDiscovered": false,
+      "personality": [
+        "Steadfast",
+        "Protective",
+        "Ancient"
+      ],
+      "palette": {
+        "body": "#0f4f63",
+        "bodyLight": "#2c8ea3",
+        "bodyDark": "#04202b",
+        "belly": "#9fe3e6",
+        "wing": "#0b6f86",
+        "wingEdge": "#6af3ff",
+        "accent": "#3fe6ff",
+        "eye": "#f2fbff",
+        "horn": "#c9e8ee"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/thalor.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.thalor",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/thalor.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/thalor/1-eggling.png",
+            "public": "public/creatures/thalor/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/thalor/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/thalor.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/thalor/2-hatchling.png",
+            "public": "public/creatures/thalor/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/thalor/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/thalor.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/thalor/3-evolved.png",
+            "public": "public/creatures/thalor/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/thalor/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/thalor.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/thalor/4-ascended.png",
+            "public": "public/creatures/thalor/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/thalor/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "astravex",
+      "dex": 20,
+      "name": "Astravex",
+      "epithet": "Platinum Starforged",
+      "rarity": "mythic",
+      "rarityLabel": "Mythic",
+      "element": "Nebula",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Infinite",
+        "Calm",
+        "Omniscient"
+      ],
+      "palette": {
+        "body": "#c9d2ea",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#4a527a",
+        "belly": "#1a1240",
+        "wing": "#b7c0e0",
+        "wingEdge": "#ffffff",
+        "accent": "#9f8bff",
+        "eye": "#c4b8ff",
+        "horn": "#f4f6ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/astravex.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.astravex",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/astravex.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/astravex/1-eggling.png",
+            "public": "public/creatures/astravex/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/astravex/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/astravex.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/astravex/2-hatchling.png",
+            "public": "public/creatures/astravex/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/astravex/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/astravex.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/astravex/3-evolved.png",
+            "public": "public/creatures/astravex/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/astravex/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/astravex.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/astravex/4-ascended.png",
+            "public": "public/creatures/astravex/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/astravex/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "orbelith",
+      "dex": 21,
+      "name": "Orbelith",
+      "epithet": "The Celestine Coil",
+      "rarity": "mythic",
+      "rarityLabel": "Mythic",
+      "element": "Aether",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Eternal",
+        "Patient",
+        "Cosmic"
+      ],
+      "palette": {
+        "body": "#d5dcf2",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#545c86",
+        "belly": "#20164a",
+        "wing": "#c6cff0",
+        "wingEdge": "#e8e3ff",
+        "accent": "#8fd8ff",
+        "eye": "#a6f0ff",
+        "horn": "#f6f7ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/orbelith.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.orbelith",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/orbelith.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/orbelith/1-eggling.png",
+            "public": "public/creatures/orbelith/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/orbelith/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/orbelith.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/orbelith/2-hatchling.png",
+            "public": "public/creatures/orbelith/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/orbelith/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/orbelith.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/orbelith/3-evolved.png",
+            "public": "public/creatures/orbelith/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/orbelith/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/orbelith.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/orbelith/4-ascended.png",
+            "public": "public/creatures/orbelith/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/orbelith/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "eventide",
+      "dex": 22,
+      "name": "Eventide",
+      "epithet": "Wing of the Last Light",
+      "rarity": "mythic",
+      "rarityLabel": "Mythic",
+      "element": "Void",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Silent",
+        "Vast",
+        "Merciful"
+      ],
+      "palette": {
+        "body": "#bcc4e0",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#363b5e",
+        "belly": "#120c30",
+        "wing": "#141030",
+        "wingEdge": "#d9d4ff",
+        "accent": "#b49bff",
+        "eye": "#ffffff",
+        "horn": "#eef0ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/eventide.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.eventide",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/eventide.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/eventide/1-eggling.png",
+            "public": "public/creatures/eventide/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/eventide/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/eventide.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/eventide/2-hatchling.png",
+            "public": "public/creatures/eventide/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/eventide/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/eventide.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/eventide/3-evolved.png",
+            "public": "public/creatures/eventide/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/eventide/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/eventide.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/eventide/4-ascended.png",
+            "public": "public/creatures/eventide/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/eventide/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "helivane",
+      "dex": 28,
+      "name": "Helivane",
+      "epithet": "The Sunpiercer",
+      "rarity": "mythic",
+      "rarityLabel": "Mythic",
+      "element": "Solar",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Fierce",
+        "Radiant",
+        "Unyielding"
+      ],
+      "palette": {
+        "body": "#c9701c",
+        "bodyLight": "#ffb547",
+        "bodyDark": "#4a1c06",
+        "belly": "#ffe7a8",
+        "wing": "#e8891f",
+        "wingEdge": "#fff1b8",
+        "accent": "#ffd75e",
+        "eye": "#ffffff",
+        "horn": "#fff3c4"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/helivane.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.helivane",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/helivane.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/helivane/1-eggling.png",
+            "public": "public/creatures/helivane/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/helivane/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/helivane.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/helivane/2-hatchling.png",
+            "public": "public/creatures/helivane/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/helivane/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/helivane.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/helivane/3-evolved.png",
+            "public": "public/creatures/helivane/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/helivane/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/helivane.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/helivane/4-ascended.png",
+            "public": "public/creatures/helivane/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/helivane/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "genesis",
+      "dex": 23,
+      "name": "GENESIS",
+      "epithet": "Slot Zero",
+      "rarity": "secret",
+      "rarityLabel": "Secret",
+      "element": "Prism",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Primordial",
+        "Unknowable",
+        "Kind"
+      ],
+      "palette": {
+        "body": "#0b0b14",
+        "bodyLight": "#2a2a44",
+        "bodyDark": "#000000",
+        "belly": "#14f195",
+        "wing": "#0f0f1e",
+        "wingEdge": "#14f195",
+        "accent": "#9945ff",
+        "eye": "#14f195",
+        "horn": "#e0e0ff"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/genesis.tsx",
+        "floating": true,
+        "designBible": "src/data/creatureDesigns.json#species.genesis",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/genesis.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/genesis/1-eggling.png",
+            "public": "public/creatures/genesis/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/genesis/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/genesis.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/genesis/2-hatchling.png",
+            "public": "public/creatures/genesis/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/genesis/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/genesis.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/genesis/3-evolved.png",
+            "public": "public/creatures/genesis/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/genesis/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/genesis.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/genesis/4-ascended.png",
+            "public": "public/creatures/genesis/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/genesis/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    },
+    {
+      "id": "nullborn",
+      "dex": 24,
+      "name": "Ø NULLBORN",
+      "epithet": "The Unindexed",
+      "rarity": "secret",
+      "rarityLabel": "Secret",
+      "element": "Void",
+      "classifiedUntilDiscovered": true,
+      "personality": [
+        "Glitched",
+        "Curious",
+        "Inverted"
+      ],
+      "palette": {
+        "body": "#f3f3f7",
+        "bodyLight": "#ffffff",
+        "bodyDark": "#9a9ab0",
+        "belly": "#000000",
+        "wing": "#ffffff",
+        "wingEdge": "#ff3df2",
+        "accent": "#ff3df2",
+        "eye": "#000000",
+        "horn": "#000000"
+      },
+      "original": {
+        "renderer": "src/components/creature/species/nullborn.tsx",
+        "floating": false,
+        "designBible": "src/data/creatureDesigns.json#species.nullborn",
+        "referenceStrip": null,
+        "extraReference": null
+      },
+      "stages": [
+        {
+          "n": 0,
+          "name": "Eggling",
+          "originalVector": "src/components/creature/species/nullborn.tsx (stage 0, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nullborn/1-eggling.png",
+            "public": "public/creatures/nullborn/1-eggling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nullborn/1-eggling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 1,
+          "name": "Hatchling",
+          "originalVector": "src/components/creature/species/nullborn.tsx (stage 1, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nullborn/2-hatchling.png",
+            "public": "public/creatures/nullborn/2-hatchling.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nullborn/2-hatchling.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 2,
+          "name": "Evolved",
+          "originalVector": "src/components/creature/species/nullborn.tsx (stage 2, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nullborn/3-evolved.png",
+            "public": "public/creatures/nullborn/3-evolved.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nullborn/3-evolved.png",
+            "status": "not-started"
+          }
+        },
+        {
+          "n": 3,
+          "name": "Ascended",
+          "originalVector": "src/components/creature/species/nullborn.tsx (stage 3, rendered by CreatureArt)",
+          "rasterSlot": {
+            "master": "art/creatures/nullborn/4-ascended.png",
+            "public": "public/creatures/nullborn/4-ascended.webp",
+            "supplied": false
+          },
+          "redesign": {
+            "candidate": "art/creature-studio/nullborn/4-ascended.png",
+            "status": "not-started"
+          }
+        }
+      ]
+    }
+  ]
+}

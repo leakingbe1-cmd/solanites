@@ -14,7 +14,7 @@ The stage count and names are data and do not change: **Eggling → Hatchling �
 6. **Complexity budget grows by stage, capped by rarity.** Ascended may add one major shape over Evolved; it still passes the 64 px black-fill test.
 7. **Classified species** (Mythic, Secret) also need a clean silhouette at every stage, because the "???" view uses it. The pipeline generates silhouettes from transparent masters automatically (`art:build`), so the masters must have clean alpha.
 
-Review artefact per species: a **stage row** (four stages at the same scale on one ground line) and its **black-fill row** beneath. The Velynx sheet in `prototypes/velynx.md` §8 is the template.
+Review artefact per species: a **stage row** (four stages side by side, each centred at its canon C13 framing target, no ground line) and its **black-fill row** beneath. The Velynx sheet in `prototypes/velynx.md` §8 is the template.
 
 ## 2. How animation fits the site today
 

@@ -38,3 +38,17 @@ Standing constraints from the same review:
 - **Assessment: does not pass as briefed** (see `prototypes/round-1/notes.json` and the comparison board). Strong painted finish, face and silhouette; but quadruped instead of upright, missing glyph tile, weak rim light so the body vanishes in colour at 48 px.
 - **Credits:** balance now **1,935**. This work has spent 20 (V-A). The other 80 (2,015 → 1,935) are four image generations in the same Runway workspace at 20:35 UTC that this session did not make (three "Hand-painted 2D creature illustration…", one "Hand-painted 2D fantasy key art…"). Their source is not confirmed. The website builder's `design/creative-direction` branch (commit `83018c0`, 20:46 UTC) records the same 1,935 balance and says it had generated nothing.
 - Generation remains paused pending review.
+
+## 2026-10-19 · Canon approved by the owner
+
+`docs/canon/solanites-art-canon.md` is now **APPROVED** and authoritative for all three workstreams:
+- **Style:** hand-painted 2D throughout, the phoenix included.
+- **Light:** warm gold key `#FFE2A8` from the upper left; restrained violet rim from behind, strong enough to separate dark silhouettes.
+- **Identity:** every species keeps its identity and anatomy; Mossling keeps its antlers.
+- **No ground:** no ground, contact shadows, floor glints or horizon lines in the artwork **or the website presentation**.
+- **No decoration:** no decorative halos, rays or sparkles; Pyraurum's halo is removed.
+- **Framing:** stage framing 45 / 60 / 78 / 88%, measured with `docs/canon/measure-framing.py`.
+- **Prototypes:** Velynx, Mossling, Cryovant.
+- **Credits:** a shared future budget of 180 credits across workstreams; the earlier 80 are historical; **all paid generation paused**; each image needs separate owner approval.
+
+Applied on this branch: art bible §1, §7, §9 and §10; the Velynx brief (§8 table, §9 prompts, canon note); round-1 style block and V-A/V-B prompts (V-B is no longer crouched); the Cryovant lighting line; the evolution stage-row rule; the website handoff (items 1, 2, 5–7). Superseded rules are listed in canon §7.

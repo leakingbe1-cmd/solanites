@@ -40,7 +40,7 @@ The vector bell is a wireframe dome with cartoon googly eyes at Eggling and Hatc
 
 ## 5. Materials, texture, light and colour
 
-- Crystal: hard facet planes, background colour visible through it, a single sharp specular per facet group on the key-light side, cool rim from the right.
+- Crystal: hard facet planes, background colour visible through it, a single sharp specular per facet group on the warm gold key-light side (upper left), restrained violet rim from behind (canon C2, C3).
 - Frost: soft, matte, slightly blue-white `#bff3ff`.
 - Body family `#1b4fa8` / `#6fb6ff` / `#0a1c4a`; accent `#7affff`.
 - Refraction: spectral colour split allowed **only along 2–3 facet edges**, never as rainbow rays.

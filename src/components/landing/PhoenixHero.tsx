@@ -1,6 +1,6 @@
 /**
- * The homepage hero's artwork and its awakening: the realistic Phoenix (2000 × 1116
- * still, the only raster here) full bleed behind the copy. Wide screens place it right
+ * The homepage hero's artwork and its awakening: the Phoenix still (served at its native
+ * 2752 × 1536, the only raster here) full bleed behind the copy. Wide screens place it right
  * of centre with the copy over its darkened left wing; phones show its head and body
  * above the copy.
  *
@@ -15,16 +15,34 @@ import heroAssets from "@/data/heroAssets.json";
 
 type HeroSource = { src: string; w: number };
 type HeroVariant = { width: number; height: number; sources: Record<"avif" | "webp" | "jpg", HeroSource[]> };
-const ECLIPSE = heroAssets as { desktop?: HeroVariant; mobile?: HeroVariant };
+const ECLIPSE = heroAssets as { current?: HeroVariant; desktop?: HeroVariant; mobile?: HeroVariant };
+/**
+ * What the art box really occupies, so the browser picks a file at least that many device
+ * pixels wide: 130% of the viewport on wide screens; on phones the box is 56% of the
+ * screen height and the 16:9 still fills it by height (≈ 100vh wide).
+ */
+const CURRENT_SIZES = "(min-width: 1024px) 130vw, 100vh";
 const srcSet = (list: HeroSource[]) => list.map((s) => `${s.src} ${s.w}w`).join(", ");
 
 /**
- * The approved Eclipse Phoenix (scripts/hero-art.mjs → src/data/heroAssets.json), or the
- * retired still while no master has been approved. Portrait screens get their own
- * composition, never a crop of the landscape one.
+ * The approved replacement phoenix when there is one (scripts/hero-art.mjs →
+ * src/data/heroAssets.json, with its own portrait composition for phones); until then the
+ * current still at its native 2752 × 1536 in AVIF/WebP/JPEG; the old 2000 px export only
+ * if neither has been built.
  */
 function HeroPicture() {
   const d = ECLIPSE.desktop;
+  const c = ECLIPSE.current;
+  if (!d && c) {
+    const fallback = c.sources.jpg[0];
+    return (
+      <picture>
+        <source type="image/avif" srcSet={srcSet(c.sources.avif)} sizes={CURRENT_SIZES} />
+        <source type="image/webp" srcSet={srcSet(c.sources.webp)} sizes={CURRENT_SIZES} />
+        <img src={fallback.src} srcSet={srcSet(c.sources.jpg)} sizes={CURRENT_SIZES} alt="" width={c.width} height={c.height} fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
+      </picture>
+    );
+  }
   if (!d) {
     return (
       <picture>

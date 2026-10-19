@@ -1,1 +1,44 @@
-{}
+{
+  "current": {
+    "width": 2752,
+    "height": 1536,
+    "sources": {
+      "avif": [
+        {
+          "src": "/hero/current/phoenix-still-2752-2000.avif",
+          "w": 2000,
+          "bytes": 131777
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-2752.avif",
+          "w": 2752,
+          "bytes": 215162
+        }
+      ],
+      "webp": [
+        {
+          "src": "/hero/current/phoenix-still-2752-2000.webp",
+          "w": 2000,
+          "bytes": 254572
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-2752.webp",
+          "w": 2752,
+          "bytes": 409398
+        }
+      ],
+      "jpg": [
+        {
+          "src": "/hero/current/phoenix-still-2752-2000.jpg",
+          "w": 2000,
+          "bytes": 447384
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-2752.jpg",
+          "w": 2752,
+          "bytes": 723901
+        }
+      ]
+    }
+  }
+}

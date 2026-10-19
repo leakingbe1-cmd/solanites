@@ -185,9 +185,19 @@ const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderbo
   for (const path of ROUTES_ALL) {
     await p.goto(B + path, { waitUntil: "networkidle" });
     await p.waitForTimeout(400);
-    const m = await p.evaluate(() => ({
+    // naturalWidth is density-corrected for srcset images, so decode each served file on its own to read its real pixels
+    const m = await p.evaluate(async () => ({
       videos: document.querySelectorAll("video").length,
-      imgs: [...document.querySelectorAll("img")].filter((i) => i.currentSrc && !i.currentSrc.startsWith("data:")).map((i) => ({ src: i.currentSrc.split("/").pop(), w: i.naturalWidth, h: i.naturalHeight })),
+      imgs: await Promise.all(
+        [...document.querySelectorAll("img")]
+          .filter((i) => i.currentSrc && !i.currentSrc.startsWith("data:"))
+          .map(async (i) => {
+            const probe = new Image();
+            probe.src = i.currentSrc;
+            await probe.decode().catch(() => {});
+            return { src: i.currentSrc.split("/").pop(), w: probe.naturalWidth, h: probe.naturalHeight };
+          }),
+      ),
     }));
     found.push(...m.imgs.map((i) => ({ ...i, path })));
     ok(`media ${path}: no video elements`, m.videos === 0);
@@ -240,12 +250,18 @@ for (const [name, vp, mobile] of [
   const [c, p] = await ctx({ viewport: vp, isMobile: mobile, hasTouch: mobile }, SEEN);
   await p.goto(B + "/", { waitUntil: "networkidle" });
   await p.waitForTimeout(1200);
-  const img = await p.evaluate(() => {
+  const img = await p.evaluate(async () => {
     const i = document.querySelector(".sl-phx img");
     const r = i.getBoundingClientRect();
-    return { loaded: i.complete && i.naturalWidth > 0, src: i.currentSrc.split("/").pop(), top: r.top, bottom: r.bottom, w: r.width };
+    const probe = new Image();
+    probe.src = i.currentSrc;
+    await probe.decode().catch(() => {});
+    // object-fit: cover — the drawn width is the larger of the box width and its height × the image's aspect
+    const drawn = Math.max(r.width, r.height * (probe.naturalWidth / probe.naturalHeight)) * devicePixelRatio;
+    return { loaded: i.complete && i.naturalWidth > 0, src: i.currentSrc.split("/").pop(), file: [probe.naturalWidth, probe.naturalHeight], enlargement: drawn / probe.naturalWidth, top: r.top, bottom: r.bottom, w: r.width };
   });
-  ok(`hero ${name}: realistic Phoenix image loaded (2000 px)`, img.loaded && /phoenix-2000\.webp/.test(img.src), img.src);
+  ok(`hero ${name}: native Phoenix still served (2752 × 1536 set)`, img.loaded && /phoenix-still-2752-(2000|2752)\.(avif|webp|jpg)$/.test(img.src), img.src);
+  ok(`hero ${name}: the still is never enlarged at standard density`, img.enlargement <= 1.0001, `${img.src} ${img.file.join("×")} drawn at ${img.enlargement.toFixed(2)}×`);
   ok(`hero ${name}: old cartoon hero gone`, (await p.locator('[data-testid="hero-caption"]').count()) === 0);
   const cta = await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().boundingBox();
   ok(`hero ${name}: Enter the Hatchery visible`, cta && cta.width > 0, cta ? `bottom ${Math.round(cta.y + cta.height)} / ${vp.height}` : "missing");

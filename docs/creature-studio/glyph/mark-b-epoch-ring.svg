@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" stroke="#2ee8d8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- B · Epoch Ring: three epoch arcs around a small Solgem -->
+  <path d="M36.34 7.38 A25 25 0 0 1 55.49 40.55"/>
+  <path d="M51.15 48.07 A25 25 0 0 1 12.85 48.07"/>
+  <path d="M8.51 40.55 A25 25 0 0 1 27.66 7.38"/>
+  <path d="M32 22 L40 32 L32 42 L24 32 Z" fill="#2ee8d8"/>
+</svg>

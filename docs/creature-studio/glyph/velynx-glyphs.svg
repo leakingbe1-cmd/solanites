@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 216 40" fill="none" stroke="#2ee8d8" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Velynx glyph alphabet: six marks on a 24-unit grid, built only from right angles, short arcs and dots -->
+  <g transform="translate(8 8)"><path d="M4 2 V20 H20"/><circle cx="16" cy="8" r="2.2" fill="#2ee8d8" stroke="none"/></g>
+  <g transform="translate(44 8)"><path d="M3 22 V4 H21 V22"/><circle cx="12" cy="15" r="2.2" fill="#2ee8d8" stroke="none"/></g>
+  <g transform="translate(80 8)"><path d="M4 4 A16 16 0 0 1 20 20"/><path d="M14 22 L22 14"/></g>
+  <g transform="translate(116 8)"><circle cx="4" cy="6" r="2.2" fill="#2ee8d8" stroke="none"/><path d="M4 6 H12 V18 H20"/><circle cx="20" cy="18" r="2.2" fill="#2ee8d8" stroke="none"/></g>
+  <g transform="translate(152 8)"><path d="M2 3 H22 M12 3 V14"/><path d="M4 20 A8 8 0 0 0 20 20"/></g>
+  <g transform="translate(188 8)"><path d="M2 14 A10 10 0 0 1 22 14"/><circle cx="12" cy="19" r="2.2" fill="#2ee8d8" stroke="none"/></g>
+</svg>

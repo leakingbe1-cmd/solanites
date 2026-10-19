@@ -137,12 +137,15 @@ Each entry: **Strengths · Weaknesses · Silhouette/anatomy · Face/personality 
 
 **#24 Ø NULLBORN** (Void). *Strengths:* inverted white nine-tailed fox with void eyes is memorable. *Weaknesses:* glitch overlay redraws the figure several times (performance); faces are cute-cartoon. *Silhouette:* tail fan; strong. *Face:* glitched curiosity: head tilt, void eyes with magenta pin-light. *Preserve:* inverted palette, tail count progression (1 → 3 → 7 → 9), third eye at Ascended. *Effort:* M. *Animation:* B: tails fan, glitch done as a cheap CSS clip-path slice rather than redraws.
 
-## 4. Decisions needed before mass production
+## 4. Decisions (resolved at Milestone A review)
 
-1. **Canon for conflicting designs.** Stormquill (heron vs griffin-bird), Aurelion (sitting dragon vs winged lion-dragon on all fours), Zephrax (ring coil vs cloud dragon), Mossling (grazer vs sprout-deer). Recommendation: shipped vector body plan wins, painted sheet sets finish only.
-2. **Literal Solana logo.** `velynx-inspiration.png` puts the Solana mark on the tail, and GENESIS orbits Solana-style bars. The Velynx design bible already says "no emblem or logo on the tail"; recommendation: keep it that way and give GENESIS an owned three-bar Solanites glyph instead of the literal mark, so no creature depends on a third-party trademark.
-3. **Rendering style text.** `creatureDesigns.json → style.prompt` asks for a "stylised but physically convincing **3D** character". The brief asks to preserve **stylised 2D**. The art bible specifies painted 2D; updating that string touches shared data, so it waits for the website builder.
-4. **Halo and aura.** `CreatureArt` still draws its rarity aura behind raster art. Painted art must not bake in halos, rays or sparkles (art bible §9), and the builder should decide whether to tone the aura down when raster art is present.
+Recorded in full in [`decisions.md`](decisions.md).
+
+1. **Canon:** the shipped body plan is the starting point where references disagree. Stormquill, Aurelion, Zephrax and Mossling are **flagged for individual review** before their final designs lock.
+2. **No third-party logos** on any creature. An original Solanites glyph replaces them (see [`glyph/`](glyph/)).
+3. **Stylised, hand-painted 2D.** No 3D renders.
+4. **Website rays and nebula** behind replacement art are to be toned down by the website builder (see [`website-builder-handoff.md`](website-builder-handoff.md)).
+5. **Originals preserved.** All original SVG artwork stays; replacements are generated only into the isolated review folder.
 
 ## 5. Redesign priority order
 

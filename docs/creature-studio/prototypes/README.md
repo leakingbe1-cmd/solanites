@@ -25,7 +25,7 @@ Each brief lists what must stay recognisable, the new anatomy and face, signatur
 
 ## Generation plan (needs approval: uses paid credits)
 
-Nothing below has been run. Image generation through the connected Runway workspace spends credits, and the brief forbids spending them without explicit approval.
+**Superseded at the Milestone A review:** generation now starts with a small Round 1 of concepts ([`round-1.md`](round-1.md)); the stage counts below are kept for reference. Nothing below has been run. Image generation through the connected Runway workspace spends credits, and the brief forbids spending them without explicit approval.
 
 | Step | Images | Notes |
 |---|---|---|

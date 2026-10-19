@@ -44,7 +44,7 @@ export function HatcheryGuide() {
   ];
   return (
     <section aria-labelledby="hatchery-guide" className="relative mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <h2 id="hatchery-guide" className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">
+      <h2 id="hatchery-guide" className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">
         How the Hatchery works
       </h2>
       <div className="mt-6 grid gap-4 md:grid-cols-3" data-tour="guide">

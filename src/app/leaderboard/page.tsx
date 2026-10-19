@@ -27,7 +27,7 @@ export default function LeaderboardPage() {
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Hall of Keepers</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Hall of Keepers</p>
           <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">Leaderboard</h1>
           <p className="mx-auto mt-4 max-w-lg text-mist">The most devoted keepers in the Hatchery.</p>
           <p className="mx-auto mt-4 inline-block rounded-full border border-amber-400/20 bg-amber-400/5 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-300/90">Simulated data · prototype</p>
@@ -47,9 +47,9 @@ export default function LeaderboardPage() {
             const rank = i === 1 ? 1 : i === 0 ? 2 : 3;
             const meta = RARITIES[e.species.rarity];
             return (
-              <div key={`${tab}-${e.wallet}`} className={`sl-fade-up relative flex flex-col items-center rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.05] to-transparent p-3 text-center sm:p-6 ${rank === 1 ? "pb-8 sm:pb-12" : ""}`} style={{ animationDelay: `${rank * 0.1}s` }}>
-                <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full opacity-40 blur-3xl" style={{ background: meta.color }} />
-                <span className={`relative font-display text-xl sm:text-3xl ${rank === 1 ? "sl-gradient-text" : "text-white/60"}`}>#{rank}</span>
+              <div key={`${tab}-${e.wallet}`} className={`sl-fade-up sl-plate relative flex flex-col items-center rounded-3xl p-3 text-center sm:p-6 ${rank === 1 ? "sl-podium-first pb-8 sm:pb-12" : ""}`} style={{ animationDelay: `${rank * 0.1}s` }}>
+                <div className="absolute -top-10 left-1/2 h-32 w-32 -translate-x-1/2 rounded-full opacity-25 blur-3xl" style={{ background: meta.color }} />
+                <span className={`relative font-display text-xl sm:text-3xl ${rank === 1 ? "sl-phx-gold" : "text-[#f6d488]/55"}`}>#{rank}</span>
                 <div className={`relative ${rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"}`}>
                   <CreatureArt species={e.species} stage={e.evoStage} />
                 </div>

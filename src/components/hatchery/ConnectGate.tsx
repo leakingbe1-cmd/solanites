@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { EggArt } from "@/components/egg/EggArt";
 import { HatcheryGuide } from "@/components/hatchery/HatcheryGuide";
 import { HatcheryTour, type TourStep } from "@/components/hatchery/HatcheryTour";
-import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
-import { ParticleField } from "@/components/ui/ParticleField";
+import { HatcheryChamber } from "@/components/hatchery/HatcheryChamber";
 import { incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { DEMO_BALANCE, useHatchery } from "@/state/HatcheryProvider";
 import { formatNumber, formatSpan } from "@/lib/format";
@@ -44,14 +43,13 @@ export function ConnectGate() {
 
   return (
     <>
-      <section className="sl-atmosphere relative overflow-hidden pt-20">
-        <ParticleField />
-        <div className="relative mx-auto grid max-w-6xl items-center gap-10 px-4 pb-20 pt-12 sm:px-6 md:grid-cols-2">
-          <div className="mx-auto h-[340px] w-[260px] sm:h-[440px] sm:w-[340px]">
+      <section className="relative overflow-hidden pt-20">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-6 px-4 pb-20 pt-6 sm:px-6 md:grid-cols-2 md:gap-10 md:pt-12">
+          <HatcheryChamber className="mx-auto">
             <EggArt stage={1} seed={2} />
-          </div>
+          </HatcheryChamber>
           <div className="text-center md:text-left">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Hatchery</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Hatchery</p>
             <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-white sm:text-5xl">Your eggs find you.</h1>
             <p className="mt-5 text-lg leading-relaxed text-mist">
               Every {formatNumber(h.config.token.tokensPerEgg)} {h.config.token.symbol} you hold earns an egg, tracked automatically from Solana once holder tracking is live. There&apos;s nothing to connect. Paste your
@@ -111,8 +109,6 @@ export function ConnectGate() {
               <button type="button" onClick={() => setTouring(true)} className="underline-offset-4 transition hover:text-white hover:underline">
                 New here? Take the 3-step tour
               </button>
-              <span className="text-white/15" aria-hidden>·</span>
-              <ReplayIntroButton className="underline-offset-4 transition hover:text-white hover:underline" />
             </div>
           </div>
         </div>

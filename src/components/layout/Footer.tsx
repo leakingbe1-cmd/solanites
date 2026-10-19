@@ -1,6 +1,6 @@
 import Link from "next/link";
+import { Sigil } from "@/components/brand/Sigil";
 import { Logo } from "./Logo";
-import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 
 export function Footer() {
   return (
@@ -27,11 +27,13 @@ export function Footer() {
           <ul className="mt-4 space-y-2.5 text-mist">
             <li><Link className="hover:text-white" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-white" href="/how-it-works#rules">Gameplay Rules</Link></li>
-            <li><ReplayIntroButton className="hover:text-white" /></li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/5 py-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/30">© Solanites · Built on conviction</div>
+      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/30">
+        <Sigil className="h-10 w-10 opacity-80" />
+        © Solanites · Built on conviction
+      </div>
     </footer>
   );
 }

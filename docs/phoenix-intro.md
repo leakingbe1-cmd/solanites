@@ -1,5 +1,10 @@
 # Phoenix intro (Runway)
 
+> **Retired from the website.** The first-visit video intro was removed: its footage is native 720p,
+> below the site's 1080p rule (see `docs/animation-asset-audit.md`), and the homepage now plays the
+> awakening in place without blocking the page. This guide is kept for the source footage and the
+> build script; new native 1080p footage is planned in `docs/runway-production-plan.md`.
+
 The cinematic phoenix intro is generated with Runway, finished locally with
 `scripts/phoenix-intro.sh`, and shown by the existing first-visit intro.
 

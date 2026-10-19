@@ -46,7 +46,7 @@ export default function CollectionPage() {
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Solanidex</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Solanidex</p>
             <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Collection</h1>
             <p className="mt-4 max-w-xl text-mist">Every known Solanite, catalogued by the Hatchery. Some signatures remain classified — the only way to reveal them is to hatch one yourself.</p>
           </div>
@@ -90,7 +90,7 @@ export default function CollectionPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
           {list.map((s) => {
             const d = discovery(s);
             const meta = RARITIES[s.rarity];
@@ -103,21 +103,29 @@ export default function CollectionPage() {
                   setOpen(s);
                 }}
                 onMouseEnter={() => sfx.hover()}
-                className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-transparent p-3 text-left hover:border-white/15 sm:p-4"
-                style={{ "--card-glow": hidden ? "rgba(110,90,255,0.45)" : meta.glow } as React.CSSProperties}
+                className="sl-card-hover sl-plate group relative overflow-hidden rounded-3xl p-3 text-left sm:p-5"
+                style={{ "--card-glow": hidden ? "rgba(110,90,255,0.45)" : meta.glow, "--tier": hidden ? "#6b6888" : meta.color } as React.CSSProperties}
               >
-                <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${hidden ? "#666" : meta.color}, transparent)` }} />
-                <div className="absolute -top-16 left-1/2 h-40 w-40 -translate-x-1/2 rounded-full opacity-25 blur-3xl transition group-hover:opacity-50" style={{ background: hidden ? "#5b4bff" : meta.color }} />
-                <div className="relative flex items-center justify-between">
-                  <span className="font-mono text-[10px] text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
-                  <span className={`font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : hidden ? "Classified" : "Catalogued"}</span>
+                <div className="absolute inset-x-0 top-0 h-px opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${hidden ? "#666" : meta.color}, transparent)` }} />
+                <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-[0.18] blur-3xl transition-opacity duration-300 group-hover:opacity-30" style={{ background: hidden ? "#5b4bff" : meta.color }} />
+                <div className="relative flex items-center justify-between gap-2">
+                  <span className="font-mono text-[10px] tracking-[0.2em] text-[#f6d488]/70">№ {String(s.dex).padStart(3, "0")}</span>
+                  {/* rarity tier as pips (one for Common … six for Secret), not colour alone */}
+                  <span className="flex items-center gap-[3px]" title={hidden && s.rarity === "secret" ? "Classified tier" : `${meta.label} · tier ${RARITY_ORDER.indexOf(s.rarity) + 1} of ${RARITY_ORDER.length}`}>
+                    {RARITY_ORDER.map((r, i) => (
+                      <span key={r} className="sl-pip" data-on={i <= RARITY_ORDER.indexOf(s.rarity) && !(hidden && s.rarity === "secret") ? "" : undefined} aria-hidden />
+                    ))}
+                  </span>
                 </div>
                 <div className="sl-art-host relative aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
                   <CreatureArt species={s} stage={bestForm[s.id] ?? 2} silhouette={hidden} showAura={!hidden} animated={!hidden} />
                   {hidden && <span className="absolute inset-0 grid place-items-center font-display text-3xl text-white/70">?</span>}
                 </div>
-                <div className="relative">
-                  <p className="truncate font-display text-base text-white sm:text-lg">{hidden ? "???" : s.name}</p>
+                <div className="relative border-t border-white/[0.06] pt-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="truncate font-display text-base text-white sm:text-xl">{hidden ? "???" : s.name}</p>
+                    <span className={`shrink-0 font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : hidden ? "Classified" : "Catalogued"}</span>
+                  </div>
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     <RarityBadge rarity={s.rarity} hidden={hidden && s.rarity === "secret"} />
                     {!hidden && <span className="text-[11px] text-mist">{ELEMENT_GLYPH[s.element]} {s.element}</span>}

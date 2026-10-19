@@ -10,13 +10,13 @@ import { HatchReveal } from "@/components/hatchery/HatchReveal";
 import { SimulationPanel } from "@/components/hatchery/SimulationPanel";
 import { CreatureDetail } from "@/components/creature/CreatureDetail";
 import { Modal } from "@/components/ui/Modal";
-import { ParticleField } from "@/components/ui/ParticleField";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { formatNumber } from "@/lib/format";
 import { phaseOf, tokensToNextEgg } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
 import { SectionTitle, Stat } from "@/components/hatchery/HatcheryUi";
 import { TrackedHatchery } from "@/components/hatchery/TrackedHatchery";
+import { Sigil } from "@/components/brand/Sigil";
 
 export default function HatcheryPage() {
   const h = useHatchery();
@@ -28,7 +28,10 @@ export default function HatcheryPage() {
       <div className="relative min-h-screen pt-24 lg:pt-28" aria-busy="true">
         <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Loading your Hatchery…</p>
+          <div className="flex items-center gap-3">
+            <Sigil draw className="h-9 w-9" />
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Loading your Hatchery…</p>
+          </div>
           <div className="mt-4 h-12 w-64 animate-pulse rounded-2xl bg-white/[0.04]" />
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
@@ -56,15 +59,12 @@ export default function HatcheryPage() {
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[600px]">
-        <ParticleField density={0.00008} />
-      </div>
 
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
         {/* header */}
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">{h.isDemo ? "Demo session · simulated data" : "Experimental live session"}</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">{h.isDemo ? "Demo session · simulated data" : "Experimental live session"}</p>
             <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Hatchery</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">

@@ -17,6 +17,10 @@ export function CosmicBackdrop() {
   return (
     <div className="sl-cosmos pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden="true">
       <div className="sl-cosmos-nebula absolute inset-0" />
+      {/* per-area light, cross-faded by RealmLight (html[data-realm]) */}
+      <div className="sl-realm sl-realm-gold absolute inset-0" />
+      <div className="sl-realm sl-realm-cyan absolute inset-0" />
+      <div className="sl-realm sl-realm-violet absolute inset-0" />
       <div className="sl-cosmos-stars sl-cosmos-stars-far" />
       <div className="sl-cosmos-stars sl-cosmos-stars-near" />
       <div className="sl-cosmos-glints absolute inset-0" />

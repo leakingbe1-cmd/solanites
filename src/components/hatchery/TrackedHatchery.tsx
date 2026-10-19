@@ -8,7 +8,6 @@ import { EggInspector } from "@/components/hatchery/EggInspector";
 import { HatchReveal } from "@/components/hatchery/HatchReveal";
 import { SectionTitle, Stat } from "@/components/hatchery/HatcheryUi";
 import { Modal } from "@/components/ui/Modal";
-import { ParticleField } from "@/components/ui/ParticleField";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { describeGrowthSchedule, describeSchedule, incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
@@ -154,14 +153,11 @@ export function TrackedHatchery({ address }: { address: string }) {
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[600px]">
-        <ParticleField density={0.00008} />
-      </div>
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
         {view.source === "fixture" && <FixtureBanner />}
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div className="min-w-0">
-            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Tracked automatically · no wallet connected</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Tracked automatically · no wallet connected</p>
             <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white sm:text-5xl">The Hatchery</h1>
             <p className="mt-3 break-all font-mono text-xs text-mist">{address}</p>
           </div>
@@ -334,7 +330,7 @@ function Shell({ address, onExit, onRetry, error }: { address: string; onExit():
     <div className="relative min-h-screen pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Tracked address</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Tracked address</p>
         <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-white">The Hatchery</h1>
         <p className="mt-3 break-all font-mono text-xs text-mist">{shortAddress(address)}</p>
         {!error ? (

@@ -1,14 +1,14 @@
-// Browser checks for the phoenix video intro and the phoenix homepage hero, against a running
-// production build:
+// Browser checks for the Solanites site, against a running production build:
 //
 //   npm run build && npx next start -p 3100 &
 //   node scripts/qa/phoenix-site.mjs <screenshot-dir> [base-url]
 //
-// Plays the real intro files (desktop and phone), and checks skip, Escape, Enter the Hatchery,
-// sound, repeat visits, the fallback when playback is blocked or the files are missing,
-// reduced motion, the hero at several widths, and the main routes.
+// The homepage awakening (interactive at once, waits for its image, fallbacks, reduced motion,
+// no JavaScript), media resolution on every route, the sigil, the Hatchery chamber, the
+// Collection bestiary, the hero at six widths, the main routes, Holder Rewards, navigation,
+// transitions, history, overflow and console errors.
 import { mkdirSync } from "node:fs";
-const { chromium, devices } = await import(process.env.PLAYWRIGHT_MODULE ?? "/opt/node22/lib/node_modules/playwright/index.mjs").catch(() => import("playwright"));
+const { chromium } = await import(process.env.PLAYWRIGHT_MODULE ?? "/opt/node22/lib/node_modules/playwright/index.mjs").catch(() => import("playwright"));
 
 const out = process.argv[2] ?? "qa-shots";
 const B = process.argv[3] ?? "http://localhost:3100";
@@ -17,7 +17,7 @@ const res = [];
 const errs = [];
 const ok = (name, cond, extra = "") => res.push(`${cond ? "PASS" : "FAIL"}  ${name}${extra ? `  (${extra})` : ""}`);
 const browser = await chromium.launch();
-const SEEN = () => localStorage.setItem("solanites:intro:v1", '{"seen":true}');
+const SEEN = undefined; // the first-visit intro is retired; kept so contexts read the same
 
 async function ctx(opts = {}, init) {
   const c = await browser.newContext({ viewport: { width: 1440, height: 900 }, ...opts });
@@ -27,138 +27,110 @@ async function ctx(opts = {}, init) {
   p.on("console", (m) => m.type() === "error" && !/503|Failed to load resource/.test(m.text()) && errs.push(m.text()));
   return [c, p];
 }
-const dialog = (p) => p.locator('[role="dialog"][aria-labelledby="sl-intro-title"]');
-const video = (p) =>
-  p.evaluate(() => {
-    const v = document.querySelector('[data-testid="phoenix-video"]');
-    return v && { paused: v.paused, t: +v.currentTime.toFixed(2), d: +v.duration.toFixed(2), muted: v.muted, controls: v.controls, src: v.currentSrc.split("/").pop(), w: v.videoWidth, h: v.videoHeight, ready: v.readyState };
-  });
+const ROUTES_ALL = ["/", "/hatchery", "/collection", "/how-it-works", "/leaderboard", "/claims"];
 
-// 1. Desktop: the real 16:9 intro plays to the end and hands over to the homepage.
+// 1. Homepage awakening: no blocking intro, usable at once, then awake once the image is ready.
 {
   const [c, p] = await ctx();
-  await p.goto(B + "/");
-  await p.waitForTimeout(1200);
-  ok("desktop: video intro is the default on a first visit", (await p.locator('[data-intro-variant="video"]').count()) === 1);
-  const v1 = await video(p);
-  ok("desktop: plays the 16:9 WebM, muted, no controls", v1 && !v1.paused && v1.t > 0 && v1.muted && !v1.controls && v1.src === "phoenix-16x9.webm" && v1.w === 1280, JSON.stringify(v1));
-  ok("desktop: Skip and Enter the Hatchery visible during playback", (await p.getByRole("button", { name: "Skip intro" }).isVisible()) && (await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).isVisible()));
-  ok("desktop: page behind is inert", (await p.locator("body > main[inert]").count()) === 1);
-  await p.screenshot({ path: `${out}/intro-desktop-01-awakening.png` });
+  const mediaReqs = [];
+  p.on("request", (r) => /\.(mp4|webm|mov)(\?|$)|\/intro\//.test(r.url()) && mediaReqs.push(r.url()));
+  await p.goto(B + "/", { waitUntil: "commit" });
+  await p.waitForSelector("h1");
+  ok("home: no first-visit overlay or video", (await p.locator('[role="dialog"]').count()) === 0 && (await p.locator("video").count()) === 0);
+  ok("home: headline", (await p.locator("h1").innerText()).replace(/\s+/g, " ").trim() === "A WORLD WAITING TO AWAKEN.");
+  const t0 = Date.now();
+  await p.getByRole("link", { name: /EXPLORE SOLANITES/ }).click({ timeout: 3000 });
+  await p.waitForURL("**/collection");
+  ok("home: Explore Solanites works immediately (no waiting for the animation)", Date.now() - t0 < 2500, `${Date.now() - t0} ms`);
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  await p.waitForFunction(() => document.querySelector("section[data-awake]") !== null, null, { timeout: 4000 }).catch(() => {});
+  const st = await p.evaluate(() => ({ awake: !!document.querySelector("section[data-awake]"), art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity, sigil: document.querySelectorAll("main .sl-sigil").length }));
+  ok("home: awakens once the image has loaded", st.awake && st.art === "1", JSON.stringify(st));
+  await p.screenshot({ path: `${out}/home-awake.png` });
+  ok("home: sigil drawn beside the eyebrow", st.sigil >= 1);
+  ok("home: no video requested", mediaReqs.length === 0, mediaReqs.join(", "));
+  await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().click();
+  await p.waitForURL("**/hatchery");
+  ok("home: Enter the Hatchery works", p.url().endsWith("/hatchery"));
+  await c.close();
+}
+{
+  const [c, p] = await ctx();
+  await c.route("**/hero/**", (r) => r.abort());
+  await p.goto(B + "/", { waitUntil: "domcontentloaded" });
   await p.waitForTimeout(3000);
-  const v2 = await video(p);
-  ok("desktop: playback advances in real time", v2.t - v1.t > 2.4, `${v1.t}s → ${v2.t}s`);
-  await p.screenshot({ path: `${out}/intro-desktop-02-reveal.png` });
-  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 10.5, null, { timeout: 15000 });
-  await p.screenshot({ path: `${out}/intro-desktop-03-burst.png` });
-  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 15.6, null, { timeout: 15000 });
-  await p.screenshot({ path: `${out}/intro-desktop-04-wordmark.png` });
-  const end = Date.now();
-  await dialog(p).waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
-  ok("desktop: hands over to the homepage after the video ends", !(await dialog(p).isVisible()), `${Date.now() - end} ms after the wordmark frame`);
-  ok("desktop: homepage interactive after the intro", (await p.locator("body > main[inert]").count()) === 0 && (await p.locator("h1").first().innerText()).replace(/\s+/g, " ").trim() === "YOUR SOLANITE IS WAITING.");
-  await p.screenshot({ path: `${out}/intro-desktop-05-handover.png` });
-  await p.reload();
-  await p.waitForTimeout(900);
-  ok("desktop: not shown again on a repeat visit", !(await dialog(p).isVisible()) && (await p.locator('[data-testid="phoenix-video"]').count()) === 0);
-  await c.close();
-}
-
-// 2. Phone: the 9:16 cut plays; Skip closes it; repeat visit goes straight to the page.
-{
-  const [c, p] = await ctx({ ...devices["iPhone 13"], defaultBrowserType: undefined });
-  await p.goto(B + "/");
-  await p.waitForTimeout(1500);
-  const v = await video(p);
-  ok("phone: plays the 9:16 cut", v && !v.paused && v.t > 0 && v.src === "phoenix-9x16.webm" && v.h === 1280, JSON.stringify(v));
-  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 8, null, { timeout: 15000 });
-  await p.screenshot({ path: `${out}/intro-phone-01-phoenix.png` });
-  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 15.6, null, { timeout: 15000 });
-  await p.screenshot({ path: `${out}/intro-phone-02-wordmark.png` });
-  const sw = await p.evaluate(() => document.documentElement.scrollWidth);
-  ok("phone: no horizontal overflow during the intro", sw <= 390, String(sw));
-  await dialog(p).waitFor({ state: "detached", timeout: 8000 }).catch(() => {});
-  ok("phone: hands over to the homepage after the video ends", !(await dialog(p).isVisible()));
-  await p.reload();
-  await p.waitForTimeout(900);
-  ok("phone: not shown again on a repeat visit", !(await dialog(p).isVisible()));
-  await c.close();
-}
-{
-  const [c, p] = await ctx({ ...devices["iPhone 13"], defaultBrowserType: undefined });
-  await p.goto(B + "/");
-  await p.waitForFunction(() => document.querySelector('[data-testid="phoenix-video"]')?.currentTime > 1, null, { timeout: 15000 });
-  await p.getByRole("button", { name: "Skip intro" }).tap();
-  await p.waitForTimeout(900);
-  ok("phone: Skip closes the intro mid-video", !(await dialog(p).isVisible()));
-  await p.screenshot({ path: `${out}/home-phone-after-skip.png` });
-  await c.close();
-}
-
-// 3. Skip, Escape and Enter the Hatchery work mid-video; sound toggles.
-{
-  const [c, p] = await ctx();
-  await p.goto(B + "/");
-  await p.waitForTimeout(1500);
-  const sound = p.getByRole("button", { name: "Sound on" });
-  ok("sound: starts muted with a Sound on control", (await sound.isVisible()) && (await video(p)).muted);
-  await sound.click();
-  ok("sound: Sound on unmutes and the label flips", !(await video(p)).muted && (await p.getByRole("button", { name: "Sound off" }).isVisible()));
-  await p.getByRole("button", { name: "Skip intro" }).click();
-  await p.waitForTimeout(900);
-  ok("skip: Skip intro closes it mid-video", !(await dialog(p).isVisible()));
-  await c.close();
-}
-{
-  const [c, p] = await ctx();
-  await p.goto(B + "/");
-  await p.waitForTimeout(1500);
-  await p.keyboard.press("Escape");
-  await p.waitForTimeout(900);
-  ok("skip: Escape closes it mid-video", !(await dialog(p).isVisible()));
-  await c.close();
-}
-{
-  const [c, p] = await ctx();
-  await p.goto(B + "/");
-  await p.waitForTimeout(1500);
-  await p.getByRole("button", { name: /ENTER THE HATCHERY/ }).click();
-  await p.waitForURL("**/hatchery", { timeout: 8000 }).catch(() => {});
-  await p.waitForTimeout(900);
-  ok("enter: Enter the Hatchery mid-video goes to the Hatchery", p.url().endsWith("/hatchery") && !(await dialog(p).isVisible()), p.url());
-  await c.close();
-}
-
-// 4. Fallbacks: missing files, blocked autoplay, reduced motion.
-{
-  const [c, p] = await ctx();
-  await c.route("**/intro/phoenix-*", (r) => r.abort());
-  await p.goto(B + "/");
-  await p.waitForTimeout(5500);
-  ok("fallback: missing video files → animated intro", (await dialog(p).isVisible()) && (await p.locator('[data-intro-variant="video"]').count()) === 0 && (await p.locator(".sl-intro-creature").count()) === 1);
-  await p.getByRole("button", { name: "Skip intro" }).click();
-  await p.waitForTimeout(900);
-  ok("fallback: Skip works on the animated intro", !(await dialog(p).isVisible()));
-  await c.close();
-}
-{
-  const [c, p] = await ctx({}, () => {
-    HTMLMediaElement.prototype.play = () => Promise.reject(new DOMException("blocked", "NotAllowedError"));
-  });
-  await p.goto(B + "/");
-  await p.waitForTimeout(800);
-  ok("fallback: autoplay blocked → animated intro at once", (await dialog(p).isVisible()) && (await p.locator(".sl-intro-creature").count()) === 1);
+  const st = await p.evaluate(() => ({ awake: !!document.querySelector("section[data-awake]"), h1: document.querySelector("h1")?.getBoundingClientRect().height, sw: document.documentElement.scrollWidth }));
+  ok("fallback: hero image missing → page still wakes, headline readable, no overflow", st.awake && st.h1 > 40 && st.sw <= 1440, JSON.stringify(st));
+  await p.screenshot({ path: `${out}/home-image-missing.png` });
   await c.close();
 }
 {
   const [c, p] = await ctx({ reducedMotion: "reduce" });
-  await p.goto(B + "/");
-  await p.waitForTimeout(800);
-  ok("reduced motion: still animated-intro frame, no video", (await dialog(p).isVisible()) && (await p.locator('[data-testid="phoenix-video"]').count()) === 0);
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  await p.waitForTimeout(300);
+  const st = await p.evaluate(() => ({ art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity, dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).display, ring: getComputedStyle(document.querySelector(".sl-phx-eclipse-ring")).strokeDashoffset }));
+  ok("reduced motion: awake frame at once (no dawn, ring already drawn)", st.art === "1" && st.dawn === "none" && parseFloat(st.ring) === 0, JSON.stringify(st));
+  await c.close();
+}
+{
+  const [c, p] = await ctx({ javaScriptEnabled: false });
+  await p.goto(B + "/", { waitUntil: "load" });
+  const art = await p.evaluate(() => getComputedStyle(document.querySelector(".sl-phx-art")).opacity);
+  ok("no JavaScript: the Phoenix still shows (noscript fallback)", art === "1", art);
   await c.close();
 }
 
-// 5. The phoenix hero across widths (intro already seen).
+// 2. Media resolution in the browser: no video anywhere; every raster image's native size recorded.
+{
+  const [c, p] = await ctx();
+  const found = [];
+  for (const path of ROUTES_ALL) {
+    await p.goto(B + path, { waitUntil: "networkidle" });
+    await p.waitForTimeout(400);
+    const m = await p.evaluate(() => ({
+      videos: document.querySelectorAll("video").length,
+      imgs: [...document.querySelectorAll("img")].filter((i) => i.currentSrc && !i.currentSrc.startsWith("data:")).map((i) => ({ src: i.currentSrc.split("/").pop(), w: i.naturalWidth, h: i.naturalHeight })),
+    }));
+    found.push(...m.imgs.map((i) => ({ ...i, path })));
+    ok(`media ${path}: no video elements`, m.videos === 0);
+  }
+  const small = found.filter((i) => Math.min(i.w, i.h) < 1080);
+  ok("media: every raster image at least 1080 px on the short edge", small.length === 0, found.map((i) => `${i.path} ${i.src} ${i.w}x${i.h}`).join("; "));
+  await c.close();
+}
+
+// 3. Hatchery chamber and Collection bestiary.
+{
+  const [c, p] = await ctx();
+  await p.goto(B + "/hatchery", { waitUntil: "networkidle" });
+  ok("hatchery: chamber presents the egg", (await p.locator(".sl-chamber .sl-chamber-egg svg").count()) >= 1);
+  ok("hatchery: address field and demo still there", (await p.getByPlaceholder(/public address/i).count()) === 1 && (await p.getByRole("button", { name: /EXPLORE THE DEMO/i }).count()) === 1);
+  await p.screenshot({ path: `${out}/hatchery-chamber.png` });
+  await p.goto(B + "/collection", { waitUntil: "networkidle" });
+  const plates = await p.locator("main button.sl-plate").count();
+  ok("collection: 28 bestiary plates", plates === 28, String(plates));
+  ok("collection: rarity tier pips on every plate", (await p.locator("main button.sl-plate .sl-pip").count()) === 28 * 6);
+  await p.getByRole("button", { name: "Mythic", exact: true }).click();
+  await p.waitForTimeout(300);
+  const mythic = await p.locator("main button.sl-plate").count();
+  ok("collection: rarity filter still filters", mythic > 0 && mythic < 28, String(mythic));
+  await p.getByRole("button", { name: "All", exact: true }).click();
+  // Tab like a keyboard user (programmatic focus doesn't show the keyboard focus ring)
+  await p.locator("main h1").click();
+  let outline = "none";
+  for (let i = 0; i < 40; i++) {
+    await p.keyboard.press("Tab");
+    const st = await p.evaluate(() => ({ plate: document.activeElement?.classList.contains("sl-plate"), outline: getComputedStyle(document.activeElement).outlineStyle }));
+    if (st.plate) {
+      outline = st.outline;
+      break;
+    }
+  }
+  ok("collection: plates show a visible keyboard focus", outline !== "none", outline);
+  await c.close();
+}
+
+// 4. The Phoenix hero across widths.
 for (const [name, vp, mobile] of [
   ["320", { width: 320, height: 640 }, true],
   ["390", { width: 390, height: 844 }, true],
@@ -175,7 +147,7 @@ for (const [name, vp, mobile] of [
     const r = i.getBoundingClientRect();
     return { loaded: i.complete && i.naturalWidth > 0, src: i.currentSrc.split("/").pop(), top: r.top, bottom: r.bottom, w: r.width };
   });
-  ok(`hero ${name}: realistic phoenix image loaded`, img.loaded && /phoenix-(1200|2000)\.webp/.test(img.src), img.src);
+  ok(`hero ${name}: realistic Phoenix image loaded (2000 px)`, img.loaded && /phoenix-2000\.webp/.test(img.src), img.src);
   ok(`hero ${name}: old cartoon hero gone`, (await p.locator('[data-testid="hero-caption"]').count()) === 0);
   const cta = await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().boundingBox();
   ok(`hero ${name}: Enter the Hatchery visible`, cta && cta.width > 0, cta ? `bottom ${Math.round(cta.y + cta.height)} / ${vp.height}` : "missing");
@@ -196,9 +168,9 @@ for (const [name, vp, mobile] of [
   await p.waitForURL("**/hatchery");
   ok("hero: Enter the Hatchery navigates", p.url().endsWith("/hatchery"));
   await p.goto(B + "/");
-  await p.getByRole("link", { name: "Explore the Collection" }).click();
+  await p.getByRole("link", { name: /EXPLORE SOLANITES/ }).click();
   await p.waitForURL("**/collection");
-  ok("hero: Explore the Collection navigates", p.url().endsWith("/collection"));
+  ok("hero: Explore Solanites navigates", p.url().endsWith("/collection"));
   await c.close();
 }
 {
@@ -220,7 +192,7 @@ for (const [name, vp, mobile] of [
   await c.close();
 }
 
-// 6. Main routes still load without errors (no wallet connected).
+// 5. Main routes still load without errors (no wallet connected).
 {
   const [c, p] = await ctx({}, SEEN);
   for (const path of ["/", "/hatchery", "/collection", "/how-it-works", "/leaderboard", "/claims", "/api/health", "/api/claims/status"]) {
@@ -234,7 +206,7 @@ for (const [name, vp, mobile] of [
   await c.close();
 }
 
-// 7. Holder rewards (/claims): the planned distribution, readable on desktop and phones.
+// 6. Holder rewards (/claims): the planned distribution, readable on desktop and phones.
 for (const [name, vp, mobile] of [["1440", { width: 1440, height: 900 }, false], ["390", { width: 390, height: 844 }, true], ["320", { width: 320, height: 640 }, true]]) {
   const [c, p] = await ctx({ viewport: vp, isMobile: mobile, hasTouch: mobile }, SEEN);
   await p.goto(B + "/claims", { waitUntil: "networkidle" });
@@ -259,7 +231,7 @@ for (const [name, vp, mobile] of [["1440", { width: 1440, height: 900 }, false],
   await c.close();
 }
 
-// 8. Site-wide overhaul: stable backdrop, page transitions, sliding nav indicator, history.
+// 7. Site-wide overhaul: stable backdrop, page transitions, sliding nav indicator, history.
 const ROUTES = [["/hatchery", "Hatchery"], ["/collection", "Collection"], ["/how-it-works", "How It Works"], ["/leaderboard", "Leaderboard"], ["/claims", "Rewards"]];
 {
   const [c, p] = await ctx({}, SEEN);

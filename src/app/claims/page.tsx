@@ -16,7 +16,7 @@ export default function ClaimsPage() {
     <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-3xl px-4 pb-24 sm:px-6">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">Holder rewards</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">Holder rewards</p>
         <h1 className="mt-3 font-display text-4xl font-bold leading-[1.05] tracking-tight text-white sm:text-6xl">
           Locked developer supply <span className="sl-gradient-text">returns to holders.</span>
         </h1>

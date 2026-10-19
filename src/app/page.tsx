@@ -4,7 +4,7 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
-import { ParticleField } from "@/components/ui/ParticleField";
+import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { CreatureMarquee } from "@/components/landing/CreatureMarquee";
@@ -22,45 +22,36 @@ export default function Home() {
       {/* ── HERO ── */}
       <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
         <PhoenixHero />
-        {/* phones: the phoenix above, the copy beneath it; wide screens: the copy left, over the phoenix's darkened wing */}
+        {/* phones: the Phoenix above, the copy beneath it; wide screens: the copy left, over the Phoenix's darkened wing */}
         <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[30svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
           <div className="max-w-xl text-center lg:text-left">
-            <p className="sl-fade-up font-mono text-[11px] uppercase tracking-[0.4em] text-sol-green/80" style={{ animationDelay: "0.1s" }}>
-              ◇ Genesis Hatchery · Season 0
-            </p>
-            <h1 className="sl-fade-up mt-4 font-display text-[2.6rem] sm:mt-6 font-bold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-7xl" style={{ animationDelay: "0.25s" }}>
-              YOUR <span className="sl-phx-gold">SOLANITE</span>
-              <br />
-              IS WAITING.
+            <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
+              <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
+              <p className="font-mono text-[11px] uppercase tracking-[0.4em] text-[#f6d488]/80">Genesis Hatchery · Season 0</p>
+            </div>
+            <h1 className="sl-awake-in mt-6 font-display text-[2.5rem] font-bold leading-[0.98] tracking-tight text-white sm:text-6xl xl:text-7xl" style={{ animationDelay: "0.25s" }}>
+              A WORLD WAITING TO <span className="sl-phx-gold">AWAKEN.</span>
             </h1>
-            <p className="sl-fade-up mx-auto mt-5 max-w-lg text-lg leading-relaxed text-mist sm:mt-7 sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              Discover your creature. Hatch the extraordinary. <span className="text-white">Watch your Solanite grow stronger through its evolution.</span>
+            <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
+              {SPECIES.length} creatures sleep in sealed eggs. <span className="text-white">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
             </p>
-            {/* walletless exploration: nothing on the site asks for a wallet today */}
-            <div className="sl-fade-up mx-auto mt-5 max-w-lg sm:mt-7 lg:mx-0" style={{ animationDelay: "0.48s" }}>
-              <p className="sl-glass inline-flex items-center gap-2.5 rounded-full py-2 pl-3 pr-4 text-sm font-medium text-white">
-                <span className="relative flex h-2 w-2" aria-hidden>
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sol-green opacity-50" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" />
-                </span>
-                No wallet needed to explore.
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-mist/90">
-                Discover creatures, watch them evolve, and explore the Solanites universe. Connect your wallet only when a feature requires it.
-              </p>
-            </div>
-            <div className="sl-fade-up mt-6 flex flex-col flex-wrap items-center gap-4 sm:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.55s" }}>
-              <Link href="/hatchery" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em]">
+            <div className="sl-awake-in mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
+              <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em]">
+                EXPLORE SOLANITES
+                <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
+              </Link>
+              <Link href="/hatchery" className="sl-btn-ghost whitespace-nowrap rounded-full px-7 py-4 font-display text-sm font-semibold tracking-[0.2em]">
                 ENTER THE HATCHERY
-                <span className="transition-transform group-hover:translate-x-1">→</span>
-              </Link>
-              <Link href="/collection" className="whitespace-nowrap rounded-full border border-white/15 bg-black/30 px-7 py-4 text-sm tracking-wider text-mist backdrop-blur transition hover:border-white/30 hover:text-white">
-                Explore the Collection
               </Link>
             </div>
+            {/* walletless exploration: nothing on the site asks for a wallet today */}
+            <p className="sl-awake-in mt-6 inline-flex items-center gap-2.5 text-sm text-mist" style={{ animationDelay: "0.6s" }}>
+              <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
+              No wallet needed to explore.
+            </p>
             {/* Each stat has its own box; the token figure gets the widest column (full row on phones) so long numbers never collide. */}
             <dl
-              className="sl-fade-up mx-auto mt-10 grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/10 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
+              className="sl-awake-in mx-auto mt-10 grid w-full max-w-xl grid-cols-2 gap-3 border-t border-white/10 pt-8 sm:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)_minmax(0,1fr)] lg:mx-0"
               style={{ animationDelay: "0.7s" }}
             >
               {[
@@ -135,7 +126,6 @@ export default function Home() {
       {/* ── CTA ── */}
       <section className="relative overflow-hidden py-28 sm:py-40">
         <div className="absolute left-1/2 top-1/2 h-[42rem] w-[42rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-sol-purple/15 blur-[120px]" />
-        <ParticleField density={0.0001} />
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           {/* a stirring egg with a classified silhouette inside; still under reduced motion (global rule) */}
           <div className="relative mx-auto mb-8 h-44 w-36 sm:h-56 sm:w-44" aria-hidden>

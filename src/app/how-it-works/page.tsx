@@ -38,7 +38,7 @@ export default function HowItWorksPage() {
     <div className="relative pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">The Rules of the Hatchery</p>
+        <p className="font-mono text-[11px] uppercase tracking-[0.35em] text-[#f6d488]/80">The Rules of the Hatchery</p>
         <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl">
           Sustained holding is the only thing that <span className="sl-gradient-text">makes them grow.</span>
         </h1>

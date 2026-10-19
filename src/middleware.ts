@@ -9,6 +9,7 @@ import { STUDIO_CHALLENGE, studioAccess } from "@/server/studioAuth";
  * - STUDIO_BASIC_AUTH unset (or weak): 404 everywhere, production and previews alike.
  * - STUDIO_BASIC_AUTH="user:long-random-password" (server-only, 24+ characters):
  *   HTTP Basic authentication with exactly those credentials (HTTPS on Vercel).
+ * - DEVELOPER_MODE=off: 404 everywhere regardless of credentials (the go-live switch).
  *
  * Each internal page and API route checks again (src/server/studioAuth.ts).
  */

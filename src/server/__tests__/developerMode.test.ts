@@ -23,9 +23,12 @@ import { studioAccess } from "../studioAuth";
 const SECRET = "owner:correct-horse-battery-staple";
 const basic = (s: string) => `Basic ${btoa(s)}`;
 const env = process.env.STUDIO_BASIC_AUTH;
+const devEnv = process.env.DEVELOPER_MODE;
 afterEach(() => {
   if (env === undefined) delete process.env.STUDIO_BASIC_AUTH;
   else process.env.STUDIO_BASIC_AUTH = env;
+  if (devEnv === undefined) delete process.env.DEVELOPER_MODE;
+  else process.env.DEVELOPER_MODE = devEnv;
 });
 const sum = (r: Record<RarityId, number>) => RARITY_ORDER.reduce((s, k) => s + r[k], 0);
 const odds = (patch: Partial<DevOddsSettings> = {}): DevOddsSettings => ({ ...DEFAULT_DEV_ODDS, ...patch });
@@ -189,6 +192,26 @@ describe("Developer Mode authorisation", () => {
     expect((await simulate(basic(SECRET))).status).toBe(200);
     delete process.env.STUDIO_BASIC_AUTH;
     expect((await simulate(basic(SECRET))).status).toBe(404);
+  });
+
+  it("DEVELOPER_MODE=off removes Developer Mode even with the secret set and the right credentials", async () => {
+    process.env.STUDIO_BASIC_AUTH = SECRET;
+    const { middleware } = await import("@/middleware");
+    for (const off of ["off", "OFF", "0", "false", "no", "disabled", " off "]) {
+      process.env.DEVELOPER_MODE = off;
+      expect((await simulate(basic(SECRET))).status).toBe(404);
+      expect(middleware(new NextRequest("http://localhost/studio/dev", { headers: { authorization: basic(SECRET) } })).status).toBe(404);
+      expect(studioAccess(basic(SECRET))).toBe("disabled");
+    }
+    for (const on of ["", "on", "1", "true"]) {
+      process.env.DEVELOPER_MODE = on;
+      expect((await simulate(basic(SECRET))).status).toBe(200);
+    }
+  });
+
+  it("an owner password under 24 characters in total keeps Developer Mode switched off", async () => {
+    process.env.STUDIO_BASIC_AUTH = "owner:shortpw";
+    expect((await simulate(basic("owner:shortpw"))).status).toBe(404);
   });
 
   it("the Developer Mode page itself re-checks the credentials on the server", () => {

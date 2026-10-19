@@ -1,8 +1,13 @@
 /**
- * Owner access to internal tools (/studio, /api/studio): HTTP Basic authentication
- * against the server-only STUDIO_BASIC_AUTH secret ("user:long-random-password", 24+
- * characters). With no secret, or a weak one, every internal route is a 404 on every
- * deployment. An environment switch alone is never treated as authentication.
+ * Owner access to internal tools (/studio, including Developer Mode, and /api/studio):
+ * HTTP Basic authentication against the server-only STUDIO_BASIC_AUTH secret
+ * ("user:long-random-password", 24+ characters). With no secret, or a weak one, every
+ * internal route is a 404 on every deployment. An environment switch alone is never
+ * treated as authentication.
+ *
+ * DEVELOPER_MODE=off is the hard off switch for going live: every internal route is a
+ * 404 even when STUDIO_BASIC_AUTH is set and the right credentials are sent, so turning
+ * Developer Mode off never depends on deleting the secret (docs/developer-mode.md).
  *
  * Used by the middleware (first gate) and again by each internal page and API route
  * (second gate), so a routing or matcher mistake cannot expose them on its own.
@@ -11,7 +16,13 @@
 
 export type StudioAccess = "disabled" | "unauthenticated" | "authorised";
 
+/** True when DEVELOPER_MODE is "off" (also accepts 0, false, no, disabled; any case). */
+export function developerModeSwitchedOff(value: string | undefined = process.env.DEVELOPER_MODE): boolean {
+  return /^(off|0|false|no|disabled)$/i.test((value ?? "").trim());
+}
+
 export function studioAccess(authorization: string | null | undefined, expected: string = process.env.STUDIO_BASIC_AUTH ?? ""): StudioAccess {
+  if (developerModeSwitchedOff()) return "disabled";
   if (expected.length < 24 || !expected.includes(":")) return "disabled";
   return safeEqual(basicCredentials(authorization ?? null), expected) ? "authorised" : "unauthenticated";
 }

@@ -8,7 +8,7 @@
    canon C13 occupancy target (45 / 60 / 78 / 88 % of 1024) and centred. Only
    downscaling is allowed; if the target would need upscaling the script refuses.
 
-  python3 -I docs/creature-studio/tools/cutout-and-frame.py <in.png> <out.png> <stage 1-4> [t0 t1]
+  python3 -I docs/creature-studio/tools/cutout-and-frame.py <in.png> <out.png> <stage 1-4> [t0 t1] [--max-upscale N]
 
 Writes <out.png> (1024 x 1024 RGBA) and prints the measured occupancy and edge stats.
 """
@@ -18,6 +18,7 @@ from PIL import Image, ImageFilter
 
 TARGETS = {1: 0.45, 2: 0.60, 3: 0.78, 4: 0.88}
 SIZE = 1024
+MAX_UPSCALE = 1.0  # --max-upscale N allows a small upscale for previews (mark them provisional)
 
 
 def border_colour(im):
@@ -63,7 +64,7 @@ def frame(rgba, stage):
     crop = rgba.crop(box)
     target = TARGETS[stage] * SIZE
     scale = target / max(crop.size)
-    if scale > 1.0001:
+    if scale > MAX_UPSCALE + 0.0001:
         raise SystemExit(f"stage {stage} target needs {scale:.2f}x upscaling; generate larger instead")
     crop = crop.resize((round(crop.width * scale), round(crop.height * scale)), Image.LANCZOS)
     canvas = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
@@ -72,6 +73,10 @@ def frame(rgba, stage):
 
 
 if __name__ == "__main__":
+    if "--max-upscale" in sys.argv:
+        i = sys.argv.index("--max-upscale")
+        MAX_UPSCALE = float(sys.argv[i + 1])
+        del sys.argv[i:i + 2]
     src, dst, stage = sys.argv[1], sys.argv[2], int(sys.argv[3])
     t0, t1 = (float(sys.argv[4]), float(sys.argv[5])) if len(sys.argv) > 5 else (10.0, 48.0)
     rgba, bg = cutout(Image.open(src), t0, t1)

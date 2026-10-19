@@ -20,3 +20,18 @@ Status: **ALL PAID GENERATION PAUSED.** Approved credit policy (canon §6, 2026-
 | Approved by owner | Task ID | Workstream | Image | Credits | Budget used | Budget left |
 |---|---|---|---|---|---|---|
 | 2026-10-19 (Velynx Evolved only, cap 20) | `40f476c8-d9e3-48d0-ade0-b447de791f0a` | creature-studio | Velynx Evolved prototype v1, nano-banana-pro 1K | 20 (measured: 1,935 → 1,915) | 20 | 160 |
+| 2026-10-19 ("approve", the single charcoal edit) | `21e98b40-15bc-4718-a727-31b47d35af64` | creature-studio | Velynx Evolved v2 (edit of v1), nano-banana-pro 1K | 20 (measured: 1,915 → 1,895) | 40 | 140 |
+
+## Creature overhaul budget (owner brief, about 400 credits hard maximum)
+
+The owner chose the model in chat: "do banana 2.1". **Measured price: nano-banana-2.1, 1K, one reference image = 4 credits per image** (first task: 1,895 → 1,891).
+
+| Time (UTC) | Task ID | Image | Credits | Balance after | Overhaul spent |
+|---|---|---|---|---|---|
+| 23:33 | `3677eca7-1659-45db-8854-ae188829174c` | Mossling 3 Evolved (pilot) | 4 | 1,891 | 4 |
+| 23:36 | `3e30749c-d589-4e58-8739-9d7421b84734` | Mossling 1 Eggling (pilot) | 4 | 1,887 | 8 |
+| 23:36 | `2e9ecd39-dedc-4660-a6ea-856fb440cda4` | Mossling 2 Hatchling (pilot) | 4 | 1,883 | 12 |
+| 23:36 | `0583e354-1ae3-4fc6-a5db-d3a404266d74` | Mossling 4 Ascended (pilot) | 4 | 1,879 | 16 |
+| 23:36 | `3cef7f5c-3322-49f7-a73f-8fed26b60bae` | Aurelion 1 Eggling (pilot) | 4 | 1,875 | 20 |
+| 23:36 | `b3d2b04f-6598-497b-abac-33b5984ad3b4` | Aurelion 3 Evolved (pilot) | 4 | 1,871 | 24 |
+| 23:36 | `70795a73-caa0-45c9-ac89-5003b3f2da5e` | Frostkit 3 Evolved (pilot) | 4 | 1,867 | 28 |

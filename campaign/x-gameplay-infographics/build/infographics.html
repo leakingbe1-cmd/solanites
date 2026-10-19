@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Solanites gameplay infographics</title>
+<style>
+@font-face { font-family: "Unbounded"; src: url("fonts/unbounded-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+
+:root {
+  --void: #05050a; --abyss: #0a0a14; --panel: #0e0d1a;
+  --purple: #9945ff; --green: #14f195; --blue: #00c2ff; --pink: #ff3df2; --gold: #ffc94a; --mist: #a6a3c4; --ink: #ecebf7;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #000; }
+body { font-family: "Inter", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+#stage { position: relative; overflow: hidden; background: var(--void); }
+.bg, .stars, .grid { position: absolute; inset: 0; pointer-events: none; }
+.bg { background:
+  radial-gradient(60% 45% at 85% 18%, rgba(153,69,255,.38), transparent 70%),
+  radial-gradient(50% 40% at 10% 75%, rgba(0,194,255,.20), transparent 70%),
+  radial-gradient(45% 35% at 70% 95%, rgba(214,75,255,.22), transparent 70%),
+  linear-gradient(180deg, #07061a 0%, #05050d 55%, #070514 100%); }
+.grid { background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 80px 80px; mask-image: radial-gradient(70% 60% at 50% 40%, #000, transparent); }
+.abs { position: absolute; }
+
+/* chrome */
+.brand { position: absolute; left: 80px; top: 64px; display: flex; align-items: center; gap: 18px; }
+.brand svg { width: 54px; height: 54px; }
+.brand b { font-family: "Unbounded"; font-weight: 600; font-size: 26px; letter-spacing: .24em; color: #fff; }
+.chip { position: absolute; right: 80px; top: 70px; font-family: "JetBrains Mono"; font-size: 20px; letter-spacing: .22em; color: var(--mist);
+  border: 1px solid rgba(255,255,255,.16); border-radius: 999px; padding: 11px 24px; background: rgba(10,10,20,.6); }
+.chip i { font-style: normal; color: var(--green); }
+.foot { position: absolute; left: 80px; right: 80px; bottom: 54px; display: flex; justify-content: space-between; align-items: center;
+  font-family: "JetBrains Mono"; font-size: 19px; letter-spacing: .2em; color: rgba(166,163,196,.85); }
+.foot .rule { flex: 1; height: 1px; margin: 0 28px; background: linear-gradient(90deg, rgba(153,69,255,.5), rgba(0,194,255,.4), rgba(20,241,149,.3)); }
+
+/* type */
+.kicker { font-family: "JetBrains Mono"; font-size: 24px; letter-spacing: .3em; color: var(--green); text-transform: uppercase; display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; width: 14px; height: 14px; border: 2px solid var(--green); transform: rotate(45deg); }
+.h1 { z-index: 2; font-family: "Unbounded"; font-weight: 800; text-transform: uppercase; line-height: .94; letter-spacing: -.01em; color: #fff;
+  text-shadow: 0 6px 40px rgba(0,0,0,.6); }
+.grad { background: linear-gradient(90deg, #a76bff 0%, #00c2ff 55%, #14f195 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.gold { background: linear-gradient(90deg, #ffe08a, #ffb23d 60%, #ff7a2f); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lede { font-size: 31px; line-height: 1.42; color: #cfcde6; }
+.lede em { font-style: normal; color: #fff; font-weight: 600; }
+.mono { font-family: "JetBrains Mono"; letter-spacing: .18em; text-transform: uppercase; }
+.note { font-size: 21px; line-height: 1.45; color: rgba(166,163,196,.9); }
+
+/* panels */
+.panel { position: absolute; border-radius: 30px; background: linear-gradient(180deg, rgba(22,20,44,.78), rgba(10,10,22,.82));
+  border: 1px solid rgba(255,255,255,.11); box-shadow: 0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.06); }
+.panel.glow::before { content: ""; position: absolute; inset: -1px; border-radius: 30px; padding: 1.5px;
+  background: linear-gradient(135deg, rgba(153,69,255,.85), rgba(0,194,255,.45) 45%, rgba(20,241,149,.15) 70%, rgba(255,201,74,.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+.shot { position: absolute; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 24px 70px rgba(0,0,0,.7), 0 0 60px rgba(153,69,255,.18); background: #000; }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tag { position: absolute; font-family: "JetBrains Mono"; font-size: 17px; letter-spacing: .2em; text-transform: uppercase; color: #ffd36b;
+  background: rgba(10,8,4,.82); border: 1px solid rgba(255,201,74,.45); border-radius: 999px; padding: 7px 16px; }
+.num { font-family: "JetBrains Mono"; font-size: 22px; letter-spacing: .2em; color: var(--green); }
+.ttl { font-family: "Unbounded"; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: .02em; }
+.txt { color: #c4c2dc; line-height: 1.4; }
+img.art { position: absolute; object-fit: contain; filter: drop-shadow(0 20px 40px rgba(0,0,0,.5)); }
+.halo { position: absolute; border-radius: 50%; pointer-events: none; }
+.arrow { position: absolute; color: rgba(255,255,255,.55); font-size: 40px; font-family: "Inter"; }
+.connector { position: absolute; height: 2px; background: linear-gradient(90deg, rgba(153,69,255,.0), rgba(153,69,255,.8), rgba(0,194,255,.8), rgba(20,241,149,0)); }
+
+/* flow cards: everything inside stacks, so text can never collide */
+.card { position: absolute; display: flex; flex-direction: column; overflow: hidden; }
+.card > .media { position: relative; flex: none; }
+.card > .media .shot { position: absolute; inset: 18px 18px 0 18px; }
+.card > .media .tag { left: 36px; bottom: 16px; }
+.card > .media img.art { position: absolute; left: 50%; transform: translateX(-50%); }
+.card > .body { padding: 22px 32px 26px; display: flex; flex-direction: column; gap: 8px; }
+.card .ttl { line-height: 1.08; }
+.card .txt { margin-top: 4px; }
+.card .num { font-size: 18px; }
+</style>
+</head>
+<body>
+<div id="stage"><div class="bg"></div><canvas class="stars"></canvas><div class="grid"></div><div id="content"></div></div>
+<script>
+const q = new URLSearchParams(location.search);
+const ID = Number(q.get("id") || 1), RATIO = q.get("ratio") || "4x5";
+const W = 1440, H = RATIO === "1x1" ? 1440 : 1800, SQ = RATIO === "1x1";
+const stage = document.getElementById("stage");
+stage.style.width = W + "px"; stage.style.height = H + "px";
+
+// deterministic star field
+(() => {
+  const c = stage.querySelector(".stars"); c.width = W; c.height = H; const g = c.getContext("2d");
+  let s = 1337 + ID; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 420; i++) {
+    const x = r() * W, y = r() * H, z = r();
+    g.globalAlpha = 0.15 + z * 0.6; g.fillStyle = z > 0.93 ? "#bda8ff" : z > 0.86 ? "#8fe9ff" : "#ffffff";
+    g.beginPath(); g.arc(x, y, z > 0.97 ? 2.2 : z * 1.3, 0, 7); g.fill();
+  }
+})();
+
+const LOGO = `<svg viewBox="0 0 40 40"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9945ff"/><stop offset=".55" stop-color="#00c2ff"/><stop offset="1" stop-color="#14f195"/></linearGradient></defs>
+<path d="M20,3 C29,3 35,16 35,25 C35,33 28.5,38 20,38 C11.5,38 5,33 5,25 C5,16 11,3 20,3 Z" fill="none" stroke="url(#lg)" stroke-width="2"/>
+<path d="M20,14 L25,21 L20,29 L15,21 Z" fill="url(#lg)"/><path d="M9,24 L14,22 L16,26 M31,24 L26,22 L24,26" fill="none" stroke="url(#lg)" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+
+const ART = n => `../source/art/${n}.webp`;
+const UI = n => `../source/ui/${n}.jpg`;
+const px = v => typeof v === "number" ? v + "px" : v;
+function el(html) { const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstChild; }
+function put(html, style = {}) { const e = el(html); Object.entries(style).forEach(([k, v]) => e.style[k] = px(v)); document.getElementById("content").appendChild(e); return e; }
+function chrome(label, n) {
+  put(`<div class="brand">${LOGO}<b>SOLANITES</b></div>`);
+  put(`<div class="chip">${label} · <i>0${n}</i>/05</div>`);
+}
+function foot(left, right) { put(`<div class="foot"><span>${left}</span><span class="rule"></span><span>${right}</span></div>`); }
+function glow(x, y, d, color, a = .5) { put(`<div class="halo"></div>`, { left: x - d / 2, top: y - d / 2, width: d, height: d, background: `radial-gradient(circle, ${color} 0%, transparent 65%)`, opacity: a }); }
+function art(name, x, y, w, h = w, extra = "") { return put(`<img class="art" src="${ART(name)}" alt="" ${extra}>`, { left: x, top: y, width: w, height: h }); }
+function shot(name, x, y, w, h, pos = "center") { const e = put(`<div class="shot"><img src="${UI(name)}" alt=""></div>`, { left: x, top: y, width: w, height: h }); e.querySelector("img").style.objectPosition = pos; return e; }
+function text(cls, html, style) { return put(`<div class="abs ${cls}">${html}</div>`, style); }
+
+// ── flow-card helpers ──
+const EGG_RATIO = 1013 / 800;
+const shotHTML = (name, pos = "center", demo = false) => `<div class="shot"><img src="${UI(name)}" alt="" style="object-position:${pos}"></div>${demo ? '<div class="tag">Hatchery demo</div>' : ""}`;
+const artHTML = (name, w, top = 0, h = w) => `<img class="art" src="${ART(name)}" alt="" style="width:${w}px;height:${h}px;top:${top}px">`;
+function card({ x, y, w, h, media, mediaH, num, title, desc, extra = "", cls = "panel", style = {}, ts = 30, ds = 23 }) {
+  const e = put(`<div class="card ${cls}"></div>`, { left: x, top: y, width: w, height: h, ...style });
+  if (media) { const m = el(`<div class="media"></div>`); m.style.height = px(mediaH); m.innerHTML = media; e.appendChild(m); }
+  const b = el(`<div class="body"></div>`);
+  b.innerHTML = [num && `<div class="num">${num}</div>`, title && `<div class="ttl" style="font-size:${ts}px">${title}</div>`, desc && `<div class="txt" style="font-size:${ds}px">${desc}</div>`, extra].filter(Boolean).join("");
+  e.appendChild(b);
+  return e;
+}
+function headline(kicker, html, size, top = SQ ? 140 : 170) {
+  text("kicker", kicker, { left: 80, top });
+  return text("h1", html, { left: 76, top: top + 54, fontSize: size, whiteSpace: "nowrap" });
+}
+
+// ───────────────────────── 1 · FROM EGG TO SOLANITE ─────────────────────────
+function hatching() {
+  chrome("HOW HATCHING WORKS", 1);
+  headline("The hatching cycle", `From egg<br>to <span class="grad">Solanite</span>`, SQ ? 84 : 96);
+  if (!SQ) text("lede", `Every egg passes through <em>four stages</em> before it opens. What is inside is decided <em>before you ever see it.</em>`, { left: 80, top: 450, width: 900 });
+  const ex = SQ ? 1120 : 1080, ew = SQ ? 240 : 300;
+  glow(ex + ew / 2, (SQ ? 110 : 160) + ew * EGG_RATIO / 2, ew * 2.4, "rgba(214,75,255,.55)", .8);
+  art("e-3-3-pyraurum", ex, SQ ? 110 : 160, ew, ew * EGG_RATIO);
+
+  const sy = SQ ? 400 : 610, sh = SQ ? 400 : 440, cw = (W - 120) / 4, eh = SQ ? 140 : 170;
+  put(`<div class="panel glow"></div>`, { left: 60, top: sy, width: W - 120, height: sh });
+  [["01", "Dormant", "A sealed egg. Quiet, for now.", "e-1-3"],
+   ["02", "Awakening", "From 35% incubated, the shell glows and cracks leak light.", "e-2-3"],
+   ["03", "Stirring", "From 70%, energy surges and a silhouette moves inside.", "e-3-3-pyraurum"],
+   ["04", "Ready to hatch", "The shell can no longer hold it.", "e-4-3-pyraurum"]].forEach(([n, t, d, a], i) => {
+    card({ x: 60 + i * cw, y: sy, w: cw, h: sh, cls: "", media: artHTML(a, eh / EGG_RATIO, 20, eh), mediaH: eh + 20, num: `STAGE ${n}`, title: t, desc: d, ts: SQ ? 24 : 28, ds: SQ ? 19 : 22 });
+    if (i < 3) text("arrow", "›", { left: 60 + (i + 1) * cw - 14, top: sy + eh / 2 - 12, fontSize: 54 });
+  });
+
+  const py = sy + sh + 30, ph = SQ ? 500 : 560, pw = (W - 150) / 2, mh = SQ ? 300 : 360;
+  card({ x: 60, y: py, w: pw, h: ph, media: shotHTML("charge", "center 52%", true), mediaH: mh, num: "STEP 05", title: "You hatch it", desc: "Hatching is manual. You trigger it, and the shell breaks open.", ts: SQ ? 26 : 32, ds: SQ ? 20 : 24 });
+  card({ x: 90 + pw, y: py, w: pw, h: ph, media: shotHTML("reveal", "center 40%", true), mediaH: mh, num: "STEP 06", title: "Meet your Solanite", desc: "Rarity is sealed when the egg is created. Hatching reveals it and can't reroll it.", ts: SQ ? 26 : 32, ds: SQ ? 20 : 24 });
+  foot("SCREENS: HATCHERY DEMO · SIMULATED DATA", "SOLANITES");
+}
+
+// ───────────────────────── 2 · RARITY ─────────────────────────
+const TIERS = [
+  { label: "Common", color: "#9fe8c8", color2: "#7cc4ff", pct: "60%", w: 60, species: 6, art: "c-mossling-2", line: "Born of morning dew and quiet validators." },
+  { label: "Rare", color: "#5b8cff", color2: "#a26bff", pct: "25%", w: 25, species: 5, art: "c-duskwing-2", line: "Elemental anomalies drawn from deep currents." },
+  { label: "Epic", color: "#d64bff", color2: "#14f1d9", pct: "10%", w: 10, species: 5, art: "c-neonyx-2", line: "Living light. They glow from the inside out." },
+  { label: "Legendary", color: "#ffc94a", color2: "#ff8a3d", pct: "3.8%", w: 3.8, species: 6, art: "c-pyraurum-2", line: "Gilded titans whispered about in every block." },
+  { label: "Mythic", color: "#e6ecff", color2: "#8f7bff", pct: "1%", w: 1, species: 4, art: "c-astravex-2-sil", line: "Platinum. Cosmic. Older than the genesis slot.", classified: true },
+  { label: "Secret", color: "#14f195", color2: "#ff3df2", pct: "0.2%", w: 0.2, species: 2, art: "c-genesis-2-sil", line: "Not in any registry. Not supposed to exist.", classified: true },
+];
+function rarity() {
+  chrome("THE RARITY SYSTEM", 2);
+  headline("Six rarity tiers", `Six tiers.<br>Which will<br><span class="grad">you find?</span>`, SQ ? 72 : 92);
+  if (!SQ) text("lede", `Every egg rolls one of six tiers. The higher you climb, <em>the fewer exist.</em>`, { left: 80, top: 520, width: 700 });
+  const hx = SQ ? 1010 : 840, hw = SQ ? 330 : 540, hy = SQ ? 120 : 110;
+  glow(hx + hw / 2, hy + hw / 2, hw * 1.4, "rgba(255,190,70,.45)", .85);
+  art("c-aurelion-2", hx, hy, hw);
+
+  const ly = SQ ? 480 : 700, rowH = SQ ? 112 : 126, gap = SQ ? 10 : 12;
+  const listH = TIERS.length * (rowH + gap) - gap;
+  put(`<div class="panel glow"></div>`, { left: 60, top: ly - 26, width: W - 120, height: listH + 52 });
+  const col2 = SQ ? 560 : 590, col3 = SQ ? 1090 : 1080;
+  TIERS.forEach((t, i) => {
+    const y = ly + i * (rowH + gap);
+    put(`<div class="abs"></div>`, { left: 84, top: y, width: W - 168, height: rowH, borderRadius: 20, background: `linear-gradient(90deg, ${t.color}26, rgba(255,255,255,.02) 55%)`, border: `1px solid ${t.color}40` });
+    put(`<div class="abs"></div>`, { left: 84, top: y, width: 8, height: rowH, borderRadius: 20, background: `linear-gradient(${t.color}, ${t.color2})` });
+    const a = rowH * 1.12;
+    art(t.art, 104, y + (rowH - a) / 2, a);
+    if (t.classified) text("ttl", "?", { left: 104 + a / 2 - 13, top: y + rowH / 2 - 26, fontSize: 40, color: "rgba(255,255,255,.8)" });
+    const tx = 104 + a + 18;
+    put(`<div class="abs" style="display:flex;flex-direction:column;justify-content:center;gap:6px"><div class="num" style="font-size:16px;color:rgba(166,163,196,.95)">TIER 0${i + 1}</div><div class="ttl" style="font-size:${SQ ? 30 : 34}px;color:${t.color}">${t.label}</div></div>`, { left: tx, top: y, height: rowH });
+    put(`<div class="abs" style="display:flex;flex-direction:column;justify-content:center;gap:6px"><div class="txt" style="font-size:${SQ ? 19 : 22}px">${t.line}</div><div class="mono" style="font-size:15px;color:rgba(166,163,196,.9)">${t.species} species${t.classified ? " · classified" : ""}</div></div>`, { left: col2, top: y, height: rowH, width: SQ ? 480 : 470 });
+    const bw = 220;
+    text("ttl", t.pct, { left: col3, top: y + rowH / 2 - (SQ ? 34 : 38), fontSize: SQ ? 36 : 42, color: "#fff" });
+    put(`<div class="abs"></div>`, { left: col3, top: y + rowH / 2 + (SQ ? 16 : 20), width: bw, height: 8, borderRadius: 8, background: "rgba(255,255,255,.08)" });
+    put(`<div class="abs"></div>`, { left: col3, top: y + rowH / 2 + (SQ ? 16 : 20), width: Math.max(6, bw * t.w / 60), height: 8, borderRadius: 8, background: `linear-gradient(90deg, ${t.color}, ${t.color2})`, boxShadow: `0 0 14px ${t.color}` });
+  });
+  text("note", `Odds per egg. Rarity is sealed when an egg is created and revealed when it hatches. Mythic and Secret species stay classified until one is hatched.`, { left: 84, top: ly + listH + (SQ ? 52 : 60), width: W - 168, fontSize: SQ ? 20 : 23 });
+  foot("ODDS FROM THE GAME'S RARITY CONFIG", "SOLANITES");
+}
+
+// ───────────────────────── 3 · EVOLUTION ─────────────────────────
+function evolution() {
+  chrome("CREATURE EVOLUTION", 3);
+  headline("One creature · four forms", `Every <span class="gold">legend</span><br>has a<br>beginning`, SQ ? 72 : 86);
+  if (!SQ) text("lede", `Every Solanite hatches as an <em>Eggling</em> and grows through four separately drawn forms. This is <em>Pyraurum</em>, a Legendary.`, { left: 80, top: 520, width: 720 });
+  const hx = SQ ? 960 : 930, hw = SQ ? 400 : 460, hy = SQ ? 120 : 140;
+  glow(hx + hw / 2, hy + hw / 2, hw * 1.45, "rgba(255,140,50,.5)", .9);
+  art("c-pyraurum-3", hx, hy, hw);
+  put(`<div class="tag">Ascended form</div>`, { left: hx + hw / 2 - 110, top: hy + hw - (SQ ? 70 : 10) });
+
+  const forms = [["Eggling", "A downy golden chick with a single flame feather."], ["Hatchling", "Its wings grow and its first flame plumes appear."], ["Evolved", "A golden phoenix in flight, trailing fire."], ["Ascended", "It burns, falls and rises again, brighter each time."]];
+  const py = SQ ? 520 : 720, ph = SQ ? 560 : 560, cw = (W - 120) / 4, a = SQ ? 300 : 300;
+  put(`<div class="panel glow"></div>`, { left: 60, top: py, width: W - 120, height: ph });
+  put(`<div class="connector"></div>`, { left: 140, top: py + 20 + a / 2, width: W - 280 });
+  forms.forEach(([t, d], i) => {
+    glow(60 + i * cw + cw / 2, py + 20 + a / 2, a * 1.1, "rgba(255,170,60,.28)", .9);
+    card({ x: 60 + i * cw, y: py, w: cw, h: ph, cls: "", media: artHTML(`c-pyraurum-${i}`, a, 20), mediaH: a + 20, num: `FORM 0${i + 1}`, title: t, desc: d, ts: SQ ? 26 : 30, ds: SQ ? 20 : 22 });
+    if (i < 3) text("arrow", "›", { left: 60 + (i + 1) * cw - 14, top: py + a / 2 - 12, fontSize: 54 });
+  });
+  {
+    const ry = py + ph + 30, rh = SQ ? 230 : 290, sa = SQ ? 110 : 130;
+    put(`<div class="panel"></div>`, { left: 60, top: ry, width: W - 120, height: rh });
+    put(`<div class="abs" style="display:flex;flex-direction:column;gap:12px"><div class="num">EVERY SPECIES GROWS ITS OWN WAY</div><div class="txt" style="font-size:${SQ ? 20 : 24}px">28 species, each with four separately drawn forms. The Ascended form gains a halo.</div></div>`, { left: 100, top: ry + (SQ ? 30 : 40), width: 380 });
+    [["neonyx", "Neonyx · Epic"], ["frostkit", "Frostkit · Common"]].forEach(([s, label], j) => {
+      const bx = 520 + j * 430;
+      text("mono", label, { left: bx, top: ry + (SQ ? 30 : 40), fontSize: 16, color: "rgba(166,163,196,.95)" });
+      [0, 1, 2, 3].forEach(k => art(`c-${s}-${k}`, bx - 10 + k * (sa - 30), ry + (SQ ? 66 : 80), sa));
+    });
+  }
+  foot("PYRAURUM · PHOENIX OF THE GOLDEN PYRE", "SOLANITES");
+}
+
+// ───────────────────────── 4 · CHOOSE ─────────────────────────
+function choose() {
+  chrome("CHOOSE YOUR CREATURE", 4);
+  headline("Pick one. Defend it.", `Which one are<br>you <span class="grad">hatching?</span>`, SQ ? 80 : 96);
+  const picks = [
+    { n: "01", name: "Pyraurum", ep: "Phoenix of the Golden Pyre", r: "Legendary", el: "Ember", c: "#ffc94a", art: "c-pyraurum-3", traits: "Undying · Passionate · Proud", line: "It burns, falls and rises again, brighter each time." },
+    { n: "02", name: "Zephrax", ep: "Coil of Living Current", r: "Epic", el: "Storm", c: "#d64bff", art: "c-zephrax-3", traits: "Wild · Brilliant · Impatient", line: "Zephrax is pure throughput given scales. It has never once stood still." },
+    { n: "03", name: "Cryovant", ep: "Shard Glider", r: "Rare", el: "Crystal", c: "#5b8cff", art: "c-cryovant-3", traits: "Precise · Cold · Elegant", line: "A lattice of living ice with a heart of light." },
+  ];
+  const cy = SQ ? 390 : 470, ch = SQ ? 790 : 990, gap = 30, cw = (W - 120 - 2 * gap) / 3, a = SQ ? 340 : 410, mh = SQ ? 400 : 610;
+  picks.forEach((p, i) => {
+    const x = 60 + i * (cw + gap);
+    glow(x + cw / 2, cy + 70 + a / 2, a * 1.25, `${p.c}66`, .8);
+    const media = `<div class="ttl" style="position:absolute;left:30px;top:24px;font-size:${SQ ? 44 : 54}px;color:${p.c}">${p.n}</div>
+      <div class="mono" style="position:absolute;right:30px;top:40px;font-size:16px;color:${p.c}">Ascended form</div>${artHTML(p.art, a, SQ ? 60 : 130)}`;
+    const extra = `<div class="mono" style="font-size:16px;color:${p.c}">${p.r} · ${p.el}</div>
+      <div style="height:1px;background:rgba(255,255,255,.12);margin:14px 0 8px"></div>
+      <div class="txt" style="font-size:${SQ ? 20 : 24}px;font-style:italic;color:#d9d7ee">“${p.line}”</div>
+      ${SQ ? "" : `<div class="mono" style="font-size:15px;color:rgba(166,163,196,.95);margin-top:14px">${p.traits}</div>`}`;
+    card({ x, y: cy, w: cw, h: ch, media, mediaH: mh, title: p.name, desc: p.ep, extra, ts: SQ ? 42 : 50, ds: SQ ? 21 : 25,
+      style: { background: `linear-gradient(180deg, ${p.c}2e, rgba(10,10,22,.92) 55%)`, border: `1.5px solid ${p.c}70`, boxShadow: `0 30px 80px rgba(0,0,0,.6), 0 0 60px ${p.c}22` } });
+  });
+  const ry = cy + ch + 30;
+  put(`<div class="panel glow" style="display:flex;align-items:center;justify-content:space-between;padding:0 48px"><div class="ttl" style="font-size:${SQ ? 30 : 38}px">Your pick? <span class="grad">Reply 1, 2 or 3</span></div><div class="mono" style="font-size:${SQ ? 16 : 18}px;color:#cfcde6">and tell us why</div></div>`, { left: 60, top: ry, width: W - 120, height: SQ ? 110 : 130 });
+  foot("THREE SPECIES FROM THE COLLECTION", "SOLANITES");
+}
+
+// ───────────────────────── 5 · INSIDE ─────────────────────────
+function inside() {
+  chrome("INSIDE SOLANITES", 5);
+  if (!SQ) {
+    headline("A look inside", `More than just<br>a <span class="grad">creature</span><br>collection`, 92);
+    glow(1220, 400, 460, "rgba(20,241,200,.35)", .8);
+    art("c-velynx-3", 1060, 250, 300);
+    const gw = (W - 150) / 2, h1 = 540, y1 = 540, y2 = y1 + h1 + 30, mh = 330;
+    card({ x: 60, y: y1, w: gw, h: h1, media: shotHTML("reveal", "center 42%", true), mediaH: mh, num: "01 · THE HATCH REVEAL", title: "Rarity gets a show", desc: "Rarer creatures get a longer charge-up and bigger effects.", ts: 30, ds: 23 });
+    card({ x: 90 + gw, y: y1, w: gw, h: h1, media: shotHTML("collection-mythic", "center"), mediaH: mh, num: "02 · CLASSIFIED", title: "Some stay hidden", desc: "Mythic and Secret species stay classified until someone hatches one.", ts: 30, ds: 23 });
+    card({ x: 60, y: y2, w: gw, h: h1, media: shotHTML("collection", "center top"), mediaH: mh, num: "03 · THE COLLECTION", title: "28 species to discover", desc: "Filter by rarity, element and what you have found.", ts: 30, ds: 23 });
+    card({ x: 90 + gw, y: y2, w: gw, h: h1, media: shotHTML("detail-stages", "center"), mediaH: mh, num: "04 · SPECIES DETAIL", title: "Every form, every species", desc: "Open any species to see all four forms, its stats and lore.", ts: 30, ds: 23 });
+  } else {
+    headline("A look inside", `More than just a<br><span class="grad">creature</span> collection`, 68);
+    const g3 = (W - 180) / 3, y1 = 370, h1 = 480, mh = 270;
+    card({ x: 60, y: y1, w: g3, h: h1, media: shotHTML("reveal", "center 42%", true), mediaH: mh, num: "01 · THE REVEAL", title: "Rarity gets a show", desc: "Rarer creatures get bigger effects.", ts: 24, ds: 19 });
+    card({ x: 90 + g3, y: y1, w: g3, h: h1, media: shotHTML("charge", "center 52%", true), mediaH: mh, num: "02 · THE CHARGE-UP", title: "Something breaks through", desc: "Rarity stays sealed until the shell opens.", ts: 24, ds: 19 });
+    card({ x: 120 + 2 * g3, y: y1, w: g3, h: h1, media: shotHTML("collection-mythic", "center"), mediaH: mh, num: "03 · CLASSIFIED", title: "Some stay hidden", desc: "Mythic and Secret stay classified until hatched.", ts: 24, ds: 19 });
+    const g2 = (W - 150) / 2, y2 = y1 + h1 + 24, h2 = 1340 - y2;
+    card({ x: 60, y: y2, w: g2, h: h2, media: shotHTML("collection", "center top"), mediaH: 250, num: "04 · THE COLLECTION", title: "28 species to discover", desc: "Filter by rarity, element and status.", ts: 24, ds: 19 });
+    card({ x: 90 + g2, y: y2, w: g2, h: h2, media: shotHTML("detail-stages", "center"), mediaH: 250, num: "05 · SPECIES DETAIL", title: "Every form, every species", desc: "All four forms, stats and lore.", ts: 24, ds: 19 });
+  }
+  foot("REAL SCREENS · DEMO USES SIMULATED DATA", "SOLANITES");
+}
+
+[hatching, rarity, evolution, choose, inside][ID - 1]();
+Promise.all([document.fonts.ready, ...[...document.images].map(i => i.decode().catch(() => { document.body.dataset.broken = (document.body.dataset.broken || "") + " " + i.src; }))])
+  .then(() => setTimeout(() => document.body.dataset.ready = "1", 150));
+</script>
+</body>
+</html>

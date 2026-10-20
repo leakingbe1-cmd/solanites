@@ -81,6 +81,20 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
   });
 });
 
+describe("GET /api/home-stats", () => {
+  it("serves real fixture holders and eggs, an honest unavailable market cap, and a shared CDN cache", async () => {
+    const { GET } = await import("@/app/api/home-stats/route");
+    const res = await GET();
+    expect(res.headers.get("cache-control")).toContain("s-maxage=30");
+    const b = await res.json();
+    expect(b.holders.status).toBe("live");
+    expect(b.holders.value).toBeGreaterThan(0);
+    expect(b.eggs.status).toBe("live");
+    expect(b.eggs.value).toBeGreaterThan(0);
+    expect(b.marketCap).toMatchObject({ value: null, status: "unavailable" });
+  });
+});
+
 describe("scheduler and webhook endpoints", () => {
   it("require their secrets", async () => {
     const cron = await import("@/app/api/cron/sync/route");

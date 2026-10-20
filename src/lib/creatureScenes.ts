@@ -340,7 +340,7 @@ export const SCENES: Record<string, SceneDef> = {
         S("swim", 1.3, 8.6, {
           glow: true,
           parts: [
-            { part: "lure", poly: [64.5, 14, 92, 14, 92, 42, 76, 42, 73, 38, 69, 36.6, 66, 36.2, 64.5, 30], hinge: [67.2, 36.5], motion: "sway", deg: 3, period: 4 },
+            { part: "lure", poly: [64.5, 14, 92, 14, 92, 38.5, 77.5, 38.5, 74, 36.4, 69, 36.6, 66, 36.2, 64.5, 30], hinge: [67.2, 36.5], motion: "sway", deg: 3, period: 4 },
             { part: "fin", poly: [0, 50, 21, 50, 21, 88, 0, 88], hinge: [21, 67.5], motion: "bend", deg: 3.5, period: 4.4 },
           ],
         }),
@@ -472,7 +472,7 @@ export const SCENES: Record<string, SceneDef> = {
       stages: [
         S("rock", 1, 4.8, { glow: true }),
         S("stalk", 1.2, 5, { glow: true, parts: [{ part: "tail", poly: [55.8, 47, 80, 47, 80, 75, 58, 75, 58, 59, 55.8, 54], hinge: [58, 70.8], motion: "sway", deg: 2, period: 4.2 }] }),
-        S("stalk", 1, 5.8, { glow: true, parts: [{ part: "tail", poly: [58.6, 37, 92, 37, 92, 78, 59.5, 78, 59.5, 66], hinge: [59.5, 73.4], motion: "sway", deg: 1.8, period: 5.2 }] }),
+        S("stalk", 1, 5.8, { glow: true, parts: [{ part: "tail", poly: [58.6, 37, 92, 37, 92, 78, 59.5, 78, 59.5, 66, 58.6, 47, 57.9, 47, 57.9, 40.6, 58.6, 40.6], hinge: [59.5, 73.4], motion: "sway", deg: 1.8, period: 5.2 }] }),
         S("stalk", 0.8, 7.2, { glow: true, parts: [{ part: "tail", poly: [59, 35, 97, 35, 97, 80.5, 59, 80.5], hinge: [59, 77], motion: "sway", deg: 1.5, period: 6.4 }] }),
       ],
     },

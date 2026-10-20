@@ -7,6 +7,8 @@ does (the body with the part's region cut out, the part clipped to its slightly 
 and turned about its hinge, or skewed from its attachment line) and measures:
 
   gap    pixels that were solid creature and now show through (the join opening)   must be ~0
+  tear   how far the part moves wherever its region's edge cuts through solid art      must be ≤ 3px
+         (an edge across a tail tip or a head rim splits it, even when nothing shows through)
   move   how far the part's tip travels, in px at 1024                              must be gentle
 
 It also checks that a part lies on the body: the hinge must sit on solid artwork.
@@ -77,6 +79,19 @@ def transform(img, rig, t):
     return img.rotate(-deg, resample=Image.BICUBIC, center=(hx, hy))
 
 
+def displacement(rig, x, y):
+    """How far a point of the part moves at the peak, in px at 1024."""
+    hx, hy = rig["hinge"][0] / 100 * N, rig["hinge"][1] / 100 * N
+    k = math.tan(math.radians(abs(rig["deg"])))
+    if rig["motion"] == "bend":
+        return abs(k * (x - hx))
+    if rig["motion"] == "skew":
+        return abs(k * (y - hy))
+    if rig["motion"] == "fold":
+        return abs((x - hx) * rig["deg"] * 0.01)
+    return math.hypot(x - hx, y - hy) * math.radians(abs(rig["deg"]))
+
+
 def frame(art, rigs, t):
     """Body with every region cut out, then each part transformed on top."""
     alpha = art.getchannel("A")
@@ -107,12 +122,15 @@ def check(species, stage, rigs):
     # sides of the edge within a few px (a tail tip merely passing near the edge is not a seam)
     solid = alpha.point(lambda v: 255 if v > 240 else 0)
     seam = Image.new("L", (N, N), 0)
+    tears = []
     for rig in rigs:
         inside = poly_mask(rig["poly"]).point(lambda v: 255 if v > 127 else 0)
         ring = ImageChops.subtract(poly_mask(dilate(rig["poly"], 0.45)), poly_mask(dilate(rig["poly"], -0.45)))
         near_in = ImageChops.multiply(solid, inside).filter(ImageFilter.MaxFilter(9))
         near_out = ImageChops.subtract(solid, inside).filter(ImageFilter.MaxFilter(9))
         crossing = ImageChops.multiply(ImageChops.multiply(near_in, near_out), ImageChops.multiply(ring, solid))
+        cut = crossing.load()
+        tears.append(max((displacement(rig, x, y) for y in range(0, N, 2) for x in range(0, N, 2) if cut[x, y] > 128), default=0))
         if rig["motion"] not in ("skew", "bend", "fold"):
             # a rotating part joins the body at its hinge; only the cut there is a seam
             disk = Image.new("L", (N, N), 0)
@@ -141,7 +159,7 @@ def check(species, stage, rigs):
         on = alpha.getpixel((min(N - 1, int(hx / 100 * N)), min(N - 1, int(hy / 100 * N))))
         # a skew's hinge is its attachment line, not a point on the body
         rig["_hinge_alpha"] = 255 if rig["motion"] in ("skew", "bend", "fold") else on
-    return art, frames, results, tips
+    return art, frames, results, tips, tears
 
 
 def sheet(art, frames, rigs, path):
@@ -177,10 +195,14 @@ def main():
             stage = int(stage_str)
             if not rigs:
                 continue
-            art, frames, gaps, tips = check(species, stage, rigs)
+            art, frames, gaps, tips, tears = check(species, stage, rigs)
             worst_gap = max(gaps)
             notes = []
             ok = worst_gap <= 6
+            for rig, tear in zip(rigs, tears):
+                if tear > 3:
+                    ok = False
+                    notes.append(f"{rig['part']} region edge splits solid art, moving {tear:.1f}px there (max 3)")
             for rig, tip in zip(rigs, tips):
                 if rig["_hinge_alpha"] < 128:
                     ok = False
@@ -189,7 +211,7 @@ def main():
                     ok = False
                     notes.append(f"{rig['part']} tip moves {tip:.1f}px (max 22)")
             label = f"{species} stage {stage + 1}: " + ", ".join(f"{r['part']} {r['motion']} ±{r['deg']}° tip {t:.1f}px" for r, t in zip(rigs, tips))
-            print(("✓ " if ok else "✗ ") + label + f"; gap {worst_gap}px" + (f"; {'; '.join(notes)}" if notes else ""))
+            print(("✓ " if ok else "✗ ") + label + f"; gap {worst_gap}px, tear {max(tears):.1f}px" + (f"; {'; '.join(notes)}" if notes else ""))
             failures += 0 if ok else 1
             if sheet_dir:
                 sheet_dir.mkdir(parents=True, exist_ok=True)

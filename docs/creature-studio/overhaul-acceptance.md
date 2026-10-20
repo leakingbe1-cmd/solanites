@@ -1,6 +1,6 @@
 # Creature overhaul: acceptance record
 
-Status 2026-10-20. Verified on `design/eclipse-vigil-code` @ `4d42aae` (local production build, desktop 1440 and phone 390). `4d42aae` is `ec8a06a` plus the Nyxara Ascended correction: only that stage's two images and its byte count differ, and all 176 public creature files match the tested build byte for byte. No merge to `main`, no production deploy.
+Status 2026-10-20: **acceptance audits in progress; not yet accepted.** Verified on `design/eclipse-vigil-code` @ `4d42aae` (local production build, desktop 1440 and phone 390). `4d42aae` is `ec8a06a` plus the Nyxara Ascended correction: only that stage's two images and its byte count differ, and all 176 public creature files match the tested build byte for byte. No merge to `main`, no production deploy.
 
 ## 1. Finished species and stages
 
@@ -62,7 +62,15 @@ Classified before/after boards exist only privately.
 | **Overhaul total** | **127** | **524** (balance 1,895 → 1,371) |
 
 - Per-image ledger: public stages in `overhaul/tasks.tsv`; classified stages in a private ledger (aggregate rows in `docs/canon/generation-ledger.md`).
-- Before this brief, 140 credits were spent on concepts and the Velynx prototype (2,035 → 1,895). Project total since the first generation: **664**.
+- Reconciliation:
+  - Merged by balance, the public and private rows form one gapless chain from 1,895 to 1,371.
+  - Each row's balance equals the `creditsRemaining` Runway returned for that task (127 of 127).
+  - Three further calls were refused by the safety classifier before submission; they were never charged.
+- Before this brief, 140 credits were spent on concepts and the Velynx prototype (2,035 → 1,895). Overhaul plus earlier work: **664** (2,035 → 1,371).
+- After the overhaul, the biome session generated 22 public background plates: 88 credits, 1,371 → 1,283. These are not overhaul spend; they are recorded in `docs/canon/generation-ledger.md`.
+  - Live balance: **1,283** (whoami: plan 983 + purchased 300).
+  - Project spend since the ledger's starting balance of 2,035: **752**.
+  - Whether 2,035 was the balance before any earlier Solanites Runway use on 19 Oct cannot be checked (`list_recent` shows only the newest 50 assets).
 
 ## 5. Stock pairings
 

@@ -1,6 +1,6 @@
 # Runway generation ledger (shared workspace)
 
-Status: **ALL PAID GENERATION PAUSED.** Approved credit policy (canon §6, 2026-10-19): a shared future budget of **180 credits** across all workstreams, with **40 spent so far** (Velynx Evolved v1 and v2; the Velynx prototype ceiling is 80). The 100 credits below (V-A 20 + website 80) are **historical** and outside that budget. The budget is not permission to generate: **each image needs its own explicit owner approval.** One ledger for both workstreams (canon G1). Workstreams: creature-studio (this branch), design (`design/creative-direction`), website (session "Solanites interactive website", branch `design/eclipse-vigil-code`, not on GitHub).
+Status 2026-10-20: **creature overhaul generation done except one classified stage (acceptance audits in progress); balance 1,283 (Runway `whoami`, 01:44 UTC: plan 983 + purchased 300).** History: on 2026-10-19 the canon §6 policy (shared 180-credit budget, per-image owner approval) was in force for the Velynx prototype rows below. On 2026-10-19 at 23:49 UTC the owner lifted the overhaul's 400-credit cap for the full catalogue (no purchases, existing balance only). One ledger for all workstreams (canon G1). Workstreams: creature-studio (this branch), design (`design/creative-direction`), website (session "Solanites interactive website", branch `design/eclipse-vigil-code`), creature-biomes (session "Solanites creature biomes and animations", branch `feature/creature-biomes`).
 
 | Created (UTC) | Task ID | Workstream | What | Model / size | Credits | Balance after |
 |---|---|---|---|---|---|---|
@@ -22,7 +22,7 @@ Status: **ALL PAID GENERATION PAUSED.** Approved credit policy (canon §6, 2026-
 | 2026-10-19 (Velynx Evolved only, cap 20) | `40f476c8-d9e3-48d0-ade0-b447de791f0a` | creature-studio | Velynx Evolved prototype v1, nano-banana-pro 1K | 20 (measured: 1,935 → 1,915) | 20 | 160 |
 | 2026-10-19 ("approve", the single charcoal edit) | `21e98b40-15bc-4718-a727-31b47d35af64` | creature-studio | Velynx Evolved v2 (edit of v1), nano-banana-pro 1K | 20 (measured: 1,915 → 1,895) | 40 | 140 |
 
-## Creature overhaul budget (owner brief, about 400 credits hard maximum)
+## Creature overhaul (owner brief; the original ~400-credit cap was lifted by the owner on 2026-10-19 23:49 UTC)
 
 The owner chose the model in chat: "do banana 2.1". **Measured price: nano-banana-2.1, 1K, one reference image = 4 credits per image** (first task: 1,895 → 1,891).
 
@@ -35,10 +35,29 @@ The owner chose the model in chat: "do banana 2.1". **Measured price: nano-banan
 | 23:36 | `3cef7f5c-3322-49f7-a73f-8fed26b60bae` | Aurelion 1 Eggling (pilot) | 4 | 1,875 | 20 |
 | 23:36 | `b3d2b04f-6598-497b-abac-33b5984ad3b4` | Aurelion 3 Evolved (pilot) | 4 | 1,871 | 24 |
 | 23:36 | `70795a73-caa0-45c9-ac89-5003b3f2da5e` | Frostkit 3 Evolved (pilot) | 4 | 1,867 | 28 |
-| 00:08–00:12 | (private ledger, held outside the public repo) | Classified stages: 23 images (one stage pending, see below) | 92 | 1,407 | — |
+| 00:10–00:13 | (private ledger, held outside the public repo) | Classified stages: 23 images (one stage never generated) | 92 | 1,407 | — |
+
+| 00:15 | (private ledger) | Classified stages: 5 colour corrections | 20 | 1,387 | — |
+| 00:29 | (private ledger) | Classified stages: 3 more colour corrections (Secret lines matched to their corrected stages) | 12 | 1,375 | — |
 
 The classified task list stays out of this public repository: species names and task IDs together would identify the art. The per-stage list goes to the website session by direct message only.
-| 00:15 | (private ledger) | Classified stages: 5 colour corrections | 20 | 1,387 | — |
-| 2026-10-20 | (private ledger) | Classified stages: 3 more colour corrections (Secret Egglings/Evolved matched to their corrected lines) | 12 | 1,375 | — |
 
 Per-image ledger for all non-classified overhaul work (including corrections and the owner's Solvanth 4 Nano Banana Pro edit, 20 credits): `art/creature-studio/overhaul/tasks.tsv`.
+
+**Overhaul totals (reconciled 2026-10-20):**
+- 127 images, 524 credits, 1,895 → 1,371.
+- Public: 96 images, 400 credits (88 first passes, 8 corrections including the 20-credit pro edit).
+- Classified: 31 images, 124 credits (23 first passes, 8 corrections).
+- Failed generations charged: 0.
+- Merged by balance, the public and private rows form one gapless chain. Every row's balance equals the `creditsRemaining` that Runway returned for that task.
+
+## Creature biomes (session "Solanites creature biomes and animations", branch `feature/creature-biomes`)
+
+Recorded here from that session's own transcript (read-only) and Runway `list_recent`. That session keeps the per-task ledger in `docs/creature-scenes/generation-ledger.md` on its branch.
+
+| Time (UTC) | Tasks | What | Model / size | Credits | Balance after |
+|---|---|---|---|---|---|
+| 01:23–01:32 (created, per `list_recent`) | 22 tasks (e.g. `074e0157`, last at 1,283; `eaa701ce` at 1,307) | Public biome background plates, one per public species | nano-banana-2.1, 1K | 88 (22 × 4) | 1,283 |
+
+**Project spend since the ledger's starting balance (2,035):** 752 credits. That is 140 before the overhaul, 524 for the overhaul and 88 for biomes.
+

@@ -1,8 +1,11 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import { afterEach, describe, expect, it } from "vitest";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { eggProgression } from "@/config/eggProgression";
+import { stageAsset } from "@/lib/creatureAssets";
 import { SPECIES } from "@/lib/species";
 import { createPgliteDb } from "../db/pglite";
 import { migrate } from "../db/schema";
@@ -222,13 +225,19 @@ describe("shared rate limiting", () => {
   });
 });
 
-describe("artwork with no raster assets", () => {
-  it("every species and stage renders its vector drawing, never a broken image", () => {
+describe("artwork: painted where supplied, vector otherwise", () => {
+  it("every species and stage renders either its existing painted file or its vector drawing, never a broken image", () => {
     for (const s of SPECIES) {
       for (const stage of [0, 1, 2, 3]) {
         const html = renderToString(createElement(CreatureArt, { species: s, stage, animated: false }));
-        expect(html, `${s.id} stage ${stage}`).toContain("<svg");
-        expect(html, `${s.id} stage ${stage}`).not.toContain("<img");
+        const asset = stageAsset(s.id, stage);
+        if (asset) {
+          expect(html, `${s.id} stage ${stage}`).toContain(`src="${asset.src}"`);
+          for (const f of [asset.src, asset.thumb]) expect(existsSync(path.join(process.cwd(), "public", f)), `${f} exists`).toBe(true);
+        } else {
+          expect(html, `${s.id} stage ${stage}`).toContain("<svg");
+          expect(html, `${s.id} stage ${stage}`).not.toContain("<img");
+        }
       }
     }
   });

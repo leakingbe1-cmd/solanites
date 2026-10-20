@@ -19,8 +19,10 @@ const holder = globalThis as typeof globalThis & { __solanitesMarket?: Promise<M
 /**
  * Market runtime, created once per process.
  *
- * Needs DATABASE_URL (the same database as holder tracking, but not the mint or RPC, so stock
- * data can run before launch). MASSIVE_API_KEY switches on fetching; without it, stored data is
+ * Off unless MARKET_DATA_ENABLED=1: until then no database is opened or migrated, and every
+ * panel shows "not connected", so a deployment can't create market tables by accident.
+ * When enabled it needs DATABASE_URL (the same database as holder tracking, but not the mint
+ * or RPC, so stock data can run before launch). MASSIVE_API_KEY switches on fetching; without it, stored data is
  * still served and the panel says market data isn't connected. MARKET_DATA_PLAN=delayed labels
  * a paid plan's intraday data as delayed (default: eod).
  *
@@ -49,6 +51,7 @@ export async function buildMarketRuntime(env: Record<string, string | undefined>
     db = (await getRuntime(env)).db;
     provider = real ?? createFixtureProvider();
   } else {
+    if (env.MARKET_DATA_ENABLED?.trim() !== "1") throw new ConfigError(["MARKET_DATA_ENABLED"]);
     const url = env.DATABASE_URL?.trim();
     if (!url) throw new ConfigError(["DATABASE_URL"]);
     // Reuse holder tracking's pool when it's configured; otherwise open a small one of our own.

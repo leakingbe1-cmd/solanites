@@ -171,6 +171,7 @@ Page views never call the provider, so traffic cannot exhaust the provider quota
 
 | Variable | Where | Purpose |
 |---|---|---|
+| `MARKET_DATA_ENABLED` | Server env | Must be `1` before the market feature opens or migrates any database. Unset (the default) means panels show **Unavailable** and nothing is written. Local sample mode (`SOLANITES_FIXTURES=1`) doesn't need it. |
 | `MASSIVE_API_KEY` | Server env (secret) | Provider key. Unset means market data shows **Unavailable**. |
 | `MARKET_DATA_PLAN` | Server env | `eod` (default) or `delayed` (paid plan only). |
 | `MASSIVE_API_BASE` | Server env | Optional override; default `https://api.massive.com`. |

@@ -107,3 +107,14 @@ describe("market routes", () => {
     }
   });
 });
+
+describe("market runtime is off by default outside local sample mode", () => {
+  it("never opens or migrates a database without MARKET_DATA_ENABLED=1, even with DATABASE_URL set", async () => {
+    const { buildMarketRuntime } = await import("@/server/market/runtime");
+    const { ConfigError } = await import("@/server/config");
+    // An unreachable URL: if the runtime tried to connect or migrate, this would fail differently.
+    const env = { NODE_ENV: "production", DATABASE_URL: "postgres://nobody:none@127.0.0.1:1/none" };
+    await expect(buildMarketRuntime(env)).rejects.toBeInstanceOf(ConfigError);
+    await expect(buildMarketRuntime({ ...env, MARKET_DATA_ENABLED: "0" })).rejects.toBeInstanceOf(ConfigError);
+  });
+});

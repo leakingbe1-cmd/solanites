@@ -177,15 +177,17 @@ for (const opts of [{}, { reducedMotion: "reduce" }, { viewport: { width: 390, h
             const probe = new Image();
             probe.src = i.currentSrc;
             await probe.decode().catch(() => {});
-            return { src: i.currentSrc.split("/").pop(), w: probe.naturalWidth, h: probe.naturalHeight };
+            return { src: i.currentSrc.split("/").pop(), creature: new URL(i.currentSrc).pathname.startsWith("/creatures/"), w: probe.naturalWidth, h: probe.naturalHeight };
           }),
       ),
     }));
     found.push(...m.imgs.map((i) => ({ ...i, path })));
     ok(`media ${path}: no video elements`, m.videos === 0);
   }
-  const small = found.filter((i) => Math.min(i.w, i.h) < 1080);
-  ok("media: every raster image at least 1080 px on the short edge", small.length === 0, found.map((i) => `${i.path} ${i.src} ${i.w}x${i.h}`).join("; "));
+  // Creature paintings follow their own delivery spec (1024 × 1024, art canon C12; shown at most ~520 CSS px);
+  // every other raster image (the Phoenix still and any page media) must be at least 1080 px.
+  const small = found.filter((i) => Math.min(i.w, i.h) < (i.creature ? 1024 : 1080));
+  ok("media: page images at least 1080 px and creature paintings at least 1024 px on the short edge", small.length === 0, (small.length ? small : found).map((i) => `${i.path} ${i.src} ${i.w}x${i.h}`).join("; "));
   await c.close();
 }
 

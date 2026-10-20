@@ -53,6 +53,12 @@
   mix-blend-mode: soft-light;
   opacity: var(--ba, 0.6);
 }
+/* canon C6/W1: the lower plate dissolves into the biome's own deep tone, so nothing reads as ground */
+.sl-biome-floor {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--sc-2) 0%, color-mix(in srgb, var(--sc-2) 82%, transparent) calc(var(--fl) * 0.45), transparent var(--fl));
+}
 .sl-biome-vignette {
   position: absolute;
   inset: 0;

@@ -59,7 +59,8 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
     "--bz": frame.zoom,
     "--bl": frame.light * (1 + (scene.biome.lift ?? 0)),
     "--bs": frame.sat * (scene.biome.calm ?? 1),
-    "--bf": size === "card" ? frame.blur * 0.6 : frame.blur,
+    "--bf": (size === "card" ? frame.blur * 0.6 : frame.blur) + (scene.biome.soften ?? 0),
+    "--fl": `${(scene.biome.floor ?? 0) * 100}%`,
     "--bx": `${fx}%`,
     "--by": `${fy}%`,
     "--ba": frame.air,
@@ -82,6 +83,7 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
           />
         )}
         <div className="sl-biome-air" />
+        {scene.biome.floor ? <div className="sl-biome-floor" /> : null}
         {count > 0 && <Motes kind={scene.biome.particle} count={count} seed={species.dex * 7 + evo} />}
         <div className="sl-biome-vignette" />
       </div>

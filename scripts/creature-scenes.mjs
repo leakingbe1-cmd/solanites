@@ -114,7 +114,7 @@ async function main() {
     // plates, focus and stage framing for scripts/qa/scene-readability.py
     const { STAGE_FRAMING } = await loadTs("src/lib/creatureScenes.ts");
     const manifestNow = JSON.parse(readFileSync(MANIFEST, "utf8"));
-    const species = Object.fromEntries(Object.entries(SCENES).map(([id, sc]) => [id, { plate: manifestNow.species[id]?.plate ?? null, focus: sc.biome.focus ?? [50, 48], lift: sc.biome.lift ?? 0, calm: sc.biome.calm ?? 1 }]));
+    const species = Object.fromEntries(Object.entries(SCENES).map(([id, sc]) => [id, { plate: manifestNow.species[id]?.plate ?? null, focus: sc.biome.focus ?? [50, 48], lift: sc.biome.lift ?? 0, calm: sc.biome.calm ?? 1, floor: sc.biome.floor ?? 0, soften: sc.biome.soften ?? 0, deep: sc.biome.tones[2] }]));
     writeFileSync(process.argv[3] ?? "/dev/stdout", JSON.stringify({ framing: STAGE_FRAMING, species }));
     return;
   }

@@ -6,15 +6,15 @@ export const MARKET_RANGES = ["1D", "1W", "1M", "3M", "1Y"] as const;
 export type MarketRange = (typeof MARKET_RANGES)[number];
 
 /**
- * How fresh the numbers are. Never "live": the configured plans provide end-of-day or
- * delayed data, and the label says exactly which.
+ * How fresh the numbers are, decided from the provider's own timestamps, never assumed.
+ *   realtime        an intraday price no more than 2 minutes old while the market is open
  *   previous_close  last completed session's official close (end-of-day data)
- *   delayed         intraday prices delayed by the provider (paid plans)
+ *   delayed         an intraday price older than that, or one whose age the provider didn't give
  *   stale           the newest stored session is older than it should be
  *   sample          local development fixture data, not real prices
  *   unavailable     no trustworthy data; nothing is shown in its place
  */
-export type DataStatus = "previous_close" | "delayed" | "stale" | "sample" | "unavailable";
+export type DataStatus = "realtime" | "previous_close" | "delayed" | "stale" | "sample" | "unavailable";
 
 export interface StockIdentity {
   ticker: string;
@@ -25,7 +25,7 @@ export interface StockIdentity {
 }
 
 export interface MarketQuote {
-  /** Official close of `sessionDate`. */
+  /** Official close of `sessionDate`, or the latest intraday price when `asOf` is set. */
   price: number;
   previousClose: number | null;
   change: number | null;
@@ -33,6 +33,8 @@ export interface MarketQuote {
   direction: "up" | "down" | "flat" | "unknown";
   sessionDate: string;
   previousSessionDate: string | null;
+  /** Epoch ms of an intraday price, from the provider's own timestamp; absent for closes. */
+  asOf?: number | null;
 }
 
 export interface ChartPoint {
@@ -71,7 +73,7 @@ export interface MarketSnapshot {
   chart: MarketChart;
   growth: MarketGrowth | null;
   market: MarketStatus;
-  source: { name: string; plan: string; fetchedAt: number | null };
+  source: { name: string; plan: string; fetchedAt: number | null; delayMinutes?: number | null };
   /** When this response was produced (server clock). */
   generatedAt: number;
   review: string | null;

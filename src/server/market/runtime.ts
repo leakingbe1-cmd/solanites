@@ -6,7 +6,9 @@ import { createSharedRateLimiter } from "../rateLimitShared";
 import { getRuntime } from "../runtime";
 import { createFixtureProvider, createMassiveProvider, type MarketProvider, type ProviderPlan } from "./provider";
 import { createMarketService, type MarketService } from "./service";
+import { createLiveMarket, type LiveMarket } from "./live";
 import { migrateMarket } from "./store";
+import { createTwelveDataClient } from "./twelvedata";
 
 export interface MarketRuntime {
   db: Db;
@@ -60,4 +62,35 @@ export async function buildMarketRuntime(env: Record<string, string | undefined>
   await migrateMarket(db);
   const service = createMarketService({ db, provider, limiter: createSharedRateLimiter(db), callsPerMinute: Number(env.MARKET_CALLS_PER_MINUTE) || 4 });
   return { db, provider, service };
+}
+
+const liveHolder = globalThis as typeof globalThis & { __solanitesLiveMarket?: { key: string; live: LiveMarket } };
+
+/**
+ * Live quotes and history from Twelve Data (no database), when TWELVE_DATA_API_KEY is set.
+ * Having a key does not make anything public: public routes also need marketPublicDisplay().
+ */
+export function getLiveMarket(env: Record<string, string | undefined> = process.env): LiveMarket | null {
+  const key = env.TWELVE_DATA_API_KEY?.trim();
+  if (!key) return null;
+  if (liveHolder.__solanitesLiveMarket?.key !== key) {
+    const client = createTwelveDataClient({ apiKey: key, baseUrl: env.TWELVE_DATA_API_BASE?.trim() || undefined });
+    const live = createLiveMarket({
+      client,
+      creditsPerMinute: Number(env.TWELVE_DATA_CREDITS_PER_MINUTE) || 8,
+      creditsPerDay: Number(env.TWELVE_DATA_CREDITS_PER_DAY) || 800,
+      planLabel: env.TWELVE_DATA_PLAN_LABEL?.trim() || "Basic (free) plan",
+    });
+    liveHolder.__solanitesLiveMarket = { key, live };
+  }
+  return liveHolder.__solanitesLiveMarket.live;
+}
+
+/**
+ * Whether genuine provider prices may be shown to public visitors. Off unless
+ * MARKET_PUBLIC_DISPLAY=1, which should only be set once the provider plan's display rights are
+ * confirmed (Twelve Data's free Basic plan is for internal, non-display use).
+ */
+export function marketPublicDisplay(env: Record<string, string | undefined> = process.env): boolean {
+  return env.MARKET_PUBLIC_DISPLAY?.trim() === "1";
 }

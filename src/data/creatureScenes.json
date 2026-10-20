@@ -203,6 +203,60 @@
         "/scenes/thalor/glow-3.webp",
         "/scenes/thalor/glow-4.webp"
       ]
+    },
+    "astravex": {
+      "plate": "/scenes/astravex/plate.webp",
+      "glow": [
+        null,
+        "/scenes/astravex/glow-2.webp",
+        "/scenes/astravex/glow-3.webp",
+        "/scenes/astravex/glow-4.webp"
+      ]
+    },
+    "orbelith": {
+      "plate": "/scenes/orbelith/plate.webp",
+      "glow": [
+        null,
+        "/scenes/orbelith/glow-2.webp",
+        "/scenes/orbelith/glow-3.webp",
+        "/scenes/orbelith/glow-4.webp"
+      ]
+    },
+    "eventide": {
+      "plate": "/scenes/eventide/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/eventide/glow-3.webp",
+        "/scenes/eventide/glow-4.webp"
+      ]
+    },
+    "helivane": {
+      "plate": "/scenes/helivane/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "genesis": {
+      "plate": "/scenes/genesis/plate.webp",
+      "glow": [
+        null,
+        "/scenes/genesis/glow-2.webp",
+        "/scenes/genesis/glow-3.webp",
+        "/scenes/genesis/glow-4.webp"
+      ]
+    },
+    "nullborn": {
+      "plate": "/scenes/nullborn/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/nullborn/glow-3.webp",
+        "/scenes/nullborn/glow-4.webp"
+      ]
     }
   }
 }

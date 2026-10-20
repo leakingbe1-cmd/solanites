@@ -53,3 +53,15 @@ describe("classified painted art never enters the repository", () => {
     expect(stageAsset("test-classified", 0)).toBeNull();
   });
 });
+
+describe("revealed classified art is all-or-nothing", () => {
+  it("registers painted stages only when all four exist", async () => {
+    const { registerClassifiedArt } = await import("@/components/creature/species");
+    const img = { src: "data:image/webp;base64,AAAA", thumb: "data:image/webp;base64,AAAA", alpha: true };
+    const stages = ["", "", "", ""] as [string, string, string, string];
+    registerClassifiedArt("test-partial", { stages, images: [img, null, img, img] });
+    for (let n = 0; n < 4; n++) expect(stageAsset("test-partial", n)).toBeNull();
+    registerClassifiedArt("test-full", { stages, images: [img, img, img, img] });
+    for (let n = 0; n < 4; n++) expect(stageAsset("test-full", n)).toEqual(img);
+  });
+});

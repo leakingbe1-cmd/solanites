@@ -74,10 +74,23 @@ ok("public: Developer Mode's client chunk exists and is among those checked", de
 const publicFiles = walk(path.join(ROOT, "public"));
 ok(`public: none of ${publicFiles.length} public asset paths names a classified species`, publicFiles.every((f) => leaks(path.relative(ROOT, f)).length === 0));
 
-for (const [method, p] of [["GET", "/api/holders/11111111111111111111111111111111"], ["GET", "/api/health"], ["POST", "/api/eggs/egg_11111111111111111111111111111111_1/hatch"]]) {
+const ADDR = "11111111111111111111111111111111";
+for (const [method, p] of [["GET", `/api/holders/${ADDR}`], ["GET", "/api/health"], ["POST", `/api/eggs/egg_${ADDR}_1/hatch`], ["GET", `/api/wallet/${ADDR}`], ["GET", "/api/claims/status"], ["GET", "/api/market/mossling?range=1M"], ...ids.map((id) => ["GET", `/api/market/${id}?range=1M&owner=${ADDR}`])]) {
   const res = await fetch(B + p, { method });
   const body = await res.text();
   ok(`public: ${method} ${p} (${res.status}) names no classified species`, leaks(body).length === 0, leaks(body).join(", "));
+}
+
+// React Server Component payloads (client-side navigation) of every public page.
+for (const p of PAGES.slice(0, 6)) {
+  const res = await fetch(B + p, { headers: { RSC: "1" } });
+  const body = await res.text();
+  ok(`public: RSC payload of ${p} names no classified species`, leaks(body).length === 0, leaks(body).join(", "));
+}
+// A classified market id answers exactly like an unknown one.
+{
+  const a = await fetch(`${B}/api/market/${ids[0]}?range=1M`), b = await fetch(`${B}/api/market/no-such-species?range=1M`);
+  ok("public: classified and unknown market ids answer identically", a.status === b.status && (await a.text()) === (await b.text()), `${a.status}/${b.status}`);
 }
 
 // Developer Mode refuses anyone without the owner credentials, and says nothing classified while refusing.

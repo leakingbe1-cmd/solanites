@@ -74,7 +74,8 @@ export const ART_ID_TOKEN = "__SLID__";
 /** Makes a classified species drawable in this browser, from art the server sent. */
 export function registerClassifiedArt(id: string, art: ClassifiedArt): void {
   const { stages, images, ...shape } = art;
-  if (images?.some(Boolean)) registerStageAssets(id, images);
+  // Painted art only when all four stages exist, so a line is never half painted, half vector.
+  if (images?.length === 4 && images.every(Boolean)) registerStageAssets(id, images);
   RENDERERS[id] = {
     ...shape,
     render: (c) => <g dangerouslySetInnerHTML={{ __html: stages[c.evo].split(ART_ID_TOKEN).join(c.id) }} />,

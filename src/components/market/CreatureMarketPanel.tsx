@@ -11,8 +11,8 @@ import { TradingViewOverview } from "./TradingViewOverview";
  * information panel; it never recolours the creature. Everything comes from /api/market, which
  * reads stored end-of-day data on the server, so opening many creatures costs no provider calls.
  *
- * `owner`: the public address of the viewer's wallet when they own this creature. Required for
- * Mythic and Secret species, whose link stays classified until a verified hatch.
+ * `owner`: the viewer's wallet when they own this creature; it only re-fetches on change. Mythic
+ * and Secret links need a wallet-signed reveal session (see components/wallet/revealWithWallet).
  */
 
 const UP = "#46c9b0";
@@ -58,8 +58,9 @@ export function CreatureMarketPanel({
   useEffect(() => {
     const ctl = new AbortController();
     setRefetching(true);
+    // Classified links are disclosed only to a wallet-signed reveal session (an httpOnly cookie
+    // sent automatically); a submitted address is never treated as proof, so none is sent.
     const q = new URLSearchParams({ range });
-    if (owner) q.set("owner", owner);
     (fetchSnapshot ? fetchSnapshot(range, ctl.signal) : fetch(`/api/market/${encodeURIComponent(speciesId)}?${q}`, { signal: ctl.signal }))
       .then(async (r) => {
         if (r.status === 404) return setLoad({ state: "classified" });

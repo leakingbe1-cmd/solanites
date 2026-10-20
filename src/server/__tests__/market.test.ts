@@ -6,7 +6,8 @@ import type { Db } from "../db/types";
 import { createSharedRateLimiter } from "../rateLimitShared";
 import { MarketDataError, type DailyBar, type MarketProvider } from "../market/provider";
 import { createMarketService, unavailableSnapshot } from "../market/service";
-import { ledgerCount, migrateMarket, ownsHatched, readBar, readLedger, readTickerState, upsertBars } from "../market/store";
+import { ledgerCount, migrateMarket, readBar, readLedger, readTickerState, upsertBars } from "../market/store";
+import { ownsHatchedOnChain } from "../ownership/reveal";
 
 // Monday 19 Oct 2026, 6:00 pm New York: the 19th's close is published, the previous session is Friday the 16th.
 const NOW = Date.parse("2026-10-19T22:00:00Z");
@@ -215,12 +216,17 @@ describe("snapshot", () => {
 });
 
 describe("ownership check for classified species", () => {
-  it("only a wallet that has hatched the species counts", async () => {
-    await db.query(`INSERT INTO holders (owner, source, first_seen_ms) VALUES ('Owner1111', 'fixture', 0)`);
+  it("only a hatched, on-chain egg of that species owned by a non-excluded wallet counts", async () => {
+    await db.query(`INSERT INTO holders (owner, source, first_seen_ms) VALUES ('Owner1111', 'chain', 0), ('Fixture22', 'fixture', 0), ('Excluded3', 'chain', 0)`);
+    await db.query(`UPDATE holders SET excluded = true WHERE owner = 'Excluded3'`);
     await db.query(`INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, hatched_ms)
-      VALUES ('e1', 'Owner1111', 1, 'fixture', 0, 0, 0, 0, 0, 1, 'astravex', NULL), ('e2', 'Owner1111', 2, 'fixture', 0, 0, 0, 0, 0, 1, 'genesis', 5)`);
-    expect(await ownsHatched(db, "Owner1111", "astravex")).toBe(false); // sealed egg: not hatched yet
-    expect(await ownsHatched(db, "Owner1111", "genesis")).toBe(true);
-    expect(await ownsHatched(db, "Someone", "genesis")).toBe(false);
+      VALUES ('e1', 'Owner1111', 1, 'chain', 0, 0, 0, 0, 0, 1, 'astravex', NULL), ('e2', 'Owner1111', 2, 'chain', 0, 0, 0, 0, 0, 1, 'genesis', 5),
+             ('e3', 'Fixture22', 1, 'fixture', 0, 0, 0, 0, 0, 1, 'genesis', 5), ('e4', 'Excluded3', 1, 'chain', 0, 0, 0, 0, 0, 1, 'genesis', 5)`);
+    expect(await ownsHatchedOnChain(db, "Owner1111", "astravex")).toBe(false); // sealed egg: not hatched yet
+    expect(await ownsHatchedOnChain(db, "Owner1111", "genesis")).toBe(true);
+    expect(await ownsHatchedOnChain(db, "Someone", "genesis")).toBe(false);
+    expect(await ownsHatchedOnChain(db, "Fixture22", "genesis")).toBe(false); // fixture eggs never count outside sample mode
+    expect(await ownsHatchedOnChain(db, "Fixture22", "genesis", true)).toBe(true);
+    expect(await ownsHatchedOnChain(db, "Excluded3", "genesis")).toBe(false);
   });
 });

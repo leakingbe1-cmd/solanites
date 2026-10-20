@@ -189,14 +189,3 @@ export async function updateTickerState(sql: Sql, ticker: string, patch: Partial
     [ticker, next.needsHistory, next.historyFetchedMs, next.intradayForbiddenMs, next.lastErrorCode, next.lastErrorMs],
   );
 }
-
-/** True when this wallet has hatched a creature of this species (holder tracking's eggs table). */
-export async function ownsHatched(sql: Sql, owner: string, speciesId: string): Promise<boolean> {
-  try {
-    const r = await sql.query(`SELECT 1 FROM eggs WHERE owner = $1 AND species_id = $2 AND hatched_ms IS NOT NULL LIMIT 1`, [owner, speciesId]);
-    return r.rows.length > 0;
-  } catch {
-    // Holder tracking not set up on this database: nobody can prove ownership yet.
-    return false;
-  }
-}

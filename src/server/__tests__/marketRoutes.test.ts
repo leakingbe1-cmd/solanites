@@ -44,30 +44,58 @@ describe("market routes", () => {
     expect((await GET(req("/api/market/pyraurum?range=5Y"), params("pyraurum"))).status).toBe(400);
   });
 
-  it("classified species stay classified: same 404 as an unknown species, unless the owner has hatched one", async () => {
+  it("classified species stay classified: a submitted address proves nothing; a signed wallet that hatched one sees it", async () => {
+    process.env.SIWS_DOMAIN = "solanites.test";
+    process.env.SOLANITES_SESSION_SECRET = "test-session-secret-for-reveal-0123456789";
     const { GET } = await import("@/app/api/market/[speciesId]/route");
+    const challenge = (await import("@/app/api/owner/challenge/route")).POST;
+    const session = (await import("@/app/api/owner/session/route")).POST;
+    const post = (url: string, body: unknown) => req(url, { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } });
     const unknown = await GET(req("/api/market/nothing"), params("nothing"));
     const hidden = await GET(req("/api/market/astravex"), params("astravex"));
     expect(unknown.status).toBe(404);
     expect(hidden.status).toBe(404);
     expect(await hidden.json()).toEqual(await unknown.json());
 
-    const owner = keypairFromSeed(1003).address;
-    expect((await GET(req(`/api/market/astravex?owner=${owner}`), params("astravex"))).status).toBe(404); // hasn't hatched one
-
+    const kp = keypairFromSeed(1003);
     const rt = await getRuntime();
     await rt.db.query(
       `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, hatched_ms)
        VALUES ('egg-market-test', $1, 900, 'fixture', 0, 0, 0, 0, 0, 1, 'astravex', 1)`,
-      [owner],
+      [kp.address],
     );
-    const res = await GET(req(`/api/market/astravex?owner=${owner}`), params("astravex"));
+    // The old route: an address in the query string is not proof of anything.
+    expect((await GET(req(`/api/market/astravex?owner=${kp.address}`), params("astravex"))).status).toBe(404);
+
+    // Sign the challenge with the wallet's key, then use the session cookie.
+    const c = (await (await challenge(post("/api/owner/challenge", { address: kp.address }))).json()) as { message: string; nonce: string };
+    expect(c.message).toContain("Action: reveal-hatched-solanites");
+    const signature = Buffer.from(kp.sign(new TextEncoder().encode(c.message))).toString("base64");
+    const s = await session(post("/api/owner/session", { address: kp.address, nonce: c.nonce, signature }));
+    expect(s.status).toBe(200);
+    const cookie = s.headers.get("set-cookie")!.split(";")[0];
+    expect(s.headers.get("set-cookie")).toMatch(/HttpOnly; SameSite=Strict/);
+    const res = await GET(req("/api/market/astravex", { headers: { cookie } }), params("astravex"));
     expect(res.status).toBe(200);
     expect(res.headers.get("cache-control")).toBe("no-store");
     expect(((await res.json()) as MarketSnapshot).stock.ticker).toBe("GOOGL");
     // Proving ownership of one classified species reveals nothing about another.
-    expect((await GET(req(`/api/market/orbelith?owner=${owner}`), params("orbelith"))).status).toBe(404);
+    expect((await GET(req("/api/market/orbelith", { headers: { cookie } }), params("orbelith"))).status).toBe(404);
+
+    // A nonce works once; another wallet's signature never opens a session; forged cookies fail closed.
+    expect((await session(post("/api/owner/session", { address: kp.address, nonce: c.nonce, signature }))).status).toBe(401);
+    const other = keypairFromSeed(1004);
+    const c2 = (await (await challenge(post("/api/owner/challenge", { address: kp.address }))).json()) as { message: string; nonce: string };
+    expect((await session(post("/api/owner/session", { address: kp.address, nonce: c2.nonce, signature: Buffer.from(other.sign(new TextEncoder().encode(c2.message))).toString("base64") }))).status).toBe(401);
+    const forged = cookie.replace(/\.[^.]+$/, ".AAAA");
+    expect((await GET(req("/api/market/astravex", { headers: { cookie: forged } }), params("astravex"))).status).toBe(404);
+    const { issueSession } = await import("@/server/claims/session");
+    const claimsToken = issueSession(process.env.SOLANITES_SESSION_SECRET!, kp.address, Date.now()).token;
+    expect((await GET(req("/api/market/astravex", { headers: { cookie: `sl_reveal=${encodeURIComponent(claimsToken)}` } }), params("astravex"))).status).toBe(404);
+    delete process.env.SIWS_DOMAIN;
+    delete process.env.SOLANITES_SESSION_SECRET;
   });
+
 
   const STUDIO = "owner:correct-horse-battery-staple-test";
   const basic = (v: string) => ({ authorization: `Basic ${btoa(v)}` });

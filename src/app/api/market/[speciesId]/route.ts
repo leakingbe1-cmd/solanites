@@ -7,8 +7,7 @@ import { log } from "@/server/log";
 import { MarketDataError } from "@/server/market/provider";
 import { getLiveMarket, getMarketRuntime, marketPublicDisplay } from "@/server/market/runtime";
 import { unavailableSnapshot } from "@/server/market/service";
-import { ownsHatched } from "@/server/market/store";
-import { checkSolanaAddress } from "@/server/solana/address";
+import { ownsHatchedOnChain, provenWallet } from "@/server/ownership/reveal";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +15,7 @@ export const dynamic = "force-dynamic";
 const notFound = () => fail(404, "NOT_FOUND", "Not found.");
 
 /**
- * GET /api/market/:speciesId?range=1M[&owner=<address>]
+ * GET /api/market/:speciesId?range=1M
  *
  * A species' linked stock: identity, the latest price and daily change, a chart for the range,
  * and its Market Vigour.
@@ -26,11 +25,10 @@ const notFound = () => fail(404, "NOT_FOUND", "Not found.");
  * unavailable snapshot, whether or not a provider key is configured, so the free Basic plan's
  * internal-use data never reaches a visitor. Local sample mode is exempt (labelled sample data).
  *
- * Mythic and Secret species are classified: their link is only returned with `owner`, a
- * public address that holder tracking shows has hatched one, the same rule the holder API
- * uses to disclose a hatched classified species. An address is public, so this is not proof
- * that the caller controls that wallet. Unknown and undisclosed classified species get the
- * same 404, so the response reveals nothing.
+ * Mythic and Secret species are classified: their link is returned only to a visitor whose
+ * wallet has signed a reveal challenge (/api/owner/challenge, /api/owner/session) and owns a
+ * hatched, on-chain egg of that species. A submitted address proves nothing on its own.
+ * Unknown species, and classified ones without that proof, get the same 404 (fail closed).
  */
 export async function GET(req: Request, { params }: { params: Promise<{ speciesId: string }> }) {
   // Rate-limited before any lookup, so an unknown id and an undisclosed classified one behave identically.
@@ -54,9 +52,10 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   try {
     const live = sample ? null : getLiveMarket();
     if (classified) {
+      const wallet = provenWallet(req);
+      if (!wallet) return notFound();
       const rt = await getMarketRuntime();
-      const owner = checkSolanaAddress(url.searchParams.get("owner") ?? "");
-      if (!owner.ok || !(await ownsHatched(rt.db, owner.address, speciesId))) return notFound();
+      if (!(await ownsHatchedOnChain(rt.db, wallet, speciesId, sample))) return notFound();
     }
     const snap = live ? await live.snapshot(speciesId, range) : await (await getMarketRuntime()).service.snapshot(speciesId, range);
     // Shared caches may hold public answers briefly: a minute for live quotes, longer for stored closes.

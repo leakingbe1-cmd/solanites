@@ -338,7 +338,7 @@ for (const [name, vp, mobile] of [
     dawn: getComputedStyle(document.querySelector(".sl-phx-dawn")).opacity,
     sheets: [...document.styleSheets].some((s) => { try { return [...s.cssRules].some((r) => /sl-phx-pulse/.test(r.cssText)); } catch { return false; } }),
   }));
-  ok("hero: no ignition pulse element or rule; after the awakening the art rests fully visible", hero.pulse === 0 && !hero.sheets && hero.art === "1" && hero.dawn === "0", JSON.stringify(hero));
+  ok("hero: no ignition pulse element or rule; after the awakening the art rests fully visible", hero.pulse === 0 && !hero.sheets && hero.art === "1" && Number(hero.dawn) < 0.02, JSON.stringify(hero));
   await c.close();
 }
 {

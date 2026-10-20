@@ -4,11 +4,10 @@ For each species x stage, the LAST row in art/creature-studio/overhaul/tasks.tsv
 come later). Its raw file is cut out and framed to the canon C13 target and written as
   art/creature-studio/overhaul/final/<id>/<n>-<stage>.png   (1024 x 1024, transparent)
 with the C9 48 px readability numbers in art/creature-studio/overhaul/status.json.
-Classified species are refused: their art must never be written into this public repository.
+Mythic and Secret species are published like the others (owner decision, 2026-10-20).
 
   python3 -I docs/creature-studio/tools/process-overhaul.py [board-name id,id,...]
 """
-import hashlib
 import importlib.util
 import json
 import sys
@@ -19,7 +18,6 @@ from PIL import Image, ImageDraw
 
 ROOT = Path("art/creature-studio/overhaul")
 STAGES = ["eggling", "hatchling", "evolved", "ascended"]
-CLASSIFIED = {"086f90d3cfd8e943", "635f6faa80eccaf4", "6be2ea8b0b28eea0", "aeebad4a796fcc2e", "b9a8facfd00a4ea9", "e3bb8b00106b7d9b"}  # sha256(id)[:16] of the Mythic and Secret species
 BG = (7, 6, 13, 255)
 PIPELINE = 3  # 2: detached specks cleared before framing; 3: painted holes restored from the raw
 KEEP_HOLES = {"aurelion-1"}  # restoring only one eye ring would make the eyes mismatch
@@ -56,8 +54,6 @@ status = json.loads((ROOT / "status.json").read_text()) if (ROOT / "status.json"
 FIXED = {j["key"] for j in json.loads((ROOT / "local-fixes.json").read_text())} if (ROOT / "local-fixes.json").exists() else set()
 for key, task in latest.items():
     sid, n = key.rsplit("-", 1)
-    if hashlib.sha256(sid.encode()).hexdigest()[:16] in CLASSIFIED:
-        raise SystemExit(f"refusing to write classified art into the public repo: {key}")
     src = raw_for(key, task)
     if not src:
         continue

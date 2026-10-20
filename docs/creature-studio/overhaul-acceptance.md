@@ -200,3 +200,14 @@ Method: all 22 `public/scenes/<id>/plate.webp` (1024²) inspected, each composit
 - Re-run here: `node scripts/creature-scenes.mjs framing` plus `scripts/qa/scene-readability.py` gives 88/88 stages readable at card size (edge ≥ 40, or ≥ 80 % of the review background), using the site's own stage framing.
 - Visual check of the Pyraurum, Aurorath and Velynx sheets: torches and horizon gone, aurora subdued, alley floor faded out.
 - This is a framing simulation in Python, not a browser render.
+
+## 11. Mythic and Secret creatures published (2026-10-20)
+
+The owner decided, in the Creature Studio session, to show Mythic and Secret creatures fully: real art, names, lore and all stages.
+- The 23 finished classified stages went through the same pipeline as the 88: cut-out, painted-hole restoration, speck removal, C13 framing and local fixes.
+- Astravex Ascended's neck-spur fix was re-applied with `tools/astravex-neck.py`.
+- They are committed under `art/creature-studio/overhaul/final/<id>/`.
+- Site art check: 111 of 112 valid, 0 invalid.
+- Eventide Hatchling was never generated and stays vector.
+- C9 below threshold, added: Eventide 1 and Genesis 1–4 (dark obsidian palette).
+- The rarity-only previews in `art/creature-studio/previews/` are superseded by the full art.

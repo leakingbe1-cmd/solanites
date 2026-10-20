@@ -61,3 +61,5 @@ Recorded here from that session's own transcript (read-only) and Runway `list_re
 
 **Project spend since the ledger's starting balance (2,035):** 752 credits. That is 140 before the overhaul, 524 for the overhaul and 88 for biomes.
 
+
+**2026-10-20: Mythic and Secret art published.** The owner decided, typed in the Creature Studio session, to show Mythic and Secret creatures fully. The 31 classified task rows (23 first passes, 8 corrections, 124 credits) are now listed per image in `art/creature-studio/overhaul/tasks.tsv`, alongside the public rows. The totals are unchanged.

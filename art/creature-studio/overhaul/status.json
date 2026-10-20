@@ -51,6 +51,58 @@
   "specks": 3,
   "pipeline": 3
  },
+ "astravex-1": {
+  "task": "da1f8f62-b768-4250-866e-2655bd3e01b3",
+  "raw": "art/creature-studio/overhaul/raw/astravex-1-da1f8f62.png",
+  "scale": 0.524,
+  "c9": [
+   172,
+   95
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 1,
+  "pipeline": 3
+ },
+ "astravex-2": {
+  "task": "80f84961-ce1c-4474-acce-23f02139d60b",
+  "raw": "art/creature-studio/overhaul/raw/astravex-2-80f84961.png",
+  "scale": 0.697,
+  "c9": [
+   114,
+   48
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 3,
+  "pipeline": 3
+ },
+ "astravex-3": {
+  "task": "b8d69fca-fc8b-4d5c-85af-e19824703e66",
+  "raw": "art/creature-studio/overhaul/raw/astravex-3-b8d69fca.png",
+  "scale": 0.908,
+  "c9": [
+   105,
+   57
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 9,
+  "pipeline": 3
+ },
+ "astravex-4": {
+  "task": "ad66b13e-bd1c-43c6-8dc9-ecd6965f0c48",
+  "raw": "art/creature-studio/overhaul/raw/astravex-4-ad66b13e.png",
+  "scale": 1.022,
+  "c9": [
+   104,
+   58
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 7,
+  "pipeline": 3
+ },
  "aurelion-1": {
   "task": "3cef7f5c-3322-49f7-a73f-8fed26b60bae",
   "raw": "art/creature-studio/overhaul/raw/aurelion-1-3cef7f5c.png",
@@ -421,6 +473,45 @@
   "specks": 6,
   "pipeline": 3
  },
+ "eventide-1": {
+  "task": "a8565d6d-098a-42b3-beaf-4f3e47921fc1",
+  "raw": "art/creature-studio/overhaul/raw/eventide-1-a8565d6d.png",
+  "scale": 0.56,
+  "c9": [
+   68,
+   38
+  ],
+  "c9_pass": false,
+  "upscaled": false,
+  "specks": 65,
+  "pipeline": 3
+ },
+ "eventide-3": {
+  "task": "5b00c58d-c8d9-45d8-9456-7a7d7e3fcdd2",
+  "raw": "art/creature-studio/overhaul/raw/eventide-3-5b00c58d.png",
+  "scale": 0.907,
+  "c9": [
+   113,
+   82
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 1,
+  "pipeline": 3
+ },
+ "eventide-4": {
+  "task": "f23ea083-5c33-4cdb-baee-7cb8f9feace3",
+  "raw": "art/creature-studio/overhaul/raw/eventide-4-f23ea083.png",
+  "scale": 1.221,
+  "c9": [
+   123,
+   71
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 49,
+  "pipeline": 3
+ },
  "frostkit-1": {
   "task": "394a5c49-1e60-45e6-b45a-ea0ef377a39b",
   "raw": "art/creature-studio/overhaul/raw/frostkit-1-394a5c49.png",
@@ -479,6 +570,58 @@
   "specks": 14,
   "pipeline": 3
  },
+ "genesis-1": {
+  "task": "b4fbf8fe-ec15-4c3d-9c90-567835254674",
+  "raw": "art/creature-studio/overhaul/raw/genesis-1-b4fbf8fe.png",
+  "scale": 0.571,
+  "c9": [
+   52,
+   32
+  ],
+  "c9_pass": false,
+  "upscaled": false,
+  "specks": 19,
+  "pipeline": 3
+ },
+ "genesis-2": {
+  "task": "d8e6db00-36e5-40a2-a42f-b034bb317bf7",
+  "raw": "art/creature-studio/overhaul/raw/genesis-2-d8e6db00.png",
+  "scale": 0.699,
+  "c9": [
+   64,
+   41
+  ],
+  "c9_pass": false,
+  "upscaled": false,
+  "specks": 32,
+  "pipeline": 3
+ },
+ "genesis-3": {
+  "task": "4733734b-e0bf-4e9d-be04-f8d1c06900c8",
+  "raw": "art/creature-studio/overhaul/raw/genesis-3-4733734b.png",
+  "scale": 0.909,
+  "c9": [
+   54,
+   35
+  ],
+  "c9_pass": false,
+  "upscaled": false,
+  "specks": 31,
+  "pipeline": 3
+ },
+ "genesis-4": {
+  "task": "82c51f7d-1f60-4dd5-9df3-4a647a670a68",
+  "raw": "art/creature-studio/overhaul/raw/genesis-4-82c51f7d.png",
+  "scale": 1.139,
+  "c9": [
+   53,
+   34
+  ],
+  "c9_pass": false,
+  "upscaled": true,
+  "specks": 49,
+  "pipeline": 3
+ },
  "glimmeray-1": {
   "task": "09815a5d-8b85-4362-9336-00fe3c2a197d",
   "raw": "art/creature-studio/overhaul/raw/glimmeray-1-09815a5d.png",
@@ -529,6 +672,58 @@
   "c9_pass": true,
   "upscaled": true,
   "specks": 0,
+  "pipeline": 3
+ },
+ "helivane-1": {
+  "task": "8983d560-4927-4a6b-8d78-60c4bbfb4801",
+  "raw": "art/creature-studio/overhaul/raw/helivane-1-8983d560.png",
+  "scale": 0.556,
+  "c9": [
+   134,
+   96
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 4,
+  "pipeline": 3
+ },
+ "helivane-2": {
+  "task": "b7f4e315-f9e6-43c5-8f3a-304656e157c9",
+  "raw": "art/creature-studio/overhaul/raw/helivane-2-b7f4e315.png",
+  "scale": 0.703,
+  "c9": [
+   120,
+   82
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 3,
+  "pipeline": 3
+ },
+ "helivane-3": {
+  "task": "d801d37f-d6e1-444d-a9e8-d638b825420f",
+  "raw": "art/creature-studio/overhaul/raw/helivane-3-d801d37f.png",
+  "scale": 1.061,
+  "c9": [
+   112,
+   78
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 13,
+  "pipeline": 3
+ },
+ "helivane-4": {
+  "task": "b0f6b6d8-e63f-44ca-b043-5e95a3ac4178",
+  "raw": "art/creature-studio/overhaul/raw/helivane-4-b0f6b6d8.png",
+  "scale": 1.075,
+  "c9": [
+   138,
+   96
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 5,
   "pipeline": 3
  },
  "mossling-1": {
@@ -641,6 +836,58 @@
   "specks": 2,
   "pipeline": 3
  },
+ "nullborn-1": {
+  "task": "43faef18-5661-490e-918a-3b5d3be324f8",
+  "raw": "art/creature-studio/overhaul/raw/nullborn-1-43faef18.png",
+  "scale": 0.521,
+  "c9": [
+   161,
+   98
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 2,
+  "pipeline": 3
+ },
+ "nullborn-2": {
+  "task": "93a8487f-8041-48da-8217-c898ec494373",
+  "raw": "art/creature-studio/overhaul/raw/nullborn-2-93a8487f.png",
+  "scale": 0.698,
+  "c9": [
+   176,
+   81
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 0,
+  "pipeline": 3
+ },
+ "nullborn-3": {
+  "task": "b7bf7aa9-37f3-41ab-aba8-aad943f19067",
+  "raw": "art/creature-studio/overhaul/raw/nullborn-3-b7bf7aa9.png",
+  "scale": 0.918,
+  "c9": [
+   173,
+   87
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 0,
+  "pipeline": 3
+ },
+ "nullborn-4": {
+  "task": "08a85226-fdb4-479b-a584-ac6d5f14ab56",
+  "raw": "art/creature-studio/overhaul/raw/nullborn-4-08a85226.png",
+  "scale": 1.041,
+  "c9": [
+   155,
+   66
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 3,
+  "pipeline": 3
+ },
  "nyxara-1": {
   "task": "b11db1b7-c0b1-4c0d-b9fe-866f9b8ae8ae",
   "raw": "art/creature-studio/overhaul/raw/nyxara-1-b11db1b7.png",
@@ -697,6 +944,58 @@
   "c9_pass": true,
   "upscaled": true,
   "specks": 7,
+  "pipeline": 3
+ },
+ "orbelith-1": {
+  "task": "4a929bf5-14f6-4906-8dc3-e8e9fcd75b89",
+  "raw": "art/creature-studio/overhaul/raw/orbelith-1-4a929bf5.png",
+  "scale": 0.524,
+  "c9": [
+   142,
+   80
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 24,
+  "pipeline": 3
+ },
+ "orbelith-2": {
+  "task": "b12669fb-b66d-4fbd-abaa-dcb13b11c90a",
+  "raw": "art/creature-studio/overhaul/raw/orbelith-2-b12669fb.png",
+  "scale": 0.704,
+  "c9": [
+   131,
+   85
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 2,
+  "pipeline": 3
+ },
+ "orbelith-3": {
+  "task": "f1e3f9e6-c720-491c-a6f5-ff481c45febe",
+  "raw": "art/creature-studio/overhaul/raw/orbelith-3-f1e3f9e6.png",
+  "scale": 0.908,
+  "c9": [
+   122,
+   80
+  ],
+  "c9_pass": true,
+  "upscaled": false,
+  "specks": 3,
+  "pipeline": 3
+ },
+ "orbelith-4": {
+  "task": "99a6740a-149c-42c2-8a70-03d62d594233",
+  "raw": "art/creature-studio/overhaul/raw/orbelith-4-99a6740a.png",
+  "scale": 1.021,
+  "c9": [
+   117,
+   78
+  ],
+  "c9_pass": true,
+  "upscaled": true,
+  "specks": 10,
   "pipeline": 3
  },
  "pallow-1": {

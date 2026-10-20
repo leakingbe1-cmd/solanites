@@ -639,6 +639,13 @@ export function catalogueForViewer(): Species[] {
   return [...SPECIES, ...CLASSIFIED_SLOTS.map((c) => revealedByDex.get(c.dex) ?? sealed(c.rarity, c.dex))];
 }
 
+/**
+ * The stage a creature is shown at when no stage is chosen (the Collection's plates and related
+ * cards): Ascended, the finished form (owner, 20 Oct). 0-indexed: 0 Eggling … 3 Ascended. A
+ * viewer's own creature, or a stage someone picks, still shows that stage.
+ */
+export const FEATURED_STAGE = 3;
+
 export function speciesOfRarity(r: RarityId): Species[] {
   return SPECIES.filter((s) => s.rarity === r);
 }

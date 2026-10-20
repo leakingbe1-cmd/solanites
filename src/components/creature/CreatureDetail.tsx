@@ -10,7 +10,7 @@ import { discoveryOf, type Discovery } from "@/lib/discovery";
 import { formatDuration, formatSpan } from "@/lib/format";
 import { evolutionOf, formUnlockText, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
-import { ELEMENT_GLYPH, SPECIES, statsAt, type Species } from "@/lib/species";
+import { ELEMENT_GLYPH, FEATURED_STAGE, SPECIES, statsAt, type Species } from "@/lib/species";
 import { CreatureMarketPanel } from "@/components/market/CreatureMarketPanel";
 import { useHatchery } from "@/state/HatcheryProvider";
 
@@ -46,7 +46,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
   }, [h.records, species.id]);
   const current = evoInfo?.stage ?? (bestOwned >= 0 ? bestOwned : null);
 
-  const [selected, setSelected] = useState(current ?? 3);
+  const [selected, setSelected] = useState(current ?? FEATURED_STAGE);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(record?.nickname ?? "");
 
@@ -245,7 +245,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <span className="text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
                     {d === "owned" && <span className="text-sol-green">● Discovered</span>}
                   </div>
-                  <CreatureScene species={s} stage={2} size="card" silhouette={rh} sealed={rh} className="my-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
+                  <CreatureScene species={s} stage={FEATURED_STAGE} size="card" silhouette={rh} sealed={rh} className="my-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
                   <p className="truncate font-display text-sm text-bone">{rh ? "???" : s.name}</p>
                   <div className="mt-1.5">
                     <RarityBadge rarity={s.rarity} hidden={rh && s.rarity === "secret"} />

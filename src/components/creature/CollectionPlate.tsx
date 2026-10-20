@@ -4,7 +4,7 @@ import { CreatureScene } from "@/components/creature/CreatureScene";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import type { Discovery } from "@/lib/discovery";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { ELEMENT_GLYPH, type Species } from "@/lib/species";
+import { ELEMENT_GLYPH, FEATURED_STAGE, type Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 
 /**
@@ -35,7 +35,7 @@ export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, on
         </span>
       </div>
       {/* the creature in its biome (classified: the sealed vault); only the creature lifts on hover */}
-      <CreatureScene species={s} stage={stage ?? 2} size="card" silhouette={hidden} sealed={hidden} className="sl-portrait mt-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
+      <CreatureScene species={s} stage={stage ?? FEATURED_STAGE} size="card" silhouette={hidden} sealed={hidden} className="sl-portrait mt-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
       <div className="relative border-t border-white/[0.06] pt-3">
         <div className="flex items-baseline justify-between gap-2">
           <p className="truncate font-display text-base text-bone sm:text-xl">{hidden ? "???" : s.name}</p>

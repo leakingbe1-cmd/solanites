@@ -12,8 +12,7 @@ Nothing here is investment advice, and owning a Solanite has nothing to do with 
 
 - **Source of truth:** `src/server/market/stockLinks.ts`, which is server-only. To remap a species, edit that file. No UI component holds a ticker.
 - **Verification:** tickers, exchanges and legal names were checked against public listings on 19 Oct 2026, using web search because the container's network policy blocks the exchange and data-provider hosts. Re-verify against live data once those hosts are allowed (see *Network* below).
-- **Classified species:** Mythic and Secret links are never sent to the browser bundle. `/api/market/:id` returns the same 404 as an unknown species unless `?owner=` names an address with a verified hatch of that species in the `eggs` table.
-  - **⚠ Limitation:** this is not proof of ownership. Wallet addresses are public, so anyone who knows the address of someone who hatched a Mythic or Secret species can see that species' stock link. Making it owner-only needs proof of wallet control (a signed message or a signed-in session), which is not built.
+- **Mythic and Secret species:** public like every other rarity (owner decision, 20 Oct 2026). `/api/market/:id` answers for all 28 species the same way, and the TradingView widget shows their charts. They are no longer classified, and there is no `?owner=` parameter.
 
 ## Mapping
 
@@ -43,7 +42,12 @@ Every row shows the ticker chip ringed in the species' palette accent and the ch
 | 20 | Aurelith | Legendary | NEM | Newmont Corporation | NYSE | Materials · gold mining | Shell of gold; largest gold miner |
 | 21 | Velynx | Legendary | ADBE | Adobe Inc. | Nasdaq | Information technology · creative software | The Glyphwalker; tools of type and image |
 | 22 | Thalor | Legendary | JPM | JPMorgan Chase & Co. | NYSE | Financials · banking | Steadfast fortress in the deep |
-| 23–28 | *Six Mythic and Secret species* | | | | | | Classified: listed only in `src/server/market/stockLinks.ts`, never in public docs, bundles or responses |
+| 23 | Astravex | Mythic | GOOGL | Alphabet Inc. (Class A) | Nasdaq | Communication services · search and AI | Omniscient and calm: a stag whose antlers map every star |
+| 24 | Orbelith | Mythic | RKLB | Rocket Lab Corporation | Nasdaq | Industrials · space launch and spacecraft | The Celestine Coil circles a world in orbit; Rocket Lab puts things there |
+| 25 | Eventide | Mythic | LLY | Eli Lilly and Company | NYSE | Health care · pharmaceuticals | The Wing of the Last Light is silent, vast and merciful: medicine |
+| 26 | Helivane | Mythic | LMT | Lockheed Martin Corporation | NYSE | Industrials · aerospace and defence | The Sunpiercer: a fierce, unyielding raptor of the high sky |
+| 27 | GENESIS | Secret | COIN | Coinbase Global, Inc. | Nasdaq | Financials · digital asset exchange | Slot Zero, the genesis of the chain, for the exchange that brought crypto to public markets |
+| 28 | Ø NULLBORN | Secret | GME | GameStop Corp. | NYSE | Consumer discretionary · specialty retail | The Unindexed: glitched, curious, inverted; the market's most famous anomaly |
 
 **Data source (all rows):** Massive (formerly Polygon.io) stock aggregates, US consolidated tape.
 
@@ -107,7 +111,7 @@ Decision: **keep TradingView, no paid plan.** No paid market data of any kind.
 
 | Path | Who sees it | Data | Licence and status |
 |---|---|---|---|
-| **TradingView Symbol Overview widget** (`TradingViewOverview`) | Public visitors on deployments where `MARKET_WIDGET=tradingview` (set for the Vercel Preview scope only); off when unset, including production | Prices and history served by TradingView in the visitor's browser. **Timing per TradingView; may be delayed.** TradingView's widget FAQ says stock data in widgets is delayed; it gives no number of minutes, so none is claimed | Free widgets are offered "with default TradingView branding"; the attribution block is TradingView's own builder markup, unaltered. Never shown in `/studio` (owner tools) or for classified species. TradingView receives the page address of every page showing a chart |
+| **TradingView Symbol Overview widget** (`TradingViewOverview`) | Public visitors on deployments where `MARKET_WIDGET=tradingview` (set for the Vercel Preview scope only); off when unset, including production | Prices and history served by TradingView in the visitor's browser. **Timing per TradingView; may be delayed.** TradingView's widget FAQ says stock data in widgets is delayed; it gives no number of minutes, so none is claimed | Free widgets are offered "with default TradingView branding"; the attribution block is TradingView's own builder markup, unaltered. Shown for all 28 species; never in `/studio` (owner tools). TradingView receives the page address of every page showing a chart |
 | **Twelve Data, Basic (free)** (`twelvedata.ts`, `live.ts`) | Developer Mode only (`/studio/dev/market`, owner sign-in) | Quote, daily closes, 5-minute bars. Labelled "delayed" with the provider's own time, "stale" or "previous close"; **never "real-time"**, because the Basic feed's venues and `last_quote_at` semantics are unverified | Basic is for personal/internal, non-display use: **never public** while `MARKET_PUBLIC_DISPLAY` is off. Coverage per ticker shows "unverified" until a live answer is seen |
 | Massive (stored closes, cron) | Off | End-of-day | Individual plans don't permit public display |
 
@@ -179,7 +183,7 @@ browser ─► /api/market/:speciesId (60/min/IP, CDN cache 2 min) ─► servic
 owner   ─► /studio/dev/market (Developer Mode auth + DEVELOPER_MODE=off switch, read-only) ─► diagnostics / snapshot / simulate
 ```
 
-Page views never call the provider, so traffic cannot exhaust the provider quota. The API key exists only in server environment variables. It is never placed in URLs, logs or error messages, and the built client bundle was checked to contain no tickers for classified species and no environment variable names.
+Page views never call the provider, so traffic cannot exhaust the provider quota. The API key exists only in server environment variables. It is never placed in URLs, logs or error messages, and the built client bundle was checked to contain no environment variable names.
 
 ## Configuration
 

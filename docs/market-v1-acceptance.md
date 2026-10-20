@@ -40,15 +40,15 @@ Developer Mode, behind owner authentication. No public Market Vigour score. No p
 
 | # | Check | State |
 |---|---|---|
-| C1 | Public identity responses and every classified response are `no-store` | Passed locally |
-| C2 | Gated live path (display switch on) caches public answers 60 s / stored closes 120 s; never classified | Code review only; path is off by default |
+| C1 | Public identity responses are `no-store` | Passed locally |
+| C2 | Gated live path (display switch on) caches public answers 60 s / stored closes 120 s | Code review only; path is off by default |
 | C3 | Shared caching of public identity responses | Deferred: `stale-while-revalidate` makes Chromium's background revalidation stall network-idle checks |
 
 ## Mappings
 
 All 28 creature-to-stock mappings checked on 2026-10-20 against dated filings and news (search
-summaries; primary pages not fetched). Exchange and legal name correct for all 28. The private
-table, with classified rows, is kept outside the repository. Recheck before V1 after: RIG
+summaries; primary pages not fetched). Exchange and legal name correct for all 28. Mythic and Secret pairings
+are public since 20 Oct (see `docs/stock-links.md`); the dated source table is kept outside the repository. Recheck before V1 after: RIG
 (Valaris merger), TSLA, GME, CMCSA corporate actions.
 
 ## Vercel setup (owner, Preview scope only)

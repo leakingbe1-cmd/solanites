@@ -2,14 +2,12 @@
   "generated": "scripts/creature-scenes.mjs",
   "spec": {
     "plate": 1024,
-    "plateSmall": 480,
     "glow": 512,
     "format": "webp"
   },
   "species": {
     "mossling": {
       "plate": "/scenes/mossling/plate.webp",
-      "plateSmall": "/scenes/mossling/plate-480.webp",
       "glow": [
         null,
         null,
@@ -19,7 +17,6 @@
     },
     "driftfin": {
       "plate": "/scenes/driftfin/plate.webp",
-      "plateSmall": "/scenes/driftfin/plate-480.webp",
       "glow": [
         null,
         null,
@@ -29,7 +26,6 @@
     },
     "pallow": {
       "plate": "/scenes/pallow/plate.webp",
-      "plateSmall": "/scenes/pallow/plate-480.webp",
       "glow": [
         null,
         null,
@@ -39,7 +35,6 @@
     },
     "glimmeray": {
       "plate": "/scenes/glimmeray/plate.webp",
-      "plateSmall": "/scenes/glimmeray/plate-480.webp",
       "glow": [
         null,
         null,
@@ -49,7 +44,6 @@
     },
     "sproutwyrm": {
       "plate": "/scenes/sproutwyrm/plate.webp",
-      "plateSmall": "/scenes/sproutwyrm/plate-480.webp",
       "glow": [
         null,
         null,
@@ -59,7 +53,6 @@
     },
     "frostkit": {
       "plate": "/scenes/frostkit/plate.webp",
-      "plateSmall": "/scenes/frostkit/plate-480.webp",
       "glow": [
         null,
         null,
@@ -69,7 +62,6 @@
     },
     "abyssal-vael": {
       "plate": "/scenes/abyssal-vael/plate.webp",
-      "plateSmall": "/scenes/abyssal-vael/plate-480.webp",
       "glow": [
         null,
         null,
@@ -79,7 +71,6 @@
     },
     "stormquill": {
       "plate": "/scenes/stormquill/plate.webp",
-      "plateSmall": "/scenes/stormquill/plate-480.webp",
       "glow": [
         null,
         null,
@@ -89,7 +80,6 @@
     },
     "duskwing": {
       "plate": "/scenes/duskwing/plate.webp",
-      "plateSmall": "/scenes/duskwing/plate-480.webp",
       "glow": [
         null,
         null,
@@ -99,7 +89,6 @@
     },
     "cryovant": {
       "plate": "/scenes/cryovant/plate.webp",
-      "plateSmall": "/scenes/cryovant/plate-480.webp",
       "glow": [
         null,
         "/scenes/cryovant/glow-2.webp",
@@ -109,7 +98,6 @@
     },
     "emberlisk": {
       "plate": "/scenes/emberlisk/plate.webp",
-      "plateSmall": "/scenes/emberlisk/plate-480.webp",
       "glow": [
         null,
         null,
@@ -119,7 +107,6 @@
     },
     "neonyx": {
       "plate": "/scenes/neonyx/plate.webp",
-      "plateSmall": "/scenes/neonyx/plate-480.webp",
       "glow": [
         "/scenes/neonyx/glow-1.webp",
         "/scenes/neonyx/glow-2.webp",
@@ -129,7 +116,6 @@
     },
     "aurorath": {
       "plate": "/scenes/aurorath/plate.webp",
-      "plateSmall": "/scenes/aurorath/plate-480.webp",
       "glow": [
         null,
         null,
@@ -139,7 +125,6 @@
     },
     "zephrax": {
       "plate": "/scenes/zephrax/plate.webp",
-      "plateSmall": "/scenes/zephrax/plate-480.webp",
       "glow": [
         "/scenes/zephrax/glow-1.webp",
         "/scenes/zephrax/glow-2.webp",
@@ -149,7 +134,6 @@
     },
     "prismara": {
       "plate": "/scenes/prismara/plate.webp",
-      "plateSmall": "/scenes/prismara/plate-480.webp",
       "glow": [
         null,
         null,
@@ -159,7 +143,6 @@
     },
     "nyxara": {
       "plate": "/scenes/nyxara/plate.webp",
-      "plateSmall": "/scenes/nyxara/plate-480.webp",
       "glow": [
         null,
         null,
@@ -169,7 +152,6 @@
     },
     "aurelion": {
       "plate": "/scenes/aurelion/plate.webp",
-      "plateSmall": "/scenes/aurelion/plate-480.webp",
       "glow": [
         null,
         null,
@@ -179,7 +161,6 @@
     },
     "solvanth": {
       "plate": "/scenes/solvanth/plate.webp",
-      "plateSmall": "/scenes/solvanth/plate-480.webp",
       "glow": [
         null,
         null,
@@ -189,7 +170,6 @@
     },
     "pyraurum": {
       "plate": "/scenes/pyraurum/plate.webp",
-      "plateSmall": "/scenes/pyraurum/plate-480.webp",
       "glow": [
         null,
         null,
@@ -199,7 +179,6 @@
     },
     "aurelith": {
       "plate": "/scenes/aurelith/plate.webp",
-      "plateSmall": "/scenes/aurelith/plate-480.webp",
       "glow": [
         null,
         null,
@@ -209,7 +188,6 @@
     },
     "velynx": {
       "plate": "/scenes/velynx/plate.webp",
-      "plateSmall": "/scenes/velynx/plate-480.webp",
       "glow": [
         "/scenes/velynx/glow-1.webp",
         "/scenes/velynx/glow-2.webp",
@@ -219,7 +197,6 @@
     },
     "thalor": {
       "plate": "/scenes/thalor/plate.webp",
-      "plateSmall": "/scenes/thalor/plate-480.webp",
       "glow": [
         null,
         null,

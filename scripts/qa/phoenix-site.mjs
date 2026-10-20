@@ -226,14 +226,15 @@ for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
             const probe = new Image();
             probe.src = i.currentSrc;
             await probe.decode().catch(() => {});
-            return { src: i.currentSrc.split("/").pop(), creature: new URL(i.currentSrc).pathname.startsWith("/creatures/"), w: probe.naturalWidth, h: probe.naturalHeight };
+            return { src: i.currentSrc.split("/").pop(), creature: /^\/(creatures|scenes)\//.test(new URL(i.currentSrc).pathname), w: probe.naturalWidth, h: probe.naturalHeight };
           }),
       ),
     }));
     found.push(...m.imgs.map((i) => ({ ...i, path })));
     ok(`media ${path}: no video elements`, m.videos === 0);
   }
-  // Creature paintings follow their own delivery spec (1024 × 1024, art canon C12; shown at most ~520 CSS px);
+  // Creature paintings and their biome plates follow their own delivery spec (1024 × 1024, art canon C12;
+  // shown at most ~520 and ~640 CSS px);
   // every other raster image (the Phoenix still and any page media) must be at least 1080 px.
   const small = found.filter((i) => Math.min(i.w, i.h) < (i.creature ? 1024 : 1080));
   ok("media: page images at least 1080 px and creature paintings at least 1024 px on the short edge", small.length === 0, (small.length ? small : found).map((i) => `${i.path} ${i.src} ${i.w}x${i.h}`).join("; "));

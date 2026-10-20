@@ -8,7 +8,8 @@
  *   node scripts/creature-scenes.mjs framing F  # write plates + stage framing as JSON (for scripts/qa/scene-readability.py)
  *
  * Plates: art/scenes/<species-id>/plate.(png|webp|jpg), one painted biome per public species,
- * at least 1024 px. They are encoded to public/scenes/<id>/plate.webp (1024) and plate-480.webp.
+ * at least 1024 px. They are encoded to public/scenes/<id>/plate.webp (1024, used at every size, like the
+ * creature paintings).
  * A species without a master keeps the CSS gradient of its biome tones; nothing is invented.
  *
  * Glow maps: for each stage whose idle profile pulses (`glow: true`), the creature's own
@@ -29,10 +30,8 @@ const OUT = path.join(ROOT, "public/scenes");
 const MANIFEST = path.join(ROOT, "src/data/creatureScenes.json");
 const STAGES = ["1-eggling", "2-hatchling", "3-evolved", "4-ascended"];
 const PLATE = 1024;
-const PLATE_SMALL = 480;
 const GLOW = 512;
 const MAX_PLATE_BYTES = 240_000;
-const MAX_SMALL_BYTES = 60_000;
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
 /** Canon C5: emission as a share of the silhouette, by rarity. A pulse may only brighten light within it. */
 const EMISSION_LIMIT = { common: 0.03, rare: 0.05, epic: 0.1, legendary: 0.1 };
@@ -128,7 +127,7 @@ async function main() {
   const { SPECIES } = await loadTs("src/lib/species.ts");
   const problems = [];
   const report = [];
-  const manifest = { generated: "scripts/creature-scenes.mjs", spec: { plate: PLATE, plateSmall: PLATE_SMALL, glow: GLOW, format: "webp" }, species: {} };
+  const manifest = { generated: "scripts/creature-scenes.mjs", spec: { plate: PLATE, glow: GLOW, format: "webp" }, species: {} };
 
   for (const s of SPECIES) {
     const scene = SCENES[s.id];
@@ -136,7 +135,7 @@ async function main() {
       problems.push(`${s.id}: no scene in src/lib/creatureScenes.ts`);
       continue;
     }
-    const entry = { plate: null, plateSmall: null, glow: [null, null, null, null] };
+    const entry = { plate: null, glow: [null, null, null, null] };
     const dir = path.join(OUT, s.id);
     const src = findPlate(s.id);
     if (src) {
@@ -147,15 +146,11 @@ async function main() {
       if (write) {
         mkdirSync(dir, { recursive: true });
         const big = await sharp(src).resize(PLATE, PLATE, { fit: "cover" }).webp({ quality: 72, effort: 6 }).toBuffer();
-        const small = await sharp(src).resize(PLATE_SMALL, PLATE_SMALL, { fit: "cover" }).webp({ quality: 68, effort: 6 }).toBuffer();
         if (big.length > MAX_PLATE_BYTES) problems.push(`${s.id}: plate.webp is ${big.length} bytes (max ${MAX_PLATE_BYTES})`);
-        if (small.length > MAX_SMALL_BYTES) problems.push(`${s.id}: plate-480.webp is ${small.length} bytes (max ${MAX_SMALL_BYTES})`);
         writeFileSync(path.join(dir, "plate.webp"), big);
-        writeFileSync(path.join(dir, "plate-480.webp"), small);
-        report.push(`${s.id}: plate ${(big.length / 1024).toFixed(0)} KB, small ${(small.length / 1024).toFixed(0)} KB`);
+        report.push(`${s.id}: plate ${(big.length / 1024).toFixed(0)} KB`);
       }
       entry.plate = `/scenes/${s.id}/plate.webp`;
-      entry.plateSmall = `/scenes/${s.id}/plate-480.webp`;
     }
 
     const glowFrom = scene.idle.glowFrom ?? ["accent"];

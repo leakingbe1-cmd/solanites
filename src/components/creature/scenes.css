@@ -240,6 +240,12 @@
   50% { transform: scaleX(calc(1 - var(--r) * 0.01)); }
 }
 
+/* small sizes, many at once: one body layer only, so a full Collection stays cheap */
+.sl-scene-card .sl-idle-b,
+.sl-scene-quiet .sl-idle-b {
+  animation: none;
+}
+
 /* off screen or before the first sighting: hold the rest pose */
 .sl-scene:not([data-active]) :is(.sl-idle-a, .sl-idle-b, .sl-idle-seg, .sl-idle-glow, .sl-mote, .sl-mote::after, .sl-biome-air) {
   animation-play-state: paused;

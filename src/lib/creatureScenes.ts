@@ -514,7 +514,6 @@ export const SEALED_SCENE: SceneDef = {
 /** Assets produced by scripts/creature-scenes.mjs (plates and glow maps), keyed by species id. */
 export interface SceneAssets {
   plate: string | null;
-  plateSmall: string | null;
   glow: (string | null)[];
 }
 const ASSETS = (manifest as { species: Record<string, SceneAssets> }).species;

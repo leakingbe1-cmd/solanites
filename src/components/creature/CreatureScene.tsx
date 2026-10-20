@@ -45,7 +45,8 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
   const ref = useVisibility<HTMLDivElement>();
   const reduced = useReducedMotion();
   const [missing, setMissing] = useState(false);
-  const plate = size === "card" ? (assets?.plateSmall ?? assets?.plate) : assets?.plate;
+  // one 1024 painting at every size, like the creature art (canon C12; the site's media standard)
+  const plate = assets?.plate;
   const still = atRest || silhouette || sealed || scene === SEALED_SCENE;
   const moving = !still && !reduced;
   const count = moving && frame.stir ? Math.round(PARTICLES[size] * (evo === 3 ? 1 : 0.6)) : 0;
@@ -66,15 +67,13 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
   } as CSSProperties;
 
   return (
-    <div ref={ref} className={`sl-scene sl-scene-${size} ${/\b(absolute|fixed|sticky)\b/.test(className) ? "" : "relative"} ${className}`} style={style} data-biome={scene.biome.id} data-stage={evo} data-stir={moving && frame.stir ? "" : undefined}>
+    <div ref={ref} className={`sl-scene sl-scene-${size} ${/\b(absolute|fixed|sticky)\b/.test(className) ? "" : "relative"} ${className}`} style={style} data-biome={scene.biome.id} data-stage={evo} data-stir={moving && frame.stir && (size === "feature" || size === "detail") ? "" : undefined}>
       <div className="sl-biome" aria-hidden>
         {plate && !missing && (
           // eslint-disable-next-line @next/next/no-img-element -- pre-optimised static WebP plate with its own small size
           <img
             className="sl-biome-plate"
             src={plate}
-            srcSet={assets?.plateSmall && assets.plate ? `${assets.plateSmall} 480w, ${assets.plate} 1024w` : undefined}
-            sizes={size === "card" ? "(max-width: 640px) 50vw, 320px" : "(max-width: 768px) 100vw, 640px"}
             alt=""
             loading="lazy"
             decoding="async"

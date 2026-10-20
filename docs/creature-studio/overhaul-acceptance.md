@@ -159,3 +159,38 @@ Overall: **NOT ACCEPTED** until the privacy audit, the report-accuracy audit, ex
 - `registerClassifiedArt` now registers painted stages only when all four exist. Verified here: code read, `classifiedArt.test.ts` and `creatureArt.test.ts` 14/14, `tsc` clean.
 - `classified-privacy.mjs` now covers `/api/wallet`, `/api/claims/status`, `/api/market` for every classified id, and RSC payloads. The website session reports 51/51; not re-run here.
 - Still open: matching served images against classified renders (planned with the Blob store work), and the cron entry (with the owner).
+
+## 9. V1 verdict (2026-10-20)
+
+**Status: NOT ACCEPTED.** All five audits are complete; no art, credit or privacy defect blocks V1.
+
+What blocks ACCEPTED:
+1. **Real-browser check of a deployed preview: BLOCKED.** This environment's proxy refuses `*.vercel.app`. Either the owner opens the `f37f25d` preview and walks Collection and Hatchery, or allows the host so it can be tested here.
+2. **Owner decision: the production cron** in `vercel.json` (`/api/cron/sync`, daily). Disable it, or confirm it stays unauthenticated.
+3. **Owner decision: C9 exceptions** for the 8 non-Shadow sub-threshold stages (see below).
+
+Not blocking (cosmetic or post-V1): Pyraurum Ascended detail warning; PLTR exchange UNVERIFIED (search summaries only); privacy QA image matching (only relevant once classified raster art exists); dead intro-video code in the bundle.
+
+### Remaining art defects (no paid generation proposed)
+| Defect | Recommendation | Why |
+|---|---|---|
+| C9 below threshold: Duskwing 2–3, Velynx 1–4, Nyxara 1–3 (Shadow) | **Post-V1**, under the canon's Shadow exception | Each reads at least as well as its shipped drawing; the palette is intentionally dark. |
+| C9 below threshold: Aurorath 1, Emberlisk 1, 2, 4, Neonyx 1, 2, 4, Prismara 1 (non-Shadow) | **Owner decision.** Recommend accepting for V1 as recorded exceptions and correcting post-V1 (8 × 4 credits). | No canon exception covers them, but each is still better than its shipped drawing. |
+| Pyraurum Ascended "little fine detail" warning | **Post-V1** | A pipeline warning, not a failure; the art is byte-identical to the approved final. |
+| Mythic Hatchling never generated | **Owner decision; not a V1 blocker** | Classified species show vector art in V1 anyway (Blob store not connected). Needs the owner's go-ahead for one reference upload and 4 credits. |
+
+## 10. Canon review: biome plates (`feature/creature-biomes` @ `9f019d2`)
+
+Method: all 22 `public/scenes/<id>/plate.webp` (1024²) inspected, each composited with that species' Ascended final at full canvas. Findings are visual judgement plus one luminance measurement; the site's CSS framing was not reproduced.
+- **Pass:** hand-painted 2D throughout; no halos or rays behind the creatures; open, centred focal space; foreground mist instead of hard floors on most plates.
+- **C6/W1 (ground or horizon), for review:**
+  - Pyraurum: ruins, torches and a mountain horizon. The torches are bright points that compete with the creature.
+  - Velynx: an alley in perspective, which implies a street floor.
+  - Sproutwyrm: a branch crossing the lower left reads as a perch.
+  - Duskwing and Aurelion: architecture standing on a mist floor.
+- **W2 (rays, sparkles), borderline:** Aurorath's aurora curtains and Prismara's bright crystal pillars, which compete for focus.
+- **Silhouette and focal point (value contrast of the creature against the plate around it, luminance 0–255):**
+  - Near zero: Aurorath −3, Prismara −3, Nyxara +7, Emberlisk +8, Stormquill +10, Duskwing +10.
+  - Velynx −24 (the creature is darker than its plate).
+  - These creatures rely on rim light alone. Recommend darkening or blurring the plate behind the creature (CSS vignette) or lowering the plate's value.
+- **Colour consistency:** each plate's palette matches its species' element and hue. No clashes found.

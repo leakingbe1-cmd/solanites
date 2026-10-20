@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { HomeMetrics } from "@/components/landing/HomeMetrics";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
@@ -23,8 +24,8 @@ export default function Home() {
       <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
         <PhoenixHero />
         {/* phones: the Phoenix above, the copy beneath it; wide screens: the copy left, over the Phoenix's darkened wing */}
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[30svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
-          <div className="max-w-xl text-center lg:text-left">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[26svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
+          <div className="flex max-w-xl flex-col text-center lg:block lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
               <p className="sl-eyebrow is-gilt">Genesis Hatchery · Season 0</p>
@@ -35,7 +36,7 @@ export default function Home() {
             <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
               {CATALOGUE_SIZE} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
             </p>
-            <div className="sl-awake-in mt-8 flex flex-col flex-wrap items-center gap-4 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
+            <div className="sl-awake-in mt-5 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
               <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
                 EXPLORE SOLANITES
                 <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
@@ -45,10 +46,14 @@ export default function Home() {
               </Link>
             </div>
             {/* walletless exploration: nothing on the site asks for a wallet today */}
-            <p className="sl-awake-in mt-6 inline-flex items-center gap-2.5 text-sm text-mist" style={{ animationDelay: "0.6s" }}>
+            <p className="sl-awake-in mt-6 inline-flex items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
               No wallet needed to explore.
             </p>
+            {/* live holders, eggs collected and market cap (/api/home-stats); on phones above the buttons, so they're on the first screen */}
+            <div className="sl-awake-in mt-4 lg:mt-5" style={{ animationDelay: "0.45s" }}>
+              <HomeMetrics />
+            </div>
           </div>
         </div>
         <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">

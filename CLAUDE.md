@@ -46,7 +46,7 @@ Adapted from forrestchang/andrej-karpathy-skills (MIT), based on Andrej Karpathy
 - Gameplay rules live in `src/config/gameConfig.ts`. Don't hard-code rule values elsewhere.
 - `src/lib/progression.ts` is pure and shared with the server. Keep it free of browser APIs.
 - The server is the authority for eggs, hatching and rarity. Never trust the client for eligibility or progression.
-- Classified (Mythic/Secret) species data stays server-side (`src/server/classified/`); don't leak it to client bundles, the DOM or tests' snapshots.
+- All 28 species are public, Mythic and Secret included (owner decision, 20 Oct; `docs/mythic-secret-species.md`). `SPECIES` order in `src/lib/species.ts` decides which species a seed rolls, so never reorder it.
 - Keep simulated and fixture data clearly labelled.
 
 ## Security and scope

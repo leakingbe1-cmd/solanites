@@ -663,16 +663,16 @@
   "pipeline": 2
  },
  "nyxara-4": {
-  "task": "2919b858-c002-4841-9412-217cd0d4a4d5",
-  "raw": "art/creature-studio/overhaul/raw/nyxara-4-2919b858.png",
-  "scale": 1.066,
+  "task": "3f28d0d4-c348-4b38-a4c0-d00883c5948a",
+  "raw": "art/creature-studio/overhaul/raw/nyxara-4-3f28d0d4.png",
+  "scale": 1.068,
   "c9": [
-   61,
-   39
+   80,
+   50
   ],
-  "c9_pass": false,
+  "c9_pass": true,
   "upscaled": true,
-  "specks": 5,
+  "specks": 11,
   "pipeline": 2
  },
  "pallow-1": {

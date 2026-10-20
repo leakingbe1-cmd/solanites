@@ -1,6 +1,6 @@
 # Creature art overhaul: pricing check, pilot proposal, ledger, integration checklist
 
-Status 2026-10-19: **proposal only. Nothing generated, 0 credits spent under this brief.** Balance 1,895 (Runway `whoami`).
+Status 2026-10-19: proposal (historical). **Superseded:** the owner later approved the full overhaul; see `overhaul-acceptance.md` for the outcome.
 
 ## 1. Brief (owner, relayed 19 Oct)
 - **Scope:** 28 existing species × 4 stages = 112 final artworks.
@@ -75,7 +75,7 @@ Template, filled as work happens:
 ## 6. Website integration checklist (for the website session; no website code is edited here)
 1. **When to move files:** only when a species' full 4-stage line is approved. Move `art/creature-studio/<id>/<n>-<stage>.png` to `art/creatures/<id>/`, then run `npm run art:build` on `design/eclipse-vigil-code`.
 2. **File names:** `1-eggling.png`, `2-hatchling.png`, `3-evolved.png`, `4-ascended.png`. Each is 1024², transparent, and framed to C13.
-3. **Classified art (Mythic: astravex, orbelith, eventide, helivane; Secret: genesis, nullborn):**
+3. **Classified art (the four Mythic and two Secret species listed in `src/server/classified`):**
    - Never put it under `public/` or `public/creatures/<id>/`; a guessable URL leaks the species.
    - Serve it only through the website session's server-side classified path (non-guessable, access-checked).
    - Never list it in `src/data/creatureAssets.json` or anything else in the client bundle.

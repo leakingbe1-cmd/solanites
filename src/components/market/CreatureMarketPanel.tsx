@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { tradingViewSymbol } from "@/lib/market/tradingview";
 import { MARKET_RANGES, type DataStatus, type MarketRange, type MarketSnapshot } from "@/lib/market/types";
 import { PriceChart } from "./PriceChart";
+import { TradingViewOverview } from "./TradingViewOverview";
 
 /**
  * The stock linked to a species, for the creature detail view. Sits beside the artwork as an
@@ -105,7 +107,10 @@ export function CreatureMarketPanel({
 
   const { snap } = load;
   const { stock, quote, growth, market } = snap;
-  const st = STATUS[snap.status];
+  // No licensed feed on our server: show TradingView's widget, which licenses and serves genuine
+  // (delayed) prices in the visitor's browser, instead of a permanent "unavailable" panel.
+  const tvSymbol = snap.status === "unavailable" ? tradingViewSymbol(stock.exchange, stock.ticker) : null;
+  const st = tvSymbol ? { label: "Delayed · TradingView", tone: "text-vellum border-rim-strong" } : STATUS[snap.status];
   const dirColor = quote?.direction === "up" ? UP : quote?.direction === "down" ? DOWN : undefined;
   const marketLine = market.reason === "holiday" && market.holiday ? `Market closed · ${market.holiday}` : `${MARKET_STATE[market.state]}${market.earlyClose ? " · early close" : ""}`;
 
@@ -127,6 +132,21 @@ export function CreatureMarketPanel({
       </div>
       <p className="mt-3 text-sm italic text-vellum">{stock.connection}</p>
 
+      {tvSymbol ? (
+        <>
+          {/* Price and history from TradingView (delayed for stocks) */}
+          <div className="mt-5">
+            <TradingViewOverview symbol={tvSymbol} company={stock.company} accent={accent} />
+          </div>
+          <p className="mt-3 text-xs text-dust">Prices and chart are provided by TradingView and are delayed (stock prices on TradingView widgets are delayed under exchange rules, typically 15 minutes or more). They are not real-time.</p>
+          <div className="mt-6 border-t border-rim pt-5">
+            <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Market Vigour</p>
+            <p className="mt-2 text-sm text-dust">Off for now. Vigour is worked out on our server from daily closes, and that needs a licensed data feed that isn&apos;t connected yet. It&apos;s cosmetic only and never affects stats, odds, ownership or rewards.</p>
+          </div>
+          <p className="mt-5 border-t border-rim pt-3 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-dust">Market data: TradingView widget (delayed) · For game flavour only, not investment advice.</p>
+        </>
+      ) : (
+        <>
       {/* Performance */}
       <div className="mt-5 flex flex-wrap items-end gap-x-5 gap-y-2">
         {quote ? (
@@ -221,6 +241,8 @@ export function CreatureMarketPanel({
         {snap.source.name} · {snap.source.plan}
         {snap.source.fetchedAt ? ` · updated ${fmtTime(snap.source.fetchedAt)}` : ""}
       </p>
+        </>
+      )}
     </section>
   );
 }

@@ -690,5 +690,10 @@
    782
   ],
   "radius": 4
+ },
+ {
+  "key": "frostkit-4",
+  "op": "override",
+  "why": "see-through gap under the head crystals filled with shaded ice (Manager's fix, art/manager-frostkit-cleanup d4ab42b; owner-approved)"
  }
 ]

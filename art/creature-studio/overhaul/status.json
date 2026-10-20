@@ -568,7 +568,10 @@
   "c9_pass": true,
   "upscaled": true,
   "specks": 14,
-  "pipeline": 3
+  "pipeline": 3,
+  "local_fixes": [
+   "see-through gap under the head crystals filled with shaded ice (Manager's fix, art/manager-frostkit-cleanup d4ab42b; owner-approved)"
+  ]
  },
  "genesis-1": {
   "task": "b4fbf8fe-ec15-4c3d-9c90-567835254674",

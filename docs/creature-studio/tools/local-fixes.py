@@ -11,6 +11,7 @@ Each entry of art/creature-studio/overhaul/local-fixes.json names a final and on
         for seams and hairlines left where a join was rebuilt;
   taper cuts polygons away (e.g. a blunt tail end), retouches seams, and outlines the newly
         exposed edge inside `box` in the local outline colour;
+  override replaces the stage with a hand-fixed master in art/creature-studio/overhaul/overrides/<key>.png;
   trim  removes only part-coloured pixels inside a polygon (e.g. a ribbon end poking above a body
         outline) and outlines the new edge.
 Coordinates are pixels of the 1024 x 1024 final. Run after process-overhaul.py:
@@ -182,6 +183,8 @@ if __name__ == "__main__":
         path = ROOT / "final" / sid / f"{STAGES[int(n) - 1]}.png"
         if job["op"] == "join":
             fix(path, path, job.get("fill", []), job.get("retouch", []), job.get("cut", []), job.get("radius", 6), job.get("outline", True))
+        elif job["op"] == "override":
+            Image.open(ROOT / "overrides" / f"{job['key']}.png").save(path, optimize=True)
         elif job["op"] == "taper":
             taper(path, path, job["cut"], job.get("retouch", []), job["box"], job.get("radius", 4))
         elif job["op"] == "smooth":

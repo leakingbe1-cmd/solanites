@@ -12,7 +12,7 @@ Owner decision, 20 Oct 2026: the six Mythic and Secret species (Astravex, Orbeli
 | Painted stages | `public/creatures/<id>/`, built by `npm run art:build` from Creature Studio's finals (`creature-studio/art-direction` `ca84448`) |
 | Stock pairings | `src/server/market/stockLinks.ts`, served by `/api/market/:speciesId` like every other species |
 
-Eventide's Hatchling was never painted, so that one stage shows its vector drawing. The six have no painted biome yet, so their scenes use the neutral vault.
+Eventide's Hatchling was never painted, so that one stage shows its vector drawing. Their biomes came with `feature/biomes-mythic-secret` (2673092).
 
 ## What stayed the same
 

@@ -19,6 +19,8 @@ const errs = [];
 const ok = (name, cond, extra = "") => res.push(`${cond ? "PASS" : "FAIL"}  ${name}${extra ? `  (${extra})` : ""}`);
 const browser = await chromium.launch();
 const SEEN = `try{localStorage.setItem("solanites:intro:v1",JSON.stringify({seen:true,at:0}))}catch(e){}`;
+/** Mythic and Secret species: public since 20 Oct, with their own biomes since feature/biomes-mythic-secret. */
+const MYTHIC_SECRET = ["astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"];
 const PUBLIC = ["mossling", "driftfin", "pallow", "glimmeray", "sproutwyrm", "frostkit", "abyssal-vael", "stormquill", "duskwing", "cryovant", "emberlisk", "neonyx", "aurorath", "zephrax", "prismara", "nyxara", "aurelion", "solvanth", "pyraurum", "aurelith", "velynx", "thalor"];
 
 async function ctx(opts = {}) {
@@ -63,11 +65,12 @@ for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   });
   const label = `collection ${vp.width}`;
   ok(`${label}: 28 creatures in scenes`, st.scenes >= 28, String(st.scenes));
-  ok(`${label}: 22 distinct public biomes + the sealed vault`, st.biomes.length === 23 && st.biomes.includes("sealed-vault"), st.biomes.length + "");
-  ok(`${label}: the 6 classified slots use the sealed vault`, st.sealed === 6, String(st.sealed));
+  ok(`${label}: 28 distinct biomes, none on the neutral vault`, st.biomes.length === 28 && !st.biomes.includes("sealed-vault"), st.biomes.length + "");
+  ok(`${label}: no plate falls back to the neutral vault`, st.sealed === 0, String(st.sealed));
   ok(`${label}: no broken images`, st.broken.length === 0, st.broken.slice(0, 3).join(", "));
-  ok(`${label}: 22 plates`, st.plates === 22, String(st.plates));
-  ok(`${label}: scene assets requested are public species only`, scenes.every((u) => PUBLIC.some((id) => u.startsWith(`/scenes/${id}/`))), scenes.filter((u) => !PUBLIC.some((id) => u.startsWith(`/scenes/${id}/`))).slice(0, 3).join(", "));
+  ok(`${label}: 28 plates`, st.plates === 28, String(st.plates));
+  const ALL = [...PUBLIC, ...MYTHIC_SECRET];
+  ok(`${label}: scene assets requested are for known species only`, scenes.every((u) => ALL.some((id) => u.startsWith(`/scenes/${id}/`))), scenes.filter((u) => !ALL.some((id) => u.startsWith(`/scenes/${id}/`))).slice(0, 3).join(", "));
   ok(`${label}: no horizontal overflow`, st.sw <= vp.width, String(st.sw));
   await p.screenshot({ path: `${out}/collection-${vp.width}.png` });
 

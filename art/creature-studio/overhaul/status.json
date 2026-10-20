@@ -87,6 +87,50 @@
   "c9_pass": true,
   "upscaled": true
  },
+ "aurelith-1": {
+  "task": "cd99e4fd-9742-49f0-9d85-43382f6ff56b",
+  "raw": "art/creature-studio/overhaul/raw/aurelith-1-cd99e4fd.png",
+  "scale": 0.562,
+  "c9": [
+   109,
+   75
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurelith-2": {
+  "task": "6a2a2870-e9b4-4c1b-8329-18d1bbcc1065",
+  "raw": "art/creature-studio/overhaul/raw/aurelith-2-6a2a2870.png",
+  "scale": 0.715,
+  "c9": [
+   120,
+   96
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurelith-3": {
+  "task": "3c068c61-310d-4f3f-a5ad-2b8ec36a08a2",
+  "raw": "art/creature-studio/overhaul/raw/aurelith-3-3c068c61.png",
+  "scale": 0.927,
+  "c9": [
+   128,
+   96
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurelith-4": {
+  "task": "cf3e3c95-bbfc-42d9-aeef-4ffaac20244c",
+  "raw": "art/creature-studio/overhaul/raw/aurelith-4-cf3e3c95.png",
+  "scale": 1.024,
+  "c9": [
+   128,
+   97
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
  "aurorath-1": {
   "task": "d2b25b89-03ce-4bf2-9ff3-0d84a34cf487",
   "raw": "art/creature-studio/overhaul/raw/aurorath-1-d2b25b89.png",
@@ -121,12 +165,12 @@
   "upscaled": false
  },
  "aurorath-4": {
-  "task": "7cb47057-578c-413a-8f54-1b61f7470f37",
-  "raw": "art/creature-studio/overhaul/raw/aurorath-4-7cb47057.png",
-  "scale": 1.031,
+  "task": "3465d057-eea7-4093-b5cc-2210cd4e6965",
+  "raw": "art/creature-studio/overhaul/raw/aurorath-4-3465d057.png",
+  "scale": 1.026,
   "c9": [
-   71,
-   53
+   84,
+   56
   ],
   "c9_pass": true,
   "upscaled": true
@@ -483,6 +527,50 @@
   "c9_pass": false,
   "upscaled": true
  },
+ "nyxara-1": {
+  "task": "b11db1b7-c0b1-4c0d-b9fe-866f9b8ae8ae",
+  "raw": "art/creature-studio/overhaul/raw/nyxara-1-b11db1b7.png",
+  "scale": 0.529,
+  "c9": [
+   68,
+   48
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "nyxara-2": {
+  "task": "ff92e745-3fb4-4df3-98a5-7e974f971ceb",
+  "raw": "art/creature-studio/overhaul/raw/nyxara-2-ff92e745.png",
+  "scale": 0.698,
+  "c9": [
+   66,
+   41
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "nyxara-3": {
+  "task": "0ec6f87e-dc94-48bc-9790-f9ba8bdf33e5",
+  "raw": "art/creature-studio/overhaul/raw/nyxara-3-0ec6f87e.png",
+  "scale": 0.91,
+  "c9": [
+   67,
+   45
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "nyxara-4": {
+  "task": "2919b858-c002-4841-9412-217cd0d4a4d5",
+  "raw": "art/creature-studio/overhaul/raw/nyxara-4-2919b858.png",
+  "scale": 1.066,
+  "c9": [
+   62,
+   40
+  ],
+  "c9_pass": false,
+  "upscaled": true
+ },
  "pallow-1": {
   "task": "f8d65718-5051-4844-a99f-64c2a81a225d",
   "raw": "art/creature-studio/overhaul/raw/pallow-1-f8d65718.png",
@@ -523,6 +611,138 @@
   "c9": [
    178,
    114
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "prismara-1": {
+  "task": "021d5462-ddce-4f76-95d6-a99e031e6f56",
+  "raw": "art/creature-studio/overhaul/raw/prismara-1-021d5462.png",
+  "scale": 0.517,
+  "c9": [
+   81,
+   44
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "prismara-2": {
+  "task": "4991aa30-ce8e-4a65-beb2-af9d61b60a3c",
+  "raw": "art/creature-studio/overhaul/raw/prismara-2-4991aa30.png",
+  "scale": 0.705,
+  "c9": [
+   76,
+   47
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "prismara-3": {
+  "task": "43a25679-564b-4867-b4d3-97b09afafc41",
+  "raw": "art/creature-studio/overhaul/raw/prismara-3-43a25679.png",
+  "scale": 0.913,
+  "c9": [
+   81,
+   57
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "prismara-4": {
+  "task": "12808c12-8372-4db3-9f8e-3a07a2f74da0",
+  "raw": "art/creature-studio/overhaul/raw/prismara-4-12808c12.png",
+  "scale": 0.992,
+  "c9": [
+   80,
+   57
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pyraurum-1": {
+  "task": "666740b3-7c8c-4420-817f-f21576c7fe21",
+  "raw": "art/creature-studio/overhaul/raw/pyraurum-1-666740b3.png",
+  "scale": 0.52,
+  "c9": [
+   151,
+   98
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pyraurum-2": {
+  "task": "daae4533-737a-4de5-a51d-835dc4e9d3f0",
+  "raw": "art/creature-studio/overhaul/raw/pyraurum-2-daae4533.png",
+  "scale": 0.726,
+  "c9": [
+   122,
+   81
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pyraurum-3": {
+  "task": "b7dba953-1b76-434b-96f5-45c7b223a82b",
+  "raw": "art/creature-studio/overhaul/raw/pyraurum-3-b7dba953.png",
+  "scale": 0.918,
+  "c9": [
+   104,
+   74
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "pyraurum-4": {
+  "task": "f0b80249-4343-422b-b988-83ab3a91b198",
+  "raw": "art/creature-studio/overhaul/raw/pyraurum-4-f0b80249.png",
+  "scale": 1.025,
+  "c9": [
+   117,
+   80
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "solvanth-1": {
+  "task": "79449bf7-a0ac-4297-8f0f-68e797d11917",
+  "raw": "art/creature-studio/overhaul/raw/solvanth-1-79449bf7.png",
+  "scale": 0.523,
+  "c9": [
+   142,
+   98
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "solvanth-2": {
+  "task": "53056d97-1212-4a6b-ba4f-e2a55640a217",
+  "raw": "art/creature-studio/overhaul/raw/solvanth-2-53056d97.png",
+  "scale": 0.705,
+  "c9": [
+   152,
+   102
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "solvanth-3": {
+  "task": "0376c5f2-65d4-4ad6-8d9f-a8fb3482fc71",
+  "raw": "art/creature-studio/overhaul/raw/solvanth-3-0376c5f2.png",
+  "scale": 0.929,
+  "c9": [
+   136,
+   93
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "solvanth-4": {
+  "task": "cbdd6e81-d741-413a-ba87-9fba491d4321",
+  "raw": "art/creature-studio/overhaul/raw/solvanth-4-cbdd6e81.png",
+  "scale": 1.021,
+  "c9": [
+   129,
+   91
   ],
   "c9_pass": true,
   "upscaled": true
@@ -611,6 +831,138 @@
   "c9": [
    85,
    53
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "thalor-1": {
+  "task": "89602ba6-f799-4f98-bcd7-4b1a43e2dfc7",
+  "raw": "art/creature-studio/overhaul/raw/thalor-1-89602ba6.png",
+  "scale": 0.522,
+  "c9": [
+   74,
+   55
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "thalor-2": {
+  "task": "28a3788a-7135-4775-876c-428f00884f3d",
+  "raw": "art/creature-studio/overhaul/raw/thalor-2-28a3788a.png",
+  "scale": 0.696,
+  "c9": [
+   87,
+   62
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "thalor-3": {
+  "task": "a8b9fcb2-148f-4b0c-b68b-8f01d1a43d9c",
+  "raw": "art/creature-studio/overhaul/raw/thalor-3-a8b9fcb2.png",
+  "scale": 0.906,
+  "c9": [
+   108,
+   66
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "thalor-4": {
+  "task": "240d4bd3-b734-4d6e-8c34-1e75696ed2b3",
+  "raw": "art/creature-studio/overhaul/raw/thalor-4-240d4bd3.png",
+  "scale": 1.024,
+  "c9": [
+   84,
+   56
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "velynx-1": {
+  "task": "b11ed11a-67fd-490d-92cf-4e316b35b4e0",
+  "raw": "art/creature-studio/overhaul/raw/velynx-1-b11ed11a.png",
+  "scale": 0.522,
+  "c9": [
+   54,
+   40
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "velynx-2": {
+  "task": "635c72e6-f199-439d-b454-1bc028941e65",
+  "raw": "art/creature-studio/overhaul/raw/velynx-2-635c72e6.png",
+  "scale": 0.696,
+  "c9": [
+   51,
+   35
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "velynx-3": {
+  "task": "3bb55250-c6cd-4720-bbdc-032b663672a2",
+  "raw": "art/creature-studio/overhaul/raw/velynx-3-3bb55250.png",
+  "scale": 0.905,
+  "c9": [
+   64,
+   41
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "velynx-4": {
+  "task": "7a7bd378-0b60-401b-97c5-67e86fc0cb26",
+  "raw": "art/creature-studio/overhaul/raw/velynx-4-7a7bd378.png",
+  "scale": 1.031,
+  "c9": [
+   60,
+   43
+  ],
+  "c9_pass": false,
+  "upscaled": true
+ },
+ "zephrax-1": {
+  "task": "3e1b62ce-3079-4004-ae43-3a7dbf36fe2c",
+  "raw": "art/creature-studio/overhaul/raw/zephrax-1-3e1b62ce.png",
+  "scale": 0.524,
+  "c9": [
+   102,
+   54
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "zephrax-2": {
+  "task": "78bf9606-963d-48e5-9389-f85a3ce5542b",
+  "raw": "art/creature-studio/overhaul/raw/zephrax-2-78bf9606.png",
+  "scale": 0.724,
+  "c9": [
+   94,
+   51
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "zephrax-3": {
+  "task": "f1108586-0606-4675-b1bd-4fe98badc32a",
+  "raw": "art/creature-studio/overhaul/raw/zephrax-3-f1108586.png",
+  "scale": 0.908,
+  "c9": [
+   132,
+   66
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "zephrax-4": {
+  "task": "2f1eabe5-beab-4687-b4e5-7a04e806c131",
+  "raw": "art/creature-studio/overhaul/raw/zephrax-4-2f1eabe5.png",
+  "scale": 1.079,
+  "c9": [
+   122,
+   66
   ],
   "c9_pass": true,
   "upscaled": true

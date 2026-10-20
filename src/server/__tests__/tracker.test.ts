@@ -448,6 +448,8 @@ describe("holder count: unique wallets with a positive balance", () => {
     expect(h.currentHolders).toBe(2);
     // The empty wallet is never tracked, so it costs no sync round either.
     expect((await db.query(`SELECT 1 FROM holders WHERE owner = $1`, [empty])).rows).toHaveLength(0);
+    // Nor is its empty account stored: the first snapshot of a big mint stays cheap.
+    expect((await db.query(`SELECT 1 FROM token_accounts WHERE owner = $1`, [empty])).rows).toHaveLength(0);
   });
 
   it("a wallet that sells everything stops counting as a holder but keeps its eggs", async () => {

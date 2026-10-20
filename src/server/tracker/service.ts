@@ -155,6 +155,9 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       );
       for (const a of snap.accounts) {
         const prev = existing.get(a.address);
+        // Never-seen empty accounts (most of a pump.fun mint's) carry nothing to track; skipping them
+        // keeps the first discovery within the cron's time limit on networked Postgres.
+        if (!prev && a.amount === 0n) continue;
         if (prev && !prev.closed && prev.owner === a.owner && BigInt(prev.amount_base) === a.amount && prev.state === a.state) continue;
         changed.add(a.owner);
         if (prev && prev.owner !== a.owner) changed.add(prev.owner);
@@ -530,6 +533,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       lastSuccessfulSyncAt: lastOkAt,
       syncStale: lastOkAt === null || now() - lastOkAt > staleAfterMs,
       trackedHolders: holders.n,
+      // Explorer-comparable holder count. Frozen balances count here, though they earn no eggs;
+      // trackedHolders also includes ex-holders, so never present it as the holder count.
       currentHolders: current.n,
       holdersAwaitingSync: holders.pending,
       mintSupplyMatchesConfig: supply === null ? null : supply === "true",

@@ -85,7 +85,7 @@ Classified before/after boards exist only privately.
   - None of the 117 private classified files (finals, raws, references, uploads) exists as a git object in any fetched branch.
   - `src/server/classified/art.json` never held an image or ciphertext in the branch history; the file is removed in `ec8a06a`.
   - No classified id under `public/`, `art/` or in `creatureAssets.json`.
-  - No classified id and no inline image in the client bundle (`.next/static`).
+  - No classified id, name or inline image in the client bundle (`.next/static`). The word "genesis" appears 3 times as ordinary site copy ("since genesis"), not as a species reference.
   - This branch's references, prompts, task ledger and status file contain no classified species.
 - Unit test `classifiedArt.test.ts` fails if any tracked file under `src/` embeds an image or a sealed stage.
 
@@ -101,12 +101,12 @@ At `ec8a06a` (local; the full suites were not rerun on `4d42aae`, whose only cha
 | `scripts/qa/phoenix-site.mjs` | 202/202, including intro off: the homepage opens on the Phoenix still with no video request |
 | `scripts/qa/button-contrast.mjs` | 16/16 |
 
-Vercel built previews of `ec8a06a` and `4d42aae` (status "success"). The preview hostnames are not reachable from the build container, so the checks above ran on a local production build of the same code.
+Previews (Vercel GitHub status "success"; dashboard links, which need a Vercel sign-in): `ec8a06a` https://vercel.com/niga20/solanites/E712QYJiQmUDPr3JwBwUWKsbPvHg, `4d42aae` https://vercel.com/niga20/solanites/CoQUfjhAAHW4hw7zpWhdKWRBNKky, `ab0de36` (footer-only fix) https://vercel.com/niga20/solanites/8EC8JhNre4Ze5PWXJ4dhd3hDDaVF. The preview hosts are refused by this environment's proxy (CONNECT 403), so **no real-browser check of a deployed preview has happened (BLOCKED)**. The suites ran on a local production build of `ec8a06a`. The Collection sweep (494/494) was re-run with the corrected Nyxara Ascended served from disk, but the full QA suites were not re-run on a fresh `4d42aae` build.
 
 Remaining:
 1. One Mythic Hatchling not generated (owner go-ahead needed).
-2. Classified painted art not on the site until the private store is connected (owner action). Until then classified species show vector art. When it is connected, a species with a missing stage stays all-vector so no line mixes painted and vector.
-3. C9 48 px readability is below the threshold (median 70, p25 45) on 17 dark-palette stages: Aurorath 1, Duskwing 2–3, Emberlisk 1, 2, 4, Neonyx 1, 2, 4, Nyxara 1–3, Prismara 1 and Velynx 1–4. Each keeps its species palette. Each reads better than its shipped drawing at 48 px, except Velynx 4 (median 58 → 57, p25 38 → 42). Nyxara 4, which had regressed, was corrected (72/44 → 80/50).
+2. Classified painted art not on the site until the private store is connected (owner action). Until then classified species show vector art. **Requirement, not yet enforced:** `registerClassifiedArt` registers any partially painted line (`images?.some(Boolean)`), so a species with a missing stage would mix painted and vector stages. The website session must add a guard before connecting the store.
+3. C9 48 px readability is below the threshold (median 70, p25 45) on 17 dark-palette stages: Aurorath 1, Duskwing 2–3, Emberlisk 1, 2, 4, Neonyx 1, 2, 4, Nyxara 1–3, Prismara 1 and Velynx 1–4. Each keeps its species palette, and each reads at least as well as its shipped drawing; the Velynx 4 comparison depends on which shipped render is used as the baseline. Nyxara 4 had regressed (61/39) and was corrected to 80/50 (its shipped drawing measures about 68–72/43–44, depending on the render). **Owner decision needed:** canon C9's exception covers only Shadow creatures, but 8 of the 17 stages are non-Shadow (Aurorath, Emberlisk, Neonyx, Prismara).
 4. Pyraurum Ascended: pipeline warning "little fine detail" (warning only).
 5. Market data is off by default (no provider connected, by approval policy); stock panels say so honestly.
 
@@ -131,3 +131,26 @@ Overall: **NOT ACCEPTED** until the privacy audit, the report-accuracy audit, ex
 - Fix owner: the website session, with the owner's approval.
 
 **Blocked:** the Vercel preview and production hosts (`*.vercel.app`) are refused by this environment's network proxy (CONNECT 403). No real-browser check of the deployed preview has been possible. All browser checks ran on local production builds of the same commits.
+
+
+**Audit results (five independent read-only auditors, plus my own checks):**
+- **Art identity: PASS.** Re-encoding the finals reproduces all 88 webps and 88 thumbnails at `4d42aae` byte for byte; none of the 41 superseded versions matches.
+- **Credits: PASS** (fixes in `0ab4a0f`).
+  - Overhaul: 127 tasks, 524 credits, gapless chain 1,895 → 1,371; every balance equals Runway's `creditsRemaining`; 0 failed.
+  - Biome session, separately: 22 plates, 88 credits.
+  - Live balance 1,283. Spend since 2,035: 752.
+  - The 80-credit website-concept block is inferred, not measured per task.
+- **Privacy: PASS with findings.**
+  - No classified art, reference or task ID exists in any git object: 143 private files hashed, and 586 image blobs compared perceptually.
+  - Earlier pushed commits `684aef0` and `cc3a2b4` named the six classified ids in docs and tools. They are removed at the tip but remain in history, without task IDs. The ids were already public on `main`.
+  - The public repo itself holds classified ids, names and designs under `src/server/classified` (owner decision; pre-existing).
+  - Gaps in `scripts/qa/classified-privacy.mjs`:
+    - it checks text and paths only, so it would not detect a classified image saved under a public name;
+    - it skips `/api/market/[speciesId]`, `/api/wallet`, `/api/claims/*`, RSC payloads and non-JS/CSS static files.
+  - Static preview artifact: public exposure not reproduced (see above).
+- **Pairings and site: PASS except one item.**
+  - 28 mappings unchanged and constant across stages.
+  - Intro off; no merge to `main`; market data off by default; no secrets.
+  - **FAIL:** "production cron disabled" (see above).
+  - External source check: 27 MATCH, 1 UNVERIFIED (PLTR exchange), 0 mismatches. These rest on search-engine summaries of SEC, IR and exchange pages; the pages themselves could not be fetched from here.
+- **Report accuracy: corrected here.** The errors found were stale `ec8a06a` references, the missing preview links, the unenforced all-vector rule, the C9 baselines, and the non-Shadow C9 exceptions.

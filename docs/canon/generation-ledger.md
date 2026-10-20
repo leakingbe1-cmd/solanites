@@ -35,3 +35,9 @@ The owner chose the model in chat: "do banana 2.1". **Measured price: nano-banan
 | 23:36 | `3cef7f5c-3322-49f7-a73f-8fed26b60bae` | Aurelion 1 Eggling (pilot) | 4 | 1,875 | 20 |
 | 23:36 | `b3d2b04f-6598-497b-abac-33b5984ad3b4` | Aurelion 3 Evolved (pilot) | 4 | 1,871 | 24 |
 | 23:36 | `70795a73-caa0-45c9-ac89-5003b3f2da5e` | Frostkit 3 Evolved (pilot) | 4 | 1,867 | 28 |
+| 00:08–00:12 | (private ledger, held outside the public repo) | Classified stages: 23 images (one stage pending, see below) | 92 | 1,407 | — |
+
+The classified task list stays out of this public repository: species names and task IDs together would identify the art. The per-stage list goes to the website session by direct message only.
+| 00:15 | (private ledger) | Classified stages: 5 colour corrections | 20 | 1,387 | — |
+
+Per-image ledger for all non-classified overhaul work (including corrections and the owner's Solvanth 4 Nano Banana Pro edit, 20 credits): `art/creature-studio/overhaul/tasks.tsv`.

@@ -880,45 +880,45 @@
   "upscaled": true
  },
  "velynx-1": {
-  "task": "b11ed11a-67fd-490d-92cf-4e316b35b4e0",
-  "raw": "art/creature-studio/overhaul/raw/velynx-1-b11ed11a.png",
-  "scale": 0.522,
+  "task": "2d68d044-19ef-451d-ad13-e2950f42705e",
+  "raw": "art/creature-studio/overhaul/raw/velynx-1-2d68d044.png",
+  "scale": 0.521,
   "c9": [
-   54,
-   40
+   60,
+   44
   ],
   "c9_pass": false,
   "upscaled": false
  },
  "velynx-2": {
-  "task": "635c72e6-f199-439d-b454-1bc028941e65",
-  "raw": "art/creature-studio/overhaul/raw/velynx-2-635c72e6.png",
-  "scale": 0.696,
+  "task": "86137a86-05d7-4778-a755-6252e02f8a5b",
+  "raw": "art/creature-studio/overhaul/raw/velynx-2-86137a86.png",
+  "scale": 0.695,
   "c9": [
-   51,
-   35
-  ],
-  "c9_pass": false,
-  "upscaled": false
- },
- "velynx-3": {
-  "task": "3bb55250-c6cd-4720-bbdc-032b663672a2",
-  "raw": "art/creature-studio/overhaul/raw/velynx-3-3bb55250.png",
-  "scale": 0.905,
-  "c9": [
-   64,
+   59,
    41
   ],
   "c9_pass": false,
   "upscaled": false
  },
- "velynx-4": {
-  "task": "7a7bd378-0b60-401b-97c5-67e86fc0cb26",
-  "raw": "art/creature-studio/overhaul/raw/velynx-4-7a7bd378.png",
-  "scale": 1.031,
+ "velynx-3": {
+  "task": "b49f802e-1c2e-401a-a943-240077380488",
+  "raw": "art/creature-studio/overhaul/raw/velynx-3-b49f802e.png",
+  "scale": 0.906,
   "c9": [
-   60,
-   43
+   57,
+   39
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "velynx-4": {
+  "task": "5961eae1-c1cf-49ee-a155-bedc05f4423b",
+  "raw": "art/creature-studio/overhaul/raw/velynx-4-5961eae1.png",
+  "scale": 1.03,
+  "c9": [
+   57,
+   42
   ],
   "c9_pass": false,
   "upscaled": true

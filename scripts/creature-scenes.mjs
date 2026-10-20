@@ -10,7 +10,9 @@
  * Plates: art/scenes/<species-id>/plate.(png|webp|jpg), one painted biome per public species,
  * at least 1024 px. They are encoded to public/scenes/<id>/plate.webp (1024, used at every size, like the
  * creature paintings).
- * A species without a master keeps the CSS gradient of its biome tones; nothing is invented.
+ * The masters stay out of git; a checkout without them keeps the encoded plates already in
+ * public/scenes, so `build` can re-derive glow maps anywhere. A species with neither keeps the
+ * CSS gradient of its biome tones; nothing is invented.
  *
  * Glow maps: for each stage whose idle profile pulses (`glow: true`), the creature's own
  * emissive pixels (close to its palette's glow colours and bright) are lifted from its
@@ -33,6 +35,8 @@ const PLATE = 1024;
 const GLOW = 512;
 const MAX_PLATE_BYTES = 240_000;
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
+/** `check`: a committed glow map is stale when more than this share of its light differs from a fresh derivation. */
+const GLOW_DRIFT = 0.02;
 /** Canon C5: emission as a share of the silhouette, by rarity. A pulse may only brighten light within it. */
 const EMISSION_LIMIT = { common: 0.03, rare: 0.05, epic: 0.1, legendary: 0.1 };
 
@@ -101,6 +105,19 @@ async function glowMap(file, colours, level = 0.5) {
   }
   return { out, share: body ? lit / body : 0 };
 }
+/** Share of glow pixels that differ clearly between the committed map and one derived from the art now. */
+async function glowDrift(file, fresh) {
+  const alpha = async (src) => (await sharp(src).ensureAlpha().extractChannel(3).raw().toBuffer());
+  const [a, b] = await Promise.all([alpha(file), alpha(fresh)]);
+  let lit = 0;
+  let off = 0;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] > 24 || b[i] > 24) lit++;
+    if (Math.abs(a[i] - b[i]) > 40) off++;
+  }
+  return lit ? off / lit : 0;
+}
+
 const smooth = (a, b, x) => {
   const t = Math.max(0, Math.min(1, (x - a) / (b - a)));
   return t * t * (3 - 2 * t);
@@ -151,6 +168,11 @@ async function main() {
         report.push(`${s.id}: plate ${(big.length / 1024).toFixed(0)} KB`);
       }
       entry.plate = `/scenes/${s.id}/plate.webp`;
+    } else if (existsSync(path.join(dir, "plate.webp"))) {
+      // masters are not committed (art/scenes is ignored): a checkout without them keeps the encoded plate
+      const meta = await sharp(path.join(dir, "plate.webp")).metadata();
+      if (meta.width !== PLATE || meta.height !== PLATE) problems.push(`${s.id}: public plate.webp is ${meta.width}×${meta.height}, expected ${PLATE}`);
+      entry.plate = `/scenes/${s.id}/plate.webp`;
     }
 
     const glowFrom = scene.idle.glowFrom ?? ["accent"];
@@ -165,12 +187,14 @@ async function main() {
       const { out, share } = await glowMap(art, glowFrom.map((k) => s.palette[k]), scene.idle.glowLevel);
       if (share > EMISSION_LIMIT[s.rarity]) problems.push(`${s.id} stage ${n + 1}: glow map covers ${(share * 100).toFixed(1)}% of the body, over the ${s.rarity} limit of ${EMISSION_LIMIT[s.rarity] * 100}% (canon C5)`);
       if (share < 0.002) problems.push(`${s.id} stage ${n + 1}: glow map is empty (${(share * 100).toFixed(2)}% lit); pick other glowFrom colours`);
+      const buf = await sharp(out, { raw: { width: GLOW, height: GLOW, channels: 4 } }).blur(0.8).webp({ quality: 70, alphaQuality: 80, effort: 6 }).toBuffer();
+      const file = path.join(dir, `glow-${n + 1}.webp`);
       if (write) {
         mkdirSync(dir, { recursive: true });
-        const buf = await sharp(out, { raw: { width: GLOW, height: GLOW, channels: 4 } }).blur(0.8).webp({ quality: 70, alphaQuality: 80, effort: 6 }).toBuffer();
-        writeFileSync(path.join(dir, `glow-${n + 1}.webp`), buf);
+        writeFileSync(file, buf);
         report.push(`${s.id} stage ${n + 1}: glow ${(share * 100).toFixed(1)}% of body, ${(buf.length / 1024).toFixed(0)} KB`);
-      }
+      } else if (!existsSync(file)) problems.push(`${s.id} stage ${n + 1}: ${path.relative(ROOT, file)} is missing: run \`node scripts/creature-scenes.mjs build\``);
+      else if ((await glowDrift(file, buf)) > GLOW_DRIFT) problems.push(`${s.id} stage ${n + 1}: ${path.relative(ROOT, file)} was derived from other artwork: run \`node scripts/creature-scenes.mjs build\``);
       entry.glow[n] = `/scenes/${s.id}/glow-${n + 1}.webp`;
     }
     manifest.species[s.id] = entry;

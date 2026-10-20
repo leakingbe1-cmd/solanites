@@ -5,7 +5,7 @@ import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
 import { log } from "@/server/log";
 import { MarketDataError } from "@/server/market/provider";
-import { getMarketRuntime } from "@/server/market/runtime";
+import { getLiveMarket, getMarketRuntime, marketPublicDisplay } from "@/server/market/runtime";
 import { unavailableSnapshot } from "@/server/market/service";
 import { ownsHatched } from "@/server/market/store";
 import { checkSolanaAddress } from "@/server/solana/address";
@@ -18,9 +18,13 @@ const notFound = () => fail(404, "NOT_FOUND", "Not found.");
 /**
  * GET /api/market/:speciesId?range=1M[&owner=<address>]
  *
- * A species' linked stock: identity, the latest recorded close and daily change, a chart for
- * the range, and its Market Vigour. Reads stored data; it never triggers a provider fetch except
- * the 1D chart, which is cached per session and limited by a shared per-minute budget.
+ * A species' linked stock: identity, the latest price and daily change, a chart for the range,
+ * and its Market Vigour.
+ *
+ * Genuine provider prices are public only when MARKET_PUBLIC_DISPLAY=1 (set once the plan's
+ * display rights are confirmed). Otherwise every public species gets the identity-only
+ * unavailable snapshot, whether or not a provider key is configured, so the free Basic plan's
+ * internal-use data never reaches a visitor. Local sample mode is exempt (labelled sample data).
  *
  * Mythic and Secret species are classified: their link is only returned with `owner`, a
  * public address that holder tracking shows has hatched one, the same rule the holder API
@@ -41,15 +45,22 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   const range = rangeParam as MarketRange;
 
   const classified = isClassifiedId(speciesId);
+  const sample = process.env.SOLANITES_FIXTURES === "1" && process.env.NODE_ENV !== "production";
+  if (!marketPublicDisplay() && !sample) {
+    // Public display not enabled: no genuine numbers, whatever is configured. Classified stays sealed.
+    if (classified) return notFound();
+    return Response.json(unavailableSnapshot(speciesId, range, Date.now()), { headers: noStore });
+  }
   try {
-    const rt = await getMarketRuntime();
+    const live = sample ? null : getLiveMarket();
     if (classified) {
+      const rt = await getMarketRuntime();
       const owner = checkSolanaAddress(url.searchParams.get("owner") ?? "");
       if (!owner.ok || !(await ownsHatched(rt.db, owner.address, speciesId))) return notFound();
     }
-    const snap = await rt.service.snapshot(speciesId, range);
-    // Public links change at most once per session (plus the lazily cached 1D chart), so shared caches may hold them briefly.
-    const headers = classified ? noStore : { "cache-control": "public, s-maxage=120, stale-while-revalidate=600" };
+    const snap = live ? await live.snapshot(speciesId, range) : await (await getMarketRuntime()).service.snapshot(speciesId, range);
+    // Shared caches may hold public answers briefly: a minute for live quotes, longer for stored closes.
+    const headers = classified ? noStore : { "cache-control": live ? "public, s-maxage=60, stale-while-revalidate=300" : "public, s-maxage=120, stale-while-revalidate=600" };
     return Response.json(snap, { headers });
   } catch (e) {
     if (e instanceof ConfigError) {
@@ -58,7 +69,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
       return Response.json(unavailableSnapshot(speciesId, range, Date.now()), { headers: noStore });
     }
     if (e instanceof MarketDataError && e.code === "NOT_FOUND") return notFound();
-    log.error("market.view_failed", { species: speciesId, error: (e as Error).message });
+    if (e instanceof MarketDataError && e.code === "RATE_LIMITED") {
+      return Response.json({ error: { code: "MARKET_BUSY", message: "Market data is busy right now. Please try again in a minute." } }, { status: 503, headers: { ...noStore, "retry-after": "60" } });
+    }
+    // Codes only: provider messages are never logged or returned.
+    log.error("market.view_failed", { species: speciesId, code: e instanceof MarketDataError ? e.code : "INTERNAL" });
     return fail(503, "MARKET_UNAVAILABLE", "Market data is temporarily unavailable. Nothing has changed; please try again shortly.");
   }
 }

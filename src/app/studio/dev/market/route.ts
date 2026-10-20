@@ -4,7 +4,10 @@ import { MARKET_RANGES, type MarketRange } from "@/lib/market/types";
 import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
 import { ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
-import { getMarketRuntime } from "@/server/market/runtime";
+import { latestCompletedSession } from "@/lib/market/calendar";
+import { MarketDataError } from "@/server/market/provider";
+import { getLiveMarket, getMarketRuntime, marketPublicDisplay } from "@/server/market/runtime";
+import { STOCK_LINKS } from "@/server/market/stockLinks";
 import { studioApiGuard } from "@/server/studioAuth";
 
 export const runtime = "nodejs";
@@ -36,17 +39,41 @@ export async function GET(req: Request) {
     return Response.json({ rules: GROWTH_RULES, entries, vigour: vigourOf(entries) }, { headers: noStore });
   }
 
-  try {
-    const rt = await getMarketRuntime();
-    const species = url.searchParams.get("species");
+  const species = url.searchParams.get("species");
+  const range = (MARKET_RANGES as readonly string[]).includes(url.searchParams.get("range") ?? "") ? (url.searchParams.get("range") as MarketRange) : "1M";
+  // Internal testing: genuine Twelve Data numbers are allowed here (owner only), never publicly.
+  const live = getLiveMarket();
+  if (live) {
     if (species !== null) {
       if (!SPECIES_BY_ID[species]) return fail(404, "NOT_FOUND", "Unknown species.");
-      const range = (MARKET_RANGES as readonly string[]).includes(url.searchParams.get("range") ?? "") ? (url.searchParams.get("range") as MarketRange) : "1M";
+      try {
+        return Response.json(await live.snapshot(species, range), { headers: noStore });
+      } catch (e) {
+        const code = e instanceof MarketDataError ? e.code : "UNAVAILABLE";
+        return fail(code === "NOT_FOUND" ? 404 : 503, `MARKET_${code}`, e instanceof MarketDataError ? e.message : "The market data provider couldn't be reached.");
+      }
+    }
+    // Rows are fetched on demand (selecting one), so opening the inspector costs no credits.
+    const s = live.stats();
+    return Response.json(
+      {
+        provider: { name: "Twelve Data", plan: `live, fetched on demand · ${s.creditsToday}/${s.perDay} credits today · ${s.creditsThisMinute}/${s.perMinute} this minute · public display ${marketPublicDisplay() ? "ON" : "off"}` },
+        rules: GROWTH_RULES,
+        links: STOCK_LINKS.map((l) => ({ ...l, name: SPECIES_BY_ID[l.speciesId]?.name ?? l.speciesId, rarity: SPECIES_BY_ID[l.speciesId]?.rarity ?? null, accent: SPECIES_BY_ID[l.speciesId]?.palette.accent ?? "#efe8da", latestSession: null, latestClose: null, expectedSession: latestCompletedSession(Date.now()), upToDate: true, growth: null, state: { lastErrorCode: null, needsHistory: false } })),
+      },
+      { headers: noStore },
+    );
+  }
+
+  try {
+    const rt = await getMarketRuntime();
+    if (species !== null) {
+      if (!SPECIES_BY_ID[species]) return fail(404, "NOT_FOUND", "Unknown species.");
       return Response.json(await rt.service.snapshot(species, range), { headers: noStore });
     }
     return Response.json({ provider: rt.provider ? { name: rt.provider.name, plan: rt.provider.plan } : null, rules: GROWTH_RULES, links: (await rt.service.diagnostics()).map((l) => ({ ...l, name: SPECIES_BY_ID[l.speciesId]?.name ?? l.speciesId, rarity: SPECIES_BY_ID[l.speciesId]?.rarity ?? null, accent: SPECIES_BY_ID[l.speciesId]?.palette.accent ?? "#efe8da" })) }, { headers: noStore });
   } catch (e) {
-    if (e instanceof ConfigError) return fail(503, "NOT_CONFIGURED", "Market data is not switched on yet on this server (DATABASE_URL).");
-    return fail(500, "UPSTREAM_ERROR", (e as Error).message);
+    if (e instanceof ConfigError) return fail(503, "NOT_CONFIGURED", "Market data is not switched on on this server (no TWELVE_DATA_API_KEY, and MARKET_DATA_ENABLED is off).");
+    return fail(500, "UPSTREAM_ERROR", "The market service failed; see the server log for the error code.");
   }
 }

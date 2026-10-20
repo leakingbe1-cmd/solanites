@@ -19,6 +19,7 @@ const UP = "#46c9b0";
 const DOWN = "#ef6a5a";
 
 export const STATUS: Record<DataStatus, { label: string; tone: string }> = {
+  realtime: { label: "Real-time", tone: "text-vellum border-rim-strong" },
   previous_close: { label: "Previous close", tone: "text-vellum border-rim-strong" },
   delayed: { label: "Delayed 15 min", tone: "text-vellum border-rim-strong" },
   stale: { label: "Stale data", tone: "text-gilt border-gilt/40" },

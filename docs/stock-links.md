@@ -101,6 +101,16 @@ Bands:
 | 20 sessions of +3% | 20 × +10 = +200 | clamped at **100** |
 | 0.0% | 0 | 50.0 Steady |
 
+## What visitors see today (20 Oct 2026)
+
+| Path | Who sees it | Data | Licence |
+|---|---|---|---|
+| **TradingView Symbol Overview widget** (`TradingViewOverview`) | Public visitors, when no licensed server feed is enabled | Genuine prices and history from TradingView, **delayed** for stocks (exchange rules) | TradingView's free widgets are for embedding on websites; its attribution link must stay. Approved by the owner for the preview. |
+| **Twelve Data, Basic (free)** (`src/server/market/twelvedata.ts`, `live.ts`) | Developer Mode only (`/studio/dev/market`, owner sign-in) | Quote, daily closes, 5-minute bars; status from the provider's own timestamps | Basic is for internal, non-display use, so it is **never public** while `MARKET_PUBLIC_DISPLAY` is off |
+| Massive (stored closes, cron) | Off | End-of-day | Individual plans don't permit public display |
+
+Public display of a server-side provider's prices needs `MARKET_PUBLIC_DISPLAY=1`, which should only be set once the plan's display rights are confirmed in writing. The cheapest published plan that includes external display is Twelve Data **Venture, from $149/month** (paid; needs owner approval).
+
 ## Data provider
 
 ### Audit of existing integrations
@@ -171,6 +181,10 @@ Page views never call the provider, so traffic cannot exhaust the provider quota
 
 | Variable | Where | Purpose |
 |---|---|---|
+| `TWELVE_DATA_API_KEY` | Server env (secret) | Twelve Data key. Enables live data in Developer Mode. Sent only in the `Authorization` header; never in URLs, logs, responses or the bundle. |
+| `MARKET_PUBLIC_DISPLAY` | Server env | `1` lets public routes serve the provider's numbers. Off by default and independent of the key. Leave off on the free Basic plan. |
+| `TWELVE_DATA_CREDITS_PER_MINUTE` / `TWELVE_DATA_CREDITS_PER_DAY` | Server env | Budget enforced per server instance before calling (defaults 8 and 800, the Basic limits). |
+| `TWELVE_DATA_PLAN_LABEL` | Server env | Shown in the source line (default "Basic (free) plan"). |
 | `MARKET_DATA_ENABLED` | Server env | Must be `1` before the market feature opens or migrates any database. Unset (the default) means panels show **Unavailable** and nothing is written. Local sample mode (`SOLANITES_FIXTURES=1`) doesn't need it. |
 | `MASSIVE_API_KEY` | Server env (secret) | Provider key. Unset means market data shows **Unavailable**. |
 | `MARKET_DATA_PLAN` | Server env | `eod` (default) or `delayed` (paid plan only). |

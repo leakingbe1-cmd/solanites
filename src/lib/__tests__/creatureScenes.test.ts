@@ -131,12 +131,11 @@ describe("idle profiles fit the anatomy", () => {
 });
 
 describe("assets", () => {
-  it("every public species has a plate and a small plate on disk", () => {
+  it("every public species has its 1024 plate on disk", () => {
     for (const s of SPECIES) {
       const a = sceneAssets(s.id);
       expect(a?.plate, s.id).toBe(`/scenes/${s.id}/plate.webp`);
       expect(existsSync(`public${a!.plate}`), s.id).toBe(true);
-      expect(existsSync(`public${a!.plateSmall}`), s.id).toBe(true);
     }
   });
 

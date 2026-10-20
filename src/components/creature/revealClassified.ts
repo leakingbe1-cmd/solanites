@@ -1,5 +1,6 @@
 import type { ClassifiedBundle } from "@/shared/classified";
 import { revealDesign } from "@/lib/creatureDesigns";
+import { registerScene } from "@/lib/creatureScenes";
 import { revealSpecies } from "@/lib/species";
 import { registerClassifiedArt } from "./species";
 
@@ -16,5 +17,6 @@ export function revealClassified(bundles: readonly ClassifiedBundle[] | undefine
     revealSpecies(b.species);
     if (b.design) revealDesign(b.species.id, b.design);
     registerClassifiedArt(b.species.id, b.art);
+    if (b.scene) registerScene(b.species.id, b.scene.scene, b.scene.assets);
   }
 }

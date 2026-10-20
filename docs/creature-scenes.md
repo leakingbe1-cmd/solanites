@@ -61,7 +61,7 @@ No classified species is named, given a biome, or given motion anywhere in the r
 |---|---|
 | `npx vitest run src/lib/__tests__/creatureScenes.test.ts` | 22 public scenes + 6 sealed slots; distinct biomes; anatomy-compatible motions and parts; restrained timing; Eggling simple, Ascended calmer; assets on disk; fallbacks; reduced motion; off-screen pause; canon markup; public ids only |
 | `node scripts/creature-scenes.mjs check` | plates and glow maps built, manifest current, glow within canon C5 |
-| `node scripts/creature-scenes.mjs rigs F && python3 scripts/qa/scene-parts.py F --sheet DIR` | every part rig at both extremes: the join never opens, the hinge is on the body, the tip moves gently |
+| `node scripts/creature-scenes.mjs rigs F && python3 scripts/qa/scene-parts.py F --sheet DIR` | every part rig at both extremes: the join never opens, no region edge splits solid art (tear ≤ 3px), the hinge is on the body, the tip moves gently |
 | `node scripts/creature-scenes.mjs framing F && python3 scripts/qa/scene-readability.py F --sheet DIR` | every creature readable on its framed biome at card size, all 88 stages |
 | `node scripts/qa/scenes-site.mjs DIR [base]` | in the browser: biomes per species and stage, no broken images, sealed slots, public assets only, off-screen pause, reduced motion, the quiet Market Bond plate, 390 px overflow, frame cost |
 

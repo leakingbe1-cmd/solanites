@@ -183,14 +183,18 @@ for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
       tickers,
       status: m.querySelector('[data-testid="market-status"]')?.textContent.trim(),
       chart: m.querySelectorAll("svg[aria-label*='closing prices']").length,
-      noChart: !!m.querySelector('[data-testid="market-no-chart"]'),
+      noPrice: !!m.querySelector('[data-testid="market-no-price"]'),
+      widget: !!m.querySelector('[data-testid="market-widget"] [data-tv-symbol]'),
+      vigour: /Market Vigour/.test(m.textContent),
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
       creature: m.querySelectorAll(".sl-creature").length,
     };
   });
   ok(`market ${vp.width}: a substantial section with a creature and the headline`, st.height > 700 && /real company/.test(st.headline) && st.creature >= 5, JSON.stringify({ h: st.height, creature: st.creature }));
   ok(`market ${vp.width}: ticker comes from /api/market and is the same at all four stages`, /^[A-Z]{1,5}$/.test(st.chip) && st.tickers.length === 4 && st.tickers.every((t) => t === st.chip) && market.some((m) => m.startsWith("200 /api/market/")), JSON.stringify({ chip: st.chip, tickers: st.tickers, market }));
-  ok(`market ${vp.width}: data labelled by the service; no chart without data`, st.status === "Unavailable" ? st.chart === 0 && st.noChart : st.status === "Sample data" || st.status === "Previous close" || st.status === "Delayed 15 min" || st.status === "Stale data", JSON.stringify(st));
+  // Public display off: identity only, or TradingView's widget when the server marks the snapshot
+  // for it. Never a server chart or a Market Vigour claim in either case.
+  ok(`market ${vp.width}: data labelled by the service; no chart without data`, st.status === "Unavailable" ? st.chart === 0 && st.noPrice && !st.widget && !st.vigour : st.status === "TradingView" ? st.chart === 0 && st.widget && !st.vigour : ["Sample data", "Previous close", "Delayed", "Stale data"].includes(st.status), JSON.stringify(st));
   ok(`market ${vp.width}: no horizontal scroll`, st.overflow <= 0, String(st.overflow));
   await p.locator("#market").screenshot({ path: `${out}/market-${vp.width}.png` });
   // pick another creature: the ticker changes, and still matches across stages
@@ -332,6 +336,8 @@ for (const [name, vp, mobile] of [
   const [c, p] = await ctx({}, SEEN);
   await p.goto(B + "/");
   await p.waitForTimeout(3200);
+  // The dawn fade can finish late on a loaded machine; give it a few more seconds before reading.
+  await p.waitForFunction(() => Number(getComputedStyle(document.querySelector(".sl-phx-dawn")).opacity) < 0.02, null, { timeout: 6000 }).catch(() => {});
   const hero = await p.evaluate(() => ({
     pulse: document.querySelectorAll(".sl-phx-pulse").length,
     art: getComputedStyle(document.querySelector(".sl-phx-art")).opacity,
@@ -405,6 +411,12 @@ const ROUTES = [["/hatchery", "Hatchery"], ["/collection", "Collection"], ["/how
     // Let the indicator finish sliding or fading in before sampling it.
     await p.waitForFunction(() => getComputedStyle(document.querySelector('[data-testid="nav-indicator"]')).opacity === "1", null, { timeout: 2000 }).catch(() => {});
     await p.waitForTimeout(350);
+    // Then until it reaches the current link (the slide can start late while a heavy page renders).
+    await p.waitForFunction(() => {
+      const ind = document.querySelector('[data-testid="nav-indicator"]');
+      const cur = document.querySelector('header a[aria-current="page"]');
+      return ind && cur && Math.abs(new DOMMatrix(getComputedStyle(ind).transform).m41 - (cur.offsetLeft + cur.offsetWidth / 2 - 2.5)) < 1;
+    }, null, { timeout: 4000, polling: 50 }).catch(() => {});
     const st = await p.evaluate(() => {
       const ind = document.querySelector('[data-testid="nav-indicator"]');
       const cur = document.querySelector('header a[aria-current="page"]');

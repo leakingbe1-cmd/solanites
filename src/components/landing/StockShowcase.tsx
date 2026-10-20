@@ -4,10 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { STATUS } from "@/components/market/CreatureMarketPanel";
+import { panelMode } from "@/components/market/panelMode";
 import { PriceChart } from "@/components/market/PriceChart";
+import { TradingViewOverview } from "@/components/market/TradingViewOverview";
 import { useMarketSnapshot } from "@/components/market/useMarketSnapshot";
 import { gameConfig } from "@/config/gameConfig";
 import { GROWTH_RULES } from "@/lib/market/growth";
+import type { WidgetStatus } from "@/lib/market/tradingview";
 import type { MarketRange } from "@/lib/market/types";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
@@ -19,7 +22,9 @@ import { SPECIES_BY_ID } from "@/lib/species";
  * Everything market-related comes from /api/market/:speciesId (the stock service's public
  * endpoint), so tickers stay out of the bundle, the data label is the service's own
  * ("Unavailable", "Sample data", "Previous close"…) and nothing is shown that the service
- * doesn't have: no price, chart or vigour is drawn without real stored data.
+ * doesn't have: no price, chart or vigour is drawn without real stored data. With public display
+ * off (the default), the only prices are TradingView's widget, and only when the server marks the
+ * snapshot for it (panelMode, the same rule as the profile panel); Market Vigour isn't shown.
  *
  * Featured species are public ones with finished painted art. A species' stock is the same at
  * every stage (it is keyed by species, never by stage), which the stage strip makes visible.
@@ -43,6 +48,9 @@ export function StockShowcase() {
   const load = useMarketSnapshot(pick, range);
   const snap = load.state === "ok" ? load.snap : null;
   const stock = snap?.stock ?? null;
+  const mode = snap ? panelMode(snap, { ownerTools: false }) : null;
+  const [widget, setWidget] = useState<WidgetStatus>("idle");
+  const status = mode?.kind === "widget" ? (widget === "failed" ? STATUS.unavailable : { label: "TradingView", tone: "text-vellum border-rim-strong" }) : snap ? STATUS[snap.status] : null;
 
   return (
     <div className="grid items-start gap-x-14 gap-y-8 lg:grid-cols-12" data-testid="stock-showcase">
@@ -53,8 +61,8 @@ export function StockShowcase() {
           Every Solanite is bonded to a <span className="italic text-gilt">real company.</span>
         </h2>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-mist sm:text-lg">
-          Each species is paired with one publicly traded stock for life, the same from {STAGES[0]} to {STAGES[STAGES.length - 1]}. The stock&apos;s daily moves feed your
-          creature&apos;s <span className="text-bone">Market Vigour</span>: a cosmetic growth meter that rises on strong trading days and eases on weak ones.
+          Each species is paired with one publicly traded stock for life, the same from {STAGES[0]} to {STAGES[STAGES.length - 1]}. Follow your creature&apos;s company
+          right beside it.
         </p>
 
         {/* species picker */}
@@ -150,12 +158,25 @@ export function StockShowcase() {
                     {stock.ticker} · {stock.exchange} <span className="normal-case tracking-normal text-dust">· {stock.sector}</span>
                   </p>
                 </div>
-                <span className={`shrink-0 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${STATUS[snap.status].tone}`} data-testid="market-status">
-                  {STATUS[snap.status].label}
-                </span>
+                {status && (
+                  <span className={`shrink-0 rounded-full border px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] ${status.tone}`} data-testid="market-status">
+                    {status.label}
+                  </span>
+                )}
               </div>
               <p className="mt-3 text-sm italic text-vellum">{stock.connection}</p>
 
+              {mode?.kind === "widget" ? (
+                <div className="mt-5" data-testid="market-widget">
+                  <TradingViewOverview key={mode.symbol} symbol={mode.symbol} company={stock.company} accent={accent} onStatus={setWidget} />
+                  <p className="mt-3 text-xs text-dust">Prices and chart by TradingView; timing per TradingView, may be delayed.</p>
+                </div>
+              ) : mode?.kind === "none" ? (
+                <p className="mt-5 text-sm text-vellum" data-testid="market-no-price">
+                  No price shown: {snap.statusDetail.replace(/^./, (c) => c.toLowerCase())}
+                </p>
+              ) : (
+                <>
               {snap.quote ? (
                 <div className="mt-5 flex flex-wrap items-end gap-x-4 gap-y-1">
                   <span className="font-display text-4xl leading-none tabular-nums text-bone">{fmtPrice(snap.quote.price)}</span>
@@ -199,6 +220,8 @@ export function StockShowcase() {
               </div>
 
               <VigourBlock growth={snap.growth} ticker={stock.ticker} />
+                </>
+              )}
             </>
           )}
         </div>
@@ -213,8 +236,8 @@ export function StockShowcase() {
           </Link>
         </div>
         <p className="mt-5 max-w-2xl text-xs leading-relaxed text-dust">
-          Market Vigour is game flavour only. It never changes ownership, rarity, hatch odds, evolution timing or rewards, and owning a Solanite has nothing to do with owning
-          shares. Not investment advice.
+          {mode?.kind === "widget" ? "Market data: TradingView widget. " : ""}For game flavour only, not investment advice. A creature&apos;s stock never changes ownership,
+          rarity, hatch odds, evolution timing or rewards, and owning a Solanite has nothing to do with owning shares.
         </p>
       </div>
     </div>

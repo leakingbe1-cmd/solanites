@@ -32,11 +32,11 @@ async function setup() {
   chain.mintTo(pool, chain.tokens(900_000_000));
   chain.mintTo(treasury, chain.tokens(50_000_000));
   let seed = 1;
-  const make = () =>
+  const make = (maxSignaturesPerAccount = 500) =>
     createTracker({
       db,
       rpc: chain.rpc,
-      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount: 500, progression: eggProgression },
+      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount, progression: eggProgression },
       now: clock.now,
       randomSeed: () => seed++,
     });
@@ -408,6 +408,51 @@ describe("failures", () => {
     await tracker.runSync({ force: true });
     expect((await tracker.holderView(b)).counts.earned).toBe(0); // credited, correctly
     expect((await tracker.holderView(b)).sync.pending).toBe(false);
+  });
+
+  it("a wallet with more history than one pass can read finishes over several passes, oldest first", async () => {
+    const { tracker: full, make, buy } = await setup();
+    await full.runSync({ force: true }); // tracking starts before b's history
+    const tracker = make(3); // 3 transactions per account per pass stands in for the real 500
+    const b = W(53);
+    for (let i = 0; i < 10; i++) buy(b, 100_000); // 10 transactions reach exactly 1,000,000
+    const passes: boolean[] = [];
+    for (let i = 0; i < 6 && !passes.at(-1); i++) passes.push((await tracker.syncOwner(b)).complete);
+    expect(passes.slice(0, -1).every((c) => !c)).toBe(true); // partial passes award nothing
+    expect(passes.at(-1)).toBe(true);
+    expect((await tracker.holderView(b)).counts.earned).toBe(1);
+    expect((await tracker.syncOwner(b)).complete).toBe(true); // and stays complete
+  });
+
+  it("credit still moves in order when a busy wallet's history spans passes", async () => {
+    const { tracker: full, make, buy, chain } = await setup();
+    const a = W(54);
+    const b = W(55);
+    buy(a, 1_000_000);
+    await full.syncOwner(a); // a earns the egg on these tokens
+    chain.transfer(a, b, chain.tokens(1_000_000)); // the credited tokens move to b first
+    for (let i = 0; i < 6; i++) buy(b, 100_000); // then b buys 600,000 of its own
+    const tracker = make(2);
+    for (let i = 0; i < 8; i++) if ((await tracker.syncOwner(b)).complete) break;
+    const v = await tracker.holderView(b);
+    expect(v.sync.pending).toBe(false);
+    expect(v.counts.earned).toBe(0); // 1,600,000 held, 1,000,000 of it already earned an egg
+  });
+
+  it("a history node behind the balance read can't cause a second egg for the same tokens", async () => {
+    const { tracker, chain, buy } = await setup();
+    const a = W(56);
+    const b = W(57);
+    buy(a, 1_000_000);
+    await tracker.syncOwner(a);
+    const before = chain.state.slot;
+    chain.transfer(a, b, chain.tokens(1_000_000)); // credited tokens arrive at b
+    chain.state.signaturesSlot = before; // the node listing history hasn't seen that transfer yet
+    await expect(tracker.syncOwner(b)).rejects.toThrow(/unavailable/i);
+    expect((await tracker.holderView(b)).counts.earned).toBe(0);
+    chain.state.signaturesSlot = Infinity;
+    await tracker.syncOwner(b);
+    expect((await tracker.holderView(b)).counts.earned).toBe(0); // credit moved with the tokens
   });
 
   it("a missed webhook is caught by the reconciliation snapshot", async () => {

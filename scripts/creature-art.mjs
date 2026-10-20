@@ -12,6 +12,7 @@
  * and the site keeps showing the four-stage vector drawing for it.
  */
 import { execFileSync } from "node:child_process";
+import { createCipheriv, randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -26,6 +27,14 @@ const MANIFEST = path.join(ROOT, "src/data/creatureAssets.json");
 /** Classified (Mythic/Secret) painted stages: server-only data URLs, never files under public/. */
 const CLASSIFIED_ART = path.join(ROOT, "src/server/classified/art.json");
 const CLASSIFIED_SIZE = 768;
+/** AES-256-GCM key for classified art (base64, 32 bytes). Classified stages are skipped without it. */
+const ARTKEY = (() => {
+  const raw = process.env.CLASSIFIED_ART_KEY?.trim();
+  if (!raw) return null;
+  const k = Buffer.from(raw, "base64");
+  if (k.length !== 32) throw new Error("CLASSIFIED_ART_KEY must be 32 bytes, base64-encoded");
+  return k;
+})();
 const CHECKLIST = path.join(ROOT, "docs/creature-art/checklist.md");
 const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 
@@ -212,7 +221,7 @@ async function run(mode) {
   }
   // Classified species: same validation, but the output is embedded in the server-only module
   // and sent only inside a disclosed bundle. No public file, thumbnail, silhouette or manifest entry.
-  const classifiedArt = { generated: "scripts/creature-art.mjs", note: "Classified painted stages as data URLs. Server only: never copy these into public/ or src/data.", species: {} };
+  const classifiedArt = { generated: "scripts/creature-art.mjs", note: "Classified painted stages, AES-256-GCM encrypted with CLASSIFIED_ART_KEY (opened by src/server/classified/artCrypto.ts). Never commit them unencrypted.", species: {} };
   for (const id of Object.keys(classifiedDesigns.species)) {
     const stages = [];
     for (let n = 0; n < 4; n++) {
@@ -242,10 +251,20 @@ async function run(mode) {
         stages.push(null);
         continue;
       }
+      if (!ARTKEY) {
+        // The repository is public: classified art is never written unencrypted.
+        invalid++;
+        stages.push(null);
+        console.error(`✗ ${rel}: CLASSIFIED_ART_KEY is not set (base64, 32 bytes); classified art is only ever committed encrypted`);
+        continue;
+      }
       const bg = info.transparent ? { r: 0, g: 0, b: 0, alpha: 0 } : { r: 5, g: 5, b: 10, alpha: 1 };
       const webp = await sharp(file).rotate().resize(CLASSIFIED_SIZE, CLASSIFIED_SIZE, { fit: "contain", background: bg }).webp({ quality: 84, alphaQuality: 90, effort: 5 }).toBuffer();
-      const src = `data:image/webp;base64,${webp.toString("base64")}`;
-      stages.push({ src, thumb: src, alpha: info.transparent });
+      const iv = randomBytes(12);
+      const cipher = createCipheriv("aes-256-gcm", ARTKEY, iv);
+      const data = Buffer.concat([cipher.update(webp), cipher.final()]);
+      // Same format as src/server/classified/artCrypto.ts (SealedStage, v1).
+      stages.push({ v: 1, iv: iv.toString("base64"), tag: cipher.getAuthTag().toString("base64"), data: data.toString("base64"), alpha: info.transparent });
     }
     classifiedArt.species[id] = stages;
   }

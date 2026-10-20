@@ -5,6 +5,7 @@ import type { SpeciesDesign } from "@/lib/creatureDesigns";
 import { SPECIES, type Species } from "@/lib/species";
 import type { ClassifiedBundle } from "@/shared/classified";
 import art from "./art.json";
+import { artKey, openStage, type SealedStage } from "./artCrypto";
 import designs from "./designs.json";
 import { svgMarkup } from "./markup";
 import { astravex } from "./renderers/astravex";
@@ -53,9 +54,12 @@ export function classifiedBundle(id: string): ClassifiedBundle {
   const r = CLASSIFIED_RENDERERS[id];
   if (!species || !r) throw new Error(`Not a classified species: ${id}`);
   const stages = [0, 1, 2, 3].map((evo) => svgMarkup(r.render(ctxFor(species, evo)))) as ClassifiedArt["stages"];
-  // Approved painted stages, built by `npm run art:build` into ./art.json (data URLs, never public files).
-  const painted = (art as { species: Record<string, ClassifiedArt["images"]> }).species[id];
-  const out: ClassifiedArt = { stages, floating: r.floating, fit: r.fit, stageFit: r.stageFit, shadow: r.shadow, halo: r.halo, images: painted?.some(Boolean) ? painted : undefined };
+  // Approved painted stages: ciphertext in ./art.json (written by `npm run art:build`), opened
+  // here with CLASSIFIED_ART_KEY. Never a public file; without the key the vector art is used.
+  const key = artKey();
+  const sealed = (art as { species: Record<string, (SealedStage | null)[]> }).species[id] ?? [];
+  const painted = sealed.map((s) => openStage(s, key));
+  const out: ClassifiedArt = { stages, floating: r.floating, fit: r.fit, stageFit: r.stageFit, shadow: r.shadow, halo: r.halo, images: painted.some(Boolean) ? painted : undefined };
   for (const k of Object.keys(out) as (keyof ClassifiedArt)[]) if (out[k] === undefined) delete out[k];
   const bundle = { species, design: DESIGNS[id] ?? null, art: out };
   cache.set(id, bundle);

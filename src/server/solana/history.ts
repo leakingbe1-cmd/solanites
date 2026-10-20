@@ -57,11 +57,13 @@ export interface SignatureInfo {
  * Signatures touching an address, newest first, back to (not including)
  * `until`. Pages through history; stops at `maxSignatures` and reports
  * whether history was cut short so callers never act on a partial view.
+ * `minContextSlot` makes a node that is behind that slot refuse instead of
+ * answering with a list that is missing recent transactions.
  */
 export async function fetchSignaturesSince(
   rpc: RpcClient,
   address: string,
-  opts: { until: string | null; minSlot: number; commitment: Commitment; maxSignatures: number; pageSize?: number },
+  opts: { until: string | null; minSlot: number; commitment: Commitment; maxSignatures: number; pageSize?: number; minContextSlot?: number },
 ): Promise<{ signatures: SignatureInfo[]; complete: boolean }> {
   const out: SignatureInfo[] = [];
   let before: string | undefined;
@@ -69,7 +71,13 @@ export async function fetchSignaturesSince(
   for (;;) {
     const page = await rpc.call<{ signature: string; slot: number; err: unknown }[]>("getSignaturesForAddress", [
       address,
-      { limit, commitment: opts.commitment, ...(opts.until ? { until: opts.until } : {}), ...(before ? { before } : {}) },
+      {
+        limit,
+        commitment: opts.commitment,
+        ...(opts.until ? { until: opts.until } : {}),
+        ...(before ? { before } : {}),
+        ...(opts.minContextSlot !== undefined ? { minContextSlot: opts.minContextSlot } : {}),
+      },
     ]);
     for (const s of page) {
       if (s.slot < opts.minSlot) return { signatures: out, complete: true };

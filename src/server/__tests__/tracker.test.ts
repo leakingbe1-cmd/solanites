@@ -32,11 +32,11 @@ async function setup() {
   chain.mintTo(pool, chain.tokens(900_000_000));
   chain.mintTo(treasury, chain.tokens(50_000_000));
   let seed = 1;
-  const make = (maxSignaturesPerAccount = 500) =>
+  const make = (maxSignaturesPerAccount = 500, historyListingCap?: number) =>
     createTracker({
       db,
       rpc: chain.rpc,
-      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount, progression: eggProgression },
+      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount, historyListingCap, progression: eggProgression },
       now: clock.now,
       randomSeed: () => seed++,
     });
@@ -437,6 +437,22 @@ describe("failures", () => {
     const v = await tracker.holderView(b);
     expect(v.sync.pending).toBe(false);
     expect(v.counts.earned).toBe(0); // 1,600,000 held, 1,000,000 of it already earned an egg
+  });
+
+  it("an account too long to list holds the whole wallet back, so its other accounts can't run ahead", async () => {
+    const { tracker: full, make, chain, pool, db } = await setup();
+    await full.runSync({ force: true }); // tracking starts before h's history
+    const h = W(58);
+    const firstSigs = [0, 1].map(() => chain.transfer(pool, h, chain.tokens(100_000))); // creates h's primary account
+    const second = chain.openAccount(h);
+    for (let i = 0; i < 4; i++) chain.transfer(pool, h, chain.tokens(100_000), { toAccount: second }); // over the cap of 3
+    const r = await make(500, 3).syncOwner(h);
+    expect(r.complete).toBe(false);
+    const processed = await db.query(`SELECT 1 FROM processed_transactions WHERE signature = ANY($1)`, [firstSigs]);
+    expect(processed.rows).toHaveLength(0); // the uncapped account was not processed ahead of the capped one
+    const cursors = await db.query<{ sig_cursor: string | null }>(`SELECT sig_cursor FROM token_accounts WHERE owner = $1`, [h]);
+    expect(cursors.rows.every((c) => c.sig_cursor === null)).toBe(true);
+    expect((await full.holderView(h)).counts.earned).toBe(0);
   });
 
   it("a history node behind the balance read can't cause a second egg for the same tokens", async () => {

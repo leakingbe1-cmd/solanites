@@ -33,6 +33,8 @@ export interface TrackerConfig {
   source: "chain" | "fixture";
   /** Transactions processed per wallet per sync; a longer history continues, oldest first, on the next sync. */
   maxSignaturesPerAccount: number;
+  /** Signatures listed per token account in one pass (default 50,000); only lowered in tests. */
+  historyListingCap?: number;
   progression: EggProgressionConfig;
 }
 
@@ -255,14 +257,16 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         until: acc.sig_cursor,
         minSlot: Math.max(startSlot, Number(acc.sig_cursor_slot)),
         commitment: COMMITMENT,
-        maxSignatures: HISTORY_LISTING_CAP,
+        maxSignatures: config.historyListingCap ?? HISTORY_LISTING_CAP,
         minContextSlot: S,
       });
       if (!res.complete) {
-        // Older history can't be reached oldest-first; hold this wallet back rather than guess.
+        // Older history can't be reached oldest-first. Hold the whole wallet back: processing its other
+        // accounts alone would move credit ahead of this account's older transactions.
         complete = false;
         log.warn("history.too_long", { account: acc.address, listed: res.signatures.length });
-        continue;
+        history.clear();
+        break;
       }
       history.set(acc.address, res.signatures.filter((s) => s.slot <= S).reverse());
     }

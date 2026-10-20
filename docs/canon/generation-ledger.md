@@ -39,5 +39,6 @@ The owner chose the model in chat: "do banana 2.1". **Measured price: nano-banan
 
 The classified task list stays out of this public repository: species names and task IDs together would identify the art. The per-stage list goes to the website session by direct message only.
 | 00:15 | (private ledger) | Classified stages: 5 colour corrections | 20 | 1,387 | — |
+| 2026-10-20 | (private ledger) | Classified stages: 3 more colour corrections (Secret Egglings/Evolved matched to their corrected lines) | 12 | 1,375 | — |
 
 Per-image ledger for all non-classified overhaul work (including corrections and the owner's Solvanth 4 Nano Banana Pro edit, 20 credits): `art/creature-studio/overhaul/tasks.tsv`.

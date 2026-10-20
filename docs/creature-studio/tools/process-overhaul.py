@@ -16,7 +16,6 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw
-from scipy import ndimage
 
 ROOT = Path("art/creature-studio/overhaul")
 STAGES = ["eggling", "hatchling", "evolved", "ascended"]
@@ -36,30 +35,6 @@ def c9(im):
     s = np.asarray(tile.convert("L").resize((48, 48), Image.LANCZOS)).astype(float)
     v = s[s > 20]
     return round(float(np.median(v))), round(float(np.percentile(v, 25)))
-
-
-def drop_specks(rgba, n):
-    """Clears detached specks smaller than 0.1 % of the delivered frame, the size the canon's C13
-    measure ignores, so a stray fleck can neither stretch the framing box nor stay in the art."""
-    a = np.asarray(rgba).copy()
-    solid = a[..., 3] >= 32
-    lab, k = ndimage.label(solid, structure=np.ones((3, 3)))
-    if k < 2:
-        return rgba, 0
-    sizes = ndimage.sum(solid, lab, range(1, k + 1))
-    boxes = ndimage.find_objects(lab)
-    keep = np.zeros(k, bool)
-    keep[int(np.argmax(sizes))] = True
-    for _ in range(3):  # the delivered scale depends on which parts are kept
-        y0 = min(boxes[i][0].start for i in np.nonzero(keep)[0]); y1 = max(boxes[i][0].stop for i in np.nonzero(keep)[0])
-        x0 = min(boxes[i][1].start for i in np.nonzero(keep)[0]); x1 = max(boxes[i][1].stop for i in np.nonzero(keep)[0])
-        s = cf.TARGETS[n] * 1024 / max(y1 - y0, x1 - x0)
-        keep = sizes * s * s >= 1024 * 1024 * 0.001
-    specks = np.isin(lab, 1 + np.nonzero(~keep)[0])
-    kept = np.isin(lab, 1 + np.nonzero(keep)[0])
-    clear = ndimage.binary_dilation(specks, iterations=3) & ~ndimage.binary_dilation(kept, iterations=3)
-    a[..., 3][clear] = 0
-    return Image.fromarray(a, "RGBA"), int((~keep).sum())
 
 
 def raw_for(key, task):
@@ -87,7 +62,7 @@ for key, task in latest.items():
     if dst.exists() and status.get(key, {}).get("task") == task and status[key].get("pipeline") == PIPELINE:
         continue
     rgba, _ = cf.cutout(Image.open(src), 10.0, 48.0)
-    rgba, specks = drop_specks(rgba, int(n))
+    rgba, specks = cf.drop_specks(rgba, int(n))
     framed, scale = cf.frame(rgba, int(n))
     dst.parent.mkdir(parents=True, exist_ok=True)
     framed.save(dst, optimize=True)

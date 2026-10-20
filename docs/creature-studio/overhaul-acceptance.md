@@ -194,3 +194,9 @@ Method: all 22 `public/scenes/<id>/plate.webp` (1024²) inspected, each composit
   - Velynx −24 (the creature is darker than its plate).
   - These creatures rely on rim light alone. Recommend darkening or blurring the plate behind the creature (CSS vignette) or lowering the plate's value.
 - **Colour consistency:** each plate's palette matches its species' element and hue. No clashes found.
+
+**Biome re-review (`feature/creature-biomes` @ `c359cf5`, rebased onto the website tip `ae58e74`): PASS.**
+- The fixes are CSS, scene config and QA only; no plate image changed against `9f019d2`.
+- Re-run here: `node scripts/creature-scenes.mjs framing` plus `scripts/qa/scene-readability.py` gives 88/88 stages readable at card size (edge ≥ 40, or ≥ 80 % of the review background), using the site's own stage framing.
+- Visual check of the Pyraurum, Aurorath and Velynx sheets: torches and horizon gone, aurora subdued, alley floor faded out.
+- This is a framing simulation in Python, not a browser render.

@@ -21,6 +21,9 @@ type ParsedTokenAccount = { pubkey: string; account: { owner: string; data: { pa
  * snapshot; it needs an RPC provider that serves getProgramAccounts for the
  * token program (Helius, Triton, QuickNode — not the public endpoint).
  */
+/** One unpaginated call returns every account of the mint; a pump.fun mint with ~12k accounts takes ~8 s on the public RPC. */
+const SNAPSHOT_TIMEOUT_MS = 30_000;
+
 export async function fetchMintTokenAccounts(rpc: RpcClient, mint: MintInfo, commitment: Commitment): Promise<{ slot: number; accounts: MintTokenAccount[] }> {
   const filters: unknown[] = [{ memcmp: { offset: 0, bytes: mint.mint } }];
   // Classic SPL token accounts are exactly 165 bytes; Token-2022 accounts can carry extensions.
@@ -28,7 +31,7 @@ export async function fetchMintTokenAccounts(rpc: RpcClient, mint: MintInfo, com
   const res = await rpc.call<{ context: { slot: number }; value: ParsedTokenAccount[] }>("getProgramAccounts", [
     mint.tokenProgram,
     { encoding: "jsonParsed", commitment, withContext: true, filters },
-  ]);
+  ], { timeoutMs: SNAPSHOT_TIMEOUT_MS });
   const seen = new Set<string>();
   const accounts: MintTokenAccount[] = [];
   for (const { pubkey, account } of res.value) {

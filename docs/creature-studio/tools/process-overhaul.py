@@ -8,6 +8,7 @@ Classified species are refused: their art must never be written into this public
 
   python3 -I docs/creature-studio/tools/process-overhaul.py [board-name id,id,...]
 """
+import hashlib
 import importlib.util
 import json
 import sys
@@ -18,7 +19,7 @@ from PIL import Image, ImageDraw
 
 ROOT = Path("art/creature-studio/overhaul")
 STAGES = ["eggling", "hatchling", "evolved", "ascended"]
-CLASSIFIED = {"astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"}
+CLASSIFIED = {"086f90d3cfd8e943", "635f6faa80eccaf4", "6be2ea8b0b28eea0", "aeebad4a796fcc2e", "b9a8facfd00a4ea9", "e3bb8b00106b7d9b"}  # sha256(id)[:16] of the Mythic and Secret species
 BG = (7, 6, 13, 255)
 
 spec = importlib.util.spec_from_file_location("cf", "docs/creature-studio/tools/cutout-and-frame.py")
@@ -51,7 +52,7 @@ for line in (ROOT / "tasks.tsv").read_text().splitlines()[1:]:
 status = json.loads((ROOT / "status.json").read_text()) if (ROOT / "status.json").exists() else {}
 for key, task in latest.items():
     sid, n = key.rsplit("-", 1)
-    if sid in CLASSIFIED:
+    if hashlib.sha256(sid.encode()).hexdigest()[:16] in CLASSIFIED:
         raise SystemExit(f"refusing to write classified art into the public repo: {key}")
     src = raw_for(key, task)
     if not src:

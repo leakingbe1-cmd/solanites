@@ -28,10 +28,14 @@ interface LinkDiag {
   upToDate: boolean;
   growth: { value: number; label: string } | null;
   state: { lastErrorCode: string | null; needsHistory: boolean };
+  /** Live provider only: what this server instance has seen for the ticker ("unverified" until a live answer). */
+  coverage?: string;
 }
 interface Diag {
   provider: { name: string; plan: string } | null;
   links: LinkDiag[];
+  /** Live provider: rows are fetched (and cost credits) only when selected, so none is preselected. */
+  fetchOnSelect?: boolean;
 }
 
 const ENDPOINT = "/studio/dev/market";
@@ -50,7 +54,7 @@ export function MarketInspector() {
     if (!r.ok) return setError((await r.json().catch(() => null))?.error?.message ?? `Market diagnostics unavailable (${r.status}).`);
     const d = (await r.json()) as Diag;
     setDiag(d);
-    setSelected((s) => s ?? d.links[0]?.speciesId ?? null);
+    setSelected((s) => s ?? (d.fetchOnSelect ? null : (d.links[0]?.speciesId ?? null)));
   }, []);
 
   useEffect(() => {
@@ -64,6 +68,22 @@ export function MarketInspector() {
 
   const link = diag?.links.find((l) => l.speciesId === selected);
   const fetchSnapshot = (range: MarketRange, signal: AbortSignal) => fetch(`${ENDPOINT}?species=${encodeURIComponent(selected ?? "")}&range=${range}`, { signal, cache: "no-store" });
+
+  // The calculator needs no provider, so it works even when diagnostics fail to load.
+  const calculator = (
+    <div className="mt-4 rounded-2xl border border-rim p-5">
+      <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Growth calculator (hypothetical, never stored)</p>
+      <div className="mt-3 flex gap-2">
+        <input value={sim} onChange={(e) => setSim(e.target.value)} className="min-w-0 flex-1 rounded-full border border-rim bg-umbra px-4 py-2 text-sm text-bone" aria-label="Daily % changes, comma separated" />
+        <button onClick={runSim} className="rounded-full border border-rim-strong px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-bone">Run</button>
+      </div>
+      {simOut && (
+        <p className="mt-3 text-sm text-vellum">
+          {simOut.entries.map((e) => `${e.changePct}% → ${e.points > 0 ? "+" : ""}${e.points}`).join(" · ")} ⇒ vigour <span className="text-bone">{simOut.vigour.value}</span> ({simOut.vigour.label})
+        </p>
+      )}
+    </div>
+  );
 
   return (
     <section aria-labelledby="dev-market" className="mt-16">
@@ -100,7 +120,7 @@ export function MarketInspector() {
                         {l.ticker} {l.review && <span title={l.review} className="text-gilt">⚑</span>}
                       </td>
                       <td className="px-3 py-2 text-vellum">
-                        {l.latestSession ? `${l.latestSession} · ${l.latestClose}` : "—"} {!l.upToDate && <span className="text-gilt">behind</span>} {l.state.lastErrorCode && <span className="text-gilt">{l.state.lastErrorCode}</span>}
+                        {l.coverage ? `coverage: ${l.coverage}` : l.latestSession ? `${l.latestSession} · ${l.latestClose}` : "—"} {!l.upToDate && <span className="text-gilt">behind</span>} {l.state.lastErrorCode && <span className="text-gilt">{l.state.lastErrorCode}</span>}
                       </td>
                       <td className="px-3 py-2 text-right tabular-nums text-bone">{l.growth ? `${l.growth.value} ${l.growth.label}` : "—"}</td>
                     </tr>
@@ -116,22 +136,12 @@ export function MarketInspector() {
                   <CreatureMarketPanel key={link.speciesId} speciesId={link.speciesId} accent={link.accent} fetchSnapshot={fetchSnapshot} />
                 </>
               )}
-              <div className="mt-4 rounded-2xl border border-rim p-5">
-                <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Growth calculator (hypothetical, never stored)</p>
-                <div className="mt-3 flex gap-2">
-                  <input value={sim} onChange={(e) => setSim(e.target.value)} className="min-w-0 flex-1 rounded-full border border-rim bg-umbra px-4 py-2 text-sm text-bone" aria-label="Daily % changes, comma separated" />
-                  <button onClick={runSim} className="rounded-full border border-rim-strong px-4 py-2 font-mono text-[11px] uppercase tracking-[0.2em] text-bone">Run</button>
-                </div>
-                {simOut && (
-                  <p className="mt-3 text-sm text-vellum">
-                    {simOut.entries.map((e) => `${e.changePct}% → ${e.points > 0 ? "+" : ""}${e.points}`).join(" · ")} ⇒ vigour <span className="text-bone">{simOut.vigour.value}</span> ({simOut.vigour.label})
-                  </p>
-                )}
-              </div>
+              {calculator}
             </div>
           </div>
         </>
       )}
+      {!diag && <div className="max-w-xl">{calculator}</div>}
     </section>
   );
 }

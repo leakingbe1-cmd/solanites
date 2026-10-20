@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { tradingViewSymbol } from "@/lib/market/tradingview";
+import { useCallback, useEffect, useState } from "react";
+import type { WidgetStatus } from "@/lib/market/tradingview";
 import { MARKET_RANGES, type DataStatus, type MarketRange, type MarketSnapshot } from "@/lib/market/types";
+import { panelMode } from "./panelMode";
 import { PriceChart } from "./PriceChart";
 import { TradingViewOverview } from "./TradingViewOverview";
 
@@ -19,9 +20,8 @@ const UP = "#46c9b0";
 const DOWN = "#ef6a5a";
 
 export const STATUS: Record<DataStatus, { label: string; tone: string }> = {
-  realtime: { label: "Real-time", tone: "text-vellum border-rim-strong" },
   previous_close: { label: "Previous close", tone: "text-vellum border-rim-strong" },
-  delayed: { label: "Delayed 15 min", tone: "text-vellum border-rim-strong" },
+  delayed: { label: "Delayed", tone: "text-vellum border-rim-strong" },
   stale: { label: "Stale data", tone: "text-gilt border-gilt/40" },
   sample: { label: "Sample data", tone: "text-eclipse-soft border-eclipse/50" },
   unavailable: { label: "Unavailable", tone: "text-dust border-rim" },
@@ -54,6 +54,8 @@ export function CreatureMarketPanel({
   const [load, setLoad] = useState<Load>({ state: "loading" });
   const [refetching, setRefetching] = useState(false);
   const [explain, setExplain] = useState(false);
+  const [widget, setWidget] = useState<WidgetStatus>("idle");
+  const onWidgetStatus = useCallback((s: WidgetStatus) => setWidget(s), []);
 
   useEffect(() => {
     const ctl = new AbortController();
@@ -65,12 +67,12 @@ export function CreatureMarketPanel({
         if (r.status === 404) return setLoad({ state: "classified" });
         if (!r.ok) {
           const b = await r.json().catch(() => null);
-          return setLoad({ state: "error", message: b?.error?.message ?? "Market data is temporarily unavailable." });
+          return setLoad({ state: "error", message: b?.error?.message ?? "The linked stock couldn't be loaded. Please try again." });
         }
         setLoad({ state: "ok", snap: (await r.json()) as MarketSnapshot });
       })
       .catch((e) => {
-        if ((e as Error).name !== "AbortError") setLoad({ state: "error", message: "Market data couldn't be reached. Check your connection and try again." });
+        if ((e as Error).name !== "AbortError") setLoad({ state: "error", message: "The linked stock couldn't be loaded. Check your connection and try again." });
       })
       .finally(() => !ctl.signal.aborted && setRefetching(false));
     return () => ctl.abort();
@@ -84,7 +86,7 @@ export function CreatureMarketPanel({
       <section className={shell} aria-busy>
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Linked stock</p>
         <div className="mt-4 h-6 w-48 rounded bg-white/5" />
-        <div className="mt-6 h-[180px] rounded-xl bg-white/[0.03]" />
+        <div className="mt-6 h-[300px] rounded-xl sm:h-[340px] bg-white/[0.03]" />
       </section>
     );
   }
@@ -93,7 +95,7 @@ export function CreatureMarketPanel({
       <section className={shell}>
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Linked stock</p>
         <p className="mt-3 font-display text-xl text-bone">Classified</p>
-        <p className="mt-1 text-sm text-vellum">This Solanite&apos;s market link reveals itself to whoever hatches one.</p>
+        <p className="mt-1 text-sm text-vellum">This Solanite&apos;s linked stock is classified and isn&apos;t shown on the site.</p>
       </section>
     );
   }
@@ -108,10 +110,8 @@ export function CreatureMarketPanel({
 
   const { snap } = load;
   const { stock, quote, growth, market } = snap;
-  // No licensed feed on our server: show TradingView's widget, which licenses and serves genuine
-  // (delayed) prices in the visitor's browser, instead of a permanent "unavailable" panel.
-  const tvSymbol = snap.status === "unavailable" ? tradingViewSymbol(stock.exchange, stock.ticker) : null;
-  const st = tvSymbol ? { label: "Delayed · TradingView", tone: "text-vellum border-rim-strong" } : STATUS[snap.status];
+  const mode = panelMode(snap, { ownerTools: Boolean(fetchSnapshot) });
+  const st = mode.kind === "widget" ? (widget === "failed" ? STATUS.unavailable : { label: "TradingView", tone: "text-vellum border-rim-strong" }) : STATUS[snap.status];
   const dirColor = quote?.direction === "up" ? UP : quote?.direction === "down" ? DOWN : undefined;
   const marketLine = market.reason === "holiday" && market.holiday ? `Market closed · ${market.holiday}` : `${MARKET_STATE[market.state]}${market.earlyClose ? " · early close" : ""}`;
 
@@ -133,18 +133,24 @@ export function CreatureMarketPanel({
       </div>
       <p className="mt-3 text-sm italic text-vellum">{stock.connection}</p>
 
-      {tvSymbol ? (
+      {mode.kind !== "server" ? (
         <>
-          {/* Price and history from TradingView (delayed for stocks) */}
-          <div className="mt-5">
-            <TradingViewOverview symbol={tvSymbol} company={stock.company} accent={accent} />
-          </div>
-          <p className="mt-3 text-xs text-dust">Prices and chart are provided by TradingView and are delayed (stock prices on TradingView widgets are delayed under exchange rules, typically 15 minutes or more). They are not real-time.</p>
+          {mode.kind === "widget" ? (
+            <>
+              {/* Prices and history from TradingView, loaded in the visitor's browser */}
+              <div className="mt-5">
+                <TradingViewOverview symbol={mode.symbol} company={stock.company} accent={accent} onStatus={onWidgetStatus} />
+              </div>
+              <p className="mt-3 text-xs text-dust">Prices and chart by TradingView; timing per TradingView, may be delayed.</p>
+            </>
+          ) : (
+            <p className="mt-5 text-sm text-vellum">No price to show.</p>
+          )}
           <div className="mt-6 border-t border-rim pt-5">
             <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Market Vigour</p>
-            <p className="mt-2 text-sm text-dust">Off for now. Vigour is worked out on our server from daily closes, and that needs a licensed data feed that isn&apos;t connected yet. It&apos;s cosmetic only and never affects stats, odds, ownership or rewards.</p>
+            <p className="mt-2 text-sm text-dust">Not shown on public pages. Market Vigour is cosmetic only and never affects stats, odds, ownership or rewards.</p>
           </div>
-          <p className="mt-5 border-t border-rim pt-3 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-dust">Market data: TradingView widget (delayed) · For game flavour only, not investment advice.</p>
+          <p className="mt-5 border-t border-rim pt-3 font-mono text-[10px] leading-relaxed tracking-[0.06em] text-dust">{mode.kind === "widget" ? "Market data: TradingView widget · " : ""}For game flavour only, not investment advice. Owning a Solanite has nothing to do with owning {stock.ticker} shares.</p>
         </>
       ) : (
         <>

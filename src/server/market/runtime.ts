@@ -24,9 +24,9 @@ const holder = globalThis as typeof globalThis & { __solanitesMarket?: Promise<M
  * Off unless MARKET_DATA_ENABLED=1: until then no database is opened or migrated, and every
  * panel shows "not connected", so a deployment can't create market tables by accident.
  * When enabled it needs DATABASE_URL (the same database as holder tracking, but not the mint
- * or RPC, so stock data can run before launch). MASSIVE_API_KEY switches on fetching; without it, stored data is
- * still served and the panel says market data isn't connected. MARKET_DATA_PLAN=delayed labels
- * a paid plan's intraday data as delayed (default: eod).
+ * or RPC, so stock data can run before launch). This stored-closes path predates the approved
+ * architecture (TradingView widget publicly, Twelve Data Basic in Developer Mode only); it is
+ * reached only when MARKET_PUBLIC_DISPLAY is on, and its removal is pending an owner decision.
  *
  * Local fixture mode (SOLANITES_FIXTURES=1, refused in production builds) shares the fixture
  * database and, without an API key, uses deterministic sample prices labelled as such.
@@ -74,7 +74,9 @@ export function getLiveMarket(env: Record<string, string | undefined> = process.
   const key = env.TWELVE_DATA_API_KEY?.trim();
   if (!key) return null;
   if (liveHolder.__solanitesLiveMarket?.key !== key) {
-    const client = createTwelveDataClient({ apiKey: key, baseUrl: env.TWELVE_DATA_API_BASE?.trim() || undefined });
+    // An alternative base URL (for a proxy or mock) is accepted only over https.
+    const base = env.TWELVE_DATA_API_BASE?.trim();
+    const client = createTwelveDataClient({ apiKey: key, baseUrl: base && /^https:\/\//i.test(base) ? base : undefined });
     const live = createLiveMarket({
       client,
       creditsPerMinute: Number(env.TWELVE_DATA_CREDITS_PER_MINUTE) || 8,
@@ -93,4 +95,14 @@ export function getLiveMarket(env: Record<string, string | undefined> = process.
  */
 export function marketPublicDisplay(env: Record<string, string | undefined> = process.env): boolean {
   return env.MARKET_PUBLIC_DISPLAY?.trim() === "1";
+}
+
+/**
+ * The embeddable chart public pages may show when no displayable prices exist on the server.
+ * Off unless MARKET_WIDGET=tradingview, which the owner sets for the Vercel Preview scope; an
+ * unset environment (production included) shows no third-party chart. Read only by the public
+ * /api/market route, which never offers it for classified species.
+ */
+export function publicMarketWidget(env: Record<string, string | undefined> = process.env): "tradingview" | null {
+  return env.MARKET_WIDGET?.trim().toLowerCase() === "tradingview" ? "tradingview" : null;
 }

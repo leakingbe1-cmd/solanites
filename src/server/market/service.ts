@@ -258,7 +258,7 @@ export function createMarketService(deps: MarketServiceDeps) {
 export type MarketService = ReturnType<typeof createMarketService>;
 
 /** Identity and market status only, for when no database is configured: nothing invented. */
-export function unavailableSnapshot(speciesId: string, range: MarketRange, nowMs: number, detail = "Market data isn't connected on this server yet."): MarketSnapshot {
+export function unavailableSnapshot(speciesId: string, range: MarketRange, nowMs: number, detail = "This site doesn't publish stock prices."): MarketSnapshot {
   const link = stockLinkOf(speciesId);
   if (!link) throw new MarketDataError("NOT_FOUND", "Unknown species.");
   return {
@@ -270,8 +270,9 @@ export function unavailableSnapshot(speciesId: string, range: MarketRange, nowMs
     chart: { range, interval: range === "1D" ? "5min" : "1day", points: [], unavailable: detail },
     growth: null,
     market: marketStatus(nowMs),
-    source: { name: MARKET_DATA_SOURCE, plan: "Not connected", fetchedAt: null },
+    source: { name: "None", plan: "Not published", fetchedAt: null },
     generatedAt: nowMs,
-    review: link.review ?? null,
+    // Internal mapping notes stay in Developer Mode.
+    review: null,
   };
 }

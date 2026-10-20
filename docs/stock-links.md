@@ -101,15 +101,19 @@ Bands:
 | 20 sessions of +3% | 20 × +10 = +200 | clamped at **100** |
 | 0.0% | 0 | 50.0 Steady |
 
-## What visitors see today (20 Oct 2026)
+## Owner decision and what visitors see (20 Oct 2026)
 
-| Path | Who sees it | Data | Licence |
+Decision: **keep TradingView, no paid plan.** No paid market data of any kind.
+
+| Path | Who sees it | Data | Licence and status |
 |---|---|---|---|
-| **TradingView Symbol Overview widget** (`TradingViewOverview`) | Public visitors, when no licensed server feed is enabled | Genuine prices and history from TradingView, **delayed** for stocks (exchange rules) | TradingView's free widgets are for embedding on websites; its attribution link must stay. Approved by the owner for the preview. |
-| **Twelve Data, Basic (free)** (`src/server/market/twelvedata.ts`, `live.ts`) | Developer Mode only (`/studio/dev/market`, owner sign-in) | Quote, daily closes, 5-minute bars; status from the provider's own timestamps | Basic is for internal, non-display use, so it is **never public** while `MARKET_PUBLIC_DISPLAY` is off |
+| **TradingView Symbol Overview widget** (`TradingViewOverview`) | Public visitors on deployments where `MARKET_WIDGET=tradingview` (set for the Vercel Preview scope only); off when unset, including production | Prices and history served by TradingView in the visitor's browser. **Timing per TradingView; may be delayed.** TradingView's widget FAQ says stock data in widgets is delayed; it gives no number of minutes, so none is claimed | Free widgets are offered "with default TradingView branding"; the attribution block is TradingView's own builder markup, unaltered. Never shown in `/studio` (owner tools) or for classified species. TradingView receives the page address of every page showing a chart |
+| **Twelve Data, Basic (free)** (`twelvedata.ts`, `live.ts`) | Developer Mode only (`/studio/dev/market`, owner sign-in) | Quote, daily closes, 5-minute bars. Labelled "delayed" with the provider's own time, "stale" or "previous close"; **never "real-time"**, because the Basic feed's venues and `last_quote_at` semantics are unverified | Basic is for personal/internal, non-display use: **never public** while `MARKET_PUBLIC_DISPLAY` is off. Coverage per ticker shows "unverified" until a live answer is seen |
 | Massive (stored closes, cron) | Off | End-of-day | Individual plans don't permit public display |
 
-Public display of a server-side provider's prices needs `MARKET_PUBLIC_DISPLAY=1`, which should only be set once the plan's display rights are confirmed in writing. The cheapest published plan that includes external display is Twelve Data **Venture, from $149/month** (paid; needs owner approval).
+**Market Vigour is not shown publicly.** It is computed on the server from daily closes, and no displayable daily closes exist on the server under this decision (TradingView's data never reaches our server). Public panels say it is not shown; no public copy may say that stock moves drive it.
+
+**Budget caveat:** the Twelve Data budget (8 credits/minute, 800/day) is enforced **per server instance**. On Vercel several instances can run at once, so it cannot by itself enforce the account-wide limit. Caching, shared in-flight calls, 15-minute memory of "not found"/"forbidden" answers, and an instance-wide back-off on any provider 429 (60 s, doubling to an hour) keep usage low.
 
 ## Data provider
 
@@ -184,6 +188,8 @@ Page views never call the provider, so traffic cannot exhaust the provider quota
 | `TWELVE_DATA_API_KEY` | Server env (secret) | Twelve Data key. Enables live data in Developer Mode. Sent only in the `Authorization` header; never in URLs, logs, responses or the bundle. |
 | `MARKET_PUBLIC_DISPLAY` | Server env | `1` lets public routes serve the provider's numbers. Off by default and independent of the key. Leave off on the free Basic plan. |
 | `TWELVE_DATA_CREDITS_PER_MINUTE` / `TWELVE_DATA_CREDITS_PER_DAY` | Server env | Budget enforced per server instance before calling (defaults 8 and 800, the Basic limits). |
+| `MARKET_WIDGET` | Server env | `tradingview` lets public routes mark snapshots for TradingView's widget. Unset (default, including production) shows no third-party chart. Set it for the Vercel **Preview** scope only. |
+| `TWELVE_DATA_API_BASE` | Server env | Optional proxy or mock base URL; honoured only over `https://`. |
 | `TWELVE_DATA_PLAN_LABEL` | Server env | Shown in the source line (default "Basic (free) plan"). |
 | `MARKET_DATA_ENABLED` | Server env | Must be `1` before the market feature opens or migrates any database. Unset (the default) means panels show **Unavailable** and nothing is written. Local sample mode (`SOLANITES_FIXTURES=1`) doesn't need it. |
 | `MASSIVE_API_KEY` | Server env (secret) | Provider key. Unset means market data shows **Unavailable**. |

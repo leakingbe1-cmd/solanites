@@ -5,28 +5,22 @@ import { CLASSIFIED_SLOTS, SEALED, sealedPreview, SPECIES } from "@/lib/species"
 import { CLASSIFIED_SPECIES } from "@/server/classified";
 
 /**
- * Owner-approved public previews for the six sealed species (Creature Studio 93f4c91). The
- * species-to-preview mapping lives only here, on the server side; the browser gets each slot's
- * catalogue number and a tier-only file name, never a species id, name or lore.
+ * Owner-approved public previews for the six sealed species (Creature Studio 93f4c91). Each
+ * catalogue slot carries its preview (src/lib/species.ts, keyed by catalogue number); this file
+ * names no classified species, so the preview-to-species mapping never appears in the repo.
  */
-const PREVIEW_OF: Record<string, string> = {
-  helivane: "mythic-a",
-  astravex: "mythic-b",
-  eventide: "mythic-c",
-  orbelith: "mythic-d",
-  nullborn: "secret-a",
-  genesis: "secret-b",
-};
 const DIR = path.resolve(__dirname, "../../../public/sealed");
 
 describe("sealed previews", () => {
-  it("each classified species' slot shows its own approved preview", () => {
-    for (const s of CLASSIFIED_SPECIES) {
+  it("every classified species has a slot of its tier with its own distinct preview", () => {
+    const previews = CLASSIFIED_SPECIES.map((s) => {
       const slot = CLASSIFIED_SLOTS.find((c) => c.dex === s.dex);
-      expect(slot, s.id).toBeDefined();
+      expect(slot).toBeDefined();
       expect(slot!.rarity).toBe(s.rarity);
-      expect(slot!.preview).toBe(`/sealed/${PREVIEW_OF[s.id]}.webp`);
-    }
+      expect(slot!.preview).toMatch(new RegExp(`^/sealed/${s.rarity}-[a-d]\\.webp$`));
+      return slot!.preview;
+    });
+    expect(new Set(previews).size).toBe(CLASSIFIED_SPECIES.length);
   });
 
   it("files are the six tier-named previews, with no ids, names or metadata", () => {

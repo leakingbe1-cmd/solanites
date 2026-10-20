@@ -109,3 +109,25 @@ Remaining:
 3. C9 48 px readability is below the threshold (median 70, p25 45) on 17 dark-palette stages: Aurorath 1, Duskwing 2–3, Emberlisk 1, 2, 4, Neonyx 1, 2, 4, Nyxara 1–3, Prismara 1 and Velynx 1–4. Each keeps its species palette. Each reads better than its shipped drawing at 48 px, except Velynx 4 (median 58 → 57, p25 38 → 42). Nyxara 4, which had regressed, was corrected (72/44 → 80/50).
 4. Pyraurum Ascended: pipeline warning "little fine detail" (warning only).
 5. Market data is off by default (no provider connected, by approval policy); stock panels say so honestly.
+
+## 8. Audit log (2026-10-20)
+
+Overall: **NOT ACCEPTED** until the privacy audit, the report-accuracy audit, external stock verification and real-browser preview acceptance are complete.
+
+**Classified-content exposure check: static preview artifact `claude.ai/artifact/1G2KesFuTNtLuG3zFJgmXc`** (owned by the website session, private):
+- Version `1792459973-e638` included `img/s5-dev-top.webp`, a Developer Mode species grid showing classified species, under a "keep private" warning.
+- The website session removed it in version `1792461132-a57b`, which leaves 15 files. The remaining `img/s5-dev-market.webp` was inspected: no classified names, art or tickers.
+- Unauthenticated check (curl, no cookies):
+  - the artifact URL returns only the generic "Claude Artifact" shell (0 Solanites or classified strings);
+  - the content host `0218f894-7bea-4ea6-a19f-6c7203239647.frame.claudeusercontent.com` returns 404 for `/`, `/index.html` and every `img/` path.
+- Result: **public exposure not reproduced.**
+- Residual: the earlier version may remain in the owner-only version history.
+- No preview screenshot was ever committed to Git (all refs searched).
+- Its "Live preview" link pointed at the `ec8a06a` deployment; the new version points at the `4d42aae` deployment.
+
+**Pairings and site (refuted claim):** `vercel.json` (unchanged since before the integration, same on `main`) still schedules `/api/cron/sync` daily at 03:17 UTC.
+- It is inert only while `CRON_SECRET` is unset in Vercel; the route returns 401 without it.
+- "Production cron disabled" is therefore inaccurate. The cron is configured but unauthenticated.
+- Fix owner: the website session, with the owner's approval.
+
+**Blocked:** the Vercel preview and production hosts (`*.vercel.app`) are refused by this environment's network proxy (CONNECT 403). No real-browser check of the deployed preview has been possible. All browser checks ran on local production builds of the same commits.

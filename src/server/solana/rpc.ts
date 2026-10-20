@@ -83,7 +83,7 @@ export function createRpcClient(opts: RpcClientOptions): RpcClient {
           clearTimeout(timer);
         }
       }
-      throw new RpcUnavailableError(`Solana RPC unavailable after ${retries + 1} attempts (${lastError})`, retries + 1);
+      throw new RpcUnavailableError(`Solana RPC unavailable after ${retries + 1} attempts (${lastError}, ${method})`, retries + 1);
     },
   };
 }

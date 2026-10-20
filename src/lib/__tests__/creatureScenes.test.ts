@@ -6,7 +6,10 @@ import { CreatureScene, type SceneSize } from "@/components/creature/CreatureSce
 import { bodyClip, dilate } from "@/components/creature/IdleArt";
 import manifest from "@/data/creatureScenes.json";
 import { SCENES, SEALED_SCENE, STAGE_FRAMING, sceneAssets, sceneOf, type Anatomy, type BodyMotion, type PartRig } from "@/lib/creatureScenes";
-import { CLASSIFIED_SLOTS, SEALED, SPECIES } from "@/lib/species";
+import { SPECIES } from "@/lib/species";
+
+/** Species with a painted biome and idle of their own (Mythic and Secret ones don't have one yet). */
+const SCENED = SPECIES.filter((s) => s.id in SCENES);
 
 /**
  * Creature scenes (docs/creature-scenes.md): every public species has its own biome and an
@@ -46,15 +49,14 @@ const PART_NEEDS: Record<PartRig["part"], (a: Anatomy) => boolean> = {
 };
 
 describe("catalogue coverage", () => {
-  it("every public species has a scene, and the scenes name no other species", () => {
-    expect(Object.keys(SCENES).sort()).toEqual(SPECIES.map((s) => s.id).sort());
+  it("every Common to Legendary species has a scene, and the scenes name no other species", () => {
+    const painted = SPECIES.filter((s) => s.rarity !== "mythic" && s.rarity !== "secret");
+    expect(Object.keys(SCENES).sort()).toEqual(painted.map((s) => s.id).sort());
   });
 
-  it("there are 28 species in all: 22 public scenes plus 6 classified slots on the sealed scene", () => {
-    expect(SPECIES.length + CLASSIFIED_SLOTS.length).toBe(28);
-    for (const slot of CLASSIFIED_SLOTS) expect(sceneOf(`classified-${slot.dex}`)).toBe(SEALED_SCENE);
-    expect(sceneOf(SEALED.mythic.id)).toBe(SEALED_SCENE);
-    expect(sceneOf(SEALED.secret.id)).toBe(SEALED_SCENE);
+  it("there are 28 species; the 6 Mythic and Secret ones use the neutral scene until their biomes are painted", () => {
+    expect(SPECIES).toHaveLength(28);
+    for (const s of SPECIES.filter((x) => x.rarity === "mythic" || x.rarity === "secret")) expect(sceneOf(s.id)).toBe(SEALED_SCENE);
   });
 
   it("every species has its own environment (no two share a biome)", () => {
@@ -131,8 +133,8 @@ describe("idle profiles fit the anatomy", () => {
 });
 
 describe("assets", () => {
-  it("every public species has its 1024 plate on disk", () => {
-    for (const s of SPECIES) {
+  it("every species with a scene has its 1024 plate on disk", () => {
+    for (const s of SCENED) {
       const a = sceneAssets(s.id);
       expect(a?.plate, s.id).toBe(`/scenes/${s.id}/plate.webp`);
       expect(existsSync(`public${a!.plate}`), s.id).toBe(true);
@@ -169,7 +171,7 @@ describe("assets", () => {
 });
 
 describe("rendering", () => {
-  for (const s of SPECIES) {
+  for (const s of SCENED) {
     it(`${s.id}: its biome and idle render at every stage and size`, () => {
       for (const stage of STAGES) {
         for (const size of SIZES) {
@@ -190,14 +192,11 @@ describe("rendering", () => {
     });
   }
 
-  it("a classified slot and a silhouette show the sealed vault, still, with no species asset", () => {
-    for (const slot of CLASSIFIED_SLOTS) {
-      const sealedSpecies = { ...SEALED[slot.rarity], id: `classified-${slot.dex}`, dex: slot.dex };
-      const out = html(createElement(CreatureScene, { species: sealedSpecies, stage: 2, size: "card", silhouette: true, sealed: true }));
-      expect(out).toMatch(/data-biome="sealed-vault"/);
-      expect(out).not.toMatch(/\/scenes\//);
-      expect(out).not.toMatch(/sl-idle/);
-    }
+  it("a species without a biome shows the neutral vault, still; a silhouette never idles", () => {
+    const out = html(createElement(CreatureScene, { species: SPECIES.find((s) => s.id === "astravex")!, stage: 3, size: "card" }));
+    expect(out).toMatch(/data-biome="sealed-vault"/);
+    expect(out).not.toMatch(/\/scenes\//);
+    expect(out).not.toMatch(/sl-idle/);
     const locked = html(createElement(CreatureScene, { species: SPECIES[0], stage: 3, size: "detail", silhouette: true }));
     expect(locked).not.toMatch(/sl-idle/);
   });
@@ -209,7 +208,7 @@ describe("rendering", () => {
   });
 
   it("draws no ground, contact shadow, halo, rays, sparkles or aura (canon W1–W2)", () => {
-    for (const s of SPECIES) {
+    for (const s of SCENED) {
       const out = html(createElement(CreatureScene, { species: s, stage: 3, size: "detail" }));
       expect(out).not.toMatch(/<ellipse cx="200" cy="376"/);
       expect(out).not.toMatch(/sl-(aura|halo|backlight|glitch-lines|rays|portrait-floor|portrait-cone)/);

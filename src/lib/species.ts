@@ -1,4 +1,4 @@
-import type { RarityId } from "@/config/gameConfig";
+import { gameConfig, type RarityId } from "@/config/gameConfig";
 
 
 export type Element =
@@ -554,97 +554,156 @@ export const SPECIES: Species[] = [
     lore: "Thalor patrols the cold trench beneath every ledger, its armoured brow turned toward anything that sinks too fast. It has never surfaced without a reason.",
     stats: { power: 90, spirit: 78, agility: 60 },
   },
-];
-
-/**
- * Mythic and Secret species are classified: their data lives on the server only
- * (src/server/classified) and never ships in a public bundle, page or API response. The
- * public site knows only that these catalogue slots exist and their tier.
- */
-export type ClassifiedRarity = "mythic" | "secret";
-/**
- * Each slot's owner-approved public preview (20 Oct): a partial reveal (dark form, rim light,
- * signature lights) shown in place of the seal-stone until the viewer may see the species.
- * File names carry only the tier; no name, lore or metadata goes with them.
- */
-export const CLASSIFIED_SLOTS: readonly { dex: number; rarity: ClassifiedRarity; preview: string }[] = [
-  { dex: 20, rarity: "mythic", preview: "/sealed/mythic-b.webp" },
-  { dex: 21, rarity: "mythic", preview: "/sealed/mythic-d.webp" },
-  { dex: 22, rarity: "mythic", preview: "/sealed/mythic-c.webp" },
-  { dex: 28, rarity: "mythic", preview: "/sealed/mythic-a.webp" },
-  { dex: 23, rarity: "secret", preview: "/sealed/secret-b.webp" },
-  { dex: 24, rarity: "secret", preview: "/sealed/secret-a.webp" },
-];
-
-/** Every species in the game, classified included: the number the site advertises. */
-export const CATALOGUE_SIZE = SPECIES.length + CLASSIFIED_SLOTS.length;
-
-/**
- * Stand-in for a classified species wherever the public site would otherwise need one: a
- * classified Collection slot, the egg of a sealed tracked hatch, or a simulated (demo) hatch
- * that rolls Mythic or Secret. It is drawn as a generic sealed form, never a real design.
- */
-function sealed(rarity: ClassifiedRarity, dex = 0): Species {
-  return {
-    id: dex ? `classified-${dex}` : `sealed-${rarity}`,
-    dex,
-    name: "???",
-    epithet: "Classified",
-    rarity,
+  // ── MYTHIC ── platinum & cosmic
+  {
+    id: "astravex",
+    dex: 20,
+    name: "Astravex",
+    epithet: "Platinum Starforged",
+    rarity: "mythic",
+    element: "Nebula",
+    palette: {
+      body: "#c9d2ea",
+      bodyLight: "#ffffff",
+      bodyDark: "#4a527a",
+      belly: "#1a1240",
+      wing: "#b7c0e0",
+      wingEdge: "#ffffff",
+      accent: "#9f8bff",
+      eye: "#c4b8ff",
+      horn: "#f4f6ff",
+    },
+    personality: ["Infinite", "Calm", "Omniscient"],
+    lore: "Astravex's flank is a window into the night sky, and its antlers are constellations that shift to match its keeper's history.",
+    stats: { power: 90, spirit: 94, agility: 84 },
+  },
+  {
+    id: "orbelith",
+    dex: 21,
+    name: "Orbelith",
+    epithet: "The Celestine Coil",
+    rarity: "mythic",
+    element: "Aether",
+    palette: {
+      body: "#d5dcf2",
+      bodyLight: "#ffffff",
+      bodyDark: "#545c86",
+      belly: "#20164a",
+      wing: "#c6cff0",
+      wingEdge: "#e8e3ff",
+      accent: "#8fd8ff",
+      eye: "#a6f0ff",
+      horn: "#f6f7ff",
+    },
+    personality: ["Eternal", "Patient", "Cosmic"],
+    lore: "Orbelith is a world that learned to watch. Its ring is lined with eyes; its moons are the ones it has adopted.",
+    stats: { power: 88, spirit: 98, agility: 82 },
+  },
+  {
+    id: "eventide",
+    dex: 22,
+    name: "Eventide",
+    epithet: "Wing of the Last Light",
+    rarity: "mythic",
     element: "Void",
-    palette: { body: "#2a2640", bodyLight: "#4a4566", bodyDark: "#0d0b18", belly: "#3a3554", wing: "#2a2640", wingEdge: "#6b6888", accent: "#9b97c0", eye: "#c9c6e8", horn: "#4a4566" },
-    personality: ["Classified", "Classified", "Classified"],
-    lore: "A classified Solanite. Its true form is revealed only when a holder's own egg hatches one.",
-    stats: { power: 0, spirit: 0, agility: 0 },
-  };
-}
-export const SEALED: Record<ClassifiedRarity, Species> = { mythic: sealed("mythic"), secret: sealed("secret") };
-export const isSealedId = (id: string) => /^(sealed-(mythic|secret)|classified-\d+)$/.test(id);
+    palette: {
+      body: "#bcc4e0",
+      bodyLight: "#ffffff",
+      bodyDark: "#363b5e",
+      belly: "#120c30",
+      wing: "#141030",
+      wingEdge: "#d9d4ff",
+      accent: "#b49bff",
+      eye: "#ffffff",
+      horn: "#eef0ff",
+    },
+    personality: ["Silent", "Vast", "Merciful"],
+    lore: "Eventide's head is an eclipse; its glass wings hold the stars that have already burned out, so they are not forgotten.",
+    stats: { power: 86, spirit: 92, agility: 96 },
+  },
+  {
+    id: "helivane",
+    dex: 28,
+    name: "Helivane",
+    epithet: "The Sunpiercer",
+    rarity: "mythic",
+    element: "Solar",
+    palette: {
+      body: "#c9701c",
+      bodyLight: "#ffb547",
+      bodyDark: "#4a1c06",
+      belly: "#ffe7a8",
+      wing: "#e8891f",
+      wingEdge: "#fff1b8",
+      accent: "#ffd75e",
+      eye: "#ffffff",
+      horn: "#fff3c4",
+    },
+    personality: ["Fierce", "Radiant", "Unyielding"],
+    lore: "Helivane hunts the high orbit where the sun never sets, stooping like a falcon with a corona folded in its wings. Its dive is said to light the sky for a whole epoch.",
+    stats: { power: 94, spirit: 88, agility: 96 },
+  },
+
+  // ── SECRET ──
+  {
+    id: "genesis",
+    dex: 23,
+    name: "GENESIS",
+    epithet: "Slot Zero",
+    rarity: "secret",
+    element: "Prism",
+    palette: {
+      body: "#0b0b14",
+      bodyLight: "#2a2a44",
+      bodyDark: "#000000",
+      belly: "#14f195",
+      wing: "#0f0f1e",
+      wingEdge: "#14f195",
+      accent: "#9945ff",
+      eye: "#14f195",
+      horn: "#e0e0ff",
+    },
+    personality: ["Primordial", "Unknowable", "Kind"],
+    lore: "Before the first block, something was already holding. GENESIS remembers. GENESIS chose you.",
+    stats: { power: 99, spirit: 99, agility: 99 },
+  },
+  {
+    id: "nullborn",
+    dex: 24,
+    name: "Ø NULLBORN",
+    epithet: "The Unindexed",
+    rarity: "secret",
+    element: "Void",
+    palette: {
+      body: "#f3f3f7",
+      bodyLight: "#ffffff",
+      bodyDark: "#9a9ab0",
+      belly: "#000000",
+      wing: "#ffffff",
+      wingEdge: "#ff3df2",
+      accent: "#ff3df2",
+      eye: "#000000",
+      horn: "#000000",
+    },
+    personality: ["Glitched", "Curious", "Inverted"],
+    lore: "No RPC returns its account. No explorer shows its history. And yet — here it is, looking back at you.",
+    stats: { power: 97, spirit: 100, agility: 98 },
+  },
+];
+
+/** Every species in the game: the number the site advertises. */
+export const CATALOGUE_SIZE = SPECIES.length;
+
+/** Lookup by id. Own properties only, so ids like "constructor" resolve to nothing. */
+export const SPECIES_BY_ID: Record<string, Species> = Object.fromEntries(SPECIES.map((s) => [s.id, s]));
 
 /**
- * The approved preview for a sealed stand-in: its own slot's for a catalogue slot, the tier's
- * first for a generic stand-in (a demo roll or a tier card). Null for anything else.
+ * The stage a creature is shown at when no stage is chosen (the Collection's plates, related
+ * cards and the detail view's opening stage): its final evolution, taken from the evolution
+ * data (0-indexed, so Ascended is 3 with four forms). A viewer's own creature, or a stage
+ * someone picks, still shows that stage.
  */
-export function sealedPreview(s: Pick<Species, "id" | "dex" | "rarity">): string | null {
-  if (!isSealedId(s.id)) return null;
-  return (CLASSIFIED_SLOTS.find((c) => c.dex === s.dex) ?? CLASSIFIED_SLOTS.find((c) => c.rarity === s.rarity))?.preview ?? null;
-}
-
-/**
- * What a client-side (simulated) roll can land on: the public species plus one sealed
- * stand-in per classified tier, so the rarity odds are exactly the production ones.
- */
-export const PUBLIC_ROLL_CATALOGUE: readonly Species[] = [...SPECIES, SEALED.mythic, SEALED.secret];
-
-/**
- * Lookup by id. Holds the public species and the sealed stand-ins; a classified species is
- * added only when the server sends it to a viewer entitled to it (registerClassified).
- */
-export const SPECIES_BY_ID: Record<string, Species> = Object.fromEntries(PUBLIC_ROLL_CATALOGUE.map((s) => [s.id, s]));
-
-/** The classified species this viewer has been sent by the server, by catalogue number. */
-const revealedByDex = new Map<number, Species>();
-
-/** Adds a classified species sent by the server (Developer Mode, or the viewer's own hatch). */
-export function revealSpecies(s: Species): void {
-  SPECIES_BY_ID[s.id] = s;
-  revealedByDex.set(s.dex, s);
-}
-
-/**
- * The full catalogue as this viewer may see it: public species, then each classified slot
- * as its revealed species or, if not revealed to them, a sealed stand-in.
- */
-export function catalogueForViewer(): Species[] {
-  return [...SPECIES, ...CLASSIFIED_SLOTS.map((c) => revealedByDex.get(c.dex) ?? sealed(c.rarity, c.dex))];
-}
-
-/**
- * The stage a creature is shown at when no stage is chosen (the Collection's plates and related
- * cards): Ascended, the finished form (owner, 20 Oct). 0-indexed: 0 Eggling … 3 Ascended. A
- * viewer's own creature, or a stage someone picks, still shows that stage.
- */
-export const FEATURED_STAGE = 3;
+export const FEATURED_STAGE = gameConfig.evolution.names.length - 1;
 
 export function speciesOfRarity(r: RarityId): Species[] {
   return SPECIES.filter((s) => s.rarity === r);

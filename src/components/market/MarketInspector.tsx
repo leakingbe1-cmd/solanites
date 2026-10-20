@@ -10,7 +10,7 @@ import { CreatureMarketPanel } from "./CreatureMarketPanel";
  * Market links section of Developer Mode (/studio/dev). Read-only: every request goes to
  * /studio/dev/market, which the middleware and the route itself guard with the owner
  * credentials and the DEVELOPER_MODE=off switch. Species names, rarities and accents come
- * from that endpoint, so classified species never reach the public bundle through here.
+ * from that endpoint.
  */
 
 interface LinkDiag {
@@ -88,7 +88,7 @@ export function MarketInspector() {
   return (
     <section aria-labelledby="dev-market" className="mt-16">
       <h2 id="dev-market" className="sl-label text-dust">Market links</h2>
-      <p className="mt-2 max-w-2xl text-sm text-vellum">Every Solanite&apos;s linked stock, data status and growth calculation, including classified species. Read-only: nothing here changes game state, ownership, odds or rewards.</p>
+      <p className="mt-2 max-w-2xl text-sm text-vellum">Every Solanite&apos;s linked stock, data status and growth calculation, Mythic and Secret included. Read-only: nothing here changes game state, ownership, odds or rewards.</p>
       {error && <p className="mt-3 text-sm text-gilt">{error}</p>}
 
       {diag && (

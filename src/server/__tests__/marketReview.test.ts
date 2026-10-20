@@ -33,15 +33,18 @@ describe("MARKET_WIDGET: the only public price display, decided by the server", 
     expect(body.chart.points).toEqual([]);
   });
 
-  it("never for a classified species: the same 404 as an unknown id", async () => {
+  it("Mythic and Secret species get the same public answer as every other species", async () => {
     process.env.MARKET_WIDGET = "tradingview";
     const { GET } = await import("@/app/api/market/[speciesId]/route");
-    const unknown = await GET(req("/api/market/no-such"), params("no-such"));
-    for (const id of (await import("@/server/classified")).CLASSIFIED_SPECIES.map((s) => s.id)) {
-      const r = await GET(req(`/api/market/${id}`), params(id));
-      expect(r.status).toBe(404);
-      expect(await r.json()).toEqual(await unknown.clone().json());
+    const { SPECIES } = await import("@/lib/species");
+    for (const s of SPECIES.filter((x) => x.rarity === "mythic" || x.rarity === "secret")) {
+      const r = await GET(req(`/api/market/${s.id}`), params(s.id));
+      expect(r.status).toBe(200);
+      const body = await r.json();
+      expect(body.externalChart).toBe("tradingview");
+      expect(body.quote).toBeNull();
     }
+    expect((await GET(req("/api/market/no-such"), params("no-such"))).status).toBe(404);
   });
 
   it("the public identity answer carries no mapping notes or provider name", async () => {

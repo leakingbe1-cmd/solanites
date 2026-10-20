@@ -13,7 +13,7 @@ Developer Mode, behind owner authentication. No public Market Vigour score. No p
 | # | Check | How | State |
 |---|---|---|---|
 | P1 | Widget appears only when the server sets `externalChart: "tradingview"` (`MARKET_WIDGET=tradingview`) | `marketReview.test.ts`, `scripts/qa/live-market.mjs` | Passed locally |
-| P2 | Never for a classified species: same 404 as an unknown id | `marketReview.test.ts`, `classified-privacy.mjs` | Passed locally |
+| P2 | Mythic and Secret species answer like every other species (owner decision 20 Oct; previously 404) | `marketReview.test.ts`, `mythic-secret.mjs` | Passed locally |
 | P3 | Public API responses carry no quote, growth, chart points, mapping notes or provider name | `marketReview.test.ts`, `live-market.mjs` | Passed locally |
 | P4 | TradingView attribution present (`Track all markets on TradingView`) | `live-market.mjs` | VERIFIED 2026-10-20 (headless Chromium, local build): TradingView's script rewrites the attribution itself, same text, link to tradingview.com with tracking parameters |
 | P5 | Delay wording: "timing per TradingView, may be delayed"; no minutes figure, no "real-time" anywhere | code search, `live-market.mjs` | Passed locally |
@@ -27,7 +27,7 @@ Developer Mode, behind owner authentication. No public Market Vigour score. No p
 
 | # | Check | How | State |
 |---|---|---|---|
-| D1 | All `/studio` routes 404 without `STUDIO_BASIC_AUTH`, 401 with wrong credentials, 404 when `DEVELOPER_MODE=off` | `classified-privacy.mjs`, `developer-mode.mjs` | Passed locally |
+| D1 | All `/studio` routes 404 without `STUDIO_BASIC_AUTH`, 401 with wrong credentials, 404 when `DEVELOPER_MODE=off` | `mythic-secret.mjs`, `developer-mode.mjs` | Passed locally |
 | D2 | Strict CSP on `/studio`; zero third-party requests from owner pages | `live-market.mjs` (owner) | Passed locally |
 | D3 | API key never in static files, page HTML, logs or any response | dummy-key sweep after a full QA run | Passed locally (0 hits) |
 | D4 | Budget: 8/min and 800/day per instance; provider 429 backs off globally (60 s, doubling, max 1 h); refusals cached 15 min | `marketLive.test.ts` | Passed (mocked provider) |

@@ -15,8 +15,7 @@ import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
  * form names come straight from `gameConfig.evolution`, so the copy can never
  * drift from the rules the tracker applies.
  *
- * Featured species span Common → Legendary and different body plans. Mythic
- * and Secret species stay classified, as everywhere else on the landing page.
+ * Featured species span Common → Legendary and different body plans.
  */
 const FEATURED = ["mossling", "emberlisk", "cryovant", "neonyx", "aurelion", "velynx"] as const;
 

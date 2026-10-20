@@ -44,29 +44,12 @@ describe("market routes", () => {
     expect((await GET(req("/api/market/pyraurum?range=5Y"), params("pyraurum"))).status).toBe(400);
   });
 
-  it("classified species stay classified: same 404 as an unknown species, unless the owner has hatched one", async () => {
+  it("Mythic and Secret species answer like any other species; unknown ids are 404", async () => {
     const { GET } = await import("@/app/api/market/[speciesId]/route");
-    const unknown = await GET(req("/api/market/nothing"), params("nothing"));
-    const hidden = await GET(req("/api/market/astravex"), params("astravex"));
-    expect(unknown.status).toBe(404);
-    expect(hidden.status).toBe(404);
-    expect(await hidden.json()).toEqual(await unknown.json());
-
-    const owner = keypairFromSeed(1003).address;
-    expect((await GET(req(`/api/market/astravex?owner=${owner}`), params("astravex"))).status).toBe(404); // hasn't hatched one
-
-    const rt = await getRuntime();
-    await rt.db.query(
-      `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, hatched_ms)
-       VALUES ('egg-market-test', $1, 900, 'fixture', 0, 0, 0, 0, 0, 1, 'astravex', 1)`,
-      [owner],
-    );
-    const res = await GET(req(`/api/market/astravex?owner=${owner}`), params("astravex"));
+    expect((await GET(req("/api/market/nothing"), params("nothing"))).status).toBe(404);
+    const res = await GET(req("/api/market/astravex"), params("astravex"));
     expect(res.status).toBe(200);
-    expect(res.headers.get("cache-control")).toBe("no-store");
     expect(((await res.json()) as MarketSnapshot).stock.ticker).toBe("GOOGL");
-    // Proving ownership of one classified species reveals nothing about another.
-    expect((await GET(req(`/api/market/orbelith?owner=${owner}`), params("orbelith"))).status).toBe(404);
   });
 
   const STUDIO = "owner:correct-horse-battery-staple-test";

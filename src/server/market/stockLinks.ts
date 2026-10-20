@@ -3,9 +3,8 @@ import "server-only";
 /**
  * Each Solanite species' permanent stock identity: one publicly traded company per species.
  *
- * Server only, so tickers never ship in the browser bundle: Mythic and Secret species stay
- * classified, and a ticker would hint at a classified creature's identity. The browser gets a
- * species' link through /api/market/:speciesId, which applies the same discovery rules.
+ * Server only: the browser gets a species' link through /api/market/:speciesId. Every
+ * species, Mythic and Secret included, is public (owner decision, 20 Oct).
  *
  * Every ticker and exchange was checked against public listings on 19 Oct 2026 (see
  * docs/stock-links.md for sources and the entries flagged for review). Editing this file is
@@ -91,7 +90,7 @@ export const STOCK_LINKS: StockLink[] = [
   { speciesId: "thalor", ticker: "JPM", company: "JPMorgan Chase & Co.", exchange: "NYSE", sector: "Financials · banking",
     connection: "The Deepwarden: steadfast, protective, ancient. A fortress in the deep.", visualIdentity: accentChip("Thalor") },
 
-  // Mythic (classified until hatched)
+  // Mythic
   { speciesId: "astravex", ticker: "GOOGL", company: "Alphabet Inc. (Class A)", exchange: "Nasdaq", sector: "Communication services · search and AI",
     connection: "Omniscient and calm: a stag whose antlers map every star.", visualIdentity: accentChip("Astravex") },
   { speciesId: "orbelith", ticker: "RKLB", company: "Rocket Lab Corporation", exchange: "Nasdaq", sector: "Industrials · space launch and spacecraft",
@@ -101,7 +100,7 @@ export const STOCK_LINKS: StockLink[] = [
   { speciesId: "helivane", ticker: "LMT", company: "Lockheed Martin Corporation", exchange: "NYSE", sector: "Industrials · aerospace and defence",
     connection: "The Sunpiercer: a fierce, unyielding raptor of the high sky.", visualIdentity: accentChip("Helivane") },
 
-  // Secret (classified until hatched)
+  // Secret
   { speciesId: "genesis", ticker: "COIN", company: "Coinbase Global, Inc.", exchange: "Nasdaq", sector: "Financials · digital asset exchange",
     connection: "Slot Zero, the genesis of the chain, for the exchange that brought crypto to public markets.", visualIdentity: accentChip("GENESIS") },
   { speciesId: "nullborn", ticker: "GME", company: "GameStop Corp.", exchange: "NYSE", sector: "Consumer discretionary · specialty retail",

@@ -2,7 +2,7 @@ import { randomInt } from "node:crypto";
 import { gameConfig } from "@/config/gameConfig";
 import { baseWeights, chancesOf, effectiveWeights, parseDevOdds, simulateHatch } from "@/lib/devOdds";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { ALL_SPECIES, ALL_SPECIES_BY_ID } from "@/server/classified";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { fail, noStore } from "@/server/http";
 import { studioApiGuard } from "@/server/studioAuth";
 
@@ -45,8 +45,8 @@ export async function POST(req: Request) {
   const results: { seed: number; speciesId: string; rarity: string }[] = [];
   for (let i = 0; i < count; i++) {
     const seed = firstSeed + i;
-    const speciesId = simulateHatch(seed, gameConfig, settings, ALL_SPECIES);
-    const rarity = ALL_SPECIES_BY_ID[speciesId].rarity;
+    const speciesId = simulateHatch(seed, gameConfig, settings, SPECIES);
+    const rarity = SPECIES_BY_ID[speciesId].rarity;
     tally[rarity] += 1;
     if (results.length < 20) results.push({ seed, speciesId, rarity });
   }

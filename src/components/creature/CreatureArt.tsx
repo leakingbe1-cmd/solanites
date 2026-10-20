@@ -69,7 +69,7 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
   const label = silhouette ? "Undiscovered Solanite" : `${species.name}, ${RARITIES[rarity].label} ${species.element} Solanite`;
 
   const asset = vector ? null : stageAsset(species.id, evo);
-  const imageSrc = asset ? pickImage(asset, silhouette, rarity === "mythic" || rarity === "secret") : null;
+  const imageSrc = asset ? pickImage(asset, silhouette) : null;
   if (asset && imageSrc) {
     return (
       <div className={`sl-creature relative ${animated ? "is-animated" : ""} rar-${rarity} ${silhouette ? "is-silhouette" : ""} ${className}`} role="img" aria-label={label}>
@@ -119,15 +119,14 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
 }
 
 /**
- * Which file to show. Classified (Mythic/Secret) species only ever expose
- * their silhouette asset. A silhouette of an opaque image would be a dark
- * square, so those fall back to the vector silhouette.
+ * Which file to show. A silhouette uses its own asset when there is one, or darkens the real
+ * art with CSS; a silhouette of an opaque image would be a dark square, so that falls back to
+ * the vector silhouette.
  */
-export function pickImage(a: StageAsset, silhouette: boolean, classified: boolean): { src: string; srcSet?: string } | null {
+export function pickImage(a: StageAsset, silhouette: boolean): { src: string; srcSet?: string } | null {
   if (silhouette) {
     if (a.silhouette) return { src: a.silhouette };
-    // Non-classified species may darken their real art with CSS; classified ones never load it.
-    return !classified && a.alpha ? { src: a.thumb } : null;
+    return a.alpha ? { src: a.thumb } : null;
   }
   return { src: a.src, srcSet: `${a.thumb} 384w, ${a.src} 1024w` };
 }

@@ -1,5 +1,4 @@
 import type { EggStatus } from "@/config/eggProgression";
-import type { ClassifiedBundle } from "@/shared/classified";
 
 /**
  * Response of GET /api/holders/:address — an automatically tracked holder.
@@ -32,8 +31,6 @@ export interface TrackedHolderView {
   eggs: TrackedEgg[];
   rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel"; initialGrowthScheduleMs: number[] };
   sync: { lastSyncedAt: number | null; pending: boolean; error: string | null };
-  /** Classified species among this holder's hatched eggs, added by the API (src/server/classified). */
-  classified?: ClassifiedBundle[];
 }
 
 export interface TrackedEgg {
@@ -78,8 +75,6 @@ export interface HatchResult {
   egg: TrackedEgg;
   speciesId: string;
   alreadyHatched: boolean;
-  /** Set by the API when the hatched species is classified (Mythic or Secret). */
-  classified?: ClassifiedBundle[];
 }
 
 export interface TrackerApiError {

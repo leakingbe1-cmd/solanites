@@ -10,17 +10,13 @@ export interface StageAsset {
   thumb: string;
   /** False when the artwork has an opaque (dark) background. */
   alpha: boolean;
-  /** Shape-only version for classified species, so "???" never needs the real art. */
+  /** Shape-only version, used for a silhouette instead of darkening the real art. */
   silhouette?: string;
 }
 
 const SPECIES = (manifest as { species: Record<string, (StageAsset | null)[]> }).species;
 
-/**
- * Painted stages that arrived from the server at runtime: a classified species' art travels
- * only inside its disclosed bundle (src/server/classified), never as a public file or a
- * manifest entry, so it can't be listed or guessed.
- */
+/** Painted stages registered at runtime (none today); they win over the built-in manifest. */
 const RUNTIME: Record<string, (StageAsset | null)[]> = {};
 
 export function registerStageAssets(speciesId: string, stages: (StageAsset | null)[]): void {

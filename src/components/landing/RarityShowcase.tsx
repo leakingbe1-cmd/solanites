@@ -5,10 +5,9 @@ import { useState } from "react";
 import { CreatureScene } from "@/components/creature/CreatureScene";
 import { Modal } from "@/components/ui/Modal";
 import { gameConfig } from "@/config/gameConfig";
-import { CLASSIFIED_RARITIES } from "@/lib/discovery";
 import { rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES_BY_ID, type Species } from "@/lib/species";
+import { FEATURED_STAGE, SPECIES_BY_ID, type Species } from "@/lib/species";
 
 // The detail view is only needed after a click, so it stays out of the homepage bundle.
 const CreatureDetail = dynamic(() => import("@/components/creature/CreatureDetail").then((m) => m.CreatureDetail), { ssr: false });
@@ -18,16 +17,11 @@ const FEATURED: Record<string, string> = {
   rare: "duskwing",
   epic: "neonyx",
   legendary: "aurelion",
-  // classified tiers show their sealed stand-in (an approved preview, seal-stone fallback): no name, lore or full design
-  mythic: "sealed-mythic",
-  secret: "sealed-secret",
+  mythic: "astravex",
+  secret: "nullborn",
 };
 
-/**
- * One card per rarity tier. Each opens the same creature detail view the
- * Collection uses, so classified (Mythic/Secret) species stay classified there
- * too, and are drawn here as the generic sealed silhouette.
- */
+/** One card per rarity tier, each at its final form; each opens the Collection's detail view. */
 export function RarityShowcase() {
   const chances = rarityChances(gameConfig);
   const [open, setOpen] = useState<Species | null>(null);
@@ -37,7 +31,6 @@ export function RarityShowcase() {
         {RARITY_ORDER.map((r) => {
           const meta = RARITIES[r];
           const s = SPECIES_BY_ID[FEATURED[r]];
-          const classified = CLASSIFIED_RARITIES.includes(r);
           const c = chances[r] * 100;
           const rate = c < 1 ? c.toFixed(1) : String(Math.round(c));
           return (
@@ -45,19 +38,19 @@ export function RarityShowcase() {
               key={r}
               type="button"
               onClick={() => setOpen(s)}
-              aria-label={`${classified ? `Classified ${meta.label} Solanite` : `${s.name}, ${meta.label}`}: ${rate}% hatch rate. View details`}
+              aria-label={`${s.name}, ${meta.label}: ${rate}% hatch rate. View details`}
               className="sl-card-hover group relative flex flex-col overflow-hidden rounded-md border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-transparent p-3 text-left transition-colors hover:border-white/[0.14] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green/70 sm:p-4"
               style={{ boxShadow: `inset 0 1px 0 ${meta.color}22` }}
             >
               <span className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} aria-hidden />
               <span className="relative -mx-2 -mt-1 block aspect-square sm:-mx-3" aria-hidden>
-                <CreatureScene species={s} stage={2} size="card" silhouette={classified} sealed={classified} className="absolute inset-0 rounded-[3px]" artClassName="sl-art-host" />
+                <CreatureScene species={s} stage={FEATURED_STAGE} size="card" className="absolute inset-0 rounded-[3px]" artClassName="sl-art-host" />
               </span>
               <span className="relative mt-1 flex flex-1 flex-col">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: meta.color }}>
                   {meta.label}
                 </span>
-                <span className="mt-1 font-display text-base text-bone">{classified ? "???" : s.name}</span>
+                <span className="mt-1 font-display text-base text-bone">{s.name}</span>
                 <span className="mt-2 flex-1 text-xs leading-relaxed text-mist/80">{meta.tagline}</span>
                 <span className="mt-4 flex items-baseline justify-between gap-2 font-mono text-[11px]">
                   <span className="text-bone/70">{rate}%</span>

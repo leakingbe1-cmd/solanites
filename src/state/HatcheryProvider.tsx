@@ -24,10 +24,10 @@ import { ApiBalanceProvider } from "@/services/token/apiBalance";
 const STORAGE_KEY = "solanites:prototype:v1";
 
 /**
- * Demo games saved before classified species moved to the server can hold a Mythic or
- * Secret species id this browser no longer knows. Rolling the record's own seed again
- * lands on the same rarity (the roll depends only on the seed and the weights), now as
- * that tier's sealed stand-in.
+ * Demo games saved while Mythic and Secret species were hidden can hold a stand-in id
+ * ("sealed-mythic", "classified-20") that no longer exists. Rolling the record's own seed
+ * again lands on the same rarity (the roll depends only on the seed and the weights), now as
+ * a real species of that tier.
  */
 function sealUnknownSpecies(saved: Partial<State>): Partial<State> {
   if (!saved.records?.some((r) => r.speciesId && !SPECIES_BY_ID[r.speciesId])) return saved;

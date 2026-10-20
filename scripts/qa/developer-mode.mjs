@@ -37,7 +37,7 @@ const browser = await chromium.launch();
   await w.close();
 }
 
-// 2. The public Collection keeps Mythic and Secret classified.
+// 2. The public Collection names the Mythic and Secret species (owner decision 20 Oct).
 {
   const c = await browser.newContext();
   await c.addInitScript(SEEN);
@@ -45,7 +45,7 @@ const browser = await chromium.launch();
   await p.goto(B + "/collection", { waitUntil: "networkidle" });
   const text = await p.locator("main").innerText();
   const leaked = ["Astravex", "Orbelith", "Eventide", "Helivane", "GENESIS", "NULLBORN"].filter((n) => text.includes(n));
-  ok("public collection: Mythic and Secret names stay hidden", leaked.length === 0, leaked.join(", "));
+  ok("public collection: all six Mythic and Secret species are named", leaked.length === 6, leaked.join(", "));
   await c.close();
 }
 

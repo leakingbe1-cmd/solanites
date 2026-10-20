@@ -76,7 +76,7 @@ export interface MarketSnapshot {
   source: { name: string; plan: string; fetchedAt: number | null; delayMinutes?: number | null };
   /**
    * Set by the public route when the server has no displayable prices but an embeddable third-
-   * party chart is enabled for this deployment (MARKET_WIDGET). Never set for classified species.
+   * party chart is enabled for this deployment (MARKET_WIDGET).
    */
   externalChart?: "tradingview" | null;
   /** When this response was produced (server clock). */

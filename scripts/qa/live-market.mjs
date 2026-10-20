@@ -6,13 +6,10 @@
 // that creature's own company and ticker, that TradingView's widget really loads (its iframe
 // appears) configured for exactly that exchange:ticker, that the attribution link is present,
 // and that nothing is labelled as sample data or "unavailable". It also checks the public
-// market API's identity for each, that classified ids answer 404, and that no provider key or
-// classified company name appears in any served JavaScript. With owner credentials it checks
-// that signed-in Developer Mode makes no third-party requests. Prints a timestamped record.
-// Classified ids and companies are read from the server-only source at run time, never written
-// into this public file.
-import { readFileSync } from "node:fs";
-import path from "node:path";
+// market API's identity for each, that the Mythic and Secret species answer like every other
+// (owner decision 20 Oct), and that no provider key appears in any served JavaScript. With owner
+// credentials it checks that signed-in Developer Mode makes no third-party requests. Prints a
+// timestamped record.
 import { chromium } from "/opt/node22/lib/node_modules/playwright/index.mjs";
 
 const B = (process.argv[2] ?? "http://localhost:3100").replace(/\/$/, "");
@@ -23,13 +20,12 @@ const CHECK = [
   { name: "Velynx", id: "velynx" },
   { name: "Thalor", id: "thalor" },
   { name: "Zephrax", id: "zephrax" },
+  { name: "Astravex", id: "astravex" },
+  { name: "GENESIS", id: "genesis" },
 ];
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
-const CLASSIFIED = [...readFileSync(path.join(ROOT, "src/server/classified/species.ts"), "utf8").matchAll(/^    id: "([^"]+)"/gm)].map((m) => m[1]);
-if (CLASSIFIED.length !== 6) throw new Error("Could not read the classified species ids.");
-const links = readFileSync(path.join(ROOT, "src/server/market/stockLinks.ts"), "utf8");
-const CLASSIFIED_COMPANIES = CLASSIFIED.map((id) => new RegExp(`speciesId: "${id}", ticker: "[^"]+", company: "([^"(]+)`).exec(links)?.[1]?.trim()).filter(Boolean);
-const SECRET_STRINGS = [...CLASSIFIED_COMPANIES, "TWELVE_DATA_API_KEY", "MASSIVE_API_KEY", "apikey="];
+/** Mythic and Secret species, public with their approved pairings (src/server/market/stockLinks.ts). */
+const MYTHIC_SECRET = { astravex: "GOOGL", orbelith: "RKLB", eventide: "LLY", helivane: "LMT", genesis: "COIN", nullborn: "GME" };
+const SECRET_STRINGS = ["TWELVE_DATA_API_KEY", "MASSIVE_API_KEY", "apikey="];
 const CREDS = process.env.STUDIO_QA_CREDENTIALS ?? null;
 const PREFIX = { NYSE: "NYSE", Nasdaq: "NASDAQ" };
 
@@ -41,7 +37,7 @@ const ok = (label, cond, detail = "") => {
 };
 console.log(`live-market acceptance · ${B} · ${new Date().toISOString()}`);
 
-// 1. Public API: identity per species, classified ids sealed.
+// 1. Public API: identity per species, Mythic and Secret included.
 const identity = {};
 const chartFlag = {};
 for (const c of CHECK) {
@@ -55,11 +51,11 @@ for (const c of CHECK) {
   console.log(`      ${c.id} externalChart: ${j?.externalChart ?? "none"}`);
   console.log(`      ${c.id} → ${j?.stock?.exchange}:${j?.stock?.ticker} (${j?.stock?.company}) · server status ${j?.status} · ${j?.statusDetail ?? ""}`);
 }
-const unknown = await fetch(`${B}/api/market/no-such-species`);
-const unknownBody = await unknown.text();
-for (const id of CLASSIFIED) {
+ok("api: an unknown id is 404", (await fetch(`${B}/api/market/no-such-species`)).status === 404);
+for (const [id, ticker] of Object.entries(MYTHIC_SECRET)) {
   const r = await fetch(`${B}/api/market/${id}`);
-  ok(`api ${id}: same 404 as an unknown id`, r.status === 404 && (await r.text()) === unknownBody);
+  const j = await r.json().catch(() => null);
+  ok(`api ${id}: 200 with its approved pairing ${ticker}, no server prices`, r.status === 200 && j?.stock?.ticker === ticker && j?.quote === null, `${r.status} ${j?.stock?.ticker}`);
 }
 
 // 2. Browser: the panel, the widget and its symbol.
@@ -105,15 +101,15 @@ for (const c of CHECK) {
   await page.keyboard.press("Escape");
 }
 
-// 3. No key or classified company in any served script.
+// 3. No provider key in any served script.
 let leaked = [];
 for (const url of scripts) {
   const body = await (await fetch(url)).text();
   for (const s of SECRET_STRINGS) if (body.includes(s)) leaked.push(`${url.split("/").pop()}: ${s}`);
 }
-ok(`no provider key or classified company in ${scripts.size} served scripts`, scripts.size > 0 && leaked.length === 0, leaked.join("; "));
+ok(`no provider key in ${scripts.size} served scripts`, scripts.size > 0 && leaked.length === 0, leaked.join("; "));
 
-// 4. Owner tools load nothing third-party (classified data and credentials live there).
+// 4. Owner tools load nothing third-party (owner credentials live there).
 if (CREDS) {
   const [username, ...rest] = CREDS.split(":");
   const owner = await browser.newContext({ viewport: { width: 1440, height: 900 }, httpCredentials: { username, password: rest.join(":") } });

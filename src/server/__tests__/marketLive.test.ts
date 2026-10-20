@@ -368,8 +368,9 @@ describe("public display gate", () => {
       expect(body.stock.ticker).toBe("DE");
       expect(f).not.toHaveBeenCalled();
       expect(JSON.stringify(body)).not.toContain(KEY);
-      const classified = await GET(new Request("http://localhost/api/market/astravex"), { params: Promise.resolve({ speciesId: "astravex" }) });
-      expect(classified.status).toBe(404);
+      const mythic = await (await GET(new Request("http://localhost/api/market/astravex"), { params: Promise.resolve({ speciesId: "astravex" }) })).json();
+      expect(mythic.quote).toBeNull();
+      expect(f).not.toHaveBeenCalled();
     } finally {
       process.env.SOLANITES_FIXTURES = prevFixtures;
     }

@@ -1,9 +1,8 @@
 import { rim, round, Spec, type Renderer } from "../kit";
 
 /**
- * The sealed form: what the public site draws for a classified (Mythic or Secret) Solanite
- * it may not show. A plain obsidian seal-stone with one dim seam, the same for every
- * classified species and every stage, so it says nothing about any real design.
+ * Fallback for an id with no renderer (an unknown or retired id, e.g. from an older saved
+ * game): a plain obsidian seal-stone with one dim seam, so nothing crashes or invents a design.
  */
 export const sealed: Renderer = {
   floating: true,

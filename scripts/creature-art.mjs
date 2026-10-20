@@ -27,9 +27,6 @@ const CHECKLIST = path.join(ROOT, "docs/creature-art/checklist.md");
 const PROMPTS = path.join(ROOT, "docs/creature-art/prompts.md");
 
 const designs = JSON.parse(readFileSync(path.join(ROOT, "src/data/creatureDesigns.json"), "utf8"));
-// Classified (Mythic/Secret) design text is server only. It feeds the prompt sheet, but those
-// species never get public asset files or manifest entries: their art is served by the server.
-const classifiedDesigns = JSON.parse(readFileSync(path.join(ROOT, "src/server/classified/designs.json"), "utf8"));
 const STAGES = designs.stageNames.map((s) => s.toLowerCase()); // eggling, hatchling, evolved, ascended
 const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec;
 /**
@@ -39,8 +36,6 @@ const { size: SIZE, thumbSize: THUMB, maxBytes: MAX_BYTES } = designs.style.spec
 const MIN_INPUT = SIZE;
 /** Canon C13 framing tool, run on the delivered canvas. */
 const FRAMING_TOOL = path.join(ROOT, "docs/canon/measure-framing.py");
-/** Classified until discovered — they also get a silhouette asset so the full art is never needed to show "???". */
-const CLASSIFIED = new Set(["astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn"]);
 const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
 
 function findSource(id, n) {
@@ -147,18 +142,6 @@ async function processOne(id, n, file, info) {
   writeFileSync(path.join(dir, `${base}-${THUMB}.webp`), thumb);
   const entry = { src: `/creatures/${id}/${base}.webp`, thumb: `/creatures/${id}/${base}-${THUMB}.webp`, alpha: info.transparent, bytes: full.length };
   if (full.length > MAX_BYTES) info.warnings.push(`optimised file is ${Math.round(full.length / 1024)} KB (budget ${Math.round(MAX_BYTES / 1024)} KB)`);
-  if (CLASSIFIED.has(id) && info.transparent) {
-    // Shape only: every visible pixel becomes the same dark tone.
-    const { data, info: raw } = await sharp(full).resize(THUMB, THUMB).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-    for (let i = 0; i < data.length; i += 4) {
-      data[i] = 8;
-      data[i + 1] = 6;
-      data[i + 2] = 20;
-    }
-    const sil = await sharp(data, { raw }).webp({ quality: 80 }).toBuffer();
-    writeFileSync(path.join(dir, `${base}-silhouette.webp`), sil);
-    entry.silhouette = `/creatures/${id}/${base}-silhouette.webp`;
-  }
   return entry;
 }
 
@@ -207,34 +190,8 @@ async function run(mode) {
     manifest.species[id] = stages;
     rows.push(`| ${id} | ${cells.join(" | ")} |`);
   }
-  // Classified species: validated like the rest, and nothing more. Owner decision (20 Oct):
-  // classified art never enters the public repository, not as files, data URLs or ciphertext.
-  // It goes to the private Blob store (docs/classified-species.md), so nothing is written here.
-  for (const id of Object.keys(classifiedDesigns.species)) {
-    for (let n = 0; n < 4; n++) {
-      const file = findSource(id, n);
-      if (!file) continue;
-      supplied++;
-      const info = await inspect(file, n);
-      const rel = path.relative(ROOT, file);
-      if (!info.problems.length) {
-        const hash = await perceptualHash(file);
-        const px = await pixels(file);
-        for (const e of seen) if (await isCopy(hash, px, e)) info.problems.push(`same image as ${e.rel} (resized or re-encoded copy)`);
-        seen.push({ hash, px, rel });
-      }
-      if (info.problems.length) {
-        invalid++;
-        console.error(`✗ ${rel}: ${info.problems.join("; ")}`);
-        continue;
-      }
-      ok++;
-      for (const w of info.warnings) console.warn(`! ${rel}: ${w}`);
-      if (write) console.warn(`! ${rel}: classified, so not written to the repository; upload it to the private store`);
-    }
-  }
 
-  const total = (Object.keys(designs.species).length + Object.keys(classifiedDesigns.species).length) * 4;
+  const total = Object.keys(designs.species).length * 4;
   const summary = `${ok} of ${total} stage assets supplied and valid · ${total - supplied} missing · ${invalid} invalid`;
   console.log(summary);
   if (write) {
@@ -277,7 +234,7 @@ function prompts() {
     `**Avoid:** ${style.negative}`,
     "",
   ];
-  for (const [id, s] of Object.entries({ ...designs.species, ...classifiedDesigns.species })) {
+  for (const [id, s] of Object.entries(designs.species)) {
     out.push(`## ${id}`, "", `- **Silhouette:** ${s.silhouette}`, `- **Anatomy:** ${s.anatomy}`, `- **Face:** ${s.face}`, `- **Posture:** ${s.posture}`, `- **Materials:** ${s.materials}`, `- **Effects:** ${s.effects}`);
     if (s.reference) out.push(`- **Reference strip:** \`${s.reference}\``);
     out.push("");

@@ -8,7 +8,7 @@ import { nextWidgetStatus, overviewConfig, TRADINGVIEW_ATTRIBUTION, TRADINGVIEW_
  * visitor's browser (timing per TradingView; free widgets may be delayed). Mounted once it
  * scrolls into view, following TradingView's React embed pattern (script appended to the
  * container). Only ever rendered for a snapshot the public route marked externalChart:
- * "tradingview", which it never does for classified species, and never inside owner tools.
+ * "tradingview", and never inside owner tools.
  *
  * Once loaded, TradingView's script replaces everything inside the container with its own
  * iframe and attribution (it adds tracking parameters to the attribution link). So the

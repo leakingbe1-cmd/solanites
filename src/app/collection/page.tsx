@@ -10,7 +10,7 @@ import { useHatchery } from "@/state/HatcheryProvider";
 import type { RarityId } from "@/config/gameConfig";
 import { evolutionOf } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { CATALOGUE_SIZE, catalogueForViewer, ELEMENT_GLYPH, type Element, type Species } from "@/lib/species";
+import { CATALOGUE_SIZE, ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
 
 
 
@@ -32,17 +32,16 @@ export default function CollectionPage() {
   // /collection?species=<id> (e.g. from the homepage Market Bond section) opens that species.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("species");
-    const s = id ? catalogueForViewer().find((c) => c.id === id) : undefined;
+    const s = id ? SPECIES.find((c) => c.id === id) : undefined;
     if (s) setOpen(s);
   }, []);
 
-  // Public species, then each classified slot: sealed unless the server revealed it to this viewer.
-  const catalogue = catalogueForViewer();
-  const elements = Array.from(new Set(catalogue.filter((s) => discovery(s) !== "classified").map((s) => s.element)));
+  const catalogue = SPECIES;
+  const elements = Array.from(new Set(catalogue.map((s) => s.element)));
   const list = catalogue.filter(
     (s) =>
       (rarity === "all" || s.rarity === rarity) &&
-      (element === "all" || (s.element === element && discovery(s) !== "classified")) &&
+      (element === "all" || s.element === element) &&
       (status === "all" || (status === "owned" ? discovery(s) === "owned" : discovery(s) !== "owned")),
   );
   const ownedCount = catalogue.filter((s) => h.discovered.includes(s.id)).length;
@@ -55,7 +54,7 @@ export default function CollectionPage() {
           <div>
             <p className="sl-eyebrow">The Solanidex</p>
             <h1 className="mt-3 sl-display-l text-bone">The Collection</h1>
-            <p className="mt-4 max-w-xl text-mist">Every known Solanite, catalogued by the Hatchery. Some signatures remain classified — the only way to reveal them is to hatch one yourself.</p>
+            <p className="mt-4 max-w-xl text-mist">Every known Solanite, catalogued by the Hatchery, from the commonest to the rarest Mythic and Secret.</p>
           </div>
           <div className="sl-glass w-full rounded-md p-5 lg:w-80">
             <div className="flex items-baseline justify-between">

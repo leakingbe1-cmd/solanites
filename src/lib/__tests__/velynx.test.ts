@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { gameConfig } from "@/config/gameConfig";
 import { rarityChances, rollSpecies } from "@/lib/progression";
 import { speciesOfRarity } from "@/lib/species";
-import { ALL_SPECIES as SPECIES, ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 
 describe("Velynx joins the catalogue without changing anything else", () => {
   it("is a Legendary Shadow species with a unique id, name and dex number", () => {

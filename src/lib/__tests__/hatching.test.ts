@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 import { gameConfig, type GameConfig } from "@/config/gameConfig";
 import { rarityChances, rollRarity, rollSpecies, validateRarityConfig } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SEALED } from "@/lib/species";
 // The game's full catalogue (classified included), as the server rolls it.
-import { ALL_SPECIES as SPECIES, ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { DEMO_UNHATCHED, demoRecords } from "@/state/HatcheryProvider";
 
 /**
@@ -21,18 +20,25 @@ const seq = (...xs: number[]) => {
   return () => xs[i++];
 };
 
-describe("classified species stay on the server", () => {
-  it("a client-side (simulated) roll lands on the same tier as the server roll, sealed for Mythic and Secret", () => {
+describe("one catalogue for every roll", () => {
+  it("a client-side (simulated) roll lands on exactly the species the server roll does, Mythic and Secret included", () => {
     const tiers = new Set<string>();
     for (let seed = 0; seed < 50_000; seed++) {
       const real = rollSpecies(seed, gameConfig, SPECIES);
-      const sim = rollSpecies(seed, gameConfig);
-      const rarity = SPECIES_BY_ID[real].rarity;
-      tiers.add(rarity);
-      if (rarity === "mythic" || rarity === "secret") expect(sim).toBe(SEALED[rarity].id);
-      else expect(sim).toBe(real);
+      expect(rollSpecies(seed, gameConfig)).toBe(real);
+      tiers.add(SPECIES_BY_ID[real].rarity);
     }
     expect(tiers.size).toBe(RARITY_ORDER.length);
+  });
+
+  it("keeps the catalogue order production rolls were issued with (reordering would change existing eggs)", () => {
+    expect(SPECIES.map((s) => s.id)).toEqual([
+      "mossling", "driftfin", "pallow", "glimmeray", "sproutwyrm", "frostkit",
+      "abyssal-vael", "stormquill", "duskwing", "cryovant", "emberlisk",
+      "neonyx", "aurorath", "zephrax", "prismara", "nyxara",
+      "aurelion", "solvanth", "pyraurum", "aurelith", "velynx", "thalor",
+      "astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn",
+    ]);
   });
 });
 

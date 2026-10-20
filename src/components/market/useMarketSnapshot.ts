@@ -8,7 +8,7 @@ export type MarketLoad = { state: "loading" } | { state: "ok"; snap: MarketSnaps
 /**
  * A species' linked stock from /api/market/:speciesId: the same endpoint and rules as the
  * creature detail panel (CreatureMarketPanel). A 404 means the link is not shown to this
- * viewer (a classified species, or an unknown id) and is reported as "hidden".
+ * viewer (an unknown id) and is reported as "hidden".
  */
 export function useMarketSnapshot(speciesId: string, range: MarketRange): MarketLoad {
   const [load, setLoad] = useState<MarketLoad>({ state: "loading" });

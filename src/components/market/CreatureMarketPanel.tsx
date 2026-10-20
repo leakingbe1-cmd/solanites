@@ -12,8 +12,7 @@ import { TradingViewOverview } from "./TradingViewOverview";
  * information panel; it never recolours the creature. Everything comes from /api/market, which
  * reads stored end-of-day data on the server, so opening many creatures costs no provider calls.
  *
- * `owner`: the public address of the viewer's wallet when they own this creature. Required for
- * Mythic and Secret species, whose link stays classified until a verified hatch.
+ * `owner`: the public address of the viewer's wallet when they own this creature (optional).
  */
 
 const UP = "#46c9b0";
@@ -34,7 +33,7 @@ const fmtSigned = (n: number, dp = 2) => `${n > 0 ? "+" : n < 0 ? "−" : "±"}$
 const fmtSession = (d: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
 const fmtTime = (ms: number) => new Date(ms).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZoneName: "short" });
 
-type Load = { state: "loading" } | { state: "ok"; snap: MarketSnapshot } | { state: "classified" } | { state: "error"; message: string };
+type Load = { state: "loading" } | { state: "ok"; snap: MarketSnapshot } | { state: "missing" } | { state: "error"; message: string };
 
 export function CreatureMarketPanel({
   speciesId,
@@ -64,7 +63,7 @@ export function CreatureMarketPanel({
     if (owner) q.set("owner", owner);
     (fetchSnapshot ? fetchSnapshot(range, ctl.signal) : fetch(`/api/market/${encodeURIComponent(speciesId)}?${q}`, { signal: ctl.signal }))
       .then(async (r) => {
-        if (r.status === 404) return setLoad({ state: "classified" });
+        if (r.status === 404) return setLoad({ state: "missing" });
         if (!r.ok) {
           const b = await r.json().catch(() => null);
           return setLoad({ state: "error", message: b?.error?.message ?? "The linked stock couldn't be loaded. Please try again." });
@@ -90,12 +89,11 @@ export function CreatureMarketPanel({
       </section>
     );
   }
-  if (load.state === "classified") {
+  if (load.state === "missing") {
     return (
       <section className={shell}>
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-dust">Linked stock</p>
-        <p className="mt-3 font-display text-xl text-bone">Classified</p>
-        <p className="mt-1 text-sm text-vellum">This Solanite&apos;s linked stock is classified and isn&apos;t shown on the site.</p>
+        <p className="mt-3 text-sm text-vellum">This Solanite&apos;s linked stock isn&apos;t available.</p>
       </section>
     );
   }

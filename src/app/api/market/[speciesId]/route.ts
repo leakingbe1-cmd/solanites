@@ -1,14 +1,12 @@
 import "server-only";
 import { MARKET_RANGES, type MarketRange } from "@/lib/market/types";
-import { ALL_SPECIES_BY_ID, isClassifiedId } from "@/server/classified";
+import { SPECIES_BY_ID } from "@/lib/species";
 import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
 import { log } from "@/server/log";
 import { MarketDataError } from "@/server/market/provider";
 import { getLiveMarket, getMarketRuntime, marketPublicDisplay, publicMarketWidget } from "@/server/market/runtime";
 import { unavailableSnapshot } from "@/server/market/service";
-import { ownsHatched } from "@/server/market/store";
-import { checkSolanaAddress } from "@/server/solana/address";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -16,7 +14,7 @@ export const dynamic = "force-dynamic";
 const notFound = () => fail(404, "NOT_FOUND", "Not found.");
 
 /**
- * GET /api/market/:speciesId?range=1M[&owner=<address>]
+ * GET /api/market/:speciesId?range=1M
  *
  * A species' linked stock: identity, the latest price and daily change, a chart for the range,
  * and its Market Vigour.
@@ -26,14 +24,11 @@ const notFound = () => fail(404, "NOT_FOUND", "Not found.");
  * unavailable snapshot, whether or not a provider key is configured, so the free Basic plan's
  * internal-use data never reaches a visitor. Local sample mode is exempt (labelled sample data).
  *
- * Mythic and Secret species are classified: their link is only returned with `owner`, a
- * public address that holder tracking shows has hatched one, the same rule the holder API
- * uses to disclose a hatched classified species. An address is public, so this is not proof
- * that the caller controls that wallet. Unknown and undisclosed classified species get the
- * same 404, so the response reveals nothing.
+ * Every species gets the same answer, Mythic and Secret included (owner decision, 20 Oct:
+ * all six are public, with their approved stock pairings).
  */
 export async function GET(req: Request, { params }: { params: Promise<{ speciesId: string }> }) {
-  // Rate-limited before any lookup, so an unknown id and an undisclosed classified one behave identically.
+  // Rate-limited before any lookup.
   const limited = await rateLimit(req, "market-view", 60, 60_000);
   if (limited) return limited;
   // The range is checked before the species, so a bad range answers the same for every id.
@@ -43,16 +38,14 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   const range = rangeParam as MarketRange;
   const speciesId = decodeURIComponent((await params).speciesId);
   // Own properties only: "constructor", "__proto__" and the like are unknown ids, not lookups.
-  if (!Object.hasOwn(ALL_SPECIES_BY_ID, speciesId)) return notFound();
+  if (!Object.hasOwn(SPECIES_BY_ID, speciesId)) return notFound();
 
-  const classified = isClassifiedId(speciesId);
   const sample = process.env.SOLANITES_FIXTURES === "1" && process.env.NODE_ENV !== "production";
   if (!marketPublicDisplay() && !sample) {
-    // Public display not enabled: no genuine numbers, whatever is configured. Classified stays sealed.
-    if (classified) return notFound();
+    // Public display not enabled: no genuine numbers, whatever is configured.
     const snap = unavailableSnapshot(speciesId, range, Date.now());
     // The only public price display: an embeddable chart the visitor's browser loads from the
-    // provider, when this deployment enables it. Classified species never reach this line.
+    // provider, when this deployment enables it.
     if (publicMarketWidget() === "tradingview") {
       snap.externalChart = "tradingview";
       snap.statusDetail = "Prices and chart by TradingView; timing per TradingView, may be delayed.";
@@ -61,19 +54,12 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   }
   try {
     const live = sample ? null : getLiveMarket();
-    if (classified) {
-      const rt = await getMarketRuntime();
-      const owner = checkSolanaAddress(url.searchParams.get("owner") ?? "");
-      if (!owner.ok || !(await ownsHatched(rt.db, owner.address, speciesId))) return notFound();
-    }
     const snap = live ? await live.snapshot(speciesId, range) : await (await getMarketRuntime()).service.snapshot(speciesId, range);
     // Shared caches may hold public answers briefly: a minute for live quotes, longer for stored closes.
-    const headers = classified ? noStore : { "cache-control": live ? "public, s-maxage=60, stale-while-revalidate=300" : "public, s-maxage=120, stale-while-revalidate=600" };
+    const headers = { "cache-control": live ? "public, s-maxage=60, stale-while-revalidate=300" : "public, s-maxage=120, stale-while-revalidate=600" };
     return Response.json(snap, { headers });
   } catch (e) {
     if (e instanceof ConfigError) {
-      // Not set up yet: disclosing a classified link needs the hatch record, which needs the database.
-      if (classified) return notFound();
       return Response.json(unavailableSnapshot(speciesId, range, Date.now()), { headers: noStore });
     }
     if (e instanceof MarketDataError && e.code === "NOT_FOUND") return notFound();

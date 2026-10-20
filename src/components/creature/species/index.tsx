@@ -1,6 +1,6 @@
-import { registerStageAssets, type StageAsset } from "@/lib/creatureAssets";
-import { sealed } from "./sealed";
 import type { Renderer } from "../kit";
+import { sealed } from "./sealed";
+import { astravex } from "./astravex";
 import { aurelion } from "./aurelion";
 import { aurelith } from "./aurelith";
 import { aurorath } from "./aurorath";
@@ -8,11 +8,16 @@ import { cryovant } from "./cryovant";
 import { driftfin } from "./driftfin";
 import { duskwing } from "./duskwing";
 import { emberlisk } from "./emberlisk";
+import { eventide } from "./eventide";
 import { frostkit } from "./frostkit";
+import { genesis } from "./genesis";
 import { glimmeray } from "./glimmeray";
+import { helivane } from "./helivane";
 import { mossling } from "./mossling";
 import { neonyx } from "./neonyx";
+import { nullborn } from "./nullborn";
 import { nyxara } from "./nyxara";
+import { orbelith } from "./orbelith";
 import { pallow } from "./pallow";
 import { prismara } from "./prismara";
 import { pyraurum } from "./pyraurum";
@@ -24,12 +29,7 @@ import { vael } from "./vael";
 import { velynx } from "./velynx";
 import { zephrax } from "./zephrax";
 
-/**
- * One renderer per public species id — every Solanite has its own body plan. Classified
- * (Mythic and Secret) renderers are server only (src/server/classified/renderers); their
- * art reaches the browser as finished markup, and only for a viewer entitled to it
- * (registerClassifiedArt). Anything else falls back to the generic sealed form.
- */
+/** One renderer per species id — every Solanite has its own body plan. */
 export const RENDERERS: Record<string, Renderer> = {
   mossling,
   driftfin,
@@ -53,36 +53,15 @@ export const RENDERERS: Record<string, Renderer> = {
   aurelith,
   velynx,
   thalor,
+  astravex,
+  orbelith,
+  eventide,
+  helivane,
+  genesis,
+  nullborn,
 };
 
-/** Server-rendered art for a classified species, sent only to a viewer entitled to it. */
-export interface ClassifiedArt {
-  /** Body markup per stage (0..3); every gradient reference uses ART_ID_TOKEN in place of the instance id. */
-  stages: [string, string, string, string];
-  floating?: boolean;
-  fit?: number;
-  stageFit?: [number, number, number, number];
-  shadow?: number;
-  halo?: [number, number, number];
-  /** Painted stages (data URLs), when approved artwork exists; otherwise the vector stages are drawn. */
-  images?: (StageAsset | null)[];
-}
-
-/** Stands in for the per-instance SVG id inside server-rendered classified art. */
-export const ART_ID_TOKEN = "__SLID__";
-
-/** Makes a classified species drawable in this browser, from art the server sent. */
-export function registerClassifiedArt(id: string, art: ClassifiedArt): void {
-  const { stages, images, ...shape } = art;
-  // Painted art only when all four stages exist, so a line is never half painted, half vector.
-  if (images?.length === 4 && images.every(Boolean)) registerStageAssets(id, images);
-  RENDERERS[id] = {
-    ...shape,
-    render: (c) => <g dangerouslySetInnerHTML={{ __html: stages[c.evo].split(ART_ID_TOKEN).join(c.id) }} />,
-  };
-}
-
-/** The renderer for an id: its own, or the generic sealed form for anything classified. */
+/** The renderer for an id, or the plain seal-stone for an id with none (never a crash). */
 export function rendererFor(id: string): Renderer {
-  return RENDERERS[id] ?? sealed;
+  return Object.hasOwn(RENDERERS, id) ? RENDERERS[id] : sealed;
 }

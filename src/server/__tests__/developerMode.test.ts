@@ -18,7 +18,6 @@ import {
 import { rarityChances, rollSpecies } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
-import { ALL_SPECIES_BY_ID } from "@/server/classified";
 import { studioAccess } from "../studioAuth";
 
 const SECRET = "owner:correct-horse-battery-staple";
@@ -178,7 +177,7 @@ describe("Developer Mode authorisation", () => {
     expect(data.count).toBe(50);
     expect(sum(data.tally)).toBe(50);
     expect(data.tally.secret).toBe(50);
-    expect(data.results.every((r: { speciesId: string }) => ALL_SPECIES_BY_ID[r.speciesId].rarity === "secret")).toBe(true);
+    expect(data.results.every((r: { speciesId: string }) => SPECIES_BY_ID[r.speciesId].rarity === "secret")).toBe(true);
     // the owner sees the real classified species, not the public sealed stand-in
     expect(data.results.every((r: { speciesId: string }) => !r.speciesId.startsWith("sealed-"))).toBe(true);
   });
@@ -250,7 +249,7 @@ describe("production hatches are isolated from developer odds", () => {
   });
 
   it("eggs are sealed with the published config", () => {
-    expect(src("src/server/tracker/service.ts")).toMatch(/rollSpecies\(seed, gameConfig, ALL_SPECIES\)/);
+    expect(src("src/server/tracker/service.ts")).toMatch(/rollSpecies\(seed, gameConfig, SPECIES\)/);
     expect(gameConfig.rarityWeights).toEqual({ common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 });
   });
 

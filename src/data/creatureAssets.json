@@ -579,6 +579,157 @@
         "alpha": true,
         "bytes": 176250
       }
+    ],
+    "astravex": [
+      {
+        "src": "/creatures/astravex/1-eggling.webp",
+        "thumb": "/creatures/astravex/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 30560
+      },
+      {
+        "src": "/creatures/astravex/2-hatchling.webp",
+        "thumb": "/creatures/astravex/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 56866
+      },
+      {
+        "src": "/creatures/astravex/3-evolved.webp",
+        "thumb": "/creatures/astravex/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 82068
+      },
+      {
+        "src": "/creatures/astravex/4-ascended.webp",
+        "thumb": "/creatures/astravex/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 99608
+      }
+    ],
+    "orbelith": [
+      {
+        "src": "/creatures/orbelith/1-eggling.webp",
+        "thumb": "/creatures/orbelith/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 37092
+      },
+      {
+        "src": "/creatures/orbelith/2-hatchling.webp",
+        "thumb": "/creatures/orbelith/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 66802
+      },
+      {
+        "src": "/creatures/orbelith/3-evolved.webp",
+        "thumb": "/creatures/orbelith/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 89336
+      },
+      {
+        "src": "/creatures/orbelith/4-ascended.webp",
+        "thumb": "/creatures/orbelith/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 151916
+      }
+    ],
+    "eventide": [
+      {
+        "src": "/creatures/eventide/1-eggling.webp",
+        "thumb": "/creatures/eventide/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 33790
+      },
+      null,
+      {
+        "src": "/creatures/eventide/3-evolved.webp",
+        "thumb": "/creatures/eventide/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 118098
+      },
+      {
+        "src": "/creatures/eventide/4-ascended.webp",
+        "thumb": "/creatures/eventide/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 159682
+      }
+    ],
+    "helivane": [
+      {
+        "src": "/creatures/helivane/1-eggling.webp",
+        "thumb": "/creatures/helivane/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 32940
+      },
+      {
+        "src": "/creatures/helivane/2-hatchling.webp",
+        "thumb": "/creatures/helivane/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 64556
+      },
+      {
+        "src": "/creatures/helivane/3-evolved.webp",
+        "thumb": "/creatures/helivane/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 80608
+      },
+      {
+        "src": "/creatures/helivane/4-ascended.webp",
+        "thumb": "/creatures/helivane/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 103840
+      }
+    ],
+    "genesis": [
+      {
+        "src": "/creatures/genesis/1-eggling.webp",
+        "thumb": "/creatures/genesis/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 34286
+      },
+      {
+        "src": "/creatures/genesis/2-hatchling.webp",
+        "thumb": "/creatures/genesis/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 39112
+      },
+      {
+        "src": "/creatures/genesis/3-evolved.webp",
+        "thumb": "/creatures/genesis/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 57248
+      },
+      {
+        "src": "/creatures/genesis/4-ascended.webp",
+        "thumb": "/creatures/genesis/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 160764
+      }
+    ],
+    "nullborn": [
+      {
+        "src": "/creatures/nullborn/1-eggling.webp",
+        "thumb": "/creatures/nullborn/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 47820
+      },
+      {
+        "src": "/creatures/nullborn/2-hatchling.webp",
+        "thumb": "/creatures/nullborn/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 60236
+      },
+      {
+        "src": "/creatures/nullborn/3-evolved.webp",
+        "thumb": "/creatures/nullborn/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 103694
+      },
+      {
+        "src": "/creatures/nullborn/4-ascended.webp",
+        "thumb": "/creatures/nullborn/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 121546
+      }
     ]
   }
 }

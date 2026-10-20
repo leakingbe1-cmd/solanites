@@ -1,12 +1,8 @@
-import type { RarityId } from "@/config/gameConfig";
 import type { Species } from "@/lib/species";
 
-/** Mythic and Secret species stay classified until the viewer hatches one. */
-export const CLASSIFIED_RARITIES: RarityId[] = ["mythic", "secret"];
-
-export type Discovery = "owned" | "catalogued" | "classified";
+/** Every species is public; a viewer has either hatched one (owned) or not (catalogued). */
+export type Discovery = "owned" | "catalogued";
 
 export function discoveryOf(s: Species, discovered: readonly string[]): Discovery {
-  if (discovered.includes(s.id)) return "owned";
-  return CLASSIFIED_RARITIES.includes(s.rarity) ? "classified" : "catalogued";
+  return discovered.includes(s.id) ? "owned" : "catalogued";
 }

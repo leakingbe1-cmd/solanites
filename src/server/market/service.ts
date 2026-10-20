@@ -231,7 +231,7 @@ export function createMarketService(deps: MarketServiceDeps) {
     };
   }
 
-  /** Owner diagnostics: every link's data state and growth breakdown (classified species included). */
+  /** Owner diagnostics: every link's data state and growth breakdown. */
   async function diagnostics() {
     const t = now();
     const expected = latestCompletedSession(t);

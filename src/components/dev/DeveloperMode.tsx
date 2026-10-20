@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CollectionPlate } from "@/components/creature/CollectionPlate";
 import { CreatureArt } from "@/components/creature/CreatureArt";
-import { revealClassified } from "@/components/creature/revealClassified";
 import { EggArt } from "@/components/egg/EggArt";
 import { CreatureCard } from "@/components/hatchery/CreatureCard";
 import { HatchReveal } from "@/components/hatchery/HatchReveal";
@@ -12,11 +11,10 @@ import { HatcheryChamber } from "@/components/hatchery/HatcheryChamber";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { gameConfig, type RarityId } from "@/config/gameConfig";
 import { DEFAULT_DEV_ODDS, type DevOddsSettings } from "@/lib/devOdds";
-import { CLASSIFIED_RARITIES, discoveryOf } from "@/lib/discovery";
+import { discoveryOf } from "@/lib/discovery";
 import { FIRST_MATURITY_MS, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { SPECIES, SPECIES_BY_ID, type Species } from "@/lib/species";
-import type { ClassifiedBundle } from "@/shared/classified";
 import { DevOddsPanel } from "./DevOddsPanel";
 
 const STAGES = gameConfig.evolution.names;
@@ -37,18 +35,9 @@ function previewRecord(s: Species, stage: number): SolaniteRecord {
  * the Collection, the Hatchery and the hatch reveal present them. Everything here is a
  * preview: no ownership, eggs, progression, tokens or rewards are created or changed,
  * and the public pages read nothing from this page.
- *
- * The classified (Mythic and Secret) species are not in this component's code: the server
- * page sends them, with finished art, only after the owner's sign-in (`classified`).
  */
-export function DeveloperMode({ classified }: { classified: ClassifiedBundle[] }) {
-  const [ready, setReady] = useState(false);
-  const all = useMemo(() => [...SPECIES, ...classified.map((b) => b.species)], [classified]);
-  useEffect(() => {
-    revealClassified(classified);
-    setReady(true);
-  }, [classified]);
-  return ready ? <DeveloperModeView all={all} /> : <p className="px-4 pt-32 text-center text-mist" data-testid="developer-loading">Loading Developer Mode…</p>;
+export function DeveloperMode() {
+  return <DeveloperModeView all={SPECIES} />;
 }
 
 function DeveloperModeView({ all: ALL }: { all: Species[] }) {
@@ -61,7 +50,6 @@ function DeveloperModeView({ all: ALL }: { all: Species[] }) {
   const [reveal, setReveal] = useState<{ species: Species; seed: number } | null>(null);
 
   const list = useMemo(() => ALL.filter((s) => rarity === "all" || s.rarity === rarity), [ALL, rarity]);
-  const restricted = CLASSIFIED_RARITIES.includes(selected.rarity);
 
   function exit() {
     setOdds({ ...DEFAULT_DEV_ODDS });
@@ -87,7 +75,7 @@ function DeveloperModeView({ all: ALL }: { all: Species[] }) {
       <div className="mx-auto max-w-7xl px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <p className="sl-eyebrow">Owner tools</p>
         <h1 className="sl-display-l mt-3 text-bone">Developer Mode</h1>
-        <p className="mt-3 max-w-2xl text-mist">All {ALL.length} species and all {STAGES.length} stages, including Mythic and Secret, which stay classified for everyone else until they hatch one.</p>
+        <p className="mt-3 max-w-2xl text-mist">All {ALL.length} species and all {STAGES.length} stages, Mythic and Secret included.</p>
 
         {/* species browser */}
         <section aria-labelledby="dev-species" className="mt-10">
@@ -115,7 +103,6 @@ function DeveloperModeView({ all: ALL }: { all: Species[] }) {
                   <p className="truncate text-xs text-bone">{s.name}</p>
                   <p className="font-mono text-[9px] uppercase tracking-wider" style={{ color: RARITIES[s.rarity].color }}>
                     {RARITIES[s.rarity].label}
-                    {CLASSIFIED_RARITIES.includes(s.rarity) ? " · classified publicly" : ""}
                   </p>
                 </button>
               </li>
@@ -132,7 +119,6 @@ function DeveloperModeView({ all: ALL }: { all: Species[] }) {
             <RarityBadge rarity={selected.rarity} size="md" />
             <span className="text-sm text-mist">
               № {String(selected.dex).padStart(3, "0")} · {selected.element}
-              {restricted ? " · hidden from the public until hatched" : ""}
             </span>
           </div>
 

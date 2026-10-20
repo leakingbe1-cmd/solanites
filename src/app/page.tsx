@@ -13,7 +13,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { FIRST_MATURITY_MS } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { CATALOGUE_SIZE, SEALED } from "@/lib/species";
+import { CATALOGUE_SIZE, SPECIES_BY_ID } from "@/lib/species";
 
 export default function Home() {
   const pctSupply = (gameConfig.token.tokensPerEgg / gameConfig.token.totalSupply) * 100;
@@ -129,9 +129,9 @@ export default function Home() {
       {/* ── CTA ── */}
       <section className="relative overflow-hidden py-28 sm:py-40">
         <div className="relative mx-auto max-w-3xl px-4 text-center">
-          {/* a stirring egg with the generic sealed (classified) silhouette inside; still under reduced motion (global rule) */}
+          {/* a stirring egg with a Secret Solanite's silhouette inside; still under reduced motion (global rule) */}
           <div className="relative mx-auto mb-8 h-44 w-36 sm:h-56 sm:w-44" aria-hidden>
-            <EggArt stage={3} progress={0.9} seed={9} inside={SEALED.secret} className="relative h-full w-full" />
+            <EggArt stage={3} progress={0.9} seed={9} inside={SPECIES_BY_ID.nullborn} className="relative h-full w-full" />
           </div>
           <h2 className="sl-display-l text-bone">
             Something is <span className="italic">stirring</span>.

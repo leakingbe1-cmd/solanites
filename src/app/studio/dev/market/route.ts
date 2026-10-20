@@ -3,7 +3,7 @@ import { GROWTH_RULES, growthPoints, vigourOf, type GrowthEntry } from "@/lib/ma
 import { MARKET_RANGES, type MarketRange } from "@/lib/market/types";
 import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
-import { ALL_SPECIES_BY_ID as SPECIES_BY_ID } from "@/server/classified";
+import { SPECIES_BY_ID } from "@/lib/species";
 import { latestCompletedSession } from "@/lib/market/calendar";
 import { MarketDataError } from "@/server/market/provider";
 import { getLiveMarket, getMarketRuntime, marketPublicDisplay } from "@/server/market/runtime";
@@ -21,7 +21,7 @@ export const dynamic = "force-dynamic";
  * rest of /studio (checked by the middleware and again here).
  *
  *   GET /studio/dev/market                          every species: ticker, data state, vigour breakdown
- *   GET /studio/dev/market?species=id&range=1M      one species' full snapshot (classified ones too)
+ *   GET /studio/dev/market?species=id&range=1M      one species' full snapshot
  *   GET /studio/dev/market?simulate=2.5,-1.8        the growth formula applied to hypothetical daily moves
  */
 export async function GET(req: Request) {

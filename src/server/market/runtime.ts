@@ -101,7 +101,7 @@ export function marketPublicDisplay(env: Record<string, string | undefined> = pr
  * The embeddable chart public pages may show when no displayable prices exist on the server.
  * Off unless MARKET_WIDGET=tradingview, which the owner sets for the Vercel Preview scope; an
  * unset environment (production included) shows no third-party chart. Read only by the public
- * /api/market route, which never offers it for classified species.
+ * /api/market route.
  */
 export function publicMarketWidget(env: Record<string, string | undefined> = process.env): "tradingview" | null {
   return env.MARKET_WIDGET?.trim().toLowerCase() === "tradingview" ? "tradingview" : null;

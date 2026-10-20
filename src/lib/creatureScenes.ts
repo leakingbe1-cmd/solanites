@@ -4,9 +4,8 @@ import type { Palette } from "@/lib/species";
 /**
  * Creature scenes: the painted biome behind each species and the way it idles.
  *
- * Public species only. A classified (Mythic/Secret) species' scene travels inside its
- * disclosed server bundle (registerScene), never in this module, so no classified name,
- * biome or motion is in any public bundle. Sealed stand-ins share one generic scene.
+ * A species with no scene of its own yet (the Mythic and Secret species, until their biomes
+ * are painted) uses one neutral scene.
  *
  * One painted plate per species carries the biome through all four stages; each stage
  * frames it differently (STAGE_FRAMING) so the Eggling sees a close, hazy corner of its
@@ -508,10 +507,7 @@ export const SCENES: Record<string, SceneDef> = {
   },
 };
 
-/**
- * The one scene every sealed stand-in uses (a classified slot, a sealed egg's hatch): a dark,
- * generic vault, CSS only. It says nothing about which species is inside.
- */
+/** The neutral scene for a species without one of its own: a dark vault, CSS only, still. */
 export const SEALED_SCENE: SceneDef = {
   biome: { id: "sealed-vault", name: "Sealed Vault", summary: "Unrevealed.", tones: ["#3a3456", "#141024", "#050409"], particle: "none" },
   anatomy: { locomotion: "hovers" },
@@ -525,7 +521,7 @@ export interface SceneAssets {
 }
 const ASSETS = (manifest as { species: Record<string, SceneAssets> }).species;
 
-/** Scenes a classified species brings in its disclosed server bundle (Developer Mode or its owner's hatch). */
+/** Scenes registered at runtime (none today); a registered scene wins over the built-in one. */
 const RUNTIME = new Map<string, { scene: SceneDef; assets: SceneAssets | null }>();
 
 export function registerScene(speciesId: string, scene: SceneDef, assets: SceneAssets | null = null): void {

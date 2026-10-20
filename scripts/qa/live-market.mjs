@@ -92,8 +92,11 @@ for (const c of CHECK) {
       const src = decodeURIComponent((await frame.first().getAttribute("src")) ?? "");
       ok(`${c.id}: iframe configured for ${want} only`, src.includes(want) && !CHECK.filter((o) => o.id !== c.id).some((o) => identity[o.id] && src.includes(`${PREFIX[identity[o.id].exchange]}:${identity[o.id].ticker}"`)), src.slice(0, 160));
       await page.waitForTimeout(4000);
+      const box = await frame.first().boundingBox();
+      ok(`${c.id}: chart has room to draw (iframe at least 240 px tall)`, (box?.height ?? 0) >= 240, `${Math.round(box?.height ?? 0)} px`);
     }
-    ok(`${c.id}: TradingView's own attribution present, unaltered`, (await tv.locator('.tradingview-widget-copyright a[href="https://www.tradingview.com/"]', { hasText: "Track all markets on TradingView" }).count()) >= 1);
+    // TradingView's script rewrites the attribution itself and adds tracking parameters to the link.
+    ok(`${c.id}: TradingView's own attribution present, unaltered`, (await tv.locator('.tradingview-widget-copyright a[href^="https://www.tradingview.com/"]', { hasText: "Track all markets on TradingView" }).count()) >= 1);
   } else {
     ok(`${c.id}: without the widget, the panel says there's no price (nothing invented)`, /No price to show/.test(text) && !/\$\d/.test(text));
   }

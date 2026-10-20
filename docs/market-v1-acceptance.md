@@ -15,12 +15,12 @@ Developer Mode, behind owner authentication. No public Market Vigour score. No p
 | P1 | Widget appears only when the server sets `externalChart: "tradingview"` (`MARKET_WIDGET=tradingview`) | `marketReview.test.ts`, `scripts/qa/live-market.mjs` | Passed locally |
 | P2 | Never for a classified species: same 404 as an unknown id | `marketReview.test.ts`, `classified-privacy.mjs` | Passed locally |
 | P3 | Public API responses carry no quote, growth, chart points, mapping notes or provider name | `marketReview.test.ts`, `live-market.mjs` | Passed locally |
-| P4 | TradingView attribution link present, unaltered (`Track all markets on TradingView`) | `live-market.mjs` | Passed locally; exact wording against TradingView's current builder output UNVERIFIED |
+| P4 | TradingView attribution present (`Track all markets on TradingView`) | `live-market.mjs` | VERIFIED 2026-10-20 (headless Chromium, local build): TradingView's script rewrites the attribution itself, same text, link to tradingview.com with tracking parameters |
 | P5 | Delay wording: "timing per TradingView, may be delayed"; no minutes figure, no "real-time" anywhere | code search, `live-market.mjs` | Passed locally |
 | P6 | Disclaimer: "For game flavour only, not investment advice. Owning a Solanite has nothing to do with owning {ticker} shares." | panel source | Passed locally |
-| P7 | Widget actually loads and renders prices in a real browser (all 28 symbols) | `live-market.mjs` iframe checks, manual check on the Preview | BLOCKED here (s3.tradingview.com unreachable from the container) |
-| P8 | Blocked or slow script: loading notice, then "couldn't load here" after 15 s; a late iframe still becomes ready; overlay never blocks clicks | `marketPanel.test.ts` (state machine); manual check with the script blocked | State machine passed; browser check BLOCKED |
-| P9 | Mobile layout: panel 300 px tall below `sm`, 340 px above; no horizontal scroll at 320 and 390 px | `phoenix-site.mjs` screenshots; manual check on the Preview | Site layout passed locally; widget at mobile width BLOCKED |
+| P7 | Widget actually loads and renders prices (all 28 symbols) | `live-market.mjs` iframe checks, manual check on the Preview | VERIFIED 2026-10-20 for the 5 sampled public symbols in headless Chromium against a local production build (iframe loads, configured for exactly that EXCHANGE:TICKER, chart draws, TradingView shows its own "D" delayed marker). Remaining public symbols and the owner's check on the Preview: pending |
+| P8 | Blocked or slow script: loading notice, then "couldn't load here" after 15 s; a late iframe still becomes ready; overlay never blocks clicks | `marketPanel.test.ts` (state machine); container blocked earlier today showed the failure notice | State machine passed; blocked-host path seen in QA runs before the allowlist change; manual check on the Preview pending |
+| P9 | Widget box 300 px tall below `sm`, 340 px above, chart at least 240 px; no horizontal scroll at 390 px | `live-market.mjs` (height), headless screenshots at 1440 and 390 px | VERIFIED locally (iframe 308 px at 1440, 268 px at 390, page width unchanged). Manual check on the Preview pending |
 | P10 | Public CSP (if set) allows TradingView's script and frames on public pages | Preview response headers | Website session to confirm |
 
 ## Developer Mode (Twelve Data Basic)
@@ -34,7 +34,7 @@ Developer Mode, behind owner authentication. No public Market Vigour score. No p
 | D5 | Status labels: open market "delayed" with as-of time; older than 60 min "stale"; never "realtime" | `marketLive.test.ts` | Passed (mocked provider) |
 | D6 | Duplicate dates: identical closes collapse, conflicting closes drop the date, output sorted | `marketLive.test.ts` | Passed (mocked provider) |
 | D7 | Coverage per symbol shown as "unverified" until a live answer | `marketLive.test.ts`, inspector | Passed (mocked provider) |
-| D8 | Real Twelve Data responses for all 28 symbols (coverage, timing of `last_quote_at`, credits per call) | live call with a key in Preview only | BLOCKED (no key; host not reachable from here) |
+| D8 | Real Twelve Data responses for all 28 symbols (coverage, timing of `last_quote_at`, credits per call) | Developer Mode on the Preview with the key set | BLOCKED: api.twelvedata.com is reachable from the container, but no key reaches the app here. The app sends `Authorization: apikey <key>` (confirmed accepted with Twelve Data's public demo key); a proxy-injected `Bearer` header is rejected (401) |
 
 ## Caching
 
@@ -51,7 +51,24 @@ summaries; primary pages not fetched). Exchange and legal name correct for all 2
 table, with classified rows, is kept outside the repository. Recheck before V1 after: RIG
 (Valaris merger), TSLA, GME, CMCSA corporate actions.
 
+## Vercel setup (owner, Preview scope only)
+
+Set in the Vercel project, Settings → Environment Variables, scope **Preview** only (not
+Production until V1 sign-off), then redeploy the Preview:
+
+| Variable | Value | Why |
+|---|---|---|
+| `MARKET_WIDGET` | `tradingview` | Turns on the public TradingView widget. Any other value, or unset, means no widget. |
+| `TWELVE_DATA_API_KEY` | your Twelve Data Basic key (mark it Sensitive) | Developer Mode diagnostics only. Read on the server, sent to Twelve Data as `Authorization: apikey <key>`, never in a URL, page, log or response. |
+| `MARKET_PUBLIC_DISPLAY` | leave **unset** | Must stay off: Basic data is for internal use and never reaches public pages. |
+| `STUDIO_BASIC_AUTH` | already set (`user:password`, 24+ characters) | Gate for Developer Mode, where Twelve Data is shown. |
+| `TWELVE_DATA_API_BASE` | leave unset | Testing override only (https only). |
+
+Never paste the key into chat, an issue, a commit or a URL. After the redeploy: open a public
+creature panel (widget, attribution and "D" marker visible; no server prices), then Developer
+Mode → Market links, select a species (one live fetch per selection) and note its coverage.
+
 ## Sign-off
 
-- Website session re-verifies the exact commits and integrates; owner checks the Preview in a real browser (P7, P8, P9).
+- Website session re-verifies the exact commits and integrates; owner checks the Preview in a real browser (P7, P8, P9); headless runs here do not replace that.
 - D8 stays BLOCKED until a key is set in Vercel Preview by the owner; nothing claims live coverage until then.

@@ -29,7 +29,8 @@ export async function GET(req: Request) {
     const body = { status, source: rt.source, lastSuccessfulSyncAt: h.lastSuccessfulSyncAt, ...(detailed ? { ...h, settingsPresent: present } : {}) };
     return Response.json(body, { status: 200, headers: noStore });
   } catch (e) {
-    if (e instanceof ConfigError) return Response.json({ status: "not_configured", lastSuccessfulSyncAt: null, ...(detailed ? { settingsPresent: present } : {}) }, { headers: noStore });
+    // Detailed view also names the failing settings (names and reasons only, never values).
+    if (e instanceof ConfigError) return Response.json({ status: "not_configured", lastSuccessfulSyncAt: null, ...(detailed ? { settingsPresent: present, notConfigured: e.missing } : {}) }, { headers: noStore });
     return failFromError(e, "health");
   }
 }

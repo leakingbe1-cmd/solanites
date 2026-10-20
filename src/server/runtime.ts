@@ -3,7 +3,7 @@ import "server-only";
 import { eggProgression } from "@/config/eggProgression";
 import { createClaims, readClaimsConfig, type Claims } from "./claims/service";
 import { ACTIVE_FEE_POLICY } from "./claims/policy";
-import { ConfigError, readServerConfig } from "./config";
+import { ConfigError, isProductionDeployment, readServerConfig } from "./config";
 import { createPgliteDb } from "./db/pglite";
 import { createPostgresDb } from "./db/postgres";
 import { migrate } from "./db/schema";
@@ -48,6 +48,26 @@ export function getRuntime(env: Record<string, string | undefined> = process.env
   return holder.__solanitesRuntime;
 }
 
+/**
+ * Holders, eggs and sync cursors are not stored per mint, so one database must only
+ * ever serve one token. The first mint to use a database is recorded and any other
+ * mint is refused, so a test-mint database can't carry its holders and eggs into
+ * production. Production also refuses an unbound database that already has holders
+ * (one used before this check existed): give production a fresh database.
+ */
+export async function bindDatabaseToMint(db: Db, mint: string, production: boolean): Promise<void> {
+  const bound = await db.query<{ value: string }>(`SELECT value FROM tracker_state WHERE key = 'bound_mint'`);
+  if (!bound.rows.length) {
+    if (production) {
+      const used = await db.query(`SELECT 1 FROM holders LIMIT 1`);
+      if (used.rows.length) throw new ConfigError(["DATABASE_URL (already holds data for an unrecorded mint; use a fresh database)"]);
+    }
+    await db.query(`INSERT INTO tracker_state (key, value) VALUES ('bound_mint', $1) ON CONFLICT (key) DO NOTHING`, [mint]);
+  }
+  const now = await db.query<{ value: string }>(`SELECT value FROM tracker_state WHERE key = 'bound_mint'`);
+  if (now.rows[0]?.value !== mint) throw new ConfigError(["DATABASE_URL (belongs to a different SOLANITES_MINT; use a separate database per mint)"]);
+}
+
 /** Builds a runtime without caching (used by getRuntime and tests). */
 export async function buildRuntime(env: Record<string, string | undefined>): Promise<Runtime> {
   const claimsConfig = readClaimsConfig(env);
@@ -81,6 +101,10 @@ export async function buildRuntime(env: Record<string, string | undefined>): Pro
   const config = readServerConfig(env);
   const db = createPostgresDb(databaseUrl);
   await migrate(db);
+  await bindDatabaseToMint(db, config.mint, isProductionDeployment(env)).catch(async (e) => {
+    await db.close();
+    throw e;
+  });
   const rpc = createRpcClient({ url: config.rpcUrl });
   const tracker = createTracker({
     db,

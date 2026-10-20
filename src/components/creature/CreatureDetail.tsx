@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CreatureArt } from "./CreatureArt";
+import { CreatureScene } from "./CreatureScene";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { gameConfig } from "@/config/gameConfig";
@@ -145,7 +145,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                   style={isCurrent ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 30px -10px ${meta.glow}` } : undefined}
                 >
                   <div className="relative aspect-square w-full">
-                    <CreatureArt species={species} stage={i} animated={false} showAura={false} silhouette={isLocked} />
+                    <CreatureScene species={species} stage={i} size="card" silhouette={isLocked} sealed={hidden} className="absolute inset-0" />
                     {isCurrent && <span className="absolute left-2 top-2 rounded-full px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-black" style={{ background: meta.color }}>{record ? "Current" : "Your best"}</span>}
                     {isLocked && !hidden && <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-mist">Locked</span>}
                     {i < names.length - 1 && <span className="absolute -right-2 top-1/2 hidden text-lg text-mist/40 sm:block" aria-hidden>›</span>}
@@ -167,9 +167,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
       {/* ── featured stage ── */}
       <div className="mt-6 grid overflow-hidden rounded-md border border-white/[0.07] bg-white/[0.02] md:grid-cols-[1.3fr_1fr]">
         <div className="relative aspect-square md:aspect-auto md:min-h-[420px]">
-          <div className="absolute inset-0 mx-auto max-w-[520px]">
-            <CreatureArt species={species} stage={selected} silhouette={selLocked} />
-          </div>
+          <CreatureScene species={species} stage={selected} size="detail" silhouette={selLocked} sealed={hidden} className="absolute inset-0" artClassName="mx-auto max-w-[520px]" />
         </div>
         <div className="flex min-w-0 flex-col p-5 sm:p-7">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">Stage {selected + 1} of 4</p>
@@ -247,9 +245,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <span className="text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
                     {d === "owned" && <span className="text-sol-green">● Discovered</span>}
                   </div>
-                  <div className="sl-art-host aspect-square" style={{ "--sl-glow": rh ? "rgba(110,90,255,0.3)" : RARITIES[s.rarity].glow } as React.CSSProperties}>
-                    <CreatureArt species={s} stage={2} showAura={false} silhouette={rh} />
-                  </div>
+                  <CreatureScene species={s} stage={2} size="card" silhouette={rh} sealed={rh} className="my-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
                   <p className="truncate font-display text-sm text-bone">{rh ? "???" : s.name}</p>
                   <div className="mt-1.5">
                     <RarityBadge rarity={s.rarity} hidden={rh && s.rarity === "secret"} />

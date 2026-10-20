@@ -1,6 +1,6 @@
 "use client";
 
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import type { Discovery } from "@/lib/discovery";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
@@ -34,13 +34,8 @@ export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, on
           ))}
         </span>
       </div>
-      {/* interim lighting around the current SVG creature (the creature art itself is being redesigned separately) */}
-      <div className="sl-portrait sl-art-host aspect-square" style={{ "--sl-glow": hidden ? "rgba(110,90,255,0.3)" : meta.glow } as React.CSSProperties}>
-        <div className="sl-portrait-art relative h-full w-full">
-          <CreatureArt species={s} stage={stage ?? 2} silhouette={hidden} showAura={!hidden && ["legendary", "mythic", "secret"].includes(s.rarity)} animated={false} />
-        </div>
-        <div className="sl-portrait-grade" aria-hidden />
-      </div>
+      {/* the creature in its biome (classified: the sealed vault); only the creature lifts on hover */}
+      <CreatureScene species={s} stage={stage ?? 2} size="card" silhouette={hidden} sealed={hidden} className="sl-portrait mt-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
       <div className="relative border-t border-white/[0.06] pt-3">
         <div className="flex items-baseline justify-between gap-2">
           <p className="truncate font-display text-base text-bone sm:text-xl">{hidden ? "???" : s.name}</p>

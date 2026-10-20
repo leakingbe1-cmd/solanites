@@ -6,6 +6,7 @@ import { RARITIES } from "@/lib/rarity";
 import { stageAsset, type StageAsset } from "@/lib/creatureAssets";
 import { rendererFor } from "./species";
 import type { Ctx } from "./kit";
+import { IdleArt } from "./IdleArt";
 
 /**
  * Solanite artwork for one species at one evolution stage.
@@ -37,10 +38,12 @@ interface CreatureArtProps {
   ornament?: "vigil" | "legacy";
   /** Renders the creature as a dark silhouette (undiscovered / inside egg). */
   silhouette?: boolean;
+  /** Species idle movement over painted art (CreatureScene): "body" moves it whole, "full" adds parts and glow. */
+  idle?: "body" | "full";
   className?: string;
 }
 
-export function CreatureArt({ species, stage = 2, animated = true, showAura = true, silhouette = false, vector = false, ornament = "vigil", className = "" }: CreatureArtProps) {
+export function CreatureArt({ species, stage = 2, animated = true, showAura = true, silhouette = false, vector = false, ornament = "vigil", idle, className = "" }: CreatureArtProps) {
   const legacy = ornament === "legacy";
   const raw = useId();
   const id = "sl" + raw.replace(/[^a-zA-Z0-9]/g, "");
@@ -75,17 +78,21 @@ export function CreatureArt({ species, stage = 2, animated = true, showAura = tr
           {legacy && showAura && !silhouette && <Aura id={id} species={species} evo={evo} />}
           {legacy && <ellipse cx="200" cy="376" rx={shadowW} ry={r.floating ? 7 : 11} fill="#000" opacity={r.floating ? 0.35 : 0.55} filter={`url(#${id}-blur8)`} />}
         </svg>
-        {/* eslint-disable-next-line @next/next/no-img-element -- pre-optimised static WebP with its own thumbnail */}
-        <img
-          src={imageSrc.src}
-          srcSet={imageSrc.srcSet}
-          sizes="(max-width: 640px) 70vw, 420px"
-          alt=""
-          loading="lazy"
-          decoding="async"
-          draggable={false}
-          className={`sl-creature-img absolute inset-0 h-full w-full object-contain ${asset.alpha ? "" : "sl-vignette"}`}
-        />
+        {idle && !silhouette && asset.alpha ? (
+          <IdleArt speciesId={species.id} stage={evo} src={imageSrc.src} srcSet={imageSrc.srcSet} sizes="(max-width: 640px) 70vw, 420px" full={idle === "full"} />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element -- pre-optimised static WebP with its own thumbnail
+          <img
+            src={imageSrc.src}
+            srcSet={imageSrc.srcSet}
+            sizes="(max-width: 640px) 70vw, 420px"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            draggable={false}
+            className={`sl-creature-img absolute inset-0 h-full w-full object-contain ${asset.alpha ? "" : "sl-vignette"}`}
+          />
+        )}
       </div>
     );
   }

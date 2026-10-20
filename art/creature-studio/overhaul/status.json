@@ -286,7 +286,10 @@
   "c9_pass": true,
   "upscaled": false,
   "specks": 0,
-  "pipeline": 3
+  "pipeline": 3,
+  "local_fixes": [
+   "dark collar ring at the tail join removed; body flows into the tail fin"
+  ]
  },
  "driftfin-3": {
   "task": "b6613308-0feb-4534-b6fd-0f322ef453fa",
@@ -879,7 +882,11 @@
   "c9_pass": true,
   "upscaled": false,
   "specks": 4,
-  "pipeline": 3
+  "pipeline": 3,
+  "local_fixes": [
+   "head flows into the neck (violet rim fades out instead of cutting across)",
+   "residual outline at the head-neck join cleaned"
+  ]
  },
  "solvanth-3": {
   "task": "0376c5f2-65d4-4ad6-8d9f-a8fb3482fc71",

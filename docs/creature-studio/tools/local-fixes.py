@@ -7,6 +7,8 @@ Each entry of art/creature-studio/overhaul/local-fixes.json names a final and on
   bridge reconnects a detached piece (found inside `near`, an [x0,y0,x1,y1] box) to the body with
         a tapered stem painted along the shortest gap, coloured from both ends;
   holes fills every enclosed see-through hole inside `near` and inpaints it from the paint around it;
+  smooth closes pinholes and repaints each polygon from the surrounding opaque paint (soft blur),
+        for seams and hairlines left where a join was rebuilt;
   trim  removes only part-coloured pixels inside a polygon (e.g. a ribbon end poking above a body
         outline) and outlines the new edge.
 Coordinates are pixels of the 1024 x 1024 final. Run after process-overhaul.py:
@@ -107,6 +109,23 @@ def fill_holes(src, dst, near, radius=4):
     return int(holes.sum())
 
 
+def smooth(src, dst, polys, sigma=3.0):
+    a = np.asarray(Image.open(src).convert("RGBA")).astype(np.float32)
+    M = poly_mask((a.shape[1], a.shape[0]), polys)
+    solid = a[..., 3] > 128
+    closed = ndimage.binary_closing(solid, structure=np.ones((5, 5)))
+    pin = closed & ~solid & M
+    a[pin, 3] = 255
+    w = (a[..., 3] > 230).astype(np.float32)
+    num = np.stack([cv2.GaussianBlur(a[..., c] * w, (0, 0), sigma) for c in range(3)], -1)
+    den = cv2.GaussianBlur(w, (0, 0), sigma)[..., None]
+    sm = num / np.maximum(den, 1e-3)
+    inside = M & (cv2.GaussianBlur(a[..., 3], (0, 0), 2) > 150)
+    a[inside, :3] = sm[inside]
+    a[inside, 3] = np.maximum(a[inside, 3], cv2.GaussianBlur(a[..., 3], (0, 0), 1.5)[inside])
+    Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGBA").save(dst, optimize=True)
+
+
 def bridge(src, dst, near, width=None):
     im = Image.open(src).convert("RGBA"); a = np.asarray(im).astype(float)
     solid = a[..., 3] > 128
@@ -146,6 +165,8 @@ if __name__ == "__main__":
         path = ROOT / "final" / sid / f"{STAGES[int(n) - 1]}.png"
         if job["op"] == "join":
             fix(path, path, job.get("fill", []), job.get("retouch", []), job.get("cut", []), job.get("radius", 6), job.get("outline", True))
+        elif job["op"] == "smooth":
+            smooth(path, path, job["polys"], job.get("sigma", 3.0))
         elif job["op"] == "holes":
             fill_holes(path, path, job["near"], job.get("radius", 4))
         elif job["op"] == "bridge":

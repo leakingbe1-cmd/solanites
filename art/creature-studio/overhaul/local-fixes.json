@@ -430,5 +430,115 @@
    512,
    198
   ]
+ },
+ {
+  "key": "driftfin-2",
+  "op": "join",
+  "why": "dark collar ring at the tail join removed; body flows into the tail fin",
+  "retouch": [
+   [
+    [
+     730,
+     505
+    ],
+    [
+     748,
+     500
+    ],
+    [
+     752,
+     520
+    ],
+    [
+     746,
+     530
+    ],
+    [
+     732,
+     528
+    ]
+   ],
+   [
+    [
+     733,
+     503
+    ],
+    [
+     745,
+     503
+    ],
+    [
+     745,
+     515
+    ],
+    [
+     733,
+     515
+    ]
+   ]
+  ],
+  "radius": 7,
+  "outline": false
+ },
+ {
+  "key": "solvanth-2",
+  "op": "join",
+  "why": "head flows into the neck (violet rim fades out instead of cutting across)",
+  "retouch": [
+   [
+    [
+     702,
+     310
+    ],
+    [
+     732,
+     306
+    ],
+    [
+     744,
+     350
+    ],
+    [
+     738,
+     380
+    ],
+    [
+     712,
+     386
+    ],
+    [
+     696,
+     362
+    ]
+   ]
+  ],
+  "radius": 8,
+  "outline": false
+ },
+ {
+  "key": "solvanth-2",
+  "op": "smooth",
+  "why": "residual outline at the head-neck join cleaned",
+  "polys": [
+   [
+    [
+     708,
+     302
+    ],
+    [
+     730,
+     302
+    ],
+    [
+     730,
+     352
+    ],
+    [
+     708,
+     352
+    ]
+   ]
+  ],
+  "sigma": 3.0
  }
 ]

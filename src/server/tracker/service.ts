@@ -18,6 +18,9 @@ import { applyTransferCredit, eggsToAward } from "./ledger";
 /** What the public holder view says about a failed sync; the raw error stays in the database and logs. */
 const PUBLIC_SYNC_ERROR = "The last update for this address didn't complete. It will retry automatically.";
 
+/** Safety cap on signatures listed per token account in one pass (listing only; processing has its own budget). */
+const HISTORY_LISTING_CAP = 50_000;
+
 /** Eggs and holding history only ever use finalized data, so a rolled-back block can't award an egg. */
 const COMMITMENT: Commitment = "finalized";
 
@@ -28,7 +31,7 @@ export interface TrackerConfig {
   /** Also exclude program-controlled owners (off-curve addresses such as pool authorities and vaults). */
   excludeOffCurveOwners: boolean;
   source: "chain" | "fixture";
-  /** History fetched per token account per sync before giving up for this round. */
+  /** Transactions processed per wallet per sync; a longer history continues, oldest first, on the next sync. */
   maxSignaturesPerAccount: number;
   progression: EggProgressionConfig;
 }
@@ -242,25 +245,39 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const known = (await db.query<{ address: string; sig_cursor: string | null; sig_cursor_slot: string }>(`SELECT address, sig_cursor, sig_cursor_slot FROM token_accounts WHERE owner = $1`, [owner])).rows;
 
     let complete = true;
-    const pending = new Map<string, SignatureInfo>();
-    const cursorUpdates: { address: string; signature: string; slot: number }[] = [];
+    // Each account's unprocessed history up to S, oldest first. Listing is cheap (one call per
+    // 1,000 signatures), so it covers everything; processing is what the per-pass budget limits.
+    // minContextSlot: S makes a node that hasn't reached the balance read refuse instead of
+    // returning a list missing a transfer the balance already includes (that would double-award).
+    const history = new Map<string, SignatureInfo[]>();
     for (const acc of known) {
       const res = await fetchSignaturesSince(rpc, acc.address, {
         until: acc.sig_cursor,
         minSlot: Math.max(startSlot, Number(acc.sig_cursor_slot)),
         commitment: COMMITMENT,
-        maxSignatures: config.maxSignaturesPerAccount,
+        maxSignatures: HISTORY_LISTING_CAP,
+        minContextSlot: S,
       });
-      if (!res.complete) complete = false;
-      const upToS = res.signatures.filter((s) => s.slot <= S);
-      for (const s of upToS) pending.set(s.signature, s);
-      if (res.complete && upToS.length) cursorUpdates.push({ address: acc.address, signature: upToS[0].signature, slot: upToS[0].slot });
+      if (!res.complete) {
+        // Older history can't be reached oldest-first; hold this wallet back rather than guess.
+        complete = false;
+        log.warn("history.too_long", { account: acc.address, listed: res.signatures.length });
+        continue;
+      }
+      history.set(acc.address, res.signatures.filter((s) => s.slot <= S).reverse());
     }
-    // Oldest first, so credit moves in the order it happened.
-    const ordered = [...pending.values()].sort((a, b) => a.slot - b.slot);
-    for (const s of ordered) {
+    // Oldest first, so credit moves in the order it happened. The sort is stable, so each account keeps
+    // its own order within a slot. A transaction touching two of the owner's accounts is processed once.
+    const seen = new Set<string>();
+    const ordered = [...history.values()].flat().sort((a, b) => a.slot - b.slot).filter((s) => !seen.has(s.signature) && seen.add(s.signature));
+    // Process at most the budget this pass, extended to the end of a slot so a cursor never splits one.
+    let end = Math.min(ordered.length, config.maxSignaturesPerAccount);
+    while (end > 0 && end < ordered.length && ordered[end].slot === ordered[end - 1].slot) end++;
+    if (end < ordered.length) complete = false;
+    let done = 0;
+    for (; done < end; done++) {
       try {
-        await processTransaction(s.signature);
+        await processTransaction(ordered[done].signature);
       } catch (e) {
         if (e instanceof TransactionNotAvailableError) {
           complete = false;
@@ -269,8 +286,12 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         throw e;
       }
     }
-    if (complete) {
-      for (const c of cursorUpdates) await db.query(`UPDATE token_accounts SET sig_cursor = $2, sig_cursor_slot = $3 WHERE address = $1 AND sig_cursor_slot <= $3`, [c.address, c.signature, c.slot]);
+    // Everything before the first unprocessed slot is done: move each account's cursor there, so the next
+    // pass continues from it instead of re-reading the newest page. Re-processing a transaction is a no-op.
+    const boundary = done < ordered.length ? ordered[done].slot : Infinity;
+    for (const [address, sigs] of history) {
+      const last = sigs.filter((s) => s.slot < boundary).at(-1);
+      if (last) await db.query(`UPDATE token_accounts SET sig_cursor = $2, sig_cursor_slot = $3 WHERE address = $1 AND sig_cursor_slot <= $3`, [address, last.signature, last.slot]);
     }
 
     const t = now();

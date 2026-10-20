@@ -101,7 +101,7 @@ export async function fetchTransactionEffect(rpc: RpcClient, signature: string, 
     blockTime: number | null;
     meta: { err: unknown; preTokenBalances?: TokenBalance[]; postTokenBalances?: TokenBalance[] } | null;
     transaction: { message: { accountKeys: ({ pubkey: string } | string)[] } };
-  } | null>("getTransaction", [signature, { encoding: "jsonParsed", commitment, maxSupportedTransactionVersion: 0 }]);
+  } | null>("getTransaction", [signature, { encoding: "jsonParsed", commitment, maxSupportedTransactionVersion: 1 }]);
   if (!tx || !tx.meta) throw new TransactionNotAvailableError(`Transaction ${signature} is not available at ${commitment} commitment yet.`);
 
   const keys = tx.transaction.message.accountKeys.map((k) => (typeof k === "string" ? k : k.pubkey));

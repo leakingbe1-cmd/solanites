@@ -27,6 +27,8 @@ interface CreatureSceneProps {
   silhouette?: boolean;
   /** Hides the species' own biome too (a classified species the viewer has not discovered). */
   sealed?: boolean;
+  /** Shows the scene at rest: no idle, no particles (a form that is not the selected one). */
+  still?: boolean;
   className?: string;
   /** Classes for the creature's box inside the scene (e.g. a max width in a wide panel). */
   artClassName?: string;
@@ -35,7 +37,7 @@ interface CreatureSceneProps {
 
 const PARTICLES: Record<SceneSize, number> = { card: 0, quiet: 0, feature: 6, detail: 9 };
 
-export function CreatureScene({ species, stage, size, silhouette = false, sealed = false, className = "", artClassName = "", children }: CreatureSceneProps) {
+export function CreatureScene({ species, stage, size, silhouette = false, sealed = false, still: atRest = false, className = "", artClassName = "", children }: CreatureSceneProps) {
   const evo = Math.max(0, Math.min(3, Math.round(stage)));
   const scene = sealed ? SEALED_SCENE : sceneOf(species.id);
   const assets = sealed ? null : sceneAssets(species.id);
@@ -44,7 +46,7 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
   const reduced = useReducedMotion();
   const [missing, setMissing] = useState(false);
   const plate = size === "card" ? (assets?.plateSmall ?? assets?.plate) : assets?.plate;
-  const still = silhouette || sealed || scene === SEALED_SCENE;
+  const still = atRest || silhouette || sealed || scene === SEALED_SCENE;
   const moving = !still && !reduced;
   const count = moving && frame.stir ? Math.round(PARTICLES[size] * (evo === 3 ? 1 : 0.6)) : 0;
   const [fx, fy] = scene.biome.focus ?? [50, 48];

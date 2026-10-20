@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { STATUS } from "@/components/market/CreatureMarketPanel";
 import { PriceChart } from "@/components/market/PriceChart";
 import { useMarketSnapshot } from "@/components/market/useMarketSnapshot";
@@ -88,8 +89,8 @@ export function StockShowcase() {
             <span className="text-[#f6d488]/70">№ {String(species.dex).padStart(3, "0")}</span>
             <span style={{ color: RARITIES[species.rarity].color }}>{RARITIES[species.rarity].label}</span>
           </div>
-          <div className="sl-art-host relative mx-auto mt-2 aspect-square w-full max-w-[420px]">
-            <CreatureArt key={`${pick}-${stage}`} species={species} stage={stage} />
+          <div className="relative mx-auto mt-2 aspect-square w-full max-w-[420px]">
+            <CreatureScene key={`${pick}-${stage}`} species={species} stage={stage} size="quiet" className="absolute inset-0 rounded-[3px]" artClassName="sl-art-host" />
           </div>
           <div className="relative mt-2 flex flex-wrap items-end justify-between gap-3 border-t border-white/[0.06] pt-4">
             <div className="min-w-0">

@@ -73,8 +73,8 @@
       "glow": [
         null,
         null,
-        null,
-        null
+        "/scenes/abyssal-vael/glow-3.webp",
+        "/scenes/abyssal-vael/glow-4.webp"
       ]
     },
     "stormquill": {
@@ -93,8 +93,8 @@
       "glow": [
         null,
         null,
-        null,
-        null
+        "/scenes/duskwing/glow-3.webp",
+        "/scenes/duskwing/glow-4.webp"
       ]
     },
     "cryovant": {
@@ -113,18 +113,18 @@
       "glow": [
         null,
         null,
-        null,
-        null
+        "/scenes/emberlisk/glow-3.webp",
+        "/scenes/emberlisk/glow-4.webp"
       ]
     },
     "neonyx": {
       "plate": "/scenes/neonyx/plate.webp",
       "plateSmall": "/scenes/neonyx/plate-480.webp",
       "glow": [
-        null,
-        null,
-        null,
-        null
+        "/scenes/neonyx/glow-1.webp",
+        "/scenes/neonyx/glow-2.webp",
+        "/scenes/neonyx/glow-3.webp",
+        "/scenes/neonyx/glow-4.webp"
       ]
     },
     "aurorath": {
@@ -141,10 +141,10 @@
       "plate": "/scenes/zephrax/plate.webp",
       "plateSmall": "/scenes/zephrax/plate-480.webp",
       "glow": [
-        null,
-        null,
-        null,
-        null
+        "/scenes/zephrax/glow-1.webp",
+        "/scenes/zephrax/glow-2.webp",
+        "/scenes/zephrax/glow-3.webp",
+        "/scenes/zephrax/glow-4.webp"
       ]
     },
     "prismara": {
@@ -223,8 +223,8 @@
       "glow": [
         null,
         null,
-        null,
-        null
+        "/scenes/thalor/glow-3.webp",
+        "/scenes/thalor/glow-4.webp"
       ]
     }
   }

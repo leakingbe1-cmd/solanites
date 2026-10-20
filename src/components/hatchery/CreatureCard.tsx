@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { gameConfig } from "@/config/gameConfig";
@@ -58,10 +58,10 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
           {paused ? "Paused" : PHASE_LABEL[evo.phase]}
         </span>
       </div>
-      <div className="sl-art-host relative mx-auto mt-1 aspect-square w-full max-w-[240px]" style={{ "--sl-glow": meta.glow } as React.CSSProperties}>
-        <CreatureArt species={s} stage={evo.stage} animated={false} />
+      <div className="relative mx-auto mt-1 aspect-square w-full max-w-[240px]">
+        <CreatureScene species={s} stage={evo.stage} size="card" className="absolute inset-0 rounded-md" artClassName="sl-art-host" />
         {celebrate && (
-          <span role="status" className="sl-pop absolute inset-x-0 top-3 mx-auto w-fit rounded-full px-3 py-1 font-display text-xs text-black" style={{ background: meta.color }}>
+          <span role="status" className="sl-pop absolute inset-x-0 top-3 z-[2] mx-auto w-fit rounded-full px-3 py-1 font-display text-xs text-black" style={{ background: meta.color }}>
             {celebrate}
           </span>
         )}

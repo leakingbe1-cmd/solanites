@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Sigil } from "@/components/brand/Sigil";
 import { Logo } from "./Logo";
 import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
+import { FIRST_VISIT_INTRO } from "@/config/intro";
 
 export function Footer() {
   return (
@@ -28,7 +29,7 @@ export function Footer() {
           <ul className="mt-4 space-y-2.5 text-mist">
             <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
-            <li><ReplayIntroButton className="hover:text-bone" /></li>
+            {FIRST_VISIT_INTRO.enabled && <li><ReplayIntroButton className="hover:text-bone" /></li>}
           </ul>
         </div>
       </div>

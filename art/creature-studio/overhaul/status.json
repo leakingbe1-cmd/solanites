@@ -1,4 +1,48 @@
 {
+ "abyssal-vael-1": {
+  "task": "a6ed28cf-809a-4d8a-8481-0c31ee0ac84a",
+  "raw": "art/creature-studio/overhaul/raw/abyssal-vael-1-a6ed28cf.png",
+  "scale": 0.523,
+  "c9": [
+   108,
+   58
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "abyssal-vael-2": {
+  "task": "ed7502de-f5b5-4073-9471-16e02fb31ed2",
+  "raw": "art/creature-studio/overhaul/raw/abyssal-vael-2-ed7502de.png",
+  "scale": 0.7,
+  "c9": [
+   95,
+   54
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "abyssal-vael-3": {
+  "task": "7ae4c85d-5f4c-402e-9c2a-3c27084347cd",
+  "raw": "art/creature-studio/overhaul/raw/abyssal-vael-3-7ae4c85d.png",
+  "scale": 0.914,
+  "c9": [
+   104,
+   65
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "abyssal-vael-4": {
+  "task": "9c60bd58-2472-47f1-b285-496627e707fc",
+  "raw": "art/creature-studio/overhaul/raw/abyssal-vael-4-9c60bd58.png",
+  "scale": 1.068,
+  "c9": [
+   88,
+   56
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
  "aurelion-1": {
   "task": "3cef7f5c-3322-49f7-a73f-8fed26b60bae",
   "raw": "art/creature-studio/overhaul/raw/aurelion-1-3cef7f5c.png",
@@ -39,6 +83,94 @@
   "c9": [
    150,
    111
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "aurorath-1": {
+  "task": "d2b25b89-03ce-4bf2-9ff3-0d84a34cf487",
+  "raw": "art/creature-studio/overhaul/raw/aurorath-1-d2b25b89.png",
+  "scale": 0.524,
+  "c9": [
+   62,
+   41
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "aurorath-2": {
+  "task": "c204f103-7f68-4e56-ae85-91fb09ba6f8a",
+  "raw": "art/creature-studio/overhaul/raw/aurorath-2-c204f103.png",
+  "scale": 0.697,
+  "c9": [
+   75,
+   50
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurorath-3": {
+  "task": "39d6ef8e-3bbe-4b65-8ace-7dce366800cb",
+  "raw": "art/creature-studio/overhaul/raw/aurorath-3-39d6ef8e.png",
+  "scale": 0.907,
+  "c9": [
+   96,
+   60
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "aurorath-4": {
+  "task": "7cb47057-578c-413a-8f54-1b61f7470f37",
+  "raw": "art/creature-studio/overhaul/raw/aurorath-4-7cb47057.png",
+  "scale": 1.031,
+  "c9": [
+   71,
+   53
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "cryovant-1": {
+  "task": "d58bdc34-28d9-40fd-9160-5823000361cb",
+  "raw": "art/creature-studio/overhaul/raw/cryovant-1-d58bdc34.png",
+  "scale": 0.529,
+  "c9": [
+   88,
+   64
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "cryovant-2": {
+  "task": "212250af-c3cd-43df-b167-b1b1cbe2d627",
+  "raw": "art/creature-studio/overhaul/raw/cryovant-2-212250af.png",
+  "scale": 0.7,
+  "c9": [
+   79,
+   49
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "cryovant-3": {
+  "task": "069aafb4-d5f4-4a8c-b54e-7ef13fca79cd",
+  "raw": "art/creature-studio/overhaul/raw/cryovant-3-069aafb4.png",
+  "scale": 0.911,
+  "c9": [
+   72,
+   47
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "cryovant-4": {
+  "task": "0b71885f-ee34-4e54-992d-68f3c8c23c4b",
+  "raw": "art/creature-studio/overhaul/raw/cryovant-4-0b71885f.png",
+  "scale": 1.049,
+  "c9": [
+   80,
+   51
   ],
   "c9_pass": true,
   "upscaled": true
@@ -85,6 +217,94 @@
    88
   ],
   "c9_pass": true,
+  "upscaled": true
+ },
+ "duskwing-1": {
+  "task": "d8c29334-c273-4425-b5c6-3f93ea669559",
+  "raw": "art/creature-studio/overhaul/raw/duskwing-1-d8c29334.png",
+  "scale": 0.521,
+  "c9": [
+   73,
+   48
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "duskwing-2": {
+  "task": "85f08be2-44f9-45af-afa3-4bbc6c09e1b1",
+  "raw": "art/creature-studio/overhaul/raw/duskwing-2-85f08be2.png",
+  "scale": 0.697,
+  "c9": [
+   65,
+   46
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "duskwing-3": {
+  "task": "53831ea9-48c0-4fd7-b3b4-8f303caf1dcf",
+  "raw": "art/creature-studio/overhaul/raw/duskwing-3-53831ea9.png",
+  "scale": 0.905,
+  "c9": [
+   58,
+   41
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "duskwing-4": {
+  "task": "ec6b07e6-8111-4200-aea5-2eab602776c6",
+  "raw": "art/creature-studio/overhaul/raw/duskwing-4-ec6b07e6.png",
+  "scale": 1.023,
+  "c9": [
+   74,
+   49
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "emberlisk-1": {
+  "task": "40b25e9f-edad-4fd1-a2bf-6b0ab3ae44f6",
+  "raw": "art/creature-studio/overhaul/raw/emberlisk-1-40b25e9f.png",
+  "scale": 0.521,
+  "c9": [
+   57,
+   43
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "emberlisk-2": {
+  "task": "dc63a798-ae47-454b-a56a-6f0dca153f39",
+  "raw": "art/creature-studio/overhaul/raw/emberlisk-2-dc63a798.png",
+  "scale": 0.696,
+  "c9": [
+   62,
+   46
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "emberlisk-3": {
+  "task": "62bc8db1-0cab-41bc-9927-7182be8520fb",
+  "raw": "art/creature-studio/overhaul/raw/emberlisk-3-62bc8db1.png",
+  "scale": 0.907,
+  "c9": [
+   71,
+   48
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "emberlisk-4": {
+  "task": "f461e003-066f-451f-9d3b-e3e7c464a0c2",
+  "raw": "art/creature-studio/overhaul/raw/emberlisk-4-f461e003.png",
+  "scale": 1.026,
+  "c9": [
+   66,
+   47
+  ],
+  "c9_pass": false,
   "upscaled": true
  },
  "frostkit-1": {
@@ -219,6 +439,50 @@
   "c9_pass": true,
   "upscaled": true
  },
+ "neonyx-1": {
+  "task": "8f34d8cf-3064-4cc6-8065-f0136fb3b195",
+  "raw": "art/creature-studio/overhaul/raw/neonyx-1-8f34d8cf.png",
+  "scale": 0.544,
+  "c9": [
+   62,
+   40
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "neonyx-2": {
+  "task": "8b340ec3-99e3-4c0d-8503-1407870a9c69",
+  "raw": "art/creature-studio/overhaul/raw/neonyx-2-8b340ec3.png",
+  "scale": 0.698,
+  "c9": [
+   61,
+   38
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "neonyx-3": {
+  "task": "00f9aa0d-8b03-448a-8b16-d18b00dbfe32",
+  "raw": "art/creature-studio/overhaul/raw/neonyx-3-00f9aa0d.png",
+  "scale": 0.937,
+  "c9": [
+   71,
+   44
+  ],
+  "c9_pass": false,
+  "upscaled": false
+ },
+ "neonyx-4": {
+  "task": "468db220-5a36-4715-ba72-0688f85796ae",
+  "raw": "art/creature-studio/overhaul/raw/neonyx-4-468db220.png",
+  "scale": 1.181,
+  "c9": [
+   68,
+   42
+  ],
+  "c9_pass": false,
+  "upscaled": true
+ },
  "pallow-1": {
   "task": "f8d65718-5051-4844-a99f-64c2a81a225d",
   "raw": "art/creature-studio/overhaul/raw/pallow-1-f8d65718.png",
@@ -259,6 +523,94 @@
   "c9": [
    178,
    114
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "sproutwyrm-1": {
+  "task": "b6574b96-9bde-4381-bfb6-3a01cb6ec29f",
+  "raw": "art/creature-studio/overhaul/raw/sproutwyrm-1-b6574b96.png",
+  "scale": 0.522,
+  "c9": [
+   117,
+   77
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "sproutwyrm-2": {
+  "task": "bca5ae61-2135-45fe-b1f4-43d5c0d084f7",
+  "raw": "art/creature-studio/overhaul/raw/sproutwyrm-2-bca5ae61.png",
+  "scale": 0.696,
+  "c9": [
+   128,
+   71
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "sproutwyrm-3": {
+  "task": "9a2be809-6606-47b7-b431-0ea1740fac95",
+  "raw": "art/creature-studio/overhaul/raw/sproutwyrm-3-9a2be809.png",
+  "scale": 0.906,
+  "c9": [
+   123,
+   71
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "sproutwyrm-4": {
+  "task": "83a9294d-8011-40ce-bc6d-26d41bdb5a15",
+  "raw": "art/creature-studio/overhaul/raw/sproutwyrm-4-83a9294d.png",
+  "scale": 1.031,
+  "c9": [
+   126,
+   83
+  ],
+  "c9_pass": true,
+  "upscaled": true
+ },
+ "stormquill-1": {
+  "task": "2a8d6a96-6253-406b-939a-013c59f1ccfa",
+  "raw": "art/creature-studio/overhaul/raw/stormquill-1-2a8d6a96.png",
+  "scale": 0.523,
+  "c9": [
+   103,
+   64
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "stormquill-2": {
+  "task": "27ff8510-f83f-451d-81b6-1f7ce31e5cb5",
+  "raw": "art/creature-studio/overhaul/raw/stormquill-2-27ff8510.png",
+  "scale": 0.697,
+  "c9": [
+   76,
+   56
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "stormquill-3": {
+  "task": "96f97fc9-3e7f-4817-b633-2aa3b58ae51c",
+  "raw": "art/creature-studio/overhaul/raw/stormquill-3-96f97fc9.png",
+  "scale": 0.896,
+  "c9": [
+   84,
+   52
+  ],
+  "c9_pass": true,
+  "upscaled": false
+ },
+ "stormquill-4": {
+  "task": "b98b0b02-b3a3-4d7d-b12a-8266455e300e",
+  "raw": "art/creature-studio/overhaul/raw/stormquill-4-b98b0b02.png",
+  "scale": 1.023,
+  "c9": [
+   85,
+   53
   ],
   "c9_pass": true,
   "upscaled": true

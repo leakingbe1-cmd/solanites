@@ -1,0 +1,167 @@
+{
+  "note": "Server only. Design bible entries for the classified species; see src/server/classified/index.ts.",
+  "species": {
+    "astravex": {
+      "silhouette": "Tall platinum stag whose antlers are constellations.",
+      "anatomy": "Long slender legs, elegant neck, flowing mane, wispy tail.",
+      "face": "Long elegant head, glowing orb eyes.",
+      "posture": "Standing tall, head raised.",
+      "materials": "Platinum hide with a star-field window on the flank.",
+      "effects": "Constellation lines and twinkling stars.",
+      "stages": [
+        {
+          "summary": "A wobbly fawn with a few stars in its coat.",
+          "brief": "Small fawn, long wobbly legs, big eyes, a few stars on its back, no antlers."
+        },
+        {
+          "summary": "Its first constellation antlers appear.",
+          "brief": "Young deer, short antler constellations, star-field on the flank."
+        },
+        {
+          "summary": "A platinum stag crowned with constellations.",
+          "brief": "Tall stag, full constellation antlers, flowing mane, star-field flank."
+        },
+        {
+          "summary": "Infinite and calm, older than the genesis slot.",
+          "brief": "Majestic stag with vast branching constellation antlers, nebula mane, cosmic glow."
+        }
+      ],
+      "reference": null
+    },
+    "orbelith": {
+      "silhouette": "Ringed planet-being with orbiting moons and comet tendrils.",
+      "anatomy": "Spherical body, a tilted ring lined with small eyes, trailing comet tendrils.",
+      "face": "A row of small orb eyes along the ring.",
+      "posture": "Slowly rotating.",
+      "materials": "Banded platinum surface with a star-field.",
+      "effects": "Small orbiting moons.",
+      "stages": [
+        {
+          "summary": "A small orb with a single eye and a thin ring.",
+          "brief": "Small orb, one eye, thin faint ring."
+        },
+        {
+          "summary": "Its ring widens and its first moon appears.",
+          "brief": "Larger orb, clear ring with three eyes, one moon."
+        },
+        {
+          "summary": "A ringed planet-being lined with watchful eyes.",
+          "brief": "Full ringed planet, five eyes on the ring, two moons, comet tendrils."
+        },
+        {
+          "summary": "A world that learned to watch.",
+          "brief": "Grand planet with multiple rings, many eyes, three moons, long comet tails, cosmic glow."
+        }
+      ],
+      "reference": null
+    },
+    "eventide": {
+      "silhouette": "Eclipse-headed dragonfly with four long glass wings.",
+      "anatomy": "Eclipse-disc head, small thorax, long segmented tail, four long wings.",
+      "face": "Two tiny glowing eyes in a black eclipse disc with a corona.",
+      "posture": "Hovering.",
+      "materials": "Glass wings with star patterns, dark body.",
+      "effects": "Eclipse corona.",
+      "stages": [
+        {
+          "summary": "A small nymph with wing buds and a dim halo.",
+          "brief": "Small nymph, short tail, tiny wing buds, faint halo around the head."
+        },
+        {
+          "summary": "Its first short glass wings unfold around a half-formed eclipse.",
+          "brief": "Short glass wings, longer tail, partial eclipse ring."
+        },
+        {
+          "summary": "An eclipse-headed dragonfly with four long glass wings.",
+          "brief": "Four long star-patterned wings, full eclipse head with corona, long segmented tail."
+        },
+        {
+          "summary": "It carries the stars that have already burned out.",
+          "brief": "Large ethereal dragonfly, wings full of galaxies, brilliant corona, trailing stardust."
+        }
+      ],
+      "reference": null
+    },
+    "helivane": {
+      "silhouette": "A raptor fused with a celestial body: hooked-beak falcon head, swept wings and a sun-disc corona behind the shoulders.",
+      "anatomy": "Compact powerful raptor body, broad swept-back wings with long primaries, a fanned tail, strong talons and a ring of solar spines forming a corona.",
+      "face": "Sharp falcon face with a hooked gold beak, fierce white-gold eyes and dark falcon cheek stripes.",
+      "posture": "Wings raised and half-open, talons gripping, head turned in profile like a hunting falcon.",
+      "materials": "Amber and burnished-orange plumage, pale gold breast with fine barring, white-hot feather tips, a polished gold beak.",
+      "effects": "A solar corona disc with radiating rays behind the shoulders, small orbiting sun-motes. Not a phoenix: no fire trails or flame body; it is a raptor carrying a sun.",
+      "stages": [
+        {
+          "summary": "A fluffy amber eyas with a gold beak too big for its face and a tiny sun-spark on its brow.",
+          "brief": "A round fluffy raptor chick of amber down, oversized hooked gold beak, big bright eyes, stubby wings and a single small sun-spark glowing on its brow."
+        },
+        {
+          "summary": "A young falcon with first flight feathers and a faint ring of light behind its head.",
+          "brief": "A juvenile falcon with mixed down and first flight feathers, barred breast, wings half open, strong legs, and a faint thin ring of light behind its head."
+        },
+        {
+          "summary": "A solar raptor with swept wings, barred breast and a blazing corona at its shoulders.",
+          "brief": "A powerful adult raptor with swept-back wings, long primaries with white-hot tips, a barred gold breast, a fanned tail and a radiant corona disc behind its shoulders."
+        },
+        {
+          "summary": "The Sunpiercer: wings raised wide, a full sun disc behind it and orbiting sun-motes.",
+          "brief": "The ascended form: wings raised wide like a crest, a full blazing sun disc with long rays behind it, crown feathers, long streamer tail feathers, and orbiting sun-motes — a falcon carrying a star."
+        }
+      ],
+      "reference": null
+    },
+    "genesis": {
+      "silhouette": "Floating polyhedron construct with a visor eye and orbiting Solana bars.",
+      "anatomy": "Faceted crystal core, visor eye, three orbiting bars.",
+      "face": "A single green visor eye.",
+      "posture": "Levitating, slowly rotating.",
+      "materials": "Obsidian facets with green edge light.",
+      "effects": "Orbiting bars.",
+      "stages": [
+        {
+          "summary": "A tiny glowing seed of geometry.",
+          "brief": "Small simple tetrahedron with one green light, one orbiting bar."
+        },
+        {
+          "summary": "It unfolds new facets and gains a visor.",
+          "brief": "Octahedron core with visor, two orbiting bars."
+        },
+        {
+          "summary": "A floating polyhedron construct with a visor eye.",
+          "brief": "Complex polyhedron, glowing visor, three orbiting bars."
+        },
+        {
+          "summary": "Slot Zero: nested geometry orbiting a single unblinking eye.",
+          "brief": "Elaborate nested polyhedra, many orbiting bars, intense green and violet light."
+        }
+      ],
+      "reference": null
+    },
+    "nullborn": {
+      "silhouette": "Inverted, glitched nine-tailed fox.",
+      "anatomy": "Sitting fox, fox mask face, fanned tails.",
+      "face": "Void-black slit eyes with pink pupils, pink cheek marks.",
+      "posture": "Sitting upright.",
+      "materials": "Inverted white fur with black inner details.",
+      "effects": "Pink glitch.",
+      "stages": [
+        {
+          "summary": "A tiny white kit with one glitched tail.",
+          "brief": "Small sitting kit, one tail, big void eyes, faint glitch."
+        },
+        {
+          "summary": "Its tails multiply to three and pink marks appear on its mask.",
+          "brief": "Juvenile fox, three tails, pink cheek marks."
+        },
+        {
+          "summary": "An inverted fox with a fan of tails.",
+          "brief": "Sitting fox, seven tails fanned out, mask markings."
+        },
+        {
+          "summary": "The Unindexed: nine glowing tails and a halo that should not exist.",
+          "brief": "Majestic nine-tailed fox, glowing tail tips, strong glitch distortion, inverted halo."
+        }
+      ],
+      "reference": null
+    }
+  }
+}

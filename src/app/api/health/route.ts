@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * GET /api/health — operational status for monitoring.
- * Public: overall status and the last successful sync time only.
+ * Public: overall status, the last successful sync time and the holder count (public on-chain data).
  * With `Authorization: Bearer $CRON_SECRET`: also run details and which settings are present
  * (true/false only — never values).
  */
@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const rt = await getRuntime();
     const h = await rt.tracker.health();
     const status = h.syncStale || h.lastRun?.failed || h.mintSupplyMatchesConfig === false ? "degraded" : "ok";
-    const body = { status, source: rt.source, lastSuccessfulSyncAt: h.lastSuccessfulSyncAt, ...(detailed ? { ...h, settingsPresent: present } : {}) };
+    const body = { status, source: rt.source, lastSuccessfulSyncAt: h.lastSuccessfulSyncAt, holders: h.currentHolders, ...(detailed ? { ...h, settingsPresent: present } : {}) };
     return Response.json(body, { status: 200, headers: noStore });
   } catch (e) {
     if (e instanceof ConfigError) return Response.json({ status: "not_configured", lastSuccessfulSyncAt: null, ...(detailed ? { settingsPresent: present } : {}) }, { headers: noStore });

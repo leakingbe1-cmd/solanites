@@ -55,3 +55,10 @@ describe("a species keeps its stock at every stage, whatever art it has", () => 
     }
   });
 });
+
+describe("every linked stock has a TradingView symbol", () => {
+  it("all 28 mappings produce a well-formed exchange:ticker symbol", async () => {
+    const { tradingViewSymbol } = await import("@/lib/market/tradingview");
+    for (const l of STOCK_LINKS) expect(tradingViewSymbol(l.exchange, l.ticker), l.speciesId).toMatch(/^(NYSE|NASDAQ):[A-Z.]+$/);
+  });
+});

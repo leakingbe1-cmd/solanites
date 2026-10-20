@@ -9,6 +9,8 @@ Each entry of art/creature-studio/overhaul/local-fixes.json names a final and on
   holes fills every enclosed see-through hole inside `near` and inpaints it from the paint around it;
   smooth closes pinholes and repaints each polygon from the surrounding opaque paint (soft blur),
         for seams and hairlines left where a join was rebuilt;
+  taper cuts polygons away (e.g. a blunt tail end), retouches seams, and outlines the newly
+        exposed edge inside `box` in the local outline colour;
   trim  removes only part-coloured pixels inside a polygon (e.g. a ribbon end poking above a body
         outline) and outlines the new edge.
 Coordinates are pixels of the 1024 x 1024 final. Run after process-overhaul.py:
@@ -126,6 +128,21 @@ def smooth(src, dst, polys, sigma=3.0):
     Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGBA").save(dst, optimize=True)
 
 
+def taper(src, dst, cut, retouch, box, radius=4):
+    before = np.asarray(Image.open(src).convert("RGBA")).astype(float)
+    fix(src, dst, [], retouch, cut, radius, False)
+    a = np.asarray(Image.open(dst).convert("RGBA")).astype(float)
+    x0, y0, x1, y1 = box
+    os_, ns = before[..., 3] > 128, a[..., 3] > 128
+    b = np.zeros_like(ns); b[y0:y1, x0:x1] = True
+    newedge = ns & ~ndimage.binary_erosion(ns, iterations=3) & ~(os_ & ~ndimage.binary_erosion(os_, iterations=3)) & b
+    oe = os_ & ~ndimage.binary_erosion(os_, iterations=3) & ndimage.binary_dilation(b, iterations=30)
+    lum = before[..., :3].mean(-1); col = before[..., :3][oe & (lum <= np.percentile(lum[oe], 15))].mean(0)
+    k = cv2.GaussianBlur(newedge.astype(np.float32), (0, 0), 0.8)[..., None] * 0.9
+    a[..., :3] = a[..., :3] * (1 - k) + col * k
+    Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGBA").save(dst, optimize=True)
+
+
 def bridge(src, dst, near, width=None):
     im = Image.open(src).convert("RGBA"); a = np.asarray(im).astype(float)
     solid = a[..., 3] > 128
@@ -165,6 +182,8 @@ if __name__ == "__main__":
         path = ROOT / "final" / sid / f"{STAGES[int(n) - 1]}.png"
         if job["op"] == "join":
             fix(path, path, job.get("fill", []), job.get("retouch", []), job.get("cut", []), job.get("radius", 6), job.get("outline", True))
+        elif job["op"] == "taper":
+            taper(path, path, job["cut"], job.get("retouch", []), job["box"], job.get("radius", 4))
         elif job["op"] == "smooth":
             smooth(path, path, job["polys"], job.get("sigma", 3.0))
         elif job["op"] == "holes":

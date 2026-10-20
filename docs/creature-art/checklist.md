@@ -24,7 +24,7 @@ Raster art is an optional painted upgrade; until a stage has one, the site shows
 | prismara | ✓ | ✓ | ✓ | ✓ |
 | aurelion | ✓ | ✓ | ✓ | ✓ |
 | solvanth | ✓ | ✓ | ✓ | ✓ |
-| pyraurum | ✓ | ✓ | ✓ | ✓ (little fine detail (ratio 0.143): check face, edges and material at 100%) |
+| pyraurum | ✓ | ✓ | ✓ | ✓ (little fine detail (ratio 0.144): check face, edges and material at 100%) |
 | aurelith | ✓ | ✓ | ✓ | ✓ |
 | velynx | ✓ | ✓ | ✓ | ✓ |
 | nyxara | ✓ | ✓ | ✓ | ✓ |

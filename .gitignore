@@ -10,6 +10,10 @@ preview/dist
 art/creatures/*
 !art/creatures/README.md
 
+# Biome plate masters (large); optimised outputs live in public/scenes
+art/scenes/*
+!art/scenes/README.md
+
 # Secrets and local environment (templates like .env.example stay tracked)
 .env
 .env.*

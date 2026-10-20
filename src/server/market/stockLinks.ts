@@ -111,5 +111,6 @@ export const STOCK_LINKS: StockLink[] = [
 export const STOCK_LINK_BY_SPECIES: Record<string, StockLink> = Object.fromEntries(STOCK_LINKS.map((l) => [l.speciesId, l]));
 
 export function stockLinkOf(speciesId: string): StockLink | null {
-  return STOCK_LINK_BY_SPECIES[speciesId] ?? null;
+  // Own properties only: ids like "constructor" or "__proto__" must not resolve to anything.
+  return Object.hasOwn(STOCK_LINK_BY_SPECIES, speciesId) ? STOCK_LINK_BY_SPECIES[speciesId] : null;
 }

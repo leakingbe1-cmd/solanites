@@ -45,7 +45,7 @@ export async function GET(req: Request) {
   const live = getLiveMarket();
   if (live) {
     if (species !== null) {
-      if (!SPECIES_BY_ID[species]) return fail(404, "NOT_FOUND", "Unknown species.");
+      if (!Object.hasOwn(SPECIES_BY_ID, species)) return fail(404, "NOT_FOUND", "Unknown species.");
       try {
         return Response.json(await live.snapshot(species, range), { headers: noStore });
       } catch (e) {
@@ -53,13 +53,16 @@ export async function GET(req: Request) {
         return fail(code === "NOT_FOUND" ? 404 : 503, `MARKET_${code}`, e instanceof MarketDataError ? e.message : "The market data provider couldn't be reached.");
       }
     }
-    // Rows are fetched on demand (selecting one), so opening the inspector costs no credits.
+    // Rows are fetched only when one is selected (nothing is selected on open), so listing costs
+    // no credits. Coverage stays "unverified" until this server instance has seen a live answer;
+    // the budget shown is this instance's (Vercel may run several).
     const s = live.stats();
     return Response.json(
       {
-        provider: { name: "Twelve Data", plan: `live, fetched on demand · ${s.creditsToday}/${s.perDay} credits today · ${s.creditsThisMinute}/${s.perMinute} this minute · public display ${marketPublicDisplay() ? "ON" : "off"}` },
+        provider: { name: "Twelve Data", plan: `Basic (free), fetched when a row is selected · this instance: ${s.creditsToday}/${s.perDay} credits today, ${s.creditsThisMinute}/${s.perMinute} this minute${s.backoffUntil ? " · provider back-off active" : ""} · public display ${marketPublicDisplay() ? "ON" : "off"}` },
+        fetchOnSelect: true,
         rules: GROWTH_RULES,
-        links: STOCK_LINKS.map((l) => ({ ...l, name: SPECIES_BY_ID[l.speciesId]?.name ?? l.speciesId, rarity: SPECIES_BY_ID[l.speciesId]?.rarity ?? null, accent: SPECIES_BY_ID[l.speciesId]?.palette.accent ?? "#efe8da", latestSession: null, latestClose: null, expectedSession: latestCompletedSession(Date.now()), upToDate: true, growth: null, state: { lastErrorCode: null, needsHistory: false } })),
+        links: STOCK_LINKS.map((l) => ({ ...l, name: SPECIES_BY_ID[l.speciesId]?.name ?? l.speciesId, rarity: SPECIES_BY_ID[l.speciesId]?.rarity ?? null, accent: SPECIES_BY_ID[l.speciesId]?.palette.accent ?? "#efe8da", latestSession: null, latestClose: null, expectedSession: latestCompletedSession(Date.now()), upToDate: true, growth: null, coverage: live.coverageOf(l.ticker), state: { lastErrorCode: null, needsHistory: false } })),
       },
       { headers: noStore },
     );
@@ -68,7 +71,7 @@ export async function GET(req: Request) {
   try {
     const rt = await getMarketRuntime();
     if (species !== null) {
-      if (!SPECIES_BY_ID[species]) return fail(404, "NOT_FOUND", "Unknown species.");
+      if (!Object.hasOwn(SPECIES_BY_ID, species)) return fail(404, "NOT_FOUND", "Unknown species.");
       return Response.json(await rt.service.snapshot(species, range), { headers: noStore });
     }
     return Response.json({ provider: rt.provider ? { name: rt.provider.name, plan: rt.provider.plan } : null, rules: GROWTH_RULES, links: (await rt.service.diagnostics()).map((l) => ({ ...l, name: SPECIES_BY_ID[l.speciesId]?.name ?? l.speciesId, rarity: SPECIES_BY_ID[l.speciesId]?.rarity ?? null, accent: SPECIES_BY_ID[l.speciesId]?.palette.accent ?? "#efe8da" })) }, { headers: noStore });

@@ -5,7 +5,7 @@ import { ConfigError } from "@/server/config";
 import { fail, noStore, rateLimit } from "@/server/http";
 import { log } from "@/server/log";
 import { MarketDataError } from "@/server/market/provider";
-import { getLiveMarket, getMarketRuntime, marketPublicDisplay } from "@/server/market/runtime";
+import { getLiveMarket, getMarketRuntime, marketPublicDisplay, publicMarketWidget } from "@/server/market/runtime";
 import { unavailableSnapshot } from "@/server/market/service";
 import { ownsHatched } from "@/server/market/store";
 import { checkSolanaAddress } from "@/server/solana/address";
@@ -36,20 +36,28 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   // Rate-limited before any lookup, so an unknown id and an undisclosed classified one behave identically.
   const limited = await rateLimit(req, "market-view", 60, 60_000);
   if (limited) return limited;
-  const speciesId = decodeURIComponent((await params).speciesId);
-  const species = ALL_SPECIES_BY_ID[speciesId];
-  if (!species) return notFound();
+  // The range is checked before the species, so a bad range answers the same for every id.
   const url = new URL(req.url);
   const rangeParam = url.searchParams.get("range") ?? "1M";
   if (!(MARKET_RANGES as readonly string[]).includes(rangeParam)) return fail(400, "INVALID_REQUEST", `range must be one of ${MARKET_RANGES.join(", ")}.`);
   const range = rangeParam as MarketRange;
+  const speciesId = decodeURIComponent((await params).speciesId);
+  // Own properties only: "constructor", "__proto__" and the like are unknown ids, not lookups.
+  if (!Object.hasOwn(ALL_SPECIES_BY_ID, speciesId)) return notFound();
 
   const classified = isClassifiedId(speciesId);
   const sample = process.env.SOLANITES_FIXTURES === "1" && process.env.NODE_ENV !== "production";
   if (!marketPublicDisplay() && !sample) {
     // Public display not enabled: no genuine numbers, whatever is configured. Classified stays sealed.
     if (classified) return notFound();
-    return Response.json(unavailableSnapshot(speciesId, range, Date.now()), { headers: noStore });
+    const snap = unavailableSnapshot(speciesId, range, Date.now());
+    // The only public price display: an embeddable chart the visitor's browser loads from the
+    // provider, when this deployment enables it. Classified species never reach this line.
+    if (publicMarketWidget() === "tradingview") {
+      snap.externalChart = "tradingview";
+      snap.statusDetail = "Prices and chart by TradingView; timing per TradingView, may be delayed.";
+    }
+    return Response.json(snap, { headers: noStore });
   }
   try {
     const live = sample ? null : getLiveMarket();

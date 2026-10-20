@@ -57,7 +57,9 @@ function codeFor(httpStatus: number, bodyCode: unknown): MarketErrorCode {
   const c = typeof bodyCode === "number" ? bodyCode : httpStatus;
   if (c === 401 || c === 403) return "FORBIDDEN";
   if (c === 429) return "RATE_LIMITED";
-  if (c === 400 || c === 404) return "NOT_FOUND";
+  // 404 means the symbol isn't covered; a 400 is a request the provider couldn't use, which says
+  // nothing about coverage (and must not read as "not found", which the routes turn into 404).
+  if (c === 404) return "NOT_FOUND";
   return "UNAVAILABLE";
 }
 const MESSAGES: Record<MarketErrorCode, string> = {

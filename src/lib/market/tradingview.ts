@@ -13,9 +13,26 @@ export function tradingViewSymbol(exchange: string, ticker: string): string | nu
   return `${prefix}:${ticker}`;
 }
 
-/** TradingView's own page for the symbol, used for the required attribution link. */
+/** TradingView's own page for the symbol (used by tests and docs; the widget links it itself). */
 export function tradingViewSymbolUrl(symbol: string): string {
   return `https://www.tradingview.com/symbols/${symbol.replace(":", "-")}/`;
+}
+
+/** The attribution TradingView's Symbol Overview builder emits; kept exactly, as its terms require. */
+export const TRADINGVIEW_ATTRIBUTION = { href: "https://www.tradingview.com/", text: "Track all markets on TradingView" } as const;
+
+/**
+ * Widget load state. The widget announces itself by inserting an iframe; until then it's
+ * loading, after a timeout or a script error it's failed, and an iframe arriving late still
+ * makes it ready (so a slow network never leaves the failure notice over a working chart).
+ */
+export type WidgetStatus = "idle" | "loading" | "ready" | "failed";
+export type WidgetEvent = "start" | "iframe" | "timeout" | "error";
+export function nextWidgetStatus(state: WidgetStatus, event: WidgetEvent): WidgetStatus {
+  if (event === "start") return "loading";
+  if (event === "iframe") return "ready";
+  if (state === "ready") return "ready";
+  return state === "loading" ? "failed" : state;
 }
 
 export const TRADINGVIEW_OVERVIEW_SCRIPT = "https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js";

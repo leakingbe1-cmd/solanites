@@ -6,15 +6,15 @@ export const MARKET_RANGES = ["1D", "1W", "1M", "3M", "1Y"] as const;
 export type MarketRange = (typeof MARKET_RANGES)[number];
 
 /**
- * How fresh the numbers are, decided from the provider's own timestamps, never assumed.
- *   realtime        an intraday price no more than 2 minutes old while the market is open
+ * How fresh the numbers are, decided from the provider's own timestamps, never assumed. There
+ * is deliberately no "real-time" status: no configured feed has verified real-time coverage.
  *   previous_close  last completed session's official close (end-of-day data)
- *   delayed         an intraday price older than that, or one whose age the provider didn't give
+ *   delayed         an intraday price, with its age when the provider gives a usable timestamp
  *   stale           the newest stored session is older than it should be
  *   sample          local development fixture data, not real prices
  *   unavailable     no trustworthy data; nothing is shown in its place
  */
-export type DataStatus = "realtime" | "previous_close" | "delayed" | "stale" | "sample" | "unavailable";
+export type DataStatus = "previous_close" | "delayed" | "stale" | "sample" | "unavailable";
 
 export interface StockIdentity {
   ticker: string;
@@ -74,6 +74,11 @@ export interface MarketSnapshot {
   growth: MarketGrowth | null;
   market: MarketStatus;
   source: { name: string; plan: string; fetchedAt: number | null; delayMinutes?: number | null };
+  /**
+   * Set by the public route when the server has no displayable prices but an embeddable third-
+   * party chart is enabled for this deployment (MARKET_WIDGET). Never set for classified species.
+   */
+  externalChart?: "tradingview" | null;
   /** When this response was produced (server clock). */
   generatedAt: number;
   review: string | null;

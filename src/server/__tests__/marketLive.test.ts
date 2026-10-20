@@ -10,8 +10,10 @@ import { createTwelveDataClient, type TwelveDataClient } from "@/server/market/t
  */
 
 const KEY = "td-test-key-never-leaks";
-// Mon 19 Oct 2026, 20:00 UTC = 4:00 pm ET: after the close. 14:30 UTC = 10:30 am ET: open.
-const AFTER_CLOSE = Date.parse("2026-10-19T20:30:00Z");
+// Mon 19 Oct 2026. 22:30 UTC = 6:30 pm ET: the session is complete (close + 90 min to settle).
+// 20:30 UTC = 4:30 pm ET: after the bell but not yet settled. 14:30 UTC = 10:30 am ET: open.
+const AFTER_CLOSE = Date.parse("2026-10-19T22:30:00Z");
+const JUST_AFTER_BELL = Date.parse("2026-10-19T20:30:00Z");
 const OPEN = Date.parse("2026-10-19T14:30:00Z");
 
 function dailyValues(ticker: string, days: number, start = 100) {
@@ -201,12 +203,49 @@ describe("live market service", () => {
     expect(s.source).toMatchObject({ name: "Twelve Data" });
   });
 
-  it("labels real-time only for a fresh intraday price while open; otherwise delayed or stale", async () => {
-    const at = async (age: number | null) => (await createLiveMarket({ client: clientWith(standardHandler({ open: true, lastQuoteAt: age === null ? null : OPEN - age })), now: () => OPEN }).snapshot("mossling", "1W")).status;
-    expect(await at(30_000)).toBe("realtime");
-    expect(await at(10 * 60_000)).toBe("delayed");
-    expect(await at(3 * 3600_000)).toBe("stale");
-    expect(await at(null)).toBe("delayed");
+  it("never claims real-time: a fresh intraday price is 'delayed' with its time; an hour old is 'stale'", async () => {
+    const at = async (lastQuoteAt: number | null) => createLiveMarket({ client: clientWith(standardHandler({ open: true, lastQuoteAt })), now: () => OPEN }).snapshot("mossling", "1W");
+    const fresh = await at(OPEN - 30_000);
+    expect(fresh.status).toBe("delayed");
+    expect(fresh.statusDetail).toMatch(/^Twelve Data \(Basic\), as of 2026-10-19 10:29 AM ET; may be delayed\.$/);
+    expect(fresh.source.delayMinutes).toBe(1);
+    expect((await at(OPEN - 10 * 60_000)).source.delayMinutes).toBe(10);
+    const old = await at(OPEN - 3 * 3600_000);
+    expect(old.status).toBe("stale");
+    expect(old.statusDetail).toContain("2026-10-19");
+    const unknown = await at(null);
+    expect(unknown.status).toBe("delayed");
+    expect(unknown.source.delayMinutes).toBeNull();
+  });
+
+  it("a last_quote_at in the future is an unknown age, not age zero", async () => {
+    const s = await createLiveMarket({ client: clientWith(standardHandler({ open: true, lastQuoteAt: OPEN + 3600_000 })), now: () => OPEN }).snapshot("mossling", "1W");
+    expect(s.status).toBe("delayed");
+    expect(s.source.delayMinutes).toBeNull();
+    expect(s.quote!.asOf).toBeNull();
+    expect(s.statusDetail).toMatch(/didn't give a usable time/);
+  });
+
+  it("right after the bell, the day's bar is not yet a completed close", async () => {
+    const s = await createLiveMarket({ client: clientWith(standardHandler()), now: () => JUST_AFTER_BELL }).snapshot("mossling", "1W");
+    expect(s.quote!.sessionDate).toBe("2026-10-16");
+    expect(s.chart.points.every((p) => p.date <= "2026-10-16")).toBe(true);
+    expect(s.status).toBe("previous_close");
+  });
+
+  it("closed market: a missing completed session reads 'stale' with its dates, not 'official close'", async () => {
+    // History stops at Fri 16 Oct and the quote is for Mon 19, but by Tue 20 Oct 23:00 UTC the 20th is complete too.
+    const h = standardHandler();
+    const stopAt16 = (u: URL) => {
+      const b = h(u) as { values?: { datetime: string }[]; datetime?: string };
+      if (b.values) b.values = b.values.filter((v) => v.datetime <= "2026-10-16");
+      return b;
+    };
+    const live = createLiveMarket({ client: clientWith(stopAt16 as never), now: () => Date.parse("2026-10-20T23:00:00Z") });
+    const s = await live.snapshot("mossling", "1W");
+    expect(s.status).toBe("stale");
+    expect(s.statusDetail).toContain("2026-10-19");
+    expect(s.statusDetail).toContain("2026-10-20");
   });
 
   it("while open, today's still-moving daily bar is not counted as a close", async () => {
@@ -238,21 +277,69 @@ describe("live market service", () => {
     const busy = await live.snapshot("zephrax", "1M").catch((e) => e);
     expect(busy.code).toBe("RATE_LIMITED");
     expect(f).toHaveBeenCalledTimes(8); // the 9th was refused before calling
+    expect(live.coverageOf("TSLA")).toBe("unverified"); // our own budget says nothing about coverage
+    expect(live.coverageOf("DE")).toBe("ok");
     t += 61_000;
     await expect(live.snapshot("zephrax", "1M")).resolves.toMatchObject({ stock: { ticker: "TSLA" } });
   });
 
-  it("a provider rate limit is remembered for a minute instead of retried at once", async () => {
+  it("a provider 429 backs off the whole instance, doubling, instead of retrying every minute", async () => {
     let calls = 0;
     const c = createTwelveDataClient({ apiKey: KEY, fetch: (async () => { calls++; return new Response(JSON.stringify({ code: 429, message: "x", status: "error" })); }) as unknown as typeof fetch });
     let t = AFTER_CLOSE;
     const live = createLiveMarket({ client: c, now: () => t });
     await expect(live.snapshot("mossling")).rejects.toMatchObject({ code: "RATE_LIMITED" });
-    await expect(live.snapshot("mossling")).rejects.toMatchObject({ code: "RATE_LIMITED" });
+    await expect(live.snapshot("pyraurum")).rejects.toMatchObject({ code: "RATE_LIMITED" }); // other ticker: same back-off
     expect(calls).toBe(1);
+    t += 61_000;
+    await live.snapshot("mossling").catch(() => null); // retried once, 429 again: back-off doubles to 2 min
+    expect(calls).toBe(2);
     t += 61_000;
     await live.snapshot("mossling").catch(() => null);
     expect(calls).toBe(2);
+    t += 61_000;
+    await live.snapshot("mossling").catch(() => null);
+    expect(calls).toBe(3);
+  });
+
+  it("an uncovered symbol is remembered for 15 minutes instead of spending a credit per view", async () => {
+    let calls = 0;
+    const c = createTwelveDataClient({ apiKey: KEY, fetch: (async () => { calls++; return new Response(JSON.stringify({ code: 404, message: "symbol not found", status: "error" })); }) as unknown as typeof fetch });
+    let t = AFTER_CLOSE;
+    const live = createLiveMarket({ client: c, now: () => t });
+    for (let i = 0; i < 5; i++) await expect(live.snapshot("mossling")).rejects.toMatchObject({ code: "NOT_FOUND" });
+    expect(calls).toBe(1);
+    expect(live.coverageOf("DE")).toBe("NOT_FOUND");
+    t += 16 * 60_000;
+    await live.snapshot("mossling").catch(() => null);
+    expect(calls).toBe(2);
+  });
+
+  it("a 400 from the provider is 'unavailable', not 'not found'", async () => {
+    const c = createTwelveDataClient({ apiKey: KEY, fetch: fakeFetch(() => ({ code: 400, message: "bad", status: "error" })) as unknown as typeof fetch });
+    await expect(c.quote("DE", "NYSE")).rejects.toMatchObject({ code: "UNAVAILABLE" });
+  });
+
+  it("Vigour only counts true day-over-day moves, never a change across a missing session", async () => {
+    const h = standardHandler();
+    const gap = (u: URL) => {
+      const b = h(u) as { values?: { datetime: string }[] };
+      if (b.values) b.values = b.values.filter((v) => v.datetime !== "2026-10-15");
+      return b;
+    };
+    const s = await createLiveMarket({ client: clientWith(gap as never), now: () => AFTER_CLOSE }).snapshot("mossling", "1M");
+    expect(s.growth!.window.some((e) => e.date === "2026-10-16")).toBe(false); // 14 → 16 bridges the gap
+    expect(s.growth!.window.every((e) => e.previousDate !== "2026-10-14" || e.date === "2026-10-15")).toBe(true);
+  });
+
+  it("fetchedAt is when the provider was called, not when the snapshot was served", async () => {
+    let t = AFTER_CLOSE;
+    const live = createLiveMarket({ client: clientWith(standardHandler()), now: () => t });
+    await live.snapshot("mossling");
+    t += 5 * 60_000;
+    const s = await live.snapshot("mossling");
+    expect(s.source.fetchedAt).toBe(AFTER_CLOSE);
+    expect(s.generatedAt).toBe(t);
   });
 
   it("1D uses the session's 5-minute bars at the right instants", async () => {

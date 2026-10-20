@@ -38,7 +38,7 @@ const EXTS = [".png", ".webp", ".jpg", ".jpeg"];
 /** `check`: a committed glow map is stale when more than this share of its light differs from a fresh derivation. */
 const GLOW_DRIFT = 0.02;
 /** Canon C5: emission as a share of the silhouette, by rarity. A pulse may only brighten light within it. */
-const EMISSION_LIMIT = { common: 0.03, rare: 0.05, epic: 0.1, legendary: 0.1 };
+const EMISSION_LIMIT = { common: 0.03, rare: 0.05, epic: 0.1, legendary: 0.1, mythic: 0.15, secret: 1 };
 
 /** Loads the TypeScript scene config and species list (with the @/ alias) without a TS toolchain. */
 async function loadTs(file) {

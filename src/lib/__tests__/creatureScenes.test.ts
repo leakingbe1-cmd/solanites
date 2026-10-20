@@ -8,7 +8,7 @@ import manifest from "@/data/creatureScenes.json";
 import { SCENES, SEALED_SCENE, STAGE_FRAMING, sceneAssets, sceneOf, type Anatomy, type BodyMotion, type PartRig } from "@/lib/creatureScenes";
 import { SPECIES } from "@/lib/species";
 
-/** Species with a painted biome and idle of their own (Mythic and Secret ones don't have one yet). */
+/** Species with a painted biome and idle of their own (all 28). */
 const SCENED = SPECIES.filter((s) => s.id in SCENES);
 
 /**
@@ -49,14 +49,13 @@ const PART_NEEDS: Record<PartRig["part"], (a: Anatomy) => boolean> = {
 };
 
 describe("catalogue coverage", () => {
-  it("every Common to Legendary species has a scene, and the scenes name no other species", () => {
-    const painted = SPECIES.filter((s) => s.rarity !== "mythic" && s.rarity !== "secret");
-    expect(Object.keys(SCENES).sort()).toEqual(painted.map((s) => s.id).sort());
+  it("every species has a scene, and the scenes name no other species", () => {
+    expect(Object.keys(SCENES).sort()).toEqual(SPECIES.map((s) => s.id).sort());
   });
 
-  it("there are 28 species; the 6 Mythic and Secret ones use the neutral scene until their biomes are painted", () => {
+  it("there are 28 species and none falls back to the neutral scene", () => {
     expect(SPECIES).toHaveLength(28);
-    for (const s of SPECIES.filter((x) => x.rarity === "mythic" || x.rarity === "secret")) expect(sceneOf(s.id)).toBe(SEALED_SCENE);
+    for (const s of SPECIES) expect(sceneOf(s.id), s.id).not.toBe(SEALED_SCENE);
   });
 
   it("every species has its own environment (no two share a biome)", () => {
@@ -180,8 +179,11 @@ describe("rendering", () => {
           expect(out).toContain(`data-stage="${stage}"`);
           expect(out).toContain(`/scenes/${s.id}/plate`);
           // the creature's own artwork, untouched, at the same path the rest of the site uses
-          expect(out).toContain(`/creatures/${s.id}/${stage + 1}-`);
-          expect(out).toContain(`data-body="${SCENES[s.id].idle.stages[stage].body}"`);
+          // (a stage that was never painted, like Eventide's Hatchling, stays a vector drawing)
+          if (readdirSync(`public/creatures/${s.id}`).some((f) => f.startsWith(`${stage + 1}-`))) {
+            expect(out).toContain(`/creatures/${s.id}/${stage + 1}-`);
+            expect(out).toContain(`data-body="${SCENES[s.id].idle.stages[stage].body}"`);
+          }
           // parts and particles only at the larger sizes
           if (size === "card" || size === "quiet") {
             expect(out).not.toMatch(/data-part=/);
@@ -193,7 +195,7 @@ describe("rendering", () => {
   }
 
   it("a species without a biome shows the neutral vault, still; a silhouette never idles", () => {
-    const out = html(createElement(CreatureScene, { species: SPECIES.find((s) => s.id === "astravex")!, stage: 3, size: "card" }));
+    const out = html(createElement(CreatureScene, { species: { ...SPECIES[0], id: "not-a-species" }, stage: 3, size: "card" }));
     expect(out).toMatch(/data-biome="sealed-vault"/);
     expect(out).not.toMatch(/\/scenes\//);
     expect(out).not.toMatch(/sl-idle/);

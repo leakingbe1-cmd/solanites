@@ -505,6 +505,65 @@ export const SCENES: Record<string, SceneDef> = {
       ],
     },
   },
+  // Mythic and Secret: plates repainted from the other biomes by scripts/scene-remix.py (no generation)
+  astravex: {
+    biome: { id: "starlit-glade", name: "Starlit Silver Glade", summary: "A silver birch edge deep in the night, a lane of star dust drifting low through the mist.", tones: ["#9aa8d8", "#10163a", "#03040c"], particle: "motes", floor: 0.4 },
+    anatomy: { locomotion: "walks", tail: true, ears: true, antlers: true, emissive: true },
+    idle: {
+      summary: "Stands tall and still, a slow breath and a shift of weight while its constellations glimmer.",
+      // the star-field window on the flank and the stars on its antlers
+      glowFrom: ["accent", "eye"],
+      glowLevel: 0.85,
+      stages: [S("rock", 0.9, 5.6), S("stalk", 1, 6.2, { glow: true }), S("stalk", 1, 7, { glow: true }), S("stalk", 0.9, 8.4, { glow: true })],
+    },
+  },
+  orbelith: {
+    biome: { id: "orbital-void", name: "Orbital Void", summary: "The void a world keeps its orbits in: a vast planet leaning in, two adopted moons, cloud tops far below.", tones: ["#6e94bc", "#0b1430", "#02030a"], particle: "none" },
+    anatomy: { locomotion: "drifts", tendrils: true, emissive: true },
+    idle: {
+      summary: "Drifts on a slow rise and settle as its comet tendrils trail.",
+      glowFrom: ["accent", "eye"],
+      stages: [S("rock", 1, 6), S("hover", 1.4, 6.8, { glow: true }), S("hover", 1.4, 7.6, { glow: true }), S("hover", 1.2, 9, { glow: true })],
+    },
+  },
+  eventide: {
+    biome: { id: "eclipse-fen", name: "Eclipse Fen", summary: "A root-bound fen at the moment of totality, the last light gone violet and still.", tones: ["#7a80b4", "#18123a", "#040310"], particle: "motes", floor: 0.35 },
+    anatomy: { locomotion: "hovers", wings: true, tail: true, emissive: true },
+    idle: {
+      summary: "Hangs in the air on a slow rise and settle beneath the eclipse.",
+      glowFrom: ["eye"],
+      glowLevel: 0.85,
+      stages: [S("rock", 1, 5.4), S("hover", 1.3, 6.2), S("hover", 1.5, 7, { glow: true }), S("hover", 1.3, 8.4, { glow: true })],
+    },
+  },
+  helivane: {
+    biome: { id: "unsetting-orbit", name: "Unsetting High Orbit", summary: "The high orbit where the sun never sets: space-dark above, cloud tops lit gold by a sun just under the world's edge.", tones: ["#e6a060", "#24204a", "#08081a"], particle: "none" },
+    anatomy: { locomotion: "flies", wings: true, tail: true },
+    idle: {
+      summary: "Holds the high air on a slow rise and fall, wings steady, watching below.",
+      stages: [S("rock", 1, 5), S("hover", 1.2, 5.8), S("hover", 1.4, 6.6), S("hover", 1.2, 8)],
+    },
+  },
+  genesis: {
+    biome: { id: "slot-zero-vault", name: "Slot Zero Vault", summary: "The vault that held before the first block: black crystal, edges in signal green, the faint grid of slot zero on the far wall.", tones: ["#306c56", "#0e201d", "#040a0b"], particle: "glyphs", floor: 0.35 },
+    anatomy: { locomotion: "hovers", emissive: true },
+    idle: {
+      summary: "Levitates in place, rising and settling with the slow hum of its visor light.",
+      // the visor eye and its green edge light
+      glowFrom: ["eye"],
+      stages: [S("rock", 1, 6), S("hover", 1.2, 6.6, { glow: true }), S("hover", 1.4, 7.4, { glow: true }), S("hover", 1.2, 9, { glow: true })],
+    },
+  },
+  nullborn: {
+    biome: { id: "unindexed-void", name: "The Unindexed Void", summary: "A place no index reaches: a shrine's last pillars in a pink-shifted void, grid fragments that fail to line up.", tones: ["#6c6474", "#110e16", "#030205"], particle: "ash", floor: 0.45 },
+    anatomy: { locomotion: "stands", tail: true, ears: true, emissive: true },
+    idle: {
+      summary: "Sits upright and still, a slow breath through the fan of its tails.",
+      // the pink glitch marks on its mask
+      glowFrom: ["accent"],
+      stages: [S("rock", 1, 5.2), S("breathe", 1, 6), S("breathe", 1, 6.8, { glow: true }), S("breathe", 0.9, 8.2, { glow: true })],
+    },
+  },
 };
 
 /** The neutral scene for a species without one of its own: a dark vault, CSS only, still. */

@@ -19,6 +19,8 @@ const js = await build({
   target: "es2020",
   jsx: "automatic",
   logLevel: "warning",
+  // Component stylesheets (e.g. creature/scenes.css) are inlined below with the site CSS.
+  loader: { ".css": "empty" },
   alias: {
     "@": path.join(root, "src"),
     "next/link": path.join(here, "shims/link.tsx"),
@@ -28,10 +30,13 @@ const js = await build({
     "process.env.NODE_ENV": '"production"',
     "process.env.NEXT_PUBLIC_SOLANITES_MINT": '""',
     "process.env.NEXT_PUBLIC_SOLANA_RPC_URL": '""',
+    "process.env.NEXT_PUBLIC_INTRO_VIDEO_BASE": '""',
   },
 });
 
-const cssSrc = await readFile(path.join(here, "styles.css"), "utf8");
+// Plain CSS files that components import directly; Next bundles them, here they're appended.
+const COMPONENT_CSS = ["src/components/creature/scenes.css"];
+const cssSrc = [await readFile(path.join(here, "styles.css"), "utf8"), ...(await Promise.all(COMPONENT_CSS.map((f) => readFile(path.join(root, f), "utf8"))))].join("\n");
 const css = await postcss([tailwind({ base: root, optimize: { minify: true } })]).process(cssSrc, { from: path.join(here, "styles.css") });
 
 const fonts =

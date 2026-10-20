@@ -660,6 +660,10 @@ body {
 }
 
 /* the hero copy settles in quickly; it is usable from the first frame */
+/* Live homepage metrics (HomeMetrics): crisp numbers with a faint glow; the live dot is still. */
+.sl-metric-value { text-shadow: 0 0 18px rgba(246, 212, 136, 0.18); }
+.sl-live-dot { box-shadow: 0 0 8px #14f195; }
+
 .sl-awake-in {
   animation: sl-fade-up 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }

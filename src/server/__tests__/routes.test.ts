@@ -81,6 +81,20 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
   });
 });
 
+describe("GET /api/home-stats", () => {
+  it("serves real fixture holders and eggs, an honest unavailable market cap, and a shared CDN cache", async () => {
+    const { GET } = await import("@/app/api/home-stats/route");
+    const res = await GET();
+    expect(res.headers.get("cache-control")).toContain("s-maxage=30");
+    const b = await res.json();
+    expect(b.holders.status).toBe("live");
+    expect(b.holders.value).toBeGreaterThan(0);
+    expect(b.eggs.status).toBe("live");
+    expect(b.eggs.value).toBeGreaterThan(0);
+    expect(b.marketCap).toMatchObject({ value: null, status: "unavailable" });
+  });
+});
+
 describe("scheduler and webhook endpoints", () => {
   it("require their secrets", async () => {
     const cron = await import("@/app/api/cron/sync/route");
@@ -127,7 +141,8 @@ describe("operations, demo isolation and request limits", () => {
   it("GET /api/health is public but reveals only status; details need the scheduler secret", async () => {
     const { GET } = await import("@/app/api/health/route");
     const pub = await (await GET(req("/api/health"))).json();
-    expect(Object.keys(pub).sort()).toEqual(["lastSuccessfulSyncAt", "source", "status"]);
+    expect(Object.keys(pub).sort()).toEqual(["holders", "lastSuccessfulSyncAt", "source", "status"]);
+    expect(pub.holders).toBeTypeOf("number");
     expect(pub.source).toBe("fixture");
     const detailed = await (await GET(req("/api/health", { headers: { authorization: "Bearer cron-secret-for-tests" } }))).json();
     expect(detailed.settingsPresent).toMatchObject({ cronSecret: true, webhookSecret: true });

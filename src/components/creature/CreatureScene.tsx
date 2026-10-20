@@ -141,7 +141,20 @@ function rand(seed: number) {
 
 /* ── one shared observer: a scene animates only while it is on screen ── */
 
+/**
+ * Card-size scenes on screen at once idle only up to this many (the first in page order); the
+ * rest hold their rest pose until scrolled to, hovered or focused. A full Collection grid stays cheap.
+ */
+export const CARD_IDLE_CAP = 8;
+
 let observer: IntersectionObserver | null = null;
+const visibleCards = new Set<Element>();
+
+function activateCards() {
+  const order = [...visibleCards].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1));
+  order.forEach((el, i) => el.toggleAttribute("data-active", i < CARD_IDLE_CAP));
+}
+
 function observe(el: Element) {
   if (typeof IntersectionObserver === "undefined") {
     el.setAttribute("data-active", "");
@@ -149,15 +162,27 @@ function observe(el: Element) {
   }
   observer ??= new IntersectionObserver(
     (entries) => {
+      let cards = false;
       for (const e of entries) {
-        if (e.isIntersecting) e.target.setAttribute("data-active", "");
+        if (e.target.classList.contains("sl-scene-card")) {
+          cards = true;
+          if (e.isIntersecting) visibleCards.add(e.target);
+          else {
+            visibleCards.delete(e.target);
+            e.target.removeAttribute("data-active");
+          }
+        } else if (e.isIntersecting) e.target.setAttribute("data-active", "");
         else e.target.removeAttribute("data-active");
       }
+      if (cards) activateCards();
     },
     { rootMargin: "80px" },
   );
   observer.observe(el);
-  return () => observer?.unobserve(el);
+  return () => {
+    observer?.unobserve(el);
+    if (visibleCards.delete(el)) activateCards();
+  };
 }
 
 function useVisibility<T extends Element>() {

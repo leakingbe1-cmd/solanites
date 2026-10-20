@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { Modal } from "@/components/ui/Modal";
 import { gameConfig } from "@/config/gameConfig";
 import { CLASSIFIED_RARITIES } from "@/lib/discovery";
@@ -50,13 +50,9 @@ export function RarityShowcase() {
               style={{ boxShadow: `inset 0 1px 0 ${meta.color}22` }}
             >
               <span className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} aria-hidden />
-              <span
-                className="sl-art-host relative -mx-2 -mt-1 block aspect-square sm:-mx-3"
-                style={{ "--sl-glow": classified ? `${meta.color}55` : meta.glow } as React.CSSProperties}
-                aria-hidden
-              >
-                <CreatureArt species={s} stage={2} silhouette={classified} showAura={!classified} animated={false} />
-                {r === "secret" && <span className="absolute inset-0 grid place-items-center font-display text-4xl text-bone/80">?</span>}
+              <span className="relative -mx-2 -mt-1 block aspect-square sm:-mx-3" aria-hidden>
+                <CreatureScene species={s} stage={2} size="card" silhouette={classified} sealed={classified} className="absolute inset-0 rounded-[3px]" artClassName="sl-art-host" />
+                {r === "secret" && <span className="absolute inset-0 z-[2] grid place-items-center font-display text-4xl text-bone/80">?</span>}
               </span>
               <span className="relative mt-1 flex flex-1 flex-col">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: meta.color }}>

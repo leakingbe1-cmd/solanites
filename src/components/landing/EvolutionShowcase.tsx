@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { gameConfig } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { FIRST_MATURITY_MS, formUnlockText } from "@/lib/progression";
@@ -140,7 +141,7 @@ export function EvolutionShowcase() {
       <div className="relative px-4 pt-8 sm:px-8 sm:pt-10">
         {/* phones and small tablets: the current form, large */}
         <div key={`${species.id}-${stage}`} className="sl-fade-in relative mx-auto aspect-square w-full max-w-[19rem] md:hidden">
-          <CreatureArt species={species} stage={stage} />
+          <CreatureScene species={species} stage={stage} size="feature" className="absolute inset-0 rounded-md" />
         </div>
 
         {/* tablets and up: all four forms in a row, each above its milestone */}
@@ -158,7 +159,7 @@ export function EvolutionShowcase() {
                   transform: on ? "translateY(-6px) scale(1.04)" : "none",
                 }}
               >
-                <CreatureArt species={species} stage={i} animated={on} showAura={on} />
+                <CreatureScene species={species} stage={i} size={on ? "feature" : "card"} still={!on} className="absolute inset-0 rounded-md" />
               </div>
             );
           })}

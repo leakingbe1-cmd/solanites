@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { EggArt } from "@/components/egg/EggArt";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, type Species } from "@/lib/species";
@@ -71,7 +71,7 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
               {species.rarity === "secret" ? "▚ SECRET ▞" : meta.label}
             </p>
             <div className="sl-pop relative mt-2 aspect-square w-[78vw] max-w-[400px]" style={{ animationDelay: "0.05s" }}>
-              <CreatureArt species={species} stage={0} />
+              <CreatureScene species={species} stage={0} size="feature" className="absolute inset-0 rounded-md" />
             </div>
             <h2 className="sl-fade-up sl-display-l text-bone" style={{ animationDelay: "0.5s" }}>
               {species.name}

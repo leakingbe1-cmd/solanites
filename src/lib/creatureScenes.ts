@@ -167,7 +167,8 @@ export const SCENES: Record<string, SceneDef> = {
   },
   pallow: {
     biome: { id: "dawn-cloudsea", name: "Dawnspire Cloudsea", summary: "A pearl-white sea of cloud at first light around a distant herald's spire, where each epoch's dawn is announced.", tones: ["#e9d2b4", "#7d7aa6", "#22203c"], particle: "petals" },
-    anatomy: { locomotion: "hovers", tendrils: true, emissive: true },
+    // feathers open into wing-like fans at Ascended
+    anatomy: { locomotion: "hovers", wings: true, tendrils: true, emissive: true },
     idle: {
       summary: "Hovers upright and drifts like a seed on warm air; its tassels trail behind the slow rise and settle.",
       stages: [
@@ -186,7 +187,8 @@ export const SCENES: Record<string, SceneDef> = {
   },
   glimmeray: {
     biome: { id: "sunlit-shallows", name: "Sunlit Shallows", summary: "A calm turquoise lagoon where sunlight nets the water and sea-grass leans with the swell.", tones: ["#7fd0c6", "#1f6f86", "#062a3a"], particle: "plankton" },
-    anatomy: { locomotion: "glides", tail: true, fins: true },
+    // a manta's broad pectoral fins are its wings (design bible: "broad triangular wings")
+    anatomy: { locomotion: "glides", wings: true, tail: true, fins: true },
     idle: {
       summary: "Glides in a slow bank, wings tilting as it rides the swell, never flapping.",
       stages: [
@@ -226,10 +228,19 @@ export const SCENES: Record<string, SceneDef> = {
   },
   "abyssal-vael": {
     biome: { id: "script-trench", name: "Abyssal Script Trench", summary: "The black trench where light forgets to reach, its walls veined with faint glowing ledger-script.", tones: ["#2a4f8a", "#0b1a40", "#02050f"], particle: "plankton" },
-    anatomy: { locomotion: "coils", fins: true, emissive: true },
+    anatomy: { locomotion: "coils", tail: true, fins: true, emissive: true },
     idle: {
       summary: "Rises and sinks on its coils with solemn slowness; marine snow falls through the dark.",
-      stages: [S("coil", 1, 6), S("coil", 1.2, 6.6), S("coil", 1.1, 7.6), S("coil", 0.9, 9)],
+      // the cyan ledger-script veins only (its long neck highlight shares the hue but is paint)
+      glowFrom: ["accent"],
+      glowLevel: 0.96,
+      stages: [
+        S("coil", 1, 6),
+        S("coil", 1.2, 6.6, { parts: [{ part: "tail", poly: [71, 48, 82, 48, 82, 72, 71, 72], hinge: [71, 60], motion: "bend", deg: 4, period: 4.8 }] }),
+        // the neck rises from the coil: it leans from the coil's top line, which stays still
+        S("coil", 1.1, 7.6, { glow: true, parts: [{ part: "crest", poly: [0, 0, 100, 0, 100, 60, 0, 60], hinge: [50, 60], motion: "skew", deg: 1, period: 9 }] }),
+        S("coil", 0.9, 9, { glow: true, parts: [{ part: "crest", poly: [0, 0, 100, 0, 100, 68, 0, 68], hinge: [50, 68], motion: "skew", deg: 0.8, period: 11 }] }),
+      ],
     },
   },
   stormquill: {
@@ -237,7 +248,12 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Restless: quick breaths and a slow weight shift on its stilt legs, as if bracing into wind.",
-      stages: [S("rock", 1.2, 4.2), S("stalk", 1.3, 4.4), S("stalk", 1.2, 5.2), S("stalk", 1, 6.4)],
+      stages: [
+        S("rock", 1.2, 4.2),
+        S("stalk", 1.3, 4.4),
+        S("stalk", 1.2, 5.2, { parts: [{ part: "tail", poly: [3, 52, 30, 52, 30, 82, 3, 82], hinge: [30, 65], motion: "bend", deg: 3, period: 3.8 }] }),
+        S("stalk", 1, 6.4, { parts: [{ part: "tail", poly: [2, 60.5, 28.5, 60.5, 28.5, 90, 2, 90], hinge: [28.5, 70.5], motion: "bend", deg: 2.5, period: 4.6 }] }),
+      ],
     },
   },
   duskwing: {
@@ -245,7 +261,26 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "hovers", wings: true, ears: true, emissive: true },
     idle: {
       summary: "Hovers in place on a slow rise and settle, watching the dark.",
-      stages: [S("rock", 1, 5.2), S("hover", 1.4, 6), S("hover", 1.6, 7), S("hover", 1.3, 8.4)],
+      // the eye-spots on its wings glow faintly in the dark
+      glowFrom: ["eye"],
+      glowLevel: 0.88,
+      stages: [
+        S("rock", 1, 5.2),
+        S("hover", 1.4, 6, {
+          parts: [
+            { part: "wing", poly: [0, 28, 38, 28, 44, 38.5, 44, 80, 0, 80], hinge: [44, 50], motion: "fold", deg: 3, period: 5.2 },
+            { part: "wing", poly: [56, 38.5, 62, 28, 100, 28, 100, 80, 56, 80], hinge: [56, 50], motion: "fold", deg: 3, period: 5.2 },
+          ],
+        }),
+        S("hover", 1.6, 7, {
+          glow: true,
+          parts: [
+            { part: "wing", poly: [0, 25, 37, 25, 46, 39, 46, 90, 0, 90], hinge: [46, 52], motion: "fold", deg: 2.5, period: 6.2 },
+            { part: "wing", poly: [54, 39, 63, 25, 100, 25, 100, 90, 54, 90], hinge: [54, 52], motion: "fold", deg: 2.5, period: 6.2 },
+          ],
+        }),
+        S("hover", 1.3, 8.4, { glow: true }),
+      ],
     },
   },
   cryovant: {
@@ -269,7 +304,14 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "crawls", tail: true, emissive: true },
     idle: {
       summary: "Low, heavy breathing like a kiln's draw; embers lift from the caldera.",
-      stages: [S("rock", 1, 5), S("breathe", 1.3, 4.6), S("breathe", 1.2, 5.4), S("breathe", 1, 6.6)],
+      glowFrom: ["accent"],
+      glowLevel: 0.85,
+      stages: [
+        S("rock", 1, 5),
+        S("breathe", 1.3, 4.6, { parts: [{ part: "tail", poly: [66, 34, 82, 34, 82, 57.5, 66, 57.5], hinge: [66, 54], motion: "bend", deg: 3, period: 5.6 }] }),
+        S("breathe", 1.2, 5.4, { glow: true, parts: [{ part: "tail", poly: [82, 30, 97, 30, 97, 60, 82, 60], hinge: [82, 48.8], motion: "bend", deg: 3, period: 6.2 }] }),
+        S("breathe", 1, 6.6, { glow: true, parts: [{ part: "tail", poly: [80, 36, 99, 36, 99, 70, 80, 70], hinge: [80, 63.8], motion: "bend", deg: 2.5, period: 7.4 }] }),
+      ],
     },
   },
   neonyx: {
@@ -277,7 +319,29 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "swims", tail: true, fins: true, lure: true, emissive: true },
     idle: {
       summary: "Hangs in the dark with a slow swim-drift, lure swinging just ahead of its jaws.",
-      stages: [S("swim", 1.2, 6.6), S("swim", 1.4, 7.4), S("swim", 1.3, 8.6), S("swim", 1.1, 10.2)],
+      glowFrom: ["accent", "eye"],
+      glowLevel: 0.8,
+      stages: [
+        S("swim", 1.2, 6.6, { glow: true }),
+        S("swim", 1.4, 7.4, {
+          glow: true,
+          parts: [
+            { part: "lure", poly: [61, 24, 84, 24, 84, 43.5, 70, 43.5, 66, 41.5, 64.5, 41, 61.5, 40], hinge: [63, 40.6], motion: "sway", deg: 4, period: 3.4 },
+            { part: "fin", poly: [12, 45, 29, 45, 29, 72, 12, 72], hinge: [29, 59.7], motion: "bend", deg: 5, period: 3.8 },
+          ],
+        }),
+        S("swim", 1.3, 8.6, {
+          glow: true,
+          parts: [
+            { part: "lure", poly: [64.5, 14, 92, 14, 92, 42, 76, 42, 73, 38, 69, 36.6, 66, 36.2, 64.5, 30], hinge: [67.2, 36.5], motion: "sway", deg: 3, period: 4 },
+            { part: "fin", poly: [0, 50, 21, 50, 21, 88, 0, 88], hinge: [21, 67.5], motion: "bend", deg: 3.5, period: 4.4 },
+          ],
+        }),
+        S("swim", 1.1, 10.2, {
+          glow: true,
+          parts: [{ part: "lure", poly: [66, 2, 98, 2, 98, 37, 84, 37, 82, 30, 76.5, 27.5, 71.5, 24.5, 68.5, 24.5, 66, 20], hinge: [70, 25], motion: "sway", deg: 2.4, period: 5 }],
+        }),
+      ],
     },
   },
   aurorath: {
@@ -285,7 +349,17 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "glides", tail: true, fins: true, tendrils: true, emissive: true },
     idle: {
       summary: "Glides with immense slowness, banking gently; its aurora curtains trail behind.",
-      stages: [S("glide", 1.1, 9), S("glide", 1.3, 10), S("glide", 1.2, 12), S("glide", 1, 14)],
+      stages: [
+        S("glide", 1.1, 9),
+        S("glide", 1.3, 10, { parts: [{ part: "tendrils", poly: [25, 55.5, 65, 55.5, 65, 80, 25, 80], hinge: [45, 55.5], motion: "skew", deg: 2.4, period: 7 }] }),
+        S("glide", 1.2, 12, {
+          parts: [
+            { part: "tendrils", poly: [15, 57.5, 80, 57.5, 80, 84, 15, 84], hinge: [47, 57.5], motion: "skew", deg: 2, period: 8.4 },
+            { part: "tail", poly: [83, 22, 99, 22, 99, 52, 83, 52], hinge: [83, 38], motion: "bend", deg: 3, period: 6 },
+          ],
+        }),
+        S("glide", 1, 14),
+      ],
     },
   },
   zephrax: {
@@ -293,7 +367,10 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "coils", tail: true, emissive: true },
     idle: {
       summary: "Never still: rides its cloud on a restless rise and settle with a slow turn of the coil.",
-      stages: [S("hover", 1.4, 5), S("coil", 1.4, 5.4), S("coil", 1.4, 6), S("coil", 1.2, 7.2)],
+      // its body runs into the painted cloud, so it moves whole; its electric runes pulse
+      glowFrom: ["accent"],
+      glowLevel: 0.85,
+      stages: [S("hover", 1.4, 5, { glow: true }), S("coil", 1.4, 5.4, { glow: true }), S("coil", 1.4, 6, { glow: true }), S("coil", 1.2, 7.2, { glow: true })],
     },
   },
   prismara: {
@@ -301,7 +378,23 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Holds a regal display: slow breath and a deliberate weight shift beneath its fan.",
-      stages: [S("rock", 1, 5), S("stalk", 1.2, 5.2), S("stalk", 1, 6.2), S("stalk", 0.8, 7.6)],
+      stages: [
+        S("rock", 1, 5),
+        S("stalk", 1.2, 5.2),
+        // the shard fan breathes open and closed behind the body
+        S("stalk", 1, 6.2, {
+          parts: [
+            { part: "wing", poly: [10, 25, 40, 25, 40, 85, 10, 85], hinge: [40, 55], motion: "fold", deg: 2.5, period: 7.2 },
+            { part: "wing", poly: [60, 25, 92, 25, 92, 85, 60, 85], hinge: [60, 55], motion: "fold", deg: 2.5, period: 7.2 },
+          ],
+        }),
+        S("stalk", 0.8, 7.6, {
+          parts: [
+            { part: "wing", poly: [5, 15, 38, 15, 38, 80, 5, 80], hinge: [38, 50], motion: "fold", deg: 2, period: 8.6 },
+            { part: "wing", poly: [62, 15, 95, 15, 95, 80, 62, 80], hinge: [62, 50], motion: "fold", deg: 2, period: 8.6 },
+          ],
+        }),
+      ],
     },
   },
   aurelion: {
@@ -309,7 +402,17 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Majestic, measured breathing; it rarely moves, and when it does it is deliberate.",
-      stages: [S("rock", 1, 5.4), S("breathe", 1.3, 5), S("breathe", 1.1, 6), S("breathe", 0.9, 7.6)],
+      stages: [
+        S("rock", 1, 5.4),
+        S("breathe", 1.3, 5),
+        S("breathe", 1.1, 6, {
+          parts: [
+            { part: "wing", poly: [2, 18, 20, 18, 38, 40, 38, 62, 2, 62], hinge: [38, 48], motion: "fold", deg: 2.5, period: 7.6 },
+            { part: "wing", poly: [62, 40, 80, 18, 98, 18, 98, 62, 62, 62], hinge: [62, 48], motion: "fold", deg: 2.5, period: 7.6 },
+          ],
+        }),
+        S("breathe", 0.9, 7.6),
+      ],
     },
   },
   solvanth: {
@@ -325,7 +428,18 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "flies", wings: true, tail: true, emissive: true },
     idle: {
       summary: "Holds the air on a slow rise and fall; embers drift up past it.",
-      stages: [S("rock", 1.1, 5), S("hover", 1.4, 5.8), S("hover", 1.6, 6.6), S("hover", 1.3, 8)],
+      stages: [
+        S("rock", 1.1, 5),
+        S("hover", 1.4, 5.8),
+        // flame plumes trail from the body and stream with the rise and fall
+        S("hover", 1.6, 6.6, { parts: [{ part: "tail", poly: [5, 66, 51.5, 66, 51.5, 95, 5, 95], hinge: [40, 66], motion: "skew", deg: 2.4, period: 4.6 }] }),
+        S("hover", 1.3, 8, {
+          parts: [
+            { part: "wing", poly: [2, 8, 40, 8, 40, 62, 2, 62], hinge: [40, 45], motion: "fold", deg: 2.5, period: 6.4 },
+            { part: "wing", poly: [60, 8, 98, 8, 98, 62, 60, 62], hinge: [60, 45], motion: "fold", deg: 2.5, period: 6.4 },
+          ],
+        }),
+      ],
     },
   },
   aurelith: {
@@ -333,7 +447,13 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "swims", fins: true },
     idle: {
       summary: "Swims slowly and serenely, banking a little with each long stroke.",
-      stages: [S("swim", 1.1, 8), S("glide", 1.2, 9), S("glide", 1.2, 10.5), S("glide", 1, 12.5)],
+      stages: [
+        S("swim", 1.1, 8),
+        S("glide", 1.2, 9),
+        // the great flippers paddle slowly beneath the shell
+        S("glide", 1.2, 10.5, { parts: [{ part: "fin", poly: [28, 66, 76, 66, 76, 90, 28, 90], hinge: [47, 66], motion: "skew", deg: 2.5, period: 7.6 }] }),
+        S("glide", 1, 12.5, { parts: [{ part: "fin", poly: [26, 67, 80, 67, 80, 92, 26, 92], hinge: [48, 67], motion: "skew", deg: 2, period: 9 }] }),
+      ],
     },
   },
   velynx: {
@@ -355,7 +475,13 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "walks", tail: true, ears: true, emissive: true },
     idle: {
       summary: "Light-footed: a quick breath and a small shift of weight, its ribbon tail drifting on the air.",
-      stages: [S("rock", 1, 4.6), S("breathe", 1.4, 4.2), S("stalk", 1.1, 5.2), S("stalk", 0.9, 6.6)],
+      stages: [
+        S("rock", 1, 4.6),
+        S("breathe", 1.4, 4.2, { parts: [{ part: "ribbon", poly: [67.5, 25, 80, 25, 80, 57.5, 67.5, 57.5], hinge: [67.5, 53], motion: "bend", deg: 3.5, period: 4.4 }] }),
+        S("stalk", 1.1, 5.2, { parts: [{ part: "ribbon", poly: [74, 22, 99, 22, 99, 64, 74, 64], hinge: [74, 52], motion: "bend", deg: 3, period: 5.2 }] }),
+        // its twin ribbons loop back across their own base, so the Ascended moves whole
+        S("stalk", 0.9, 6.6),
+      ],
     },
   },
   thalor: {
@@ -363,7 +489,14 @@ export const SCENES: Record<string, SceneDef> = {
     anatomy: { locomotion: "swims", tail: true, fins: true, emissive: true },
     idle: {
       summary: "Holds its station with slow authority, a heavy swim-drift with its head lowered like a shield.",
-      stages: [S("swim", 1, 7.6), S("swim", 1.1, 8.4), S("swim", 1, 9.6), S("swim", 0.8, 11.6)],
+      glowFrom: ["accent"],
+      glowLevel: 0.7,
+      stages: [
+        S("swim", 1, 7.6),
+        S("swim", 1.1, 8.4, { parts: [{ part: "tail", poly: [70, 30, 86, 30, 86, 72, 70, 72], hinge: [70, 53.3], motion: "bend", deg: 4, period: 4.6 }] }),
+        S("swim", 1, 9.6, { glow: true, parts: [{ part: "tail", poly: [80, 25, 96, 25, 96, 75, 80, 75], hinge: [80, 52.7], motion: "bend", deg: 3, period: 5.4 }] }),
+        S("swim", 0.8, 11.6, { glow: true, parts: [{ part: "tail", poly: [62, 74, 99, 74, 99, 99, 50, 99, 50, 86, 62, 86], hinge: [76, 74], motion: "skew", deg: 2.2, period: 6.4 }] }),
+      ],
     },
   },
 };

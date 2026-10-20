@@ -47,7 +47,9 @@ export function overviewConfig(symbol: string, company: string, accent: string) 
     autosize: true,
     locale: "en",
     colorTheme: "dark",
-    isTransparent: true,
+    // Opaque dark background: with isTransparent the widget renders on white in its own frame.
+    isTransparent: false,
+    backgroundColor: "#0f0d14",
     showVolume: false,
     showMA: false,
     hideDateRanges: false,

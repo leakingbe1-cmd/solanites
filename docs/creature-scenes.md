@@ -66,3 +66,23 @@ No classified species is named, given a biome, or given motion anywhere in the r
 | `node scripts/qa/scenes-site.mjs DIR [base]` | in the browser: biomes per species and stage, no broken images, sealed slots, public assets only, off-screen pause, reduced motion, the quiet Market Bond plate, 390 px overflow, frame cost |
 
 Prompts: `docs/creature-scenes/prompts.md`. Credits: `docs/creature-scenes/generation-ledger.md`.
+
+## Performance note
+
+**Method.** Local production builds served side by side: baseline `design/eclipse-vigil-code` (4d42aae, before the scenes) on :3200 and this branch on :3100, measured with headless Chromium 1194 (Playwright). Frame rate: `requestAnimationFrame` count over 3 s with a screen of Collection scenes idling, 3 alternating runs each. Weight: bytes on the wire per page (CDP `Network.loadingFinished`), 390 × 844 at 2× DPR, mobile emulation.
+
+| Collection, idling | Baseline | Branch |
+|---|---|---|
+| Desktop 1440 × 900 | 17.1 fps (18/16/17) | 18.4 fps (17/19/19) |
+| Phone 390, 4× CPU throttle | 58.1 fps | 60.4 fps |
+
+**Caveat.** The container has no GPU, so Chromium composites in software: the desktop figure is low for the whole site with or without scenes (every animation on the page disabled: 60 fps), and run-to-run noise is about ±3 fps. Within that noise the scenes cost nothing measurable; the in-page check in `scripts/qa/scenes-site.mjs` (same page, scene animation on vs off) has passed and failed on consecutive runs for that reason. Real-device GPU measurement is still to do. Everything scenes animate is a transform or opacity on composited layers; off-screen scenes are paused; cards run one layer.
+
+| Mobile (390 px), bytes transferred | Baseline | Branch | Of which scene plates/glow |
+|---|---|---|---|
+| Homepage, first screen | 1,507 KB | 1,666 KB | 148 KB |
+| Homepage, scrolled through | 1,876 KB | 2,035 KB | 148 KB |
+| Collection | 2,326 KB | 2,990 KB | 652 KB (all 22 plates) |
+| Creature profile (Velynx) | 2,489 KB | 3,161 KB | 660 KB |
+
+JavaScript grows by about 9 KB (the scene config and components). Plates are 21–43 KB each at 1024 px (the site's media standard); glow maps 2–21 KB.

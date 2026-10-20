@@ -102,6 +102,15 @@ describe("scheduler and webhook endpoints", () => {
     expect((await cron.GET(req("/api/cron/sync", { headers: { authorization: "Bearer wrong" } }))).status).toBe(401);
     const ok = await cron.GET(req("/api/cron/sync", { headers: { authorization: "Bearer cron-secret-for-tests" } }));
     expect(ok.status).toBe(200);
+    // Vercel Preview (behind Deployment Protection, no Vercel Cron) lets the owner run a pass from the browser; Production never does.
+    try {
+      process.env.VERCEL_ENV = "preview";
+      expect((await cron.GET(req("/api/cron/sync"))).status).toBe(200);
+      process.env.VERCEL_ENV = "production";
+      expect((await cron.GET(req("/api/cron/sync"))).status).toBe(401);
+    } finally {
+      delete process.env.VERCEL_ENV;
+    }
 
     const hook = await import("@/app/api/webhooks/solana/route");
     expect((await hook.POST(req("/api/webhooks/solana", { method: "POST", body: "[]" }))).status).toBe(401);

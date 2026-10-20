@@ -149,7 +149,10 @@ async function main() {
   for (const s of SPECIES) {
     const scene = SCENES[s.id];
     if (!scene) {
-      problems.push(`${s.id}: no scene in src/lib/creatureScenes.ts`);
+      // Mythic and Secret species are public now (20 Oct) but have no biome painted yet; they use
+      // the neutral scene (SEALED_SCENE) until one is added. Any other species must have its own.
+      if (s.rarity === "mythic" || s.rarity === "secret") report.push(`· ${s.id}: no scene yet (neutral scene)`);
+      else problems.push(`${s.id}: no scene in src/lib/creatureScenes.ts`);
       continue;
     }
     const entry = { plate: null, glow: [null, null, null, null] };

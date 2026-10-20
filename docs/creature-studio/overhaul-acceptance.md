@@ -154,3 +154,8 @@ Overall: **NOT ACCEPTED** until the privacy audit, the report-accuracy audit, ex
   - **FAIL:** "production cron disabled" (see above).
   - External source check: 27 MATCH, 1 UNVERIFIED (PLTR exchange), 0 mismatches. These rest on search-engine summaries of SEC, IR and exchange pages; the pages themselves could not be fetched from here.
 - **Report accuracy: corrected here.** The errors found were stale `ec8a06a` references, the missing preview links, the unenforced all-vector rule, the C9 baselines, and the non-Shadow C9 exceptions.
+
+**Follow-up (website session, `design/eclipse-vigil-code` @ `f37f25d`):**
+- `registerClassifiedArt` now registers painted stages only when all four exist. Verified here: code read, `classifiedArt.test.ts` and `creatureArt.test.ts` 14/14, `tsc` clean.
+- `classified-privacy.mjs` now covers `/api/wallet`, `/api/claims/status`, `/api/market` for every classified id, and RSC payloads. The website session reports 51/51; not re-run here.
+- Still open: matching served images against classified renders (planned with the Blob store work), and the cron entry (with the owner).

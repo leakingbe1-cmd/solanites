@@ -53,7 +53,7 @@ Per-image ledger for all non-classified overhaul work (including corrections and
 
 ## Creature biomes (session "Solanites creature biomes and animations", branch `feature/creature-biomes`)
 
-Recorded here from that session's own transcript (read-only) and Runway `list_recent`. That session keeps the per-task ledger in `docs/creature-scenes/generation-ledger.md` on its branch.
+Recorded here from that session's own transcript (read-only) and Runway `list_recent`. Per-task rows (22, final, no corrections or failures): `docs/creature-scenes/generation-ledger.md` on `feature/creature-biomes` @ `9f019d2` (checked: 22 rows, 1,371 → 1,283).
 
 | Time (UTC) | Tasks | What | Model / size | Credits | Balance after |
 |---|---|---|---|---|---|

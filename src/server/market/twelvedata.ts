@@ -9,7 +9,8 @@ import { MarketDataError, type MarketErrorCode } from "./provider";
  * line, an error or a cache key. Every response is checked before use: the symbol and exchange
  * must be the ones asked for (so one ticker's prices can never land under another creature),
  * the currency must be USD, prices must be finite and positive, and dates must parse. Anything
- * that fails is dropped or rejected; nothing is filled in.
+ * that fails is dropped or rejected; nothing is filled in. A date reported twice with different
+ * closes is dropped entirely rather than resolved by whichever record came first.
  */
 
 export interface TwelveDataOptions {
@@ -104,15 +105,19 @@ export function createTwelveDataClient(opts: TwelveDataOptions): TwelveDataClien
     async timeSeries(ticker, exchange, interval, outputsize) {
       const body = await get("/time_series", { symbol: ticker, exchange: TD_EXCHANGE[exchange], interval, outputsize: String(outputsize), order: "ASC", timezone: "Exchange" });
       checkIdentity(body, ticker, exchange, "meta");
-      const seen = new Set<string>();
-      const bars: TdBar[] = [];
+      // Duplicate dates: identical closes collapse to one bar; conflicting closes invalidate the
+      // date (every record for it is dropped), so the series never depends on record order.
+      const closesByDate = new Map<string, Set<number>>();
       for (const v of Array.isArray(body.values) ? (body.values as Record<string, unknown>[]) : []) {
         const close = num(v.close);
         const dt = typeof v.datetime === "string" ? v.datetime : "";
-        if (close === null || close <= 0 || !DATE.test(dt) || seen.has(dt)) continue;
-        seen.add(dt);
-        bars.push({ datetime: dt, close });
+        if (close === null || close <= 0 || !DATE.test(dt)) continue;
+        const set = closesByDate.get(dt) ?? new Set<number>();
+        set.add(close);
+        closesByDate.set(dt, set);
       }
+      const bars: TdBar[] = [];
+      for (const [datetime, closes] of closesByDate) if (closes.size === 1) bars.push({ datetime, close: [...closes][0] });
       bars.sort((a, b) => (a.datetime < b.datetime ? -1 : a.datetime > b.datetime ? 1 : 0));
       return bars;
     },

@@ -72,6 +72,15 @@ describe("/api/home-stats aggregation", () => {
     expect(s.eggs).toMatchObject({ value: null, status: "unavailable", note: "Egg tracking has not completed a sync yet." });
   });
 
+  it("eggs stay live between syncs and turn stale only when the tracker hasn't synced for 30 minutes", async () => {
+    const { stats, clock } = setup({ eggs: async () => ({ total: 7, lastSyncAt: T0 }) });
+    expect((await stats.get()).eggs).toMatchObject({ value: 7, status: "live", asOf: T0 });
+    clock.t += 5 * 60_000;
+    expect((await stats.get()).eggs).toMatchObject({ value: 7, status: "live", asOf: T0 });
+    clock.t += 30 * 60_000;
+    expect((await stats.get()).eggs).toMatchObject({ value: 7, status: "stale", asOf: T0, note: "Egg tracking hasn't synced for over 30 minutes." });
+  });
+
   it("a provider error before any success is unavailable, never zero", async () => {
     const { stats } = setup({ market: async () => Promise.reject(new Error("HTTP 500")) });
     expect((await stats.get()).marketCap).toMatchObject({ value: null, status: "unavailable" });

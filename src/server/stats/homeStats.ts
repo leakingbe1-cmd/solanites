@@ -47,6 +47,7 @@ const POLICY = {
   marketCap: { freshMs: 30_000, staleMaxMs: 10 * 60_000 },
 } as const;
 const RETRY_AFTER_FAILURE_MS = 30_000;
+const SYNC_STALE_MS = 30 * 60_000;
 
 /**
  * Builds the live homepage metrics with per-metric caching and single-flight refreshes, so a
@@ -86,6 +87,15 @@ export function createHomeStats(deps: HomeStatsDeps) {
     return { value: hit.value, status: stale ? "stale" : "live", asOf: hit.asOf, ...(stale ? { note: "Showing the last good value; refresh failed." } : {}), ...hit.extra };
   }
 
+  /** Eggs are only as fresh as the tracker's last completed sync, which runs every 10 min in production. */
+  function eggsMetric(): Metric<number> {
+    const m = metric("eggs", failures.eggs?.startsWith("Egg tracking ") ? failures.eggs : "Egg data is temporarily unavailable.");
+    const { syncedAt, ...rest } = m as Metric<number> & { syncedAt?: number };
+    if (m.value === null || syncedAt === undefined) return rest;
+    if (m.status === "live" && now() - syncedAt > SYNC_STALE_MS) return { ...rest, status: "stale", asOf: syncedAt, note: "Egg tracking hasn't synced for over 30 minutes." };
+    return { ...rest, asOf: syncedAt };
+  }
+
   async function get(): Promise<HomeStats> {
     const chain = deps.chain;
     await Promise.all([
@@ -100,7 +110,8 @@ export function createHomeStats(deps: HomeStatsDeps) {
         const e = await deps.eggs();
         // Before the first completed sync the egg table is incomplete, so there is no honest total yet.
         if (e.lastSyncAt === null) throw new Error("Egg tracking has not completed a sync yet.");
-        return { value: e.total, asOf: e.lastSyncAt };
+        // asOf is when the egg table was read, so the cache works; syncedAt is when the tracker last finished a pass.
+        return { value: e.total, asOf: now(), extra: { syncedAt: e.lastSyncAt } };
       }),
       chain
         ? refresh("marketCap", async () => {
@@ -114,7 +125,7 @@ export function createHomeStats(deps: HomeStatsDeps) {
     return {
       holders: chain ? metric("holders", "Holder data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: notConfigured },
       // "Egg tracking …" messages are written for visitors (not configured / no sync yet); anything else is generic.
-      eggs: metric("eggs", failures.eggs?.startsWith("Egg tracking ") ? failures.eggs : "Egg data is temporarily unavailable."),
+      eggs: eggsMetric(),
       marketCap: chain ? metric("marketCap", "Market data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: notConfigured },
       generatedAt: now(),
     };

@@ -115,10 +115,60 @@ describe("Twelve Data client", () => {
         status: "ok",
       })) as unknown as typeof fetch,
     });
-    expect(await c.timeSeries("DE", "NYSE", "1day", 10)).toEqual([
-      { datetime: "2026-10-15", close: 10.5 },
-      { datetime: "2026-10-19", close: 12.25 },
-    ]);
+    // 2026-10-15 arrives twice with different closes (10.5 vs 11), so that date is dropped.
+    expect(await c.timeSeries("DE", "NYSE", "1day", 10)).toEqual([{ datetime: "2026-10-19", close: 12.25 }]);
+  });
+
+  describe("duplicate and malformed records (policy: conflicting dates are dropped, order never matters)", () => {
+    const series = (values: { datetime: string; close: string }[]) =>
+      createTwelveDataClient({
+        apiKey: KEY,
+        fetch: fakeFetch((u) => ({ meta: { symbol: u.searchParams.get("symbol"), exchange: "NYSE", currency: "USD" }, values, status: "ok" })) as unknown as typeof fetch,
+      }).timeSeries("DE", "NYSE", "1day", 10);
+
+    it("identical duplicates collapse to one bar", async () => {
+      expect(await series([{ datetime: "2026-10-15", close: "10.5" }, { datetime: "2026-10-15", close: "10.50" }])).toEqual([{ datetime: "2026-10-15", close: 10.5 }]);
+    });
+
+    it("conflicting duplicates drop the date, whichever order they arrive in", async () => {
+      const a = [{ datetime: "2026-10-14", close: "9" }, { datetime: "2026-10-15", close: "10.5" }, { datetime: "2026-10-15", close: "11" }, { datetime: "2026-10-16", close: "12" }];
+      const want = [{ datetime: "2026-10-14", close: 9 }, { datetime: "2026-10-16", close: 12 }];
+      expect(await series(a)).toEqual(want);
+      expect(await series([...a].reverse())).toEqual(want);
+    });
+
+    it("two agreeing records and one dissenting record still drop the date", async () => {
+      const rows = [{ datetime: "2026-10-15", close: "10" }, { datetime: "2026-10-15", close: "10" }, { datetime: "2026-10-15", close: "10.01" }, { datetime: "2026-10-16", close: "12" }];
+      expect(await series(rows)).toEqual([{ datetime: "2026-10-16", close: 12 }]);
+      expect(await series([rows[2], rows[0], rows[3], rows[1]])).toEqual([{ datetime: "2026-10-16", close: 12 }]);
+    });
+
+    it("unsorted records come back in chronological order", async () => {
+      expect(await series([{ datetime: "2026-10-16", close: "3" }, { datetime: "2026-10-14", close: "1" }, { datetime: "2026-10-15", close: "2" }])).toEqual([
+        { datetime: "2026-10-14", close: 1 },
+        { datetime: "2026-10-15", close: 2 },
+        { datetime: "2026-10-16", close: 3 },
+      ]);
+    });
+
+    it("invalid dates and closes are ignored and never create or break a date", async () => {
+      const rows = [
+        { datetime: "2026-10-15", close: "10" },
+        { datetime: "2026-10-15", close: "NaN" }, // invalid: ignored, not a conflict
+        { datetime: "2026-10-15", close: "-1" },
+        { datetime: "15/10/2026", close: "10" },
+        { datetime: "2026-10-16", close: "" },
+        { datetime: "2026-10-17", close: "0" },
+        { datetime: "2026-10-19", close: "12.25" },
+      ];
+      expect(await series(rows)).toEqual([{ datetime: "2026-10-15", close: 10 }, { datetime: "2026-10-19", close: 12.25 }]);
+    });
+
+    it("a clean series is unchanged", async () => {
+      const bars = await createTwelveDataClient({ apiKey: KEY, fetch: fakeFetch(standardHandler()) as unknown as typeof fetch }).timeSeries("DE", "NYSE", "1day", 270);
+      expect(bars.length).toBe(dailyValues("DE", 300).length);
+      expect(bars.every((b, i) => i === 0 || bars[i - 1].datetime < b.datetime)).toBe(true);
+    });
   });
 
   it("maps provider errors to codes and never repeats the provider's message or the key", async () => {

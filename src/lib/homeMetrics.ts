@@ -10,6 +10,8 @@ export type MetricKey = "holders" | "eggs" | "marketCap";
 export interface MetricView {
   key: MetricKey;
   label: string;
+  /** A shorter label for phones, where it differs. */
+  shortLabel?: string;
   /** The number to show (animated by the component), or null when there is none. */
   value: number | null;
   format: (n: number) => string;
@@ -53,7 +55,7 @@ export function metricViews(stats: HomeStats, now: number): MetricView[] {
   return [
     view("holders", "Holders", stats.holders, formatCount, now),
     view("eggs", "Eggs collected", stats.eggs, formatCount, now),
-    view("marketCap", fdv ? "FDV" : "Live market cap", stats.marketCap, formatUsdCompact, now),
+    { ...view("marketCap", fdv ? "FDV" : "Live market cap", stats.marketCap, formatUsdCompact, now), shortLabel: fdv ? undefined : "Market cap" },
   ];
 }
 

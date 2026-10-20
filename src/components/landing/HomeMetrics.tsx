@@ -59,9 +59,16 @@ export function HomeMetricsView({ stats, error, now }: { stats: HomeStats | null
       <dl className="grid grid-cols-3 divide-x divide-white/10 rounded-md border border-white/[0.08] bg-void/55 py-2 backdrop-blur-sm sm:py-3.5">
         {(views ?? [null, null, null]).map((m, i) => (
           <div key={m?.key ?? i} className="flex min-w-0 flex-col items-center px-2 text-center lg:items-start lg:px-4 lg:text-left" data-metric={m?.key} data-status={m?.status ?? "loading"}>
-            <dt className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-dust sm:text-[10px]">
+            <dt className="flex min-w-0 max-w-full items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-dust sm:text-[10px] sm:tracking-[0.22em]">
               {m?.live && <span className="sl-live-dot h-1.5 w-1.5 shrink-0 rounded-full bg-sol-green" aria-hidden data-live-dot />}
-              <span className="truncate">{m?.label ?? ["Holders", "Eggs collected", "Live market cap"][i]}</span>
+              {m?.shortLabel ? (
+                <>
+                  <span className="truncate sm:hidden">{m.shortLabel}</span>
+                  <span className="hidden truncate sm:inline">{m.label}</span>
+                </>
+              ) : (
+                <span className="truncate">{m?.label ?? ["Holders", "Eggs collected", "Live market cap"][i]}</span>
+              )}
             </dt>
             <dd className="mt-1 min-h-[1.75rem] sm:mt-1.5 sm:min-h-[2.4rem]">
               {!m ? (

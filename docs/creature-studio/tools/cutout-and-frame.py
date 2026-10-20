@@ -4,9 +4,12 @@
    ramps from 0 to 1 as a pixel's colour distance from that background goes from
    `t0` to `t1`. Semi-transparent edge pixels are "decontaminated" (the background
    colour is divided back out) so no grey fringe shows on the dark site cards.
-2. Specks: detached flecks smaller than 0.1 % of the delivered frame (the size the canon's
+2. Painted holes: an enclosed hole whose raw pixels are textured or clearly off the background
+   colour is paint the colour key removed (grey shading, fin membranes); it is restored from the raw.
+   Flat background-coloured holes (gaps between coils, legs, loops) stay open.
+3. Specks: detached flecks smaller than 0.1 % of the delivered frame (the size the canon's
    C13 measure ignores) are cleared, so they can neither stretch the box nor stay in the art.
-3. Framing: the creature's bounding box is scaled so its larger side hits the stage's
+4. Framing: the creature's bounding box is scaled so its larger side hits the stage's
    canon C13 occupancy target (45 / 60 / 78 / 88 % of 1024) and centred. Only
    downscaling is allowed; if the target would need upscaling the script refuses.
 
@@ -61,6 +64,26 @@ def cutout(im, t0=10.0, t1=48.0):
     return out, bg
 
 
+def restore_painted_holes(raw_im, rgba, min_px=12, std_min=6.0, dist_min=16.0):
+    raw = np.asarray(raw_im.convert("RGB")).astype(float)
+    a = np.asarray(rgba).copy()
+    bg = np.array(border_colour(raw_im.convert("RGB")))
+    solid = a[..., 3] >= 128
+    holes = ndimage.binary_fill_holes(solid) & ~solid
+    lab, n = ndimage.label(holes)
+    restored = []
+    dist = np.sqrt(((raw - bg) ** 2).sum(-1))
+    for i in range(1, n + 1):
+        m = lab == i; k = int(m.sum())
+        if k < min_px: 
+            # tiny pinholes inside paint: always paint
+            a[m, :3] = raw[m]; a[m, 3] = 255; continue
+        std = raw[m].std(0).mean(); dm = dist[m].mean()
+        if std > std_min or dm > dist_min:
+            a[m, :3] = raw[m]; a[m, 3] = 255; restored.append((k, round(std, 1), round(dm, 1)))
+    return Image.fromarray(a, "RGBA"), restored
+
+
 def drop_specks(rgba, n):
     """Clears detached specks smaller than 0.1 % of the delivered frame, the size the canon's C13
     measure ignores, so a stray fleck can neither stretch the framing box nor stay in the art."""
@@ -101,13 +124,19 @@ def frame(rgba, stage):
 
 
 if __name__ == "__main__":
+    keep = "--keep-holes" in sys.argv
+    if keep:
+        sys.argv.remove("--keep-holes")
     if "--max-upscale" in sys.argv:
         i = sys.argv.index("--max-upscale")
         MAX_UPSCALE = float(sys.argv[i + 1])
         del sys.argv[i:i + 2]
     src, dst, stage = sys.argv[1], sys.argv[2], int(sys.argv[3])
     t0, t1 = (float(sys.argv[4]), float(sys.argv[5])) if len(sys.argv) > 5 else (10.0, 48.0)
-    rgba, bg = cutout(Image.open(src), t0, t1)
+    raw = Image.open(src)
+    rgba, bg = cutout(raw, t0, t1)
+    if not keep:
+        rgba, _ = restore_painted_holes(raw, rgba)
     rgba, _ = drop_specks(rgba, stage)
     framed, scale = frame(rgba, stage)
     framed.save(dst, optimize=True)

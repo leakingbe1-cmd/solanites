@@ -1,0 +1,434 @@
+[
+ {
+  "key": "frostkit-2",
+  "op": "join",
+  "why": "back ear grows out of the skull (no flat ear base)",
+  "fill": [
+   [
+    [
+     362,
+     458
+    ],
+    [
+     390,
+     452
+    ],
+    [
+     393,
+     470
+    ],
+    [
+     398,
+     498
+    ],
+    [
+     385,
+     482
+    ],
+    [
+     372,
+     468
+    ]
+   ],
+   [
+    [
+     356,
+     455
+    ],
+    [
+     366,
+     460
+    ],
+    [
+     380,
+     472
+    ],
+    [
+     392,
+     486
+    ],
+    [
+     400,
+     500
+    ],
+    [
+     394,
+     505
+    ],
+    [
+     380,
+     488
+    ],
+    [
+     366,
+     474
+    ],
+    [
+     354,
+     466
+    ]
+   ],
+   [
+    [
+     358,
+     451
+    ],
+    [
+     393,
+     448
+    ],
+    [
+     393,
+     462
+    ],
+    [
+     358,
+     464
+    ]
+   ]
+  ],
+  "retouch": [
+   [
+    [
+     354,
+     436
+    ],
+    [
+     367,
+     436
+    ],
+    [
+     367,
+     467
+    ],
+    [
+     354,
+     467
+    ]
+   ]
+  ],
+  "radius": 9
+ },
+ {
+  "key": "frostkit-3",
+  "op": "join",
+  "why": "both ears grow out of the skull (no flat ear base)",
+  "fill": [
+   [
+    [
+     304,
+     463
+    ],
+    [
+     350,
+     461
+    ],
+    [
+     352,
+     478
+    ],
+    [
+     350,
+     496
+    ],
+    [
+     336,
+     486
+    ],
+    [
+     318,
+     472
+    ]
+   ],
+   [
+    [
+     296,
+     458
+    ],
+    [
+     314,
+     460
+    ],
+    [
+     336,
+     472
+    ],
+    [
+     350,
+     488
+    ],
+    [
+     351,
+     497
+    ],
+    [
+     344,
+     500
+    ],
+    [
+     326,
+     490
+    ],
+    [
+     302,
+     474
+    ],
+    [
+     294,
+     466
+    ]
+   ],
+   [
+    [
+     296,
+     455
+    ],
+    [
+     350,
+     455
+    ],
+    [
+     350,
+     466
+    ],
+    [
+     296,
+     466
+    ]
+   ]
+  ],
+  "retouch": [
+   [
+    [
+     288,
+     451
+    ],
+    [
+     353,
+     451
+    ],
+    [
+     353,
+     470
+    ],
+    [
+     288,
+     470
+    ]
+   ],
+   [
+    [
+     288,
+     452
+    ],
+    [
+     314,
+     458
+    ],
+    [
+     336,
+     472
+    ],
+    [
+     350,
+     488
+    ],
+    [
+     353,
+     496
+    ],
+    [
+     346,
+     506
+    ],
+    [
+     326,
+     494
+    ],
+    [
+     302,
+     478
+    ],
+    [
+     284,
+     470
+    ]
+   ]
+  ],
+  "radius": 10
+ },
+ {
+  "key": "nyxara-2",
+  "op": "trim",
+  "why": "ribbon emerges from behind the haunch (no squared end on the rump)",
+  "poly": [
+   [
+    636,
+    494
+   ],
+   [
+    690,
+    490
+   ],
+   [
+    684,
+    500
+   ],
+   [
+    674,
+    510
+   ],
+   [
+    668,
+    520
+   ],
+   [
+    664,
+    530
+   ],
+   [
+    652,
+    530
+   ],
+   [
+    636,
+    522
+   ]
+  ],
+  "bminusr": 15,
+  "minlum": 60,
+  "outline": true
+ },
+ {
+  "key": "nyxara-3",
+  "op": "trim",
+  "why": "ribbon emerges from behind the haunch (no squared end on the rump)",
+  "poly": [
+   [
+    618,
+    540
+   ],
+   [
+    670,
+    536
+   ],
+   [
+    660,
+    548
+   ],
+   [
+    650,
+    557
+   ],
+   [
+    643,
+    567
+   ],
+   [
+    639,
+    580
+   ],
+   [
+    624,
+    580
+   ],
+   [
+    616,
+    560
+   ]
+  ],
+  "bminusr": 15,
+  "minlum": 60,
+  "outline": true
+ },
+ {
+  "key": "solvanth-1",
+  "op": "join",
+  "why": "translucent sketch leaf removed from the neck join",
+  "retouch": [
+   [
+    [
+     624,
+     462
+    ],
+    [
+     650,
+     460
+    ],
+    [
+     672,
+     476
+    ],
+    [
+     674,
+     496
+    ],
+    [
+     650,
+     498
+    ],
+    [
+     630,
+     484
+    ]
+   ]
+  ],
+  "radius": 4,
+  "outline": false
+ },
+ {
+  "key": "aurelion-1",
+  "op": "holes",
+  "why": "see-through rings around the eyes closed",
+  "near": [
+   380,
+   350,
+   600,
+   460
+  ]
+ },
+ {
+  "key": "mossling-2",
+  "op": "bridge",
+  "why": "antler buds reconnected to their stems",
+  "near": [
+   280,
+   310,
+   365,
+   350
+  ]
+ },
+ {
+  "key": "mossling-4",
+  "op": "bridge",
+  "why": "hanging moss strands reconnected to the body",
+  "near": [
+   120,
+   735,
+   145,
+   835
+  ]
+ },
+ {
+  "key": "sproutwyrm-4",
+  "op": "bridge",
+  "why": "glowing tip-buds reconnected to the leaf tips",
+  "near": [
+   560,
+   220,
+   905,
+   312
+  ]
+ },
+ {
+  "key": "zephrax-4",
+  "op": "bridge",
+  "why": "forehead crystal reconnected to the head",
+  "near": [
+   490,
+   140,
+   512,
+   198
+  ]
+ }
+]

@@ -21,7 +21,8 @@ ROOT = Path("art/creature-studio/overhaul")
 STAGES = ["eggling", "hatchling", "evolved", "ascended"]
 CLASSIFIED = {"086f90d3cfd8e943", "635f6faa80eccaf4", "6be2ea8b0b28eea0", "aeebad4a796fcc2e", "b9a8facfd00a4ea9", "e3bb8b00106b7d9b"}  # sha256(id)[:16] of the Mythic and Secret species
 BG = (7, 6, 13, 255)
-PIPELINE = 2  # 2: detached specks cleared before framing (canon C13 measure ignores them)
+PIPELINE = 3  # 2: detached specks cleared before framing; 3: painted holes restored from the raw
+KEEP_HOLES = {"aurelion-1"}  # restoring only one eye ring would make the eyes mismatch
 
 spec = importlib.util.spec_from_file_location("cf", "docs/creature-studio/tools/cutout-and-frame.py")
 cf = importlib.util.module_from_spec(spec)
@@ -51,6 +52,8 @@ for line in (ROOT / "tasks.tsv").read_text().splitlines()[1:]:
         key, task, *_ = line.split("\t")
         latest[key] = task
 status = json.loads((ROOT / "status.json").read_text()) if (ROOT / "status.json").exists() else {}
+# stages with local fixes are always regenerated, so local-fixes.py always starts from fresh output
+FIXED = {j["key"] for j in json.loads((ROOT / "local-fixes.json").read_text())} if (ROOT / "local-fixes.json").exists() else set()
 for key, task in latest.items():
     sid, n = key.rsplit("-", 1)
     if hashlib.sha256(sid.encode()).hexdigest()[:16] in CLASSIFIED:
@@ -59,9 +62,12 @@ for key, task in latest.items():
     if not src:
         continue
     dst = ROOT / "final" / sid / f"{n}-{STAGES[int(n) - 1]}.png"
-    if dst.exists() and status.get(key, {}).get("task") == task and status[key].get("pipeline") == PIPELINE:
+    if dst.exists() and status.get(key, {}).get("task") == task and status[key].get("pipeline") == PIPELINE and key not in FIXED:
         continue
-    rgba, _ = cf.cutout(Image.open(src), 10.0, 48.0)
+    raw = Image.open(src)
+    rgba, _ = cf.cutout(raw, 10.0, 48.0)
+    if key not in KEEP_HOLES:
+        rgba, _ = cf.restore_painted_holes(raw, rgba)
     rgba, specks = cf.drop_specks(rgba, int(n))
     framed, scale = cf.frame(rgba, int(n))
     dst.parent.mkdir(parents=True, exist_ok=True)

@@ -93,6 +93,7 @@ Each wallet carries a credit: the amount of its tokens that has already earned a
 | Variable | What |
 |---|---|
 | `SOLANITES_MINT` | The official $SLNT mint. **Not invented: you must provide it.** |
+| `SOLANITES_TEST_MINTS` | Test/staging mints that Production refuses. Set in every scope. See [`launch-readiness.md`](launch-readiness.md). |
 | `SOLANA_RPC_URL` | Provider endpoint with key (Helius recommended: `getProgramAccounts`, history, webhooks). Server-only. |
 | `DATABASE_URL` | Postgres (Neon via Vercel Marketplace, or Supabase). The schema is created automatically. |
 | `SOLANITES_EXCLUDED_OWNERS` | Treasury, team, LP, reserve, burn and exchange wallets (on-curve ones; off-curve pool PDAs are excluded automatically). |
@@ -134,7 +135,7 @@ On Vercel Pro you can replace the GitHub schedule with a `*/10 * * * *` Vercel C
 
 ### Staging verification plan (do this on a Preview deployment first)
 
-1. Create a separate staging Postgres and set Preview-only variables, with a devnet or test mint (never the production database).
+1. Create a separate staging Postgres and set Preview-only variables, with a devnet or test mint (never the production database). A database is bound to the first mint it tracks and refuses any other, so production must get its own, empty database.
 2. Deploy the branch; open `/api/health` and confirm `source` is not `demo`/`fixtures`.
 3. Trigger `/api/cron/sync` with the Bearer secret; confirm health shows a recent `ok` run and the supply check matches.
 4. From a test wallet, buy or transfer exactly 1,000,000 test tokens; enter the address in the Hatchery and confirm one egg appears with no wallet connection, ready 1 minute later.

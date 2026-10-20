@@ -1,6 +1,6 @@
 # Creature overhaul: acceptance record
 
-Status 2026-10-20. Verified on `design/eclipse-vigil-code` @ `ec8a06a` (local production build, desktop 1440 and phone 390). No merge to `main`, no production deploy.
+Status 2026-10-20. Verified on `design/eclipse-vigil-code` @ `4d42aae` (local production build, desktop 1440 and phone 390). `4d42aae` is `ec8a06a` plus the Nyxara Ascended correction: only that stage's two images and its byte count differ, and all 176 public creature files match the tested build byte for byte. No merge to `main`, no production deploy.
 
 ## 1. Finished species and stages
 
@@ -15,7 +15,7 @@ Status 2026-10-20. Verified on `design/eclipse-vigil-code` @ `ec8a06a` (local pr
 
 **Classified catalogue (4 Mythic, 2 Secret): 23 of 24 stages finished**, framed and checked (C13 framing 23/23 pass). They are held outside the repository; see §6.
 - One Mythic Hatchling is not generated. Its private reference upload was refused by the session's safety classifier and was not retried; it needs the owner's go-ahead (one 4-credit image).
-- The classified art is not on the site yet. The site's server-side classified path (a disclosed bundle after Developer Mode sign-in or a hatched egg) is in place, but per `ec8a06a` it serves vector art until the private store is connected.
+- The classified art is not on the site yet. The site's server-side classified path (a disclosed bundle after Developer Mode sign-in or a hatched egg) is in place, but since `ec8a06a` it serves vector art until the owner's private Vercel Blob store is created and connected. As relayed by the website session, the owner chose that store over committing classified images to the public repository, in plaintext or as encrypted assets "as the default solution".
 
 **Total finished artworks: 111 of 112.**
 
@@ -26,7 +26,7 @@ Notes on identity:
 
 ## 2. On the site
 
-- `public/creatures/` and `src/data/creatureAssets.json` at `ec8a06a` are byte-identical to `npm run art:build` from these finals: a rebuild changes 0 files.
+- `public/creatures/` and `src/data/creatureAssets.json` at `4d42aae` are byte-identical to `npm run art:build` from these finals. All 88 images and 88 thumbnails re-encode byte for byte, and no superseded final from history matches.
 - The site pipeline reports `88 of 112 stage assets supplied and valid · 24 missing (classified) · 0 invalid`. Its one warning: Pyraurum Ascended "little fine detail".
 - Collection sweep (`creature-studio` script, 494 checks, 1440 and 390):
   - 28 plates: 22 painted, all loaded; 6 sealed silhouettes.
@@ -83,7 +83,7 @@ Classified before/after boards exist only privately.
 
 ## 7. Build, tests, preview, remaining defects
 
-At `ec8a06a` (local):
+At `ec8a06a` (local; the full suites were not rerun on `4d42aae`, whose only change is the Nyxara Ascended images, re-swept 494/494):
 
 | Check | Result |
 |---|---|
@@ -93,7 +93,7 @@ At `ec8a06a` (local):
 | `scripts/qa/phoenix-site.mjs` | 202/202, including intro off: the homepage opens on the Phoenix still with no video request |
 | `scripts/qa/button-contrast.mjs` | 16/16 |
 
-Vercel built the preview of `ec8a06a` (status "success"). Its hostname is not reachable from the build container, so the checks above ran on an identical local production build.
+Vercel built previews of `ec8a06a` and `4d42aae` (status "success"). The preview hostnames are not reachable from the build container, so the checks above ran on a local production build of the same code.
 
 Remaining:
 1. One Mythic Hatchling not generated (owner go-ahead needed).

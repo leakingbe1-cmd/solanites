@@ -433,6 +433,46 @@ describe("failures", () => {
   });
 });
 
+describe("holder count: unique wallets with a positive balance", () => {
+  it("ignores empty token accounts and counts a wallet with several accounts once", async () => {
+    const { tracker, chain, pool, db, buy } = await setup();
+    const multi = W(70);
+    const second = chain.openAccount(multi);
+    chain.transfer(pool, multi, chain.tokens(10));
+    chain.transfer(pool, multi, chain.tokens(20), { toAccount: second });
+    buy(W(71), 5);
+    const empty = W(72);
+    chain.openAccount(empty); // pump.fun leaves many of these behind
+    await tracker.runSync({ force: true });
+    const h = await tracker.health();
+    expect(h.currentHolders).toBe(2);
+    // The empty wallet is never tracked, so it costs no sync round either.
+    expect((await db.query(`SELECT 1 FROM holders WHERE owner = $1`, [empty])).rows).toHaveLength(0);
+  });
+
+  it("a wallet that sells everything stops counting as a holder but keeps its eggs", async () => {
+    const { tracker, chain, pool, buy } = await setup();
+    const seller = W(73);
+    buy(seller, 1_000_000);
+    buy(W(74), 1);
+    await tracker.runSync({ force: true });
+    expect((await tracker.health()).currentHolders).toBe(2);
+    chain.transfer(seller, pool, chain.tokens(1_000_000));
+    await tracker.runSync({ force: true });
+    const h = await tracker.health();
+    expect(h.currentHolders).toBe(1);
+    expect((await tracker.holderView(seller)).counts.earned).toBe(1);
+  });
+
+  it("excluded owners (treasury, pools) are not holders", async () => {
+    const { tracker, buy } = await setup();
+    buy(W(75), 1);
+    await tracker.runSync({ force: true });
+    // The setup funds the pool (off-curve) and the treasury (configured), and both are excluded.
+    expect((await tracker.health()).currentHolders).toBe(1);
+  });
+});
+
 describe("credit ledger unit rules", () => {
   const h = (credit: bigint, excluded = false) => ({ credit, excluded });
   it("moves credit only when the sender can no longer cover it", () => {

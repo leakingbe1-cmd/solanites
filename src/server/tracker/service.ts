@@ -145,7 +145,10 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const snap = await fetchMintTokenAccounts(rpc, m, COMMITMENT);
     await trackingStartSlot(snap.slot);
     const changed = new Set<string>();
-    const owners = new Set(snap.accounts.map((a) => a.owner));
+    // Only wallets holding a positive balance are holders. Pump.fun mints leave many empty
+    // accounts behind; tracking them would inflate the holder count and cost a sync round each.
+    // Known holders whose accounts drain still get needs_sync below, so credit can move.
+    const owners = new Set(snap.accounts.filter((a) => a.amount > 0n).map((a) => a.owner));
     await db.tx(async (sql) => {
       const existing = new Map(
         (await sql.query<{ address: string; owner: string; amount_base: string; state: string; closed: boolean }>(`SELECT address, owner, amount_base, state, closed FROM token_accounts`)).rows.map((r) => [r.address, r]),
@@ -167,7 +170,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         changed.add(prev.owner);
         await sql.query(`UPDATE token_accounts SET closed = true, amount_base = 0, last_seen_slot = $2 WHERE address = $1`, [address, snap.slot]);
       }
-      for (const o of [...owners, ...changed]) await ensureHolder(sql, o);
+      for (const o of owners) await ensureHolder(sql, o);
       if (changed.size) await sql.query(`UPDATE holders SET needs_sync = true WHERE owner = ANY($1) AND NOT excluded`, [[...changed]]);
     });
     await setState("last_discovery_ms", String(now()));
@@ -515,6 +518,11 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     )).rows[0];
     const ok = (await db.query<{ finished_ms: string }>(`SELECT finished_ms FROM sync_runs WHERE status = 'ok' ORDER BY id DESC LIMIT 1`)).rows[0];
     const holders = (await db.query<{ n: number; pending: number }>(`SELECT count(*)::int AS n, count(*) FILTER (WHERE needs_sync)::int AS pending FROM holders WHERE NOT excluded`)).rows[0];
+    // Unique non-excluded wallets with a positive balance in open token accounts, as of the last snapshot.
+    const current = (await db.query<{ n: number }>(
+      `SELECT count(DISTINCT t.owner)::int AS n FROM token_accounts t JOIN holders h ON h.owner = t.owner
+       WHERE NOT t.closed AND t.amount_base > 0 AND NOT h.excluded`,
+    )).rows[0];
     const supply = await getState("mint_supply_matches_config");
     const lastOkAt = ok ? Number(ok.finished_ms) : null;
     return {
@@ -522,6 +530,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       lastSuccessfulSyncAt: lastOkAt,
       syncStale: lastOkAt === null || now() - lastOkAt > staleAfterMs,
       trackedHolders: holders.n,
+      currentHolders: current.n,
       holdersAwaitingSync: holders.pending,
       mintSupplyMatchesConfig: supply === null ? null : supply === "true",
     };

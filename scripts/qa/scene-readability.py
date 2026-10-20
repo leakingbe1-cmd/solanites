@@ -42,9 +42,20 @@ def framed_plate(plate, frame, focus, size):
     img = plate.crop((round(left), round(top), round(left + w), round(top + w))).resize((size, size), Image.LANCZOS)
     img = ImageEnhance.Brightness(img).enhance(frame["light"])
     img = ImageEnhance.Color(img).enhance(frame["sat"])
-    if frame["blur"]:
-        # cards use 0.6 of the stage blur (CreatureScene)
-        img = img.filter(ImageFilter.GaussianBlur(frame["blur"] * 0.6 * size / 1024))
+    blur = frame["blur"] * 0.6 + frame.get("soften", 0)  # cards use 0.6 of the stage blur, plus the biome's soften
+    if blur:
+        img = img.filter(ImageFilter.GaussianBlur(blur * size / 1024))
+    if frame.get("floor"):
+        # the floor fade: deep tone at the bottom, 82% at 0.45 of its height, clear at its top
+        deep = Image.new("RGB", (size, size), frame["deep"])
+        m = Image.new("L", (size, size), 0)
+        top = size * (1 - frame["floor"])
+        for y in range(size):
+            t = (y - top) / (size - top) if y >= top else 0
+            k = 1 - t  # 0 at bottom … 1 at top of the fade
+            a = 0 if y < top else (255 if k <= 0 else (0.82 + (1 - 0.82) * (0.45 - k) / 0.45 if k < 0.45 else 0.82 * (1 - k) / 0.55) * 255)
+            ImageDraw.Draw(m).line([(0, y), (size, y)], fill=int(max(0, min(255, a))))
+        img = Image.composite(deep, img, m)
     # vignette: transparent to 40% of the ellipse, then toward rgba(5,4,10,bv)
     v = Image.new("L", (size, size), 0)
     d = ImageDraw.Draw(v)
@@ -102,6 +113,9 @@ def main():
             f = dict(framing[stage])
             f["light"] *= 1 + info.get("lift", 0)
             f["sat"] *= info.get("calm", 1)
+            f["soften"] = info.get("soften", 0)
+            f["floor"] = info.get("floor", 0)
+            f["deep"] = info.get("deep", "#000000")
             card, edge, calm = measure(species, stage, plate, f, info["focus"])
             _, ref, _ = measure(species, stage, None, f, info["focus"])
             ok = edge >= EDGE_MIN or edge >= RELATIVE_MIN * ref

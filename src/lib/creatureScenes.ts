@@ -34,6 +34,13 @@ export interface Biome {
    */
   lift?: number;
   calm?: number;
+  /**
+   * Canon C6/W1: height (0–1) of a fade from the bottom of the plate into its own deep tone,
+   * where the painting shows anything that could read as ground, a perch or a horizon.
+   */
+  floor?: number;
+  /** Extra depth-of-field blur (px at 1024) where the plate's texture competes with the creature. */
+  soften?: number;
 }
 
 /** What a body can actually do. A motion is only allowed if the anatomy has the part (scenes.test.ts). */
@@ -206,7 +213,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   sproutwyrm: {
-    biome: { id: "canopy-bough", name: "Canopy Bough", summary: "High in the canopy among moss-wrapped boughs and layered leaves, lit through gaps in the crown.", tones: ["#a7b65a", "#2f5a2a", "#0b1a0c"], particle: "leaves" },
+    biome: { id: "canopy-bough", name: "Canopy Bough", summary: "High in the canopy among moss-wrapped boughs and layered leaves, lit through gaps in the crown.", tones: ["#a7b65a", "#2f5a2a", "#0b1a0c"], particle: "leaves", floor: 0.55 },
     anatomy: { locomotion: "crawls", antlers: true },
     idle: {
       summary: "Inches in place: segments swell and settle in a slow breath along the arch.",
@@ -244,7 +251,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   stormquill: {
-    biome: { id: "thunderhead-eyrie", name: "Thunderhead Eyrie", summary: "Storm-swept crags among violet thunderheads, lit from inside the cloud by distant charge.", tones: ["#8a86c8", "#2c2766", "#0a0820"], particle: "motes" },
+    biome: { id: "thunderhead-eyrie", name: "Thunderhead Eyrie", summary: "Storm-swept crags among violet thunderheads, lit from inside the cloud by distant charge.", tones: ["#8a86c8", "#2c2766", "#0a0820"], particle: "motes", soften: 2 },
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Restless: quick breaths and a slow weight shift on its stilt legs, as if bracing into wind.",
@@ -257,7 +264,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   duskwing: {
-    biome: { id: "twilight-ruins", name: "Twilight Boundary Ruins", summary: "Moonlit overgrown arches on the boundary between one epoch and the next, steeped in violet mist.", tones: ["#8a78b8", "#2e2152", "#0b0718"], particle: "motes", calm: 0.85 },
+    biome: { id: "twilight-ruins", name: "Twilight Boundary Ruins", summary: "Moonlit overgrown arches on the boundary between one epoch and the next, steeped in violet mist.", tones: ["#8a78b8", "#2e2152", "#0b0718"], particle: "motes", calm: 0.85, floor: 0.55, soften: 1.5 },
     anatomy: { locomotion: "hovers", wings: true, ears: true, emissive: true },
     idle: {
       summary: "Hovers in place on a slow rise and settle, watching the dark.",
@@ -300,7 +307,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   emberlisk: {
-    biome: { id: "kiln-caldera", name: "Kiln Caldera", summary: "An obsidian chamber in the volcano's heart, its cracks holding restrained molten light.", tones: ["#b8643a", "#3a1830", "#0d050c"], particle: "embers", lift: 0.08 },
+    biome: { id: "kiln-caldera", name: "Kiln Caldera", summary: "An obsidian chamber in the volcano's heart, its cracks holding restrained molten light.", tones: ["#b8643a", "#3a1830", "#0d050c"], particle: "embers", lift: 0.08, soften: 1.5 },
     anatomy: { locomotion: "crawls", tail: true, emissive: true },
     idle: {
       summary: "Low, heavy breathing like a kiln's draw; embers lift from the caldera.",
@@ -345,7 +352,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   aurorath: {
-    biome: { id: "aurora-sky", name: "Polar Aurora Sky", summary: "The upper polar sky above a sea of cloud, hung with teal and violet aurora.", tones: ["#4fd0b8", "#15354a", "#040b16"], particle: "none" },
+    biome: { id: "aurora-sky", name: "Polar Aurora Sky", summary: "The upper polar sky above a sea of cloud, hung with teal and violet aurora.", tones: ["#4fd0b8", "#15354a", "#040b16"], particle: "none", lift: -0.12, calm: 0.75, soften: 2 },
     anatomy: { locomotion: "glides", tail: true, fins: true, tendrils: true, emissive: true },
     idle: {
       summary: "Glides with immense slowness, banking gently; its aurora curtains trail behind.",
@@ -374,7 +381,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   prismara: {
-    biome: { id: "prism-throne", name: "Prism Throne Garden", summary: "A crystalline court of tall prisms that split the light into soft colour on violet stone.", tones: ["#c9a8e8", "#4a2a7a", "#120624"], particle: "motes", calm: 0.85 },
+    biome: { id: "prism-throne", name: "Prism Throne Garden", summary: "A crystalline court of tall prisms that split the light into soft colour on violet stone.", tones: ["#c9a8e8", "#4a2a7a", "#120624"], particle: "motes", lift: -0.1, calm: 0.72, soften: 2 },
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Holds a regal display: slow breath and a deliberate weight shift beneath its fan.",
@@ -398,7 +405,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   aurelion: {
-    biome: { id: "gilded-sanctum", name: "Gilded Slot Sanctum", summary: "A golden temple hall of engraved columns where every slot since genesis is remembered.", tones: ["#e7b862", "#5a3814", "#140a04"], particle: "motes" },
+    biome: { id: "gilded-sanctum", name: "Gilded Slot Sanctum", summary: "A golden temple hall of engraved columns where every slot since genesis is remembered.", tones: ["#e7b862", "#5a3814", "#140a04"], particle: "motes", floor: 0.42 },
     anatomy: { locomotion: "stands", wings: true, tail: true },
     idle: {
       summary: "Majestic, measured breathing; it rarely moves, and when it does it is deliberate.",
@@ -424,7 +431,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   pyraurum: {
-    biome: { id: "pyre-summit", name: "Golden Pyre Summit", summary: "Old altar ruins on a summit wreathed in warm smoke, where the phoenix burns and rises.", tones: ["#f0a858", "#6a2a18", "#160606"], particle: "embers" },
+    biome: { id: "pyre-summit", name: "Golden Pyre Summit", summary: "Old altar ruins on a summit wreathed in warm smoke, where the phoenix burns and rises.", tones: ["#f0a858", "#6a2a18", "#160606"], particle: "embers", floor: 0.62 },
     anatomy: { locomotion: "flies", wings: true, tail: true, emissive: true },
     idle: {
       summary: "Holds the air on a slow rise and fall; embers drift up past it.",
@@ -457,7 +464,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   velynx: {
-    biome: { id: "glyph-archive", name: "Glyphwalk Archive", summary: "A moonlit alley of an ancient archive, its stone walls carved with faint teal glyphs it has walked.", tones: ["#4a7a86", "#1a1f38", "#05060d"], particle: "glyphs", lift: 0.16 },
+    biome: { id: "glyph-archive", name: "Glyphwalk Archive", summary: "A moonlit alley of an ancient archive, its stone walls carved with faint teal glyphs it has walked.", tones: ["#4a7a86", "#1a1f38", "#05060d"], particle: "glyphs", lift: 0.16, floor: 0.26 },
     anatomy: { locomotion: "stands", tail: true, ears: true, emissive: true },
     idle: {
       summary: "Poised on its toes with a slow weight shift; its tail sways in an unhurried S and its glyphs breathe with light.",
@@ -471,7 +478,7 @@ export const SCENES: Record<string, SceneDef> = {
     },
   },
   nyxara: {
-    biome: { id: "duskwood", name: "Duskwood Edge", summary: "The edge of a pale-trunked wood at deep dusk, threaded with ribbons of violet mist.", tones: ["#8a7ac0", "#262048", "#08061a"], particle: "motes", calm: 0.85 },
+    biome: { id: "duskwood", name: "Duskwood Edge", summary: "The edge of a pale-trunked wood at deep dusk, threaded with ribbons of violet mist.", tones: ["#8a7ac0", "#262048", "#08061a"], particle: "motes", calm: 0.85, soften: 1.5 },
     anatomy: { locomotion: "walks", tail: true, ears: true, emissive: true },
     idle: {
       summary: "Light-footed: a quick breath and a small shift of weight, its ribbon tail drifting on the air.",

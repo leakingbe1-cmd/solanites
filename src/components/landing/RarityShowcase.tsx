@@ -18,7 +18,7 @@ const FEATURED: Record<string, string> = {
   rare: "duskwing",
   epic: "neonyx",
   legendary: "aurelion",
-  // classified tiers show the generic sealed form: their real designs never ship to the browser
+  // classified tiers show their sealed stand-in (an approved preview, seal-stone fallback): no name, lore or full design
   mythic: "sealed-mythic",
   secret: "sealed-secret",
 };
@@ -52,13 +52,12 @@ export function RarityShowcase() {
               <span className="absolute inset-x-0 top-0 h-px" style={{ background: `linear-gradient(90deg, transparent, ${meta.color}, transparent)` }} aria-hidden />
               <span className="relative -mx-2 -mt-1 block aspect-square sm:-mx-3" aria-hidden>
                 <CreatureScene species={s} stage={2} size="card" silhouette={classified} sealed={classified} className="absolute inset-0 rounded-[3px]" artClassName="sl-art-host" />
-                {r === "secret" && <span className="absolute inset-0 z-[2] grid place-items-center font-display text-4xl text-bone/80">?</span>}
               </span>
               <span className="relative mt-1 flex flex-1 flex-col">
                 <span className="font-mono text-[10px] uppercase tracking-[0.25em]" style={{ color: meta.color }}>
                   {meta.label}
                 </span>
-                <span className="mt-1 font-display text-base text-bone">{classified ? "Classified" : s.name}</span>
+                <span className="mt-1 font-display text-base text-bone">{classified ? "???" : s.name}</span>
                 <span className="mt-2 flex-1 text-xs leading-relaxed text-mist/80">{meta.tagline}</span>
                 <span className="mt-4 flex items-baseline justify-between gap-2 font-mono text-[11px]">
                   <span className="text-bone/70">{rate}%</span>

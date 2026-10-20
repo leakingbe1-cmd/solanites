@@ -562,13 +562,18 @@ export const SPECIES: Species[] = [
  * public site knows only that these catalogue slots exist and their tier.
  */
 export type ClassifiedRarity = "mythic" | "secret";
-export const CLASSIFIED_SLOTS: readonly { dex: number; rarity: ClassifiedRarity }[] = [
-  { dex: 20, rarity: "mythic" },
-  { dex: 21, rarity: "mythic" },
-  { dex: 22, rarity: "mythic" },
-  { dex: 28, rarity: "mythic" },
-  { dex: 23, rarity: "secret" },
-  { dex: 24, rarity: "secret" },
+/**
+ * Each slot's owner-approved public preview (20 Oct): a partial reveal (dark form, rim light,
+ * signature lights) shown in place of the seal-stone until the viewer may see the species.
+ * File names carry only the tier; no name, lore or metadata goes with them.
+ */
+export const CLASSIFIED_SLOTS: readonly { dex: number; rarity: ClassifiedRarity; preview: string }[] = [
+  { dex: 20, rarity: "mythic", preview: "/sealed/mythic-b.webp" },
+  { dex: 21, rarity: "mythic", preview: "/sealed/mythic-d.webp" },
+  { dex: 22, rarity: "mythic", preview: "/sealed/mythic-c.webp" },
+  { dex: 28, rarity: "mythic", preview: "/sealed/mythic-a.webp" },
+  { dex: 23, rarity: "secret", preview: "/sealed/secret-b.webp" },
+  { dex: 24, rarity: "secret", preview: "/sealed/secret-a.webp" },
 ];
 
 /** Every species in the game, classified included: the number the site advertises. */
@@ -583,7 +588,7 @@ function sealed(rarity: ClassifiedRarity, dex = 0): Species {
   return {
     id: dex ? `classified-${dex}` : `sealed-${rarity}`,
     dex,
-    name: rarity === "mythic" ? "Sealed Mythic" : "Sealed Secret",
+    name: "???",
     epithet: "Classified",
     rarity,
     element: "Void",
@@ -595,6 +600,15 @@ function sealed(rarity: ClassifiedRarity, dex = 0): Species {
 }
 export const SEALED: Record<ClassifiedRarity, Species> = { mythic: sealed("mythic"), secret: sealed("secret") };
 export const isSealedId = (id: string) => /^(sealed-(mythic|secret)|classified-\d+)$/.test(id);
+
+/**
+ * The approved preview for a sealed stand-in: its own slot's for a catalogue slot, the tier's
+ * first for a generic stand-in (a demo roll or a tier card). Null for anything else.
+ */
+export function sealedPreview(s: Pick<Species, "id" | "dex" | "rarity">): string | null {
+  if (!isSealedId(s.id)) return null;
+  return (CLASSIFIED_SLOTS.find((c) => c.dex === s.dex) ?? CLASSIFIED_SLOTS.find((c) => c.rarity === s.rarity))?.preview ?? null;
+}
 
 /**
  * What a client-side (simulated) roll can land on: the public species plus one sealed

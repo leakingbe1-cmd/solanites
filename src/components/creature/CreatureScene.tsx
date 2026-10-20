@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
-import type { Species } from "@/lib/species";
+import { sealedPreview, type Species } from "@/lib/species";
 import { STAGE_FRAMING, sceneAssets, sceneOf, SEALED_SCENE, type Particle } from "@/lib/creatureScenes";
 import { CreatureArt } from "./CreatureArt";
 import "./scenes.css";
@@ -16,7 +16,8 @@ import "./scenes.css";
  *   detail  — the creature profile: as feature, with the full particle count
  *
  * Classified or sealed species (or a stage the viewer may not see) get the generic sealed
- * vault and a still silhouette: no species biome, motion or asset path is revealed.
+ * vault, still: no species biome, motion or asset path is revealed. A sealed stand-in shows
+ * its owner-approved preview there, with the seal-stone as the fallback if it can't load.
  */
 export type SceneSize = "card" | "quiet" | "feature" | "detail";
 
@@ -45,6 +46,8 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
   const ref = useVisibility<HTMLDivElement>();
   const reduced = useReducedMotion();
   const [missing, setMissing] = useState(false);
+  const [previewFailed, setPreviewFailed] = useState(false);
+  const preview = sealed && !previewFailed ? sealedPreview(species) : null;
   // one 1024 painting at every size, like the creature art (canon C12; the site's media standard)
   const plate = assets?.plate;
   const still = atRest || silhouette || sealed || scene === SEALED_SCENE;
@@ -88,7 +91,13 @@ export function CreatureScene({ species, stage, size, silhouette = false, sealed
         <div className="sl-biome-vignette" />
       </div>
       <div className={`sl-scene-art ${artClassName}`}>
-        {children ?? <CreatureArt species={species} stage={evo} silhouette={silhouette} animated={false} idle={moving ? (size === "card" || size === "quiet" ? "body" : "full") : undefined} />}
+        {children ??
+          (preview ? (
+            // eslint-disable-next-line @next/next/no-img-element -- small static WebP preview; decorative (the card names the tier)
+            <img className="sl-sealed-preview" src={preview} alt="" loading="lazy" decoding="async" draggable={false} onError={() => setPreviewFailed(true)} data-sealed-preview />
+          ) : (
+            <CreatureArt species={species} stage={evo} silhouette={silhouette} animated={false} idle={moving ? (size === "card" || size === "quiet" ? "body" : "full") : undefined} />
+          ))}
       </div>
     </div>
   );

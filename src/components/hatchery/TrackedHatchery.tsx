@@ -11,7 +11,7 @@ import { Modal } from "@/components/ui/Modal";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { describeGrowthSchedule, describeSchedule, incubationMsFor, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { formatDuration, formatNumber, formatSpan, shortAddress } from "@/lib/format";
+import { formatClock, formatDuration, formatNumber, formatSpan, shortAddress } from "@/lib/format";
 import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
@@ -35,6 +35,8 @@ function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord
     // Server-verified qualifying hold, counted forward only while the balance still backs it.
     growthMs: e.growthMs === null ? 0 : e.growthMs + (e.growing ? Math.max(0, now - serverNow) : 0),
     maturityMs: e.maturityMs,
+    afterMaturityMs: e.afterMaturityMs ?? undefined,
+    fastTrack: e.fastTrack,
     backed: e.hatchedAt === null || e.growing,
   };
 }
@@ -58,7 +60,7 @@ function nextMilestone(eggs: TrackedEgg[], now: number, serverNow: number): Mile
   for (const e of eggs) {
     if (e.hatchedAt === null || e.growthMs === null || !e.growing) continue;
     // Count forward from the server's figure the same way the creature card does.
-    const evo = evolutionOf(e.growthMs + Math.max(0, now - serverNow), gameConfig, e.maturityMs);
+    const evo = evolutionOf(e.growthMs + Math.max(0, now - serverNow), gameConfig, e.maturityMs, e.afterMaturityMs ?? undefined);
     if (evo.isFinal || evo.nextLabel === null) continue;
     const name = e.speciesId ? (SPECIES_BY_ID[e.speciesId]?.name ?? "Your Solanite") : "Your Solanite";
     options.push({ text: evo.phase === "growing" ? `${name} is fully grown` : `${name} becomes ${evo.nextLabel}`, inMs: evo.toNextMs, progress: evo.toNextProgress });
@@ -174,6 +176,8 @@ export function TrackedHatchery({ address }: { address: string }) {
           </div>
         </div>
 
+        {!view.holdings.excluded && <FastTrackBanner ft={view.fastTrack} />}
+
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Stat
             label="Qualifying holdings"
@@ -244,8 +248,18 @@ export function TrackedHatchery({ address }: { address: string }) {
                   key={e.id}
                   record={rec}
                   index={e.sequence - 1}
-                  badge={startsIn > 0 ? "Queued" : undefined}
-                  footnote={startsIn > 0 ? `Starts in ${formatDuration(startsIn)}` : `Earned ${formatDuration(now - e.earnedAt)} ago`}
+                  badge={e.fastTrack ? `Fast track: egg ${e.sequence} of ${view.fastTrack.total}` : startsIn > 0 ? "Queued" : undefined}
+                  footnote={
+                    e.fastTrack
+                      ? startsIn > 0
+                        ? `Starts in ${formatClock(startsIn)}`
+                        : now < e.readyAt
+                          ? `Hatches in ${formatClock(e.readyAt - now)}`
+                          : "Ready to hatch"
+                      : startsIn > 0
+                        ? `Starts in ${formatDuration(startsIn)}`
+                        : `Earned ${formatDuration(now - e.earnedAt)} ago`
+                  }
                   onOpen={() => setInspect(e.id)}
                   onHatch={() => hatch(e, rec)}
                 />
@@ -364,3 +378,31 @@ function Shell({ address, onExit, onRetry, error }: { address: string; onExit():
     </div>
   );
 }
+
+/** Onboarding fast track: the first five eggs hatch in a minute and their creatures evolve a stage a minute. */
+function FastTrackBanner({ ft }: { ft: TrackedHolderView["fastTrack"] }) {
+  const mins = (ms: number) => (ms === 60_000 ? "1 minute" : formatSpan(ms));
+  return (
+    <div
+      className={`sl-glass mt-6 flex flex-col gap-2 rounded-md border p-4 sm:flex-row sm:items-center sm:justify-between ${ft.complete ? "border-white/10" : "border-sol-green/30 shadow-[0_0_40px_-18px_#14f195]"}`}
+      data-testid="fast-track"
+    >
+      <div>
+        <p className={`font-mono text-[11px] uppercase tracking-[0.25em] ${ft.complete ? "text-mist" : "text-sol-green"}`}>
+          {ft.complete ? "Fast track complete" : ft.used === 0 ? `Fast track: ${ft.total} eggs` : `Fast track: egg ${ft.used} of ${ft.total}`}
+        </p>
+        <p className="mt-1 text-sm text-mist">
+          {ft.complete
+            ? "Your first five Solanites were fast-tracked. New eggs and creatures now follow the standard timings."
+            : `Your first ${ft.total} eggs hatch in ${mins(ft.hatchMs)} and their creatures evolve one stage every ${mins(ft.stageMs)}. Rarity is unchanged.`}
+        </p>
+      </div>
+      {!ft.complete && (
+        <p className="shrink-0 font-mono text-sm text-bone" data-testid="fast-track-remaining">
+          {ft.remaining} fast {ft.remaining === 1 ? "egg" : "eggs"} left
+        </p>
+      )}
+    </div>
+  );
+}
+

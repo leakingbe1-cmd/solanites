@@ -91,6 +91,8 @@ const STATEMENTS = [
   // v2: each egg's initial growth (to its creature's mature form), fixed at issuance like incubation_ms.
   // Rows issued before v2 have NULL and use the configured value for their sequence when read.
   `ALTER TABLE eggs ADD COLUMN IF NOT EXISTS maturity_ms bigint CHECK (maturity_ms >= 0)`,
+  // Onboarding fast track, fixed when the egg is issued. Eggs issued before this column existed keep their timers.
+  `ALTER TABLE eggs ADD COLUMN IF NOT EXISTS fast_track boolean NOT NULL DEFAULT false`,
 
   `CREATE TABLE IF NOT EXISTS sync_runs (
     id bigserial PRIMARY KEY,

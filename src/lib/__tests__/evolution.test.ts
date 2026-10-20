@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { eggProgression, initialGrowthMsFor } from "@/config/eggProgression";
+import { eggProgression, fastTrackAfterMaturityMs, initialGrowthMsFor } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { evolutionOf, FIRST_MATURITY_MS, formThresholdsMs, formUnlockText } from "@/lib/progression";
@@ -16,7 +16,9 @@ describe("initial growth, evolution and Ascension are separate milestones", () =
     expect(gameConfig.evolution.names).toEqual(["Eggling", "Hatchling", "Evolved", "Ascended"]);
     expect(gameConfig.evolution.afterMaturityMs).toEqual([30 * MIN, 2 * HOUR]);
     expect(FIRST_MATURITY_MS).toBe(1 * MIN);
-    expect([1, 2, 3, 4, 5, 6, 7, 20].map((n) => initialGrowthMsFor(n))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 3 * HOUR, 6 * HOUR, 6 * HOUR, 6 * HOUR]);
+    // The first five creatures are on the fast track (1 min); later ones use the long-term schedule.
+    expect([1, 2, 3, 4, 5, 6, 7, 20].map((n) => initialGrowthMsFor(n))).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 6 * HOUR, 6 * HOUR, 6 * HOUR]);
+    expect(eggProgression.fastTrack).toEqual({ eggs: 5, hatchMs: 1 * MIN, stageMs: 1 * MIN });
   });
 
   it("first creature: growing, fully grown at exactly 1 min, Evolved 30 min later, Ascended 2 h after maturity", () => {
@@ -35,15 +37,28 @@ describe("initial growth, evolution and Ascension are separate milestones", () =
   });
 
   it("later creatures use their own initial growth, and evolution still follows maturity", () => {
-    const second = (ms: number) => evolutionOf(ms, gameConfig, initialGrowthMsFor(2));
+    const slow = { ...eggProgression, fastTrack: { ...eggProgression.fastTrack, eggs: 0 } };
+    const second = (ms: number) => evolutionOf(ms, gameConfig, initialGrowthMsFor(2, slow));
     expect(second(5 * MIN - 1).phase).toBe("growing");
     expect(second(5 * MIN).phase).toBe("mature");
     expect(second(35 * MIN).phase).toBe("evolved");
-    const fourth = (ms: number) => evolutionOf(ms, gameConfig, initialGrowthMsFor(4));
+    const fourth = (ms: number) => evolutionOf(ms, gameConfig, initialGrowthMsFor(4, slow));
     // Maturity (1 h) is never overtaken by evolution, whatever the creature's growth time.
     expect(fourth(59 * MIN).phase).toBe("growing");
     expect(fourth(1 * HOUR).phase).toBe("mature");
     expect(fourth(1 * HOUR + 30 * MIN).phase).toBe("evolved");
+  });
+
+  it("fast-track creatures take exactly one minute per evolution stage; Ascension ranks keep their timings", () => {
+    const after = fastTrackAfterMaturityMs(gameConfig.evolution.afterMaturityMs.length);
+    expect(after).toEqual([1 * MIN, 2 * MIN]);
+    const fast = (ms: number) => evolutionOf(ms, gameConfig, initialGrowthMsFor(1), after);
+    expect([0, 1 * MIN - 1, 1 * MIN, 2 * MIN - 1, 2 * MIN, 3 * MIN - 1, 3 * MIN].map((ms) => fast(ms).name)).toEqual([
+      "Eggling", "Eggling", "Hatchling", "Hatchling", "Evolved", "Evolved", "Ascended",
+    ]);
+    expect(fast(3 * MIN)).toMatchObject({ label: "Ascended", nextLabel: "Ascended II", toNextMs: 1 * MIN + 8 * HOUR - 3 * MIN });
+    // A normal creature with the same maturity still takes 30 min to evolve.
+    expect(evolutionOf(2 * MIN, gameConfig, initialGrowthMsFor(1)).name).toBe("Hatchling");
   });
 
   it("counts remaining time to each milestone exactly", () => {

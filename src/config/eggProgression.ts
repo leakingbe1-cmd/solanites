@@ -38,6 +38,12 @@ export interface EggProgressionConfig {
    * Ascension are separate milestones that start counting from maturity.
    */
   initialGrowthScheduleMs: number[];
+  /**
+   * Onboarding fast track: a wallet's first `eggs` eggs (by sequence number, fixed by the server
+   * when each egg is issued) hatch after `hatchMs`, and the creatures from them take `stageMs`
+   * per evolution stage. Later eggs use the schedules above. Rarity is never affected.
+   */
+  fastTrack: { eggs: number; hatchMs: number; stageMs: number };
 }
 
 export const eggProgression: EggProgressionConfig = {
@@ -49,11 +55,27 @@ export const eggProgression: EggProgressionConfig = {
   incubationMode: "sequential",
   // First creature is fully grown 1 min after hatching (2 min after its egg was earned), then 5 min, 15 min, 1 h, 3 h, then 6 h.
   initialGrowthScheduleMs: [1 * MINUTE, 5 * MINUTE, 15 * MINUTE, 1 * HOUR, 3 * HOUR, 6 * HOUR],
+  // First five eggs: 1 min to hatch, then 1 min per evolution stage for the creature.
+  fastTrack: { eggs: 5, hatchMs: 1 * MINUTE, stageMs: 1 * MINUTE },
 };
+
+/** Whether the egg with this 1-based sequence number is one of the wallet's fast-track eggs. */
+export function isFastTrack(sequence: number, cfg: EggProgressionConfig = eggProgression): boolean {
+  return Number.isInteger(sequence) && sequence >= 1 && sequence <= cfg.fastTrack.eggs;
+}
+
+/**
+ * Cumulative growth after maturity at which each later form is reached for a fast-track creature:
+ * one stage every `stageMs`. Normal creatures use the game's evolution timings instead.
+ */
+export function fastTrackAfterMaturityMs(laterForms: number, cfg: EggProgressionConfig = eggProgression): number[] {
+  return Array.from({ length: laterForms }, (_, i) => (i + 1) * cfg.fastTrack.stageMs);
+}
 
 /** Incubation length for the egg with this 1-based sequence number. */
 export function incubationMsFor(sequence: number, cfg: EggProgressionConfig = eggProgression): number {
   if (!Number.isInteger(sequence) || sequence < 1) throw new Error("Egg sequence numbers start at 1");
+  if (isFastTrack(sequence, cfg)) return cfg.fastTrack.hatchMs;
   const s = cfg.incubationScheduleMs;
   if (!s.length) throw new Error("incubationScheduleMs must not be empty");
   return s[Math.min(sequence, s.length) - 1];
@@ -62,6 +84,7 @@ export function incubationMsFor(sequence: number, cfg: EggProgressionConfig = eg
 /** Initial growth (to the mature form) for the creature from the egg with this 1-based sequence number. */
 export function initialGrowthMsFor(sequence: number, cfg: EggProgressionConfig = eggProgression): number {
   if (!Number.isInteger(sequence) || sequence < 1) throw new Error("Egg sequence numbers start at 1");
+  if (isFastTrack(sequence, cfg)) return cfg.fastTrack.stageMs;
   const s = cfg.initialGrowthScheduleMs;
   if (!s.length) throw new Error("initialGrowthScheduleMs must not be empty");
   return s[Math.min(sequence, s.length) - 1];

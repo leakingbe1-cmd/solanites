@@ -5,7 +5,7 @@ import { CreatureScene } from "@/components/creature/CreatureScene";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { gameConfig } from "@/config/gameConfig";
-import { formatDuration } from "@/lib/format";
+import { formatClock, formatDuration } from "@/lib/format";
 import { evolutionOf, type GrowthPhase, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
@@ -15,7 +15,8 @@ const PHASE_LABEL: Record<GrowthPhase, string> = { growing: "Growing", mature: "
 
 export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpen(): void }) {
   const s = SPECIES_BY_ID[record.speciesId];
-  const evo = evolutionOf(record.growthMs, gameConfig, record.maturityMs);
+  const evo = evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs);
+  const fast = !!record.fastTrack && !evo.isMax;
   const meta = RARITIES[s.rarity];
   const paused = !record.backed;
 
@@ -66,15 +67,20 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
           </span>
         )}
       </div>
+      {fast && (
+        <p className="relative mb-1 w-fit rounded-full border border-sol-green/30 bg-sol-green/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-sol-green" data-testid="fast-growth">
+          Fast growth active
+        </p>
+      )}
       <p className="relative font-display text-xl text-bone">{record.nickname ?? s.name}</p>
       <p className="relative text-xs text-mist">
         {evo.label} form · {record.nickname ? s.name : s.epithet}
       </p>
       <div className="relative mt-4">
         <div className="flex justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-mist/70">
-          <span>{next}</span>
+          <span>{fast && !paused ? "Evolves in" : next}</span>
           <span className="tabular-nums text-bone/80" data-testid="creature-next-in">
-            {evo.isFinal ? "MAX" : paused ? "—" : formatDuration(evo.toNextMs)}
+            {evo.isFinal ? "MAX" : paused ? "—" : fast ? formatClock(evo.toNextMs) : formatDuration(evo.toNextMs)}
           </span>
         </div>
         <ProgressBar

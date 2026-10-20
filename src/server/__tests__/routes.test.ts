@@ -22,8 +22,10 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     expect(res.status).toBe(200);
     const v = (await res.json()) as TrackedHolderView;
     expect(v).toMatchObject({ source: "fixture", tracked: true, counts: { earned: 3 } });
-    expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
-    expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
+    // Fast track: the first five eggs hatch in a minute and grow a stage a minute.
+    expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
+    expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
+    expect(v.fastTrack).toMatchObject({ total: 5, used: 3, remaining: 2, complete: false });
     expect(v.eggs.every((e) => e.speciesId === null)).toBe(true); // sealed until hatch
   });
 

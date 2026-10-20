@@ -37,10 +37,10 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
   const meta = RARITIES[species.rarity];
 
   // Real progression only: the owned creature's stage, or the best stage among the viewer's hatched creatures of this species.
-  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs) : null;
+  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs) : null;
   const bestOwned = useMemo(() => {
     let best = -1;
-    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig, r.maturityMs).stage);
+    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig, r.maturityMs, r.afterMaturityMs).stage);
     return best;
   }, [h.records, species.id]);
   const current = evoInfo?.stage ?? (bestOwned >= 0 ? bestOwned : null);

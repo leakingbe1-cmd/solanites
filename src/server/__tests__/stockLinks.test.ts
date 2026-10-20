@@ -33,3 +33,25 @@ describe("creature → stock links", () => {
     expect(STOCK_LINKS.filter((l) => l.review).map((l) => l.ticker).sort()).toEqual(["CMCSA", "RIG"]);
   });
 });
+
+describe("a species keeps its stock at every stage, whatever art it has", () => {
+  it("links are keyed by species alone, and every painted species keeps its catalogue id and link", async () => {
+    const manifest = (await import("@/data/creatureAssets.json")).default as { species: Record<string, unknown[]> };
+    for (const l of STOCK_LINKS) expect(Object.keys(l)).not.toContain("stage");
+    for (const [id, stages] of Object.entries(manifest.species)) {
+      expect(stages, id).toHaveLength(4);
+      expect(SPECIES.some((s) => s.id === id), `${id} is a catalogue id`).toBe(true);
+      expect(stockLinkOf(id), `${id} has its stock`).not.toBeNull();
+    }
+  });
+
+  it("the market snapshot names the same company for a species however it is asked for", async () => {
+    const { unavailableSnapshot } = await import("@/server/market/service");
+    for (const l of STOCK_LINKS.slice(0, 10)) {
+      const a = unavailableSnapshot(l.speciesId, "1W", 0).stock;
+      const b = unavailableSnapshot(l.speciesId, "1Y", 1e12).stock;
+      expect(a).toEqual(b);
+      expect(a.ticker).toBe(l.ticker);
+    }
+  });
+});

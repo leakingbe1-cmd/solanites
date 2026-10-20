@@ -25,13 +25,13 @@
         "src": "/creatures/mossling/3-evolved.webp",
         "thumb": "/creatures/mossling/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 80832
+        "bytes": 80776
       },
       {
         "src": "/creatures/mossling/4-ascended.webp",
         "thumb": "/creatures/mossling/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 140510
+        "bytes": 140480
       }
     ],
     "driftfin": [
@@ -51,7 +51,7 @@
         "src": "/creatures/driftfin/3-evolved.webp",
         "thumb": "/creatures/driftfin/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 73266
+        "bytes": 73262
       },
       {
         "src": "/creatures/driftfin/4-ascended.webp",
@@ -71,7 +71,7 @@
         "src": "/creatures/pallow/2-hatchling.webp",
         "thumb": "/creatures/pallow/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 73136
+        "bytes": 73038
       },
       {
         "src": "/creatures/pallow/3-evolved.webp",
@@ -135,7 +135,7 @@
         "src": "/creatures/sproutwyrm/4-ascended.webp",
         "thumb": "/creatures/sproutwyrm/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 127786
+        "bytes": 130836
       }
     ],
     "frostkit": [
@@ -161,7 +161,7 @@
         "src": "/creatures/frostkit/4-ascended.webp",
         "thumb": "/creatures/frostkit/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 78096
+        "bytes": 76230
       }
     ],
     "abyssal-vael": [
@@ -181,7 +181,7 @@
         "src": "/creatures/abyssal-vael/3-evolved.webp",
         "thumb": "/creatures/abyssal-vael/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 71766
+        "bytes": 71732
       },
       {
         "src": "/creatures/abyssal-vael/4-ascended.webp",
@@ -201,13 +201,13 @@
         "src": "/creatures/stormquill/2-hatchling.webp",
         "thumb": "/creatures/stormquill/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 42858
+        "bytes": 42880
       },
       {
         "src": "/creatures/stormquill/3-evolved.webp",
         "thumb": "/creatures/stormquill/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 70344
+        "bytes": 70332
       },
       {
         "src": "/creatures/stormquill/4-ascended.webp",
@@ -227,7 +227,7 @@
         "src": "/creatures/duskwing/2-hatchling.webp",
         "thumb": "/creatures/duskwing/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 65350
+        "bytes": 64114
       },
       {
         "src": "/creatures/duskwing/3-evolved.webp",
@@ -259,13 +259,13 @@
         "src": "/creatures/cryovant/3-evolved.webp",
         "thumb": "/creatures/cryovant/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 141474
+        "bytes": 141470
       },
       {
         "src": "/creatures/cryovant/4-ascended.webp",
         "thumb": "/creatures/cryovant/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 173790
+        "bytes": 172592
       }
     ],
     "emberlisk": [
@@ -291,39 +291,59 @@
         "src": "/creatures/emberlisk/4-ascended.webp",
         "thumb": "/creatures/emberlisk/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 106534
+        "bytes": 106556
       }
     ],
     "neonyx": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/neonyx/1-eggling.webp",
+        "thumb": "/creatures/neonyx/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 38490
+      },
+      {
+        "src": "/creatures/neonyx/2-hatchling.webp",
+        "thumb": "/creatures/neonyx/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 47822
+      },
+      {
+        "src": "/creatures/neonyx/3-evolved.webp",
+        "thumb": "/creatures/neonyx/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 95184
+      },
+      {
+        "src": "/creatures/neonyx/4-ascended.webp",
+        "thumb": "/creatures/neonyx/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 160108
+      }
     ],
     "aurorath": [
       {
         "src": "/creatures/aurorath/1-eggling.webp",
         "thumb": "/creatures/aurorath/1-eggling-384.webp",
         "alpha": true,
-        "bytes": 38356
+        "bytes": 38230
       },
       {
         "src": "/creatures/aurorath/2-hatchling.webp",
         "thumb": "/creatures/aurorath/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 53862
+        "bytes": 53820
       },
       {
         "src": "/creatures/aurorath/3-evolved.webp",
         "thumb": "/creatures/aurorath/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 94034
+        "bytes": 93628
       },
       {
         "src": "/creatures/aurorath/4-ascended.webp",
         "thumb": "/creatures/aurorath/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 143574
+        "bytes": 143624
       }
     ],
     "zephrax": [
@@ -331,7 +351,7 @@
         "src": "/creatures/zephrax/1-eggling.webp",
         "thumb": "/creatures/zephrax/1-eggling-384.webp",
         "alpha": true,
-        "bytes": 46022
+        "bytes": 45974
       },
       {
         "src": "/creatures/zephrax/2-hatchling.webp",
@@ -349,14 +369,34 @@
         "src": "/creatures/zephrax/4-ascended.webp",
         "thumb": "/creatures/zephrax/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 151328
+        "bytes": 149292
       }
     ],
     "prismara": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/prismara/1-eggling.webp",
+        "thumb": "/creatures/prismara/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 39500
+      },
+      {
+        "src": "/creatures/prismara/2-hatchling.webp",
+        "thumb": "/creatures/prismara/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 55450
+      },
+      {
+        "src": "/creatures/prismara/3-evolved.webp",
+        "thumb": "/creatures/prismara/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 112152
+      },
+      {
+        "src": "/creatures/prismara/4-ascended.webp",
+        "thumb": "/creatures/prismara/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 195658
+      }
     ],
     "aurelion": [
       {
@@ -407,7 +447,7 @@
         "src": "/creatures/solvanth/4-ascended.webp",
         "thumb": "/creatures/solvanth/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 115152
+        "bytes": 115174
       }
     ],
     "pyraurum": [
@@ -447,7 +487,7 @@
         "src": "/creatures/aurelith/2-hatchling.webp",
         "thumb": "/creatures/aurelith/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 42952
+        "bytes": 42976
       },
       {
         "src": "/creatures/aurelith/3-evolved.webp",
@@ -467,25 +507,25 @@
         "src": "/creatures/velynx/1-eggling.webp",
         "thumb": "/creatures/velynx/1-eggling-384.webp",
         "alpha": true,
-        "bytes": 39362
+        "bytes": 33226
       },
       {
         "src": "/creatures/velynx/2-hatchling.webp",
         "thumb": "/creatures/velynx/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 48686
+        "bytes": 51346
       },
       {
         "src": "/creatures/velynx/3-evolved.webp",
         "thumb": "/creatures/velynx/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 75238
+        "bytes": 62604
       },
       {
         "src": "/creatures/velynx/4-ascended.webp",
         "thumb": "/creatures/velynx/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 89702
+        "bytes": 78726
       }
     ],
     "nyxara": [
@@ -499,7 +539,7 @@
         "src": "/creatures/nyxara/2-hatchling.webp",
         "thumb": "/creatures/nyxara/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 58080
+        "bytes": 58022
       },
       {
         "src": "/creatures/nyxara/3-evolved.webp",
@@ -511,7 +551,7 @@
         "src": "/creatures/nyxara/4-ascended.webp",
         "thumb": "/creatures/nyxara/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 139276
+        "bytes": 138560
       }
     ],
     "thalor": [
@@ -519,25 +559,25 @@
         "src": "/creatures/thalor/1-eggling.webp",
         "thumb": "/creatures/thalor/1-eggling-384.webp",
         "alpha": true,
-        "bytes": 55488
+        "bytes": 55536
       },
       {
         "src": "/creatures/thalor/2-hatchling.webp",
         "thumb": "/creatures/thalor/2-hatchling-384.webp",
         "alpha": true,
-        "bytes": 77384
+        "bytes": 77386
       },
       {
         "src": "/creatures/thalor/3-evolved.webp",
         "thumb": "/creatures/thalor/3-evolved-384.webp",
         "alpha": true,
-        "bytes": 98110
+        "bytes": 98142
       },
       {
         "src": "/creatures/thalor/4-ascended.webp",
         "thumb": "/creatures/thalor/4-ascended-384.webp",
         "alpha": true,
-        "bytes": 191474
+        "bytes": 191616
       }
     ]
   }

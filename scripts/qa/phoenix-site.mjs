@@ -159,6 +159,55 @@ for (const opts of [{}, { reducedMotion: "reduce" }, { viewport: { width: 390, h
   await c.close();
 }
 
+// 1b. Market Bond: the stock feature directly after the hero, from the stock service, honest about data.
+for (const vp of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+  const [c, p] = await ctx({ viewport: vp }, SEEN);
+  const market = [];
+  p.on("response", (r) => r.url().includes("/api/market/") && market.push(`${r.status()} ${new URL(r.url()).pathname}`));
+  await p.goto(B + "/", { waitUntil: "networkidle" });
+  const order = await p.evaluate(() => {
+    const sections = [...document.querySelectorAll("main section")];
+    const hero = sections.findIndex((x) => x.querySelector("h1"));
+    return { hero, next: sections[hero + 1]?.id ?? null };
+  });
+  ok(`market ${vp.width}: the Market Bond section comes directly after the hero`, order.next === "market", JSON.stringify(order));
+  await p.locator("#market").scrollIntoViewIfNeeded();
+  await p.waitForSelector('[data-testid="market-status"]', { timeout: 8000 }).catch(() => {});
+  const st = await p.evaluate(() => {
+    const m = document.querySelector("#market");
+    const tickers = [...m.querySelectorAll("[data-stage-ticker]")].map((e) => e.textContent.trim());
+    return {
+      height: m.getBoundingClientRect().height,
+      headline: m.querySelector("h2")?.textContent ?? "",
+      chip: m.querySelector('[data-testid="ticker-chip"]')?.textContent.trim(),
+      tickers,
+      status: m.querySelector('[data-testid="market-status"]')?.textContent.trim(),
+      chart: m.querySelectorAll("svg[aria-label*='closing prices']").length,
+      noChart: !!m.querySelector('[data-testid="market-no-chart"]'),
+      overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      creature: m.querySelectorAll(".sl-creature").length,
+    };
+  });
+  ok(`market ${vp.width}: a substantial section with a creature and the headline`, st.height > 700 && /real company/.test(st.headline) && st.creature >= 5, JSON.stringify({ h: st.height, creature: st.creature }));
+  ok(`market ${vp.width}: ticker comes from /api/market and is the same at all four stages`, /^[A-Z]{1,5}$/.test(st.chip) && st.tickers.length === 4 && st.tickers.every((t) => t === st.chip) && market.some((m) => m.startsWith("200 /api/market/")), JSON.stringify({ chip: st.chip, tickers: st.tickers, market }));
+  ok(`market ${vp.width}: data labelled by the service; no chart without data`, st.status === "Unavailable" ? st.chart === 0 && st.noChart : st.status === "Sample data" || st.status === "Previous close" || st.status === "Delayed 15 min" || st.status === "Stale data", JSON.stringify(st));
+  ok(`market ${vp.width}: no horizontal scroll`, st.overflow <= 0, String(st.overflow));
+  await p.locator("#market").screenshot({ path: `${out}/market-${vp.width}.png` });
+  // pick another creature: the ticker changes, and still matches across stages
+  await p.locator('#market [role="radio"]').nth(1).click();
+  await p.waitForFunction((prev) => document.querySelector('#market [data-testid="ticker-chip"]')?.textContent.trim() !== prev, st.chip, { timeout: 8000 }).catch(() => {});
+  const second = await p.evaluate(() => ({ chip: document.querySelector('#market [data-testid="ticker-chip"]')?.textContent.trim(), tickers: [...document.querySelectorAll("#market [data-stage-ticker]")].map((e) => e.textContent.trim()) }));
+  ok(`market ${vp.width}: another creature shows its own stock, the same at every stage`, second.chip !== st.chip && second.tickers.every((t) => t === second.chip), JSON.stringify(second));
+  if (vp.width === 1440) {
+    await p.locator("#market a", { hasText: /PROFILE/ }).click();
+    await p.waitForURL("**/collection?species=*");
+    const panel = await p.waitForSelector('[aria-label="Solanite details"] section[aria-label*="stock linked"]', { timeout: 8000 }).then(() => true).catch(() => false);
+    ok("market: the profile link opens that creature in the Collection with its stock panel", panel);
+    await p.screenshot({ path: `${out}/collection-detail-stock.png` });
+  }
+  await c.close();
+}
+
 // 2. Media resolution in the browser (returning visitor): no video on any route; every raster
 //    image's native size recorded. The intro video is switched off (section 0 checks that it is never requested).
 {

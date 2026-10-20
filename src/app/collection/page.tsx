@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CollectionPlate } from "@/components/creature/CollectionPlate";
 import { CreatureDetail } from "@/components/creature/CreatureDetail";
 import { discoveryOf } from "@/lib/discovery";
@@ -28,6 +28,13 @@ export default function CollectionPage() {
   }, [h.records, h.config]);
 
   const discovery = (s: Species) => discoveryOf(s, h.discovered);
+
+  // /collection?species=<id> (e.g. from the homepage Market Bond section) opens that species.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("species");
+    const s = id ? catalogueForViewer().find((c) => c.id === id) : undefined;
+    if (s) setOpen(s);
+  }, []);
 
   // Public species, then each classified slot: sealed unless the server revealed it to this viewer.
   const catalogue = catalogueForViewer();

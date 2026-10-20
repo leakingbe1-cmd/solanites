@@ -16,7 +16,7 @@ import { PriceChart } from "./PriceChart";
 const UP = "#46c9b0";
 const DOWN = "#ef6a5a";
 
-const STATUS: Record<DataStatus, { label: string; tone: string }> = {
+export const STATUS: Record<DataStatus, { label: string; tone: string }> = {
   previous_close: { label: "Previous close", tone: "text-vellum border-rim-strong" },
   delayed: { label: "Delayed 15 min", tone: "text-vellum border-rim-strong" },
   stale: { label: "Stale data", tone: "text-gilt border-gilt/40" },

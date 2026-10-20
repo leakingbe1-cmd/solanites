@@ -4,6 +4,7 @@ import { HeroSection } from "@/components/landing/HeroSection";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
+import { StockShowcase } from "@/components/landing/StockShowcase";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
@@ -50,11 +51,19 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <a href="#rarities" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">
+        <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
       </HeroSection>
+
+      {/* ── MARKET BOND: every species' stock, the second headline feature ── */}
+      <section id="market" className="relative overflow-hidden border-b border-white/5 py-24 sm:py-32">
+        <div className="sl-atmosphere pointer-events-none absolute inset-0 opacity-50" />
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <StockShowcase />
+        </div>
+      </section>
 
       {/* ── RARITIES ── */}
       <section id="rarities" className="relative py-24 sm:py-32">

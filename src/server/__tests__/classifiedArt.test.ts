@@ -1,19 +1,20 @@
-import { createCipheriv, randomBytes } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import manifest from "@/data/creatureAssets.json";
 import { registerStageAssets, stageAsset } from "@/lib/creatureAssets";
 import { CLASSIFIED_SPECIES, classifiedBundle } from "@/server/classified";
-import art from "@/server/classified/art.json";
-import { artKey, openStage, type SealedStage } from "@/server/classified/artCrypto";
 
-/** Painted art for Mythic and Secret species: server only, delivered inside a disclosed bundle. */
+/**
+ * Painted art for Mythic and Secret species. Owner decision (20 Oct): it never enters the
+ * public repository, as files, data URLs or ciphertext. It will be served from the private
+ * Blob store after the existing access checks; until then classified species use vector art.
+ */
 const ROOT = path.resolve(__dirname, "../../..");
 const ids = CLASSIFIED_SPECIES.map((s) => s.id);
-const painted = (art as { species: Record<string, (SealedStage | null)[]> }).species;
 
-describe("classified painted art stays on the server", () => {
+describe("classified painted art never enters the repository", () => {
   it("has no public files, thumbnails, silhouettes or manifest entries", () => {
     const pub = path.join(ROOT, "public/creatures");
     const dirs = existsSync(pub) ? readdirSync(pub) : [];
@@ -23,48 +24,26 @@ describe("classified painted art stays on the server", () => {
     }
   });
 
-  it("is imported only by the server-only classified module", () => {
-    const hits: string[] = [];
-    const walk = (d: string) => {
-      for (const f of readdirSync(d, { withFileTypes: true })) {
-        const p = path.join(d, f.name);
-        if (f.isDirectory()) walk(p);
-        else if (/\.(ts|tsx|js|mjs)$/.test(f.name) && /classified\/art(\.json)?["']/.test(readFileSync(p, "utf8"))) hits.push(path.relative(ROOT, p));
-      }
-    };
-    walk(path.join(ROOT, "src"));
-    expect(hits.filter((h) => !h.startsWith("src/server/"))).toEqual([]);
-  });
-
-  it("covers exactly the six classified species, committed only as ciphertext", () => {
-    expect(Object.keys(painted).sort()).toEqual([...ids].sort());
-    // The repository is public: no readable image may ever be committed.
-    expect(readFileSync(path.join(ROOT, "src/server/classified/art.json"), "utf8")).not.toMatch(/data:image|iVBORw0KGgo|UklGR/);
-    for (const stages of Object.values(painted)) {
-      expect(stages).toHaveLength(4);
-      for (const s of stages) if (s) expect(Object.keys(s).sort()).toEqual(["alpha", "data", "iv", "tag", "v"]);
+  it("no tracked file under src/ embeds an image, plain or encrypted", () => {
+    const tracked = execFileSync("git", ["ls-files", "src"], { cwd: ROOT, encoding: "utf8" }).split("\n").filter(Boolean);
+    for (const f of tracked) {
+      const p = path.join(ROOT, f);
+      if (!existsSync(p) || statSync(p).size > 5_000_000 || !/\.(ts|tsx|json|mjs|js)$/.test(f)) continue;
+      const text = readFileSync(p, "utf8");
+      // data URLs of real images, raw PNG/WebP base64 headers, or sealed-stage ciphertext records
+      expect(text, f).not.toMatch(/data:image\/(png|webp|jpe?g);base64,[A-Za-z0-9+/]{200}/);
+      expect(text, f).not.toMatch(/iVBORw0KGgo[A-Za-z0-9+/]{200}|UklGR[A-Za-z0-9+/]{200}/);
+      expect(text, f).not.toMatch(/"iv":\s*"[A-Za-z0-9+/=]{16}",\s*"tag":/);
     }
+    expect(existsSync(path.join(ROOT, "src/server/classified/art.json"))).toBe(false);
   });
 
-  it("without the key no painted stage is disclosed", () => {
-    expect(artKey()).toBeNull();
-    for (const id of ids) expect(classifiedBundle(id).art.images, id).toBeUndefined();
-  });
-
-  it("a sealed stage opens only with the right key", () => {
-    const key = randomBytes(32);
-    const webp = Buffer.from("RIFF....WEBPVP8 fake image bytes");
-    const iv = randomBytes(12);
-    const c = createCipheriv("aes-256-gcm", key, iv);
-    const data = Buffer.concat([c.update(webp), c.final()]);
-    const sealed: SealedStage = { v: 1, iv: iv.toString("base64"), tag: c.getAuthTag().toString("base64"), data: data.toString("base64"), alpha: true };
-    const src = `data:image/webp;base64,${webp.toString("base64")}`;
-    expect(openStage(sealed, key)).toEqual({ src, thumb: src, alpha: true });
-    expect(openStage(sealed, randomBytes(32))).toBeNull();
-    expect(openStage(sealed, null)).toBeNull();
-    expect(openStage({ ...sealed, data: Buffer.from("tampered").toString("base64") }, key)).toBeNull();
-    expect(artKey({ CLASSIFIED_ART_KEY: key.toString("base64") })?.equals(key)).toBe(true);
-    expect(artKey({ CLASSIFIED_ART_KEY: "too-short" })).toBeNull();
+  it("a disclosed bundle carries vector art only until the private store is connected", () => {
+    for (const id of ids) {
+      const art = classifiedBundle(id).art;
+      expect(art.stages, id).toHaveLength(4);
+      expect(art.images, id).toBeUndefined();
+    }
   });
 
   it("a revealed species' painted stages are found through the runtime registry", () => {

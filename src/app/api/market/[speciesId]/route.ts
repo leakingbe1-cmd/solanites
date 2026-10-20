@@ -29,6 +29,9 @@ const notFound = () => fail(404, "NOT_FOUND", "Not found.");
  * same 404, so the response reveals nothing.
  */
 export async function GET(req: Request, { params }: { params: Promise<{ speciesId: string }> }) {
+  // Rate-limited before any lookup, so an unknown id and an undisclosed classified one behave identically.
+  const limited = await rateLimit(req, "market-view", 60, 60_000);
+  if (limited) return limited;
   const speciesId = decodeURIComponent((await params).speciesId);
   const species = ALL_SPECIES_BY_ID[speciesId];
   if (!species) return notFound();
@@ -36,9 +39,6 @@ export async function GET(req: Request, { params }: { params: Promise<{ speciesI
   const rangeParam = url.searchParams.get("range") ?? "1M";
   if (!(MARKET_RANGES as readonly string[]).includes(rangeParam)) return fail(400, "INVALID_REQUEST", `range must be one of ${MARKET_RANGES.join(", ")}.`);
   const range = rangeParam as MarketRange;
-
-  const limited = await rateLimit(req, "market-view", 60, 60_000);
-  if (limited) return limited;
 
   const classified = isClassifiedId(speciesId);
   try {

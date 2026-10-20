@@ -67,7 +67,9 @@ type TokenAccountInfo = { mint: string; owner: string; state: string; tokenAmoun
 export async function fetchOwnerBalance(rpc: RpcClient, owner: string, mint: MintInfo, commitment: Commitment): Promise<OwnerBalance> {
   const res = await rpc.call<{ context: { slot: number }; value: { pubkey: string; account: ParsedAccount<TokenAccountInfo> }[] }>("getTokenAccountsByOwner", [
     owner,
-    { programId: mint.tokenProgram },
+    // Filter by mint, not program: active traders and bots own thousands of token accounts, and
+    // listing all of them timed out on mainnet. The checks below still verify mint and program.
+    { mint: mint.mint },
     { encoding: "jsonParsed", commitment },
   ]);
   const accounts: TokenAccountBalance[] = [];

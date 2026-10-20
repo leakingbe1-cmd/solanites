@@ -62,9 +62,9 @@ export function fakeChain(opts: { accounts?: FakeTokenAccount[]; program?: strin
         return { context: { slot: state.slot }, value } as T;
       }
       if (method === "getTokenAccountsByOwner") {
-        const [owner, filter] = params as [string, { programId: string }];
+        const [owner, filter] = params as [string, { programId?: string; mint?: string }];
         const value = state.accounts
-          .filter((a) => a.owner === owner && (a.program ?? program) === filter.programId)
+          .filter((a) => a.owner === owner && (filter.mint !== undefined ? (a.mint ?? MINT) === filter.mint : (a.program ?? program) === filter.programId))
           .map((a) => ({
             pubkey: a.pubkey,
             account: {

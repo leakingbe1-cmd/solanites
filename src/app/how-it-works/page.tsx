@@ -53,7 +53,11 @@ export default function HowItWorksPage() {
 
         <div id="rules" className="mt-28 scroll-mt-28">
           <SectionHeading eyebrow="Current configuration" title="Gameplay rules.">
-            Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/eggProgression.ts</code> and <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/gameConfig.ts</code>, and is enforced on the server.
+            The rules are fixed in code and enforced on the server. Any change is announced in the{" "}
+            <Link href="/updates" className="text-bone underline-offset-4 hover:underline">
+              shipping log
+            </Link>
+            .
           </SectionHeading>
           <div className="sl-panel mt-10 overflow-hidden rounded-md">
             {rules.map(([k, v, note]) => (

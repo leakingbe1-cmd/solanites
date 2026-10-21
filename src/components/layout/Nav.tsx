@@ -4,7 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
+import { COMMUNITY, X_HANDLE, X_URL } from "@/config/social";
 import { ContractAddress } from "./ContractAddress";
+import { XIcon } from "./XIcon";
 import { WalletButton } from "./WalletButton";
 import { useHatchery } from "@/state/HatcheryProvider";
 
@@ -75,6 +77,9 @@ export function Nav() {
         </div>
         <div className="flex items-center gap-2">
           <ContractAddress variant="compact" className="mr-2 hidden xl:inline-flex" />
+          <a href={X_URL} target="_blank" rel="noopener noreferrer" aria-label={`${X_HANDLE} on X`} title={`${X_HANDLE} on X`} className="sl-glass hidden h-10 w-10 place-items-center rounded-full text-mist transition hover:text-bone sm:grid">
+            <XIcon className="h-3.5 w-3.5" />
+          </a>
           <button
             onClick={h.toggleSound}
             aria-label={h.sound ? "Mute sound" : "Enable sound"}
@@ -108,6 +113,16 @@ export function Nav() {
               {l.label}
             </Link>
           ))}
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-mist">
+            <a href={X_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-bone">
+              <XIcon className="h-3.5 w-3.5" /> {X_HANDLE}
+            </a>
+            {COMMUNITY && (
+              <a href={COMMUNITY.url} target="_blank" rel="noopener noreferrer" className="hover:text-bone">
+                {COMMUNITY.label}
+              </a>
+            )}
+          </div>
           <ContractAddress variant="compact" className="mt-4 flex" />
           <button onClick={h.toggleSound} className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-mist sm:hidden">
             Sound: {h.sound ? "On" : "Off"}

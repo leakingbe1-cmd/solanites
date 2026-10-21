@@ -2,6 +2,8 @@
 export const X_HANDLE = "@Solanites_";
 export const X_URL = "https://x.com/Solanites_";
 export const CONTRACT_LABEL = "Contract: coming soon";
+/** The community channel (e.g. Telegram or Discord). Null until the owner opens one; nothing is linked until then. */
+export const COMMUNITY: { label: string; url: string } | null = null;
 
 /**
  * The public $SLNT contract (mint) address, set by the owner on launch day by copying it from the

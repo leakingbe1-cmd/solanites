@@ -65,7 +65,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">
+        <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex lg:hidden">
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>

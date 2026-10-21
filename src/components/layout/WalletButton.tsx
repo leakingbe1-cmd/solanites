@@ -25,7 +25,7 @@ export function WalletButton({ compact = false }: { compact?: boolean }) {
 
   if (!h.wallet) {
     return (
-      <Link href="/hatchery" className="sl-btn-outline whitespace-nowrap rounded-full px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-bone sm:px-5">
+      <Link href="/hatchery" className="sl-btn-outline whitespace-nowrap rounded-full px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-bone sm:px-5 sm:tracking-[0.18em]">
         Find my eggs
       </Link>
     );

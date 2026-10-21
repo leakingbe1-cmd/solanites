@@ -1,0 +1,213 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Solanites X master template</title>
+<!--
+  Master template for every Solanites X graphic. Every post is 1600×900 and is rendered from
+  POSTS below by ../build/render.mjs:  template.html?post=01  (profile: ?banner, ?avatar, ?blank).
+  Spec (colours, type, logo position, safe margins): ./SPEC.md
+-->
+<style>
+@font-face { font-family: "Cormorant"; src: url("fonts/cormorant-latin-wght-normal.woff2") format("woff2"); font-weight: 300 700; font-style: normal; }
+@font-face { font-family: "Cormorant"; src: url("fonts/cormorant-latin-wght-italic.woff2") format("woff2"); font-weight: 300 700; font-style: italic; }
+@font-face { font-family: "Inter"; src: url("fonts/inter-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; }
+@font-face { font-family: "JetBrains Mono"; src: url("fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+:root {
+  /* the site's Eclipse Vigil palette (src/app/globals.css) */
+  --void: #07060a; --umbra: #0f0d14; --basalt: #17141d;
+  --bone: #efe8da; --vellum: #bdb3a3; --dust: #8c8374;
+  --flare: #fff1c9; --gilt: #e8b75c; --gilt-deep: #a8692a; --ember: #f08a3c;
+  --eclipse: #7d5cf0; --eclipse-deep: #241a4d; --aurora: #46c9b0;
+  --rim: rgba(239,232,218,.09); --rim-strong: rgba(239,232,218,.18);
+  --m: 72px;                    /* safe margin on every side */
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #000; }
+#frame { position: relative; width: 1600px; height: 900px; overflow: hidden; background: var(--void); color: var(--bone); font-family: "Inter", sans-serif; }
+.abs { position: absolute; }
+.sky { inset: 0; background:
+  radial-gradient(55% 70% at 74% 48%, rgba(125,92,240,.20), transparent 70%),
+  radial-gradient(40% 45% at 76% 58%, rgba(232,183,92,.10), transparent 70%),
+  radial-gradient(45% 60% at 0% 100%, rgba(36,26,77,.55), transparent 70%),
+  linear-gradient(180deg, #0b0911 0%, #07060a 60%, #09070f 100%); }
+canvas.stars { inset: 0; }
+.vignette { inset: 0; background: radial-gradient(120% 120% at 50% 50%, transparent 60%, rgba(0,0,0,.55) 100%); pointer-events: none; }
+
+/* fixed brand lockup: always here, always this size */
+.lockup { left: var(--m); top: 60px; display: flex; align-items: center; gap: 14px; z-index: 5; }
+.lockup img { width: 52px; height: 45px; }
+.lockup b { font-family: "Cormorant"; font-weight: 600; font-size: 25px; letter-spacing: .32em; text-transform: uppercase; color: var(--bone); }
+
+/* copy column: left 72 → 760 */
+.copy { left: var(--m); top: 0; bottom: 0; width: 640px; display: flex; flex-direction: column; justify-content: center; z-index: 4; }
+.kicker { font-family: "JetBrains Mono"; font-size: 17px; letter-spacing: .3em; text-transform: uppercase; color: var(--gilt); margin-bottom: 26px; display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; width: 28px; height: 1px; background: var(--gilt); }
+h1 { font-family: "Cormorant"; font-weight: 600; font-size: 118px; line-height: .98; letter-spacing: -.01em; color: var(--bone); text-shadow: 0 4px 30px rgba(0,0,0,.6); }
+h1 em { font-style: italic; font-weight: 500; color: var(--gilt);
+  background: linear-gradient(180deg, var(--flare) 0%, var(--gilt) 55%, var(--gilt-deep) 120%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; padding-right: .06em; }
+.support { margin-top: 30px; font-size: 27px; line-height: 1.42; color: var(--vellum); max-width: 560px; }
+.pill { display: inline-block; margin-top: 30px; font-family: "JetBrains Mono"; font-size: 17px; letter-spacing: .26em; text-transform: uppercase; color: var(--void);
+  background: linear-gradient(180deg, var(--flare), var(--gilt) 60%, var(--gilt-deep)); padding: 11px 22px; border-radius: 999px; align-self: flex-start; box-shadow: 0 0 30px rgba(232,183,92,.35); }
+
+/* hero zone: right 800 → 1528, top 72 → 828 */
+.hero { left: 772px; top: var(--m); width: 756px; height: 756px; z-index: 3; display: flex; align-items: center; justify-content: center; }
+.glow { position: absolute; border-radius: 50%; pointer-events: none; }
+.shot { position: relative; border-radius: 20px; overflow: hidden; background: var(--umbra);
+  box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 0 1px var(--rim-strong), 0 0 70px rgba(125,92,240,.18); }
+.shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.shot::after { content: ""; position: absolute; inset: 0; border-radius: 20px; box-shadow: inset 0 0 0 1px rgba(232,183,92,.22); pointer-events: none; }
+.art { display: block; object-fit: contain; filter: drop-shadow(0 24px 40px rgba(0,0,0,.6)); }
+.plate { position: absolute; inset: 0; border-radius: 28px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,.7), 0 0 0 1px var(--rim-strong); }
+.plate img { width: 100%; height: 100%; object-fit: cover; filter: brightness(.62) saturate(.9); }
+.plate::after { content: ""; position: absolute; inset: 0; background: radial-gradient(70% 60% at 50% 55%, transparent 30%, rgba(7,6,10,.75) 100%); }
+.caption { font-family: "JetBrains Mono"; font-size: 15px; letter-spacing: .22em; text-transform: uppercase; color: var(--vellum); white-space: nowrap; }
+.caption b { color: var(--gilt); font-weight: 400; }
+
+/* footer: bottom-left index, bottom-right hero label */
+.foot { left: var(--m); right: var(--m); bottom: 52px; display: flex; justify-content: space-between; align-items: center; z-index: 5;
+  font-family: "JetBrains Mono"; font-size: 15px; letter-spacing: .24em; text-transform: uppercase; color: var(--dust); }
+.foot .demo { color: var(--gilt); border: 1px solid rgba(232,183,92,.45); border-radius: 999px; padding: 7px 16px; background: rgba(7,6,10,.7); }
+</style>
+</head>
+<body>
+<div id="frame"><div class="abs sky"></div><canvas class="abs stars"></canvas><div id="content"></div><div class="abs vignette"></div></div>
+<script>
+const q = new URLSearchParams(location.search);
+const frame = document.getElementById("frame");
+const content = document.getElementById("content");
+const C = n => `../../../public/creatures/${n}.webp`;   // painted stage art, e.g. C("pyraurum/4-ascended")
+const SCENE = n => `../../../public/scenes/${n}/plate.webp`;
+const CAP = n => `../build/captures/${n}.jpg`;          // real site captures (see ../build/CAPTURES.md)
+const KEYART = "../../../public/hero/current/phoenix-still-2752-2000.jpg";
+
+// ── the ten posts ─────────────────────────────────────────────────────────
+// Every post: kicker, headline (one <em> word in gilt), support line, ONE hero, footer label.
+const POSTS = {
+  "01": { slug: "intro", kicker: "Genesis Hatchery", h: "28 creatures.<br>Sealed in <em>eggs.</em>", s: "Hatch one. Raise it. Keep it.",
+          hero: { kind: "keyart" }, label: "Key art" },
+  "02": { slug: "hatchery", kicker: "The Hatchery", h: "Where every<br>egg <em>waits.</em>", s: "Your eggs live in the Hatchery, warming until they're ready to open.",
+          hero: { kind: "shot", src: CAP("hatchery-eggs"), w: 756, h: 349 }, label: "Hatchery demo · simulated data", demo: true },
+  "03": { slug: "hatching", kicker: "Hatching", h: "It doesn't just<br><em>sit there.</em>", s: "It glows. It cracks. Something moves inside. Then one day, it opens.",
+          hero: { kind: "shot", src: CAP("egg-breaking"), w: 720, h: 597 }, label: "Hatchery demo · simulated data", demo: true },
+  "04": { slug: "rarity", kicker: "The bloodlines", h: "Six<br><em>bloodlines.</em>", s: "From Common to Secret. Every species is sealed the moment its egg is earned.",
+          hero: { kind: "tiers", src: CAP("rarity-cards") }, label: "Real site capture · odds per egg" },
+  "05": { slug: "evolution", kicker: "Evolution", h: "One creature.<br>Four <em>forms.</em>", s: "Eggling → Hatchling → Evolved → Ascended.",
+          hero: { kind: "forms", id: "pyraurum", name: "Pyraurum", tier: "Legendary" }, label: "In-game art · Pyraurum" },
+  "06": { slug: "catalogue", kicker: "The Collection", h: "28 species.<br>No two <em>alike.</em>", s: "Each with its own body, face and element.",
+          hero: { kind: "trio", items: [["mossling", "Mossling", "Common"], ["velynx", "Velynx", "Legendary"], ["cryovant", "Cryovant", "Rare"]] }, label: "In-game art" },
+  "07": { slug: "mythic-secret", kicker: "Mythic & Secret", h: "The rarest<br>of <em>all.</em>", s: "Six of the 28 species are Mythic or Secret. Will you be the one to hatch one?",
+          hero: { kind: "single", id: "genesis", name: "GENESIS", tier: "Secret" }, label: "In-game art · GENESIS" },
+  "08": { slug: "leaderboard", kicker: "Hall of Keepers", h: "The Keepers'<br><em>board.</em>", s: "Most evolved. Longest held. Rarest finds.", pill: "Live soon",
+          hero: { kind: "single", id: "aurelion", name: "Aurelion", tier: "Legendary" }, label: "In-game art · Aurelion" },
+  "09": { slug: "collection", kicker: "Your collection", h: "It grows<br><em>with you.</em>", s: "Hold longer and watch every Solanite climb from Eggling to Ascended.",
+          hero: { kind: "shot", src: CAP("collection-grid"), w: 756, h: 455 }, label: "Real site capture · the Collection" },
+  "10": { slug: "cta", kicker: "Season 0", h: "The hatching<br>begins <em>soon.</em>", s: "Follow for launch updates.",
+          hero: { kind: "shot", src: CAP("hatchery-egg"), w: 690, h: 630 }, label: "Real site capture · the Hatchery" },
+};
+window.POSTS = POSTS;
+
+function el(html, parent = content) { const t = document.createElement("template"); t.innerHTML = html.trim(); const e = t.content.firstChild; parent.appendChild(e); return e; }
+
+function stars(seed, density = 1) {
+  const c = frame.querySelector("canvas.stars"); c.width = frame.clientWidth; c.height = frame.clientHeight; const g = c.getContext("2d");
+  let s = seed; const r = () => ((s = (s * 16807) % 2147483647) / 2147483647);
+  for (let i = 0; i < 360 * density; i++) {
+    const x = r() * c.width, y = r() * c.height, z = r();
+    g.globalAlpha = .1 + z * .5; g.fillStyle = z > .94 ? "#fff1c9" : z > .88 ? "#a48cff" : "#efe8da";
+    g.beginPath(); g.arc(x, y, z > .97 ? 1.7 : z * 1.05, 0, 7); g.fill();
+  }
+}
+const lockup = () => el(`<div class="abs lockup"><img src="assets/sigil-emblem.svg" alt=""><b>Solanites</b></div>`);
+
+function hero(p) {
+  const H = el(`<div class="abs hero"></div>`);
+  const h = p.hero;
+  if (h.kind === "keyart") {
+    // the site's hero key art, bled off the right edge
+    H.style.cssText += "left:640px;top:0;width:960px;height:900px;";
+    el(`<img src="${KEYART}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:46% 40%;
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 26%);mask-image:linear-gradient(90deg,transparent 0%,#000 26%)">`, H);
+  } else if (h.kind === "shot") {
+    el(`<div class="glow" style="width:${h.w * 1.2}px;height:${h.h * 1.2}px;background:radial-gradient(closest-side,rgba(125,92,240,.28),transparent)"></div>`, H);
+    el(`<div class="shot" style="width:${h.w}px;height:${h.h}px"><img src="${h.src}"></div>`, H);
+  } else if (h.kind === "forms") {
+    H.style.left = "770px"; H.style.width = "790px";
+    const names = ["Eggling", "Hatchling", "Evolved", "Ascended"], sizes = [180, 220, 260, 310];
+    el(`<div class="glow" style="width:760px;height:520px;background:radial-gradient(closest-side,rgba(240,138,60,.22),transparent)"></div>`, H);
+    const row = el(`<div style="display:flex;align-items:flex-end;gap:0"></div>`, H);
+    names.forEach((n, i) => el(`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 -28px">
+      <img class="art" src="${C(`${h.id}/${i + 1}-${n.toLowerCase()}`)}" style="width:${sizes[i]}px;height:${sizes[i]}px">
+      <div class="caption">${i === 3 ? `<b>${n}</b>` : n}</div></div>`, row));
+  } else if (h.kind === "trio") {
+    el(`<div class="glow" style="width:780px;height:560px;background:radial-gradient(closest-side,rgba(70,201,176,.16),transparent)"></div>`, H);
+    H.style.left = "770px"; H.style.width = "790px";
+    const row = el(`<div style="display:flex;align-items:flex-end;gap:0"></div>`, H);
+    h.items.forEach(([id, name, tier], i) => el(`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:0 -40px">
+      <img class="art" src="${C(`${id}/4-ascended`)}" style="width:${i === 1 ? 350 : 290}px;height:${i === 1 ? 350 : 290}px">
+      <div class="caption" style="text-align:center;line-height:1.7"><b>${name}</b><br>${tier}</div></div>`, row));
+  } else if (h.kind === "tiers") {
+    // the site's real six-tier card row (2460×725 capture), shown as two rows of three
+    el(`<div class="glow" style="width:820px;height:760px;background:radial-gradient(closest-side,rgba(125,92,240,.26),transparent)"></div>`, H);
+    const box = el(`<div style="display:flex;flex-direction:column;gap:22px"></div>`, H);
+    for (const half of [0, 1]) el(`<div class="shot" style="width:600px;height:${Math.round(600 * 725 / 1230)}px">
+      <img src="${h.src}" style="width:200%;height:100%;object-fit:cover;object-position:${half ? "100%" : "0%"} 0;max-width:none;margin-left:${half ? "-100%" : "0"}"></div>`, box);
+  } else if (h.kind === "single") {
+    // the creature over its own biome plate (public/scenes/<id>/plate.webp)
+    el(`<div class="plate"><img src="${SCENE(h.id)}"></div>`, H);
+    el(`<img class="art" src="${C(`${h.id}/4-ascended`)}" style="position:relative;width:650px;height:650px;margin-top:-50px">`, H);
+    el(`<div class="caption" style="position:absolute;left:0;right:0;bottom:34px;text-align:center"><b>${h.name}</b> · ${h.tier}</div>`, H);
+  }
+}
+
+function post(id) {
+  const p = POSTS[id];
+  stars(Number(id) * 7919 + 13);
+  lockup();
+  el(`<div class="abs copy"><div class="kicker">${p.kicker}</div><h1>${p.h}</h1><div class="support">${p.s}</div>${p.pill ? `<div class="pill">${p.pill}</div>` : ""}</div>`);
+  hero(p);
+  el(`<div class="abs foot"><span>${id} / 10</span><span class="${p.demo ? "demo" : ""}">${p.label}</span></div>`);
+}
+
+function banner() {
+  // X header 1500×500. X overlays the avatar on the lower-left, so nothing sits in x<420, y>300.
+  frame.style.width = "1500px"; frame.style.height = "500px";
+  stars(4242, .8);
+  el(`<img src="${KEYART}" class="abs" style="right:-120px;top:-30px;width:960px;height:560px;object-fit:cover;object-position:46% 38%;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0%,transparent 22%,#000 48%);mask-image:linear-gradient(90deg,transparent 0%,transparent 22%,#000 48%)">`);
+  el(`<div class="abs" style="left:120px;top:96px;display:flex;flex-direction:column;align-items:flex-start;z-index:4">
+    <div style="display:flex;align-items:center;gap:20px"><img src="assets/sigil-emblem.svg" style="width:84px;height:72px"><b style="font-family:Cormorant;font-weight:600;font-size:64px;letter-spacing:.3em;color:var(--bone)">SOLANITES</b></div>
+    <div style="margin-top:22px;font-family:Cormorant;font-size:42px;color:var(--vellum);font-style:italic">28 creatures sleep in sealed eggs.</div>
+    <div class="kicker" style="margin:22px 0 0">The hatching begins soon</div></div>`);
+}
+
+function avatar() {
+  // 400×400; X crops to a circle, so the sigil stays inside the central 78%.
+  frame.style.width = "400px"; frame.style.height = "400px";
+  content.innerHTML = "";
+  stars(77, .25);
+  el(`<div class="abs" style="inset:0;background:radial-gradient(closest-side,rgba(232,183,92,.16),transparent 85%)"></div>`);
+  el(`<img src="assets/sigil-full.svg" class="abs" style="left:66px;top:66px;width:268px;height:268px;filter:drop-shadow(0 0 18px rgba(232,183,92,.35))">`);
+}
+
+function blank() {
+  // the bare master: grid of the safe area and zones, for designers
+  stars(1); lockup();
+  el(`<div class="abs" style="left:72px;top:72px;right:72px;bottom:72px;border:1px dashed rgba(232,183,92,.6)"></div>`);
+  el(`<div class="abs copy"><div class="kicker">Kicker</div><h1>Headline,<br>one <em>gilt</em> word.</h1><div class="support">Support line in Inter, vellum, 27 px.</div></div>`);
+  el(`<div class="abs hero" style="border:1px dashed rgba(164,140,255,.7)"><div class="caption">Hero zone · 728 × 756</div></div>`);
+  el(`<div class="abs foot"><span>00 / 10</span><span>Hero label</span></div>`);
+}
+
+if (q.has("banner")) banner(); else if (q.has("avatar")) avatar(); else if (q.has("blank")) blank(); else post(q.get("post") || "01");
+(async () => {
+  await document.fonts.ready;
+  for (const i of document.images) {
+    if (!i.complete) await new Promise(r => { i.onload = i.onerror = r; });
+    if (!i.naturalWidth) document.body.dataset.broken = (document.body.dataset.broken || "") + " " + i.getAttribute("src");
+  }
+  document.body.dataset.ready = "1";
+})();
+</script>
+</body>
+</html>

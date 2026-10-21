@@ -101,12 +101,12 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
 | Rarity weights | Common 40 · Rare 30 · Epic 17 · Legendary 8 · Mythic 3.5 · Secret 1.5 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
-| Holder distribution | Planned: 2 hours after launch, the locked developer supply divided equally among eligible holders. Eligibility, amount and process pending; not implemented |
+| Holder distribution | Planned: 2 hours after launch, the developer supply allocated for redistribution divided equally among eligible holders. Terms not yet published; not implemented. The page is hidden until launch |
 
 ## Holder tracking, eggs and holder rewards
 
 - **Eggs (no wallet connection):** the server tracks every holder from Solana (`/api/cron/sync`, `/api/webhooks/solana`), issues eggs into Postgres and serves them at `GET /api/holders/:address`. The Hatchery's **Find my eggs** takes a public address.
-- **Holder rewards (`/claims`):** presents the planned holder distribution (`src/config/holderDistribution.ts`). **Nothing distributes yet**: see "Holder distribution" in `docs/holder-tracking.md` for what is still needed. The earlier launch-fee claim backend (`/api/claims/*`) remains in the code, unused by the site.
+- **Holder rewards (`/rewards`, hidden until launch):** presents the planned holder distribution (`src/config/holderDistribution.ts`). While `REWARDS_PAGE_LIVE` is off the page answers 404 (`/claims` redirects there) and nothing links to it. Terms the owner hasn't set stay hidden. **Nothing distributes yet**: see "Holder distribution" in `docs/holder-tracking.md` for what is still needed. The earlier launch-fee claim backend (`/api/claims/*`) remains in the code, unused by the site.
 
 Architecture, audit, configuration (env checklist, scheduler, `/api/health`), staging plan, decisions still needed and limitations: [`docs/holder-tracking.md`](docs/holder-tracking.md).
 

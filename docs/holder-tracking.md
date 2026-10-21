@@ -211,10 +211,12 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 
 ## 7. Holder distribution (planned, not implemented)
 
-**Rule shown on `/claims`:** two hours after the official launch, the locked developer supply
-allocated for redistribution is divided equally among eligible holders
-(`src/config/holderDistribution.ts`). Eligibility, the final amount and the process are marked
-pending on the page.
+**Rule (page `/rewards`, hidden until launch):** two hours after the official launch, the developer
+supply allocated for redistribution is divided equally among eligible holders
+(`src/config/holderDistribution.ts`). While `REWARDS_PAGE_LIVE` is off the page answers 404
+(`/claims` redirects there) and nothing links to it. The terms (amount, eligibility, one share per
+holder, snapshot, process) are owner-set fields that stay hidden until set, and the supply is only
+called "locked" once a lock proof link is set. See `docs/buyer-upgrade/OWNER-INPUTS.md`.
 
 **What exists today that it could build on**
 

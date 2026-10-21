@@ -7,6 +7,7 @@ phoenix creatives (`art/promo/`, built by `scripts/promo-assets.sh`).
 mint, Solana data provider, database and scheduler are configured in production. Until then,
 posts that promise eggs from real holdings would not be true yet. The holder distribution is
 planned, not built, and its terms are unpublished: never quote amounts, percentages or dates for it.
+The rewards page is hidden until launch (`REWARDS_PAGE_LIVE` is off), so don't mention or link it yet.
 
 **PRELAUNCH URL RULE:** no website or preview address in any post until the official launch URL is
 approved. See `prelaunch-rules.md`.
@@ -69,12 +70,12 @@ approved. See `prelaunch-rules.md`.
 >
 > Demo results are simulated and don't count toward real eggs.
 
-**10. Holder rewards (only after terms are published)**
+**10. Holder rewards (HELD until launch)**
 > Holder rewards are coming.
 >
-> A portion of the developer supply is planned for eligible holders, favouring those who held longer. Full allocation, eligibility and method will be published before anything goes live.
+> The developer supply allocated for redistribution is planned to be divided equally among eligible holders. The full terms will be published before anything goes live.
 
-*[Only after the holder-rewards page is live. Do not add a start time until the launch time is confirmed, or amounts until they are published.]*
+*[HELD: don't post until the owner turns the rewards page on (`REWARDS_PAGE_LIVE`) and publishes its terms. Wording matches the site: an equal split, not "favouring those who held longer". Do not add a start time until the launch time is confirmed, or amounts until they are published.]*
 
 ---
 

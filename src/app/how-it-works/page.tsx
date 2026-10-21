@@ -31,7 +31,7 @@ export default function HowItWorksPage() {
       "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
-    ["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The locked developer supply, divided equally among eligible holders. Eligibility, the final amount and the process are pending and will be published first"],
+    ["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The developer supply allocated for redistribution, divided equally among eligible holders. Its terms are on the Rewards page as they are published"],
   ];
 
   return (
@@ -94,7 +94,7 @@ export default function HowItWorksPage() {
               <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
               <li>◇ The demo wallet is <span className="text-bone">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
               <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
-              <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its eligibility, amount and process will be published before it happens.</li>
+              <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its terms are published on the Rewards page before it happens.</li>
             </ul>
           </div>
         </div>

@@ -35,6 +35,10 @@ const nextConfig: NextConfig = {
     "/api/card/[eggId]": ["./public/creatures/**/*-384.webp"],
     "/api/card/demo": ["./public/creatures/**/*-384.webp"],
   },
+  // The rewards page used to live at /claims.
+  async redirects() {
+    return [{ source: "/claims", destination: "/rewards", permanent: false }];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

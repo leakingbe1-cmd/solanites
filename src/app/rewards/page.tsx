@@ -1,28 +1,31 @@
-import { HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS } from "@/config/holderDistribution";
+import { HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS, isLocked, publishedTerms } from "@/config/holderDistribution";
 
 export const metadata = { title: "Holder Rewards — Solanites" };
 
 const HOURS_WORD = HOLDER_DISTRIBUTION_HOURS === 2 ? "Two" : String(HOLDER_DISTRIBUTION_HOURS);
 
 /**
- * The planned holder distribution: the locked developer supply, divided equally among
- * eligible holders two hours after the official launch. Presentation only (see
- * src/config/holderDistribution.ts): nothing can be claimed, connected or signed here,
- * no launch time is shown, and every undecided term is marked pending. The dormant
- * launch-fee claim API (src/server/claims, /api/claims/*) is not used by this page.
+ * The planned holder distribution: the developer supply allocated for redistribution, divided
+ * equally among eligible holders two hours after the official launch. Presentation only (see
+ * src/config/holderDistribution.ts): nothing can be claimed, connected or signed here, no launch
+ * time is shown, and terms the owner hasn't set are left out (never shown as pending). The supply
+ * is only called "locked" once a lock proof link is set. The dormant launch-fee claim API
+ * (src/server/claims, /api/claims/*) is not used by this page.
  */
-export default function ClaimsPage() {
+export default function RewardsPage() {
+  const supply = isLocked() ? "locked developer supply" : "developer supply";
+  const terms = publishedTerms();
   return (
     <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28">
       <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
       <div className="relative mx-auto max-w-3xl px-4 pb-24 sm:px-6">
         <p className="sl-eyebrow">Holder rewards</p>
         <h1 className="mt-3 sl-display-l text-bone">
-          Locked developer supply <span className="italic">returns to holders.</span>
+          {isLocked() ? "Locked developer supply" : "Developer supply"} <span className="italic">returns to holders.</span>
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-mist">
-          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the locked developer supply will be divided equally among eligible holders. Every eligible holder will receive an
-          equal share of the total supply allocated for redistribution.
+          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the {supply} allocated for redistribution will be divided equally among eligible holders. Every eligible holder will
+          receive an equal share.
         </p>
 
         {/* When: launch, then the distribution two hours later. The clock is the launch, not the visit. */}
@@ -68,29 +71,30 @@ export default function ClaimsPage() {
             </p>
           </div>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-mist">
-            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The locked developer supply allocated for redistribution will be split equally among eligible
-            holders. Further details about eligibility, the final distribution amount and how distribution will be processed will be published here.
+            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The {supply} allocated for redistribution will be split equally among eligible holders.
           </p>
 
           <dl className="mt-6 divide-y divide-white/[0.06] border-t border-white/[0.06]">
-            {[
-              ...HOLDER_DISTRIBUTION.planned.map((t) => ({ ...t, pending: false })),
-              ...HOLDER_DISTRIBUTION.pending.map((t) => ({ ...t, pending: true })),
-            ].map(({ term, detail, pending }) => (
+            {[...HOLDER_DISTRIBUTION.planned.map((t) => ({ ...t, published: false })), ...terms.map((t) => ({ ...t, published: true }))].map(({ term, detail, published }) => (
               <div key={term} className="flex flex-col gap-1.5 py-3.5 sm:flex-row sm:items-baseline sm:gap-6">
                 <dt className="w-28 shrink-0 font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">{term}</dt>
                 <dd className="flex flex-1 items-start justify-between gap-4 text-sm text-bone/85">
                   <span className="min-w-0">{detail}</span>
-                  {pending ? (
-                    <span className="mt-0.5 shrink-0 rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-mist/80">Pending</span>
-                  ) : (
-                    <span className="mt-0.5 shrink-0 rounded-full border border-sol-green/25 bg-sol-green/[0.06] px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-sol-green/90">Planned</span>
-                  )}
+                  <span className="mt-0.5 shrink-0 rounded-full border border-sol-green/25 bg-sol-green/[0.06] px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.2em] text-sol-green/90">
+                    {published ? "Published" : "Planned"}
+                  </span>
                 </dd>
               </div>
             ))}
           </dl>
 
+          {HOLDER_DISTRIBUTION.lockProofUrl && (
+            <p className="mt-6 text-sm">
+              <a href={HOLDER_DISTRIBUTION.lockProofUrl} target="_blank" rel="noopener noreferrer" className="text-sol-green/90 underline-offset-4 hover:underline">
+                Lock proof ↗
+              </a>
+            </p>
+          )}
           <p className="mt-6 text-xs leading-relaxed text-mist/80">
             This is the planned distribution. There is nothing to claim, connect or sign here yet. Solanites will never ask for your seed phrase or private key.
           </p>

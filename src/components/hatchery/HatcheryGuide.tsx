@@ -39,7 +39,7 @@ export function HatcheryGuide() {
           <path d="M23 32l6 6 12-13" />
         </svg>
       ),
-      link: { href: "/claims", label: "Holder rewards" },
+      link: { href: "/rewards", label: "Holder rewards" },
     },
   ];
   return (

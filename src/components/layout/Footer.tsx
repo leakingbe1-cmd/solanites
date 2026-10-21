@@ -24,7 +24,7 @@ export function Footer() {
             <li><Link className="hover:text-bone" href="/hatchery">Hatchery</Link></li>
             <li><Link className="hover:text-bone" href="/collection">Collection</Link></li>
             <li><Link className="hover:text-bone" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-bone" href="/claims">Holder Rewards</Link></li>
+            <li><Link className="hover:text-bone" href="/rewards">Holder Rewards</Link></li>
           </ul>
         </div>
         <div className="text-sm">

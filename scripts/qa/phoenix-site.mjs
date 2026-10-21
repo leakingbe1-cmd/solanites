@@ -86,9 +86,9 @@ for (const opts of [{}, { reducedMotion: "reduce" }, { viewport: { width: 390, h
   await p.screenshot({ path: `${out}/home-awake.png` });
   ok("home: sigil drawn beside the eyebrow", st.sigil >= 1);
   ok("home, returning visitor: no intro video requested", mediaReqs.length === 0, mediaReqs.join(", "));
-  await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().click();
-  await p.waitForURL("**/hatchery");
-  ok("home: Enter the Hatchery works", p.url().endsWith("/hatchery"));
+  await p.getByRole("link", { name: /TRY THE DEMO/ }).first().click();
+  await p.waitForURL("**/hatchery*");
+  ok("home: Try the demo works", new URL(p.url()).pathname === "/hatchery");
   await c.close();
 }
 {
@@ -302,10 +302,10 @@ for (const [name, vp, mobile] of [
   ok(`hero ${name}: native Phoenix still served (2752 × 1536 set)`, img.loaded && /phoenix-still-2752-(2000|2752)\.(avif|webp|jpg)$/.test(img.src), img.src);
   ok(`hero ${name}: the still is never enlarged at standard density`, img.enlargement <= 1.0001, `${img.src} ${img.file.join("×")} drawn at ${img.enlargement.toFixed(2)}×`);
   ok(`hero ${name}: old cartoon hero gone`, (await p.locator('[data-testid="hero-caption"]').count()) === 0);
-  const cta = await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().boundingBox();
-  ok(`hero ${name}: Enter the Hatchery visible`, cta && cta.width > 0, cta ? `bottom ${Math.round(cta.y + cta.height)} / ${vp.height}` : "missing");
-  if (vp.width >= 390) ok(`hero ${name}: Enter the Hatchery within the first screen`, cta.y + cta.height <= vp.height);
-  const pill = await p.getByText("No wallet needed to explore.").boundingBox();
+  const cta = await p.getByRole("link", { name: /TRY THE DEMO/ }).first().boundingBox();
+  ok(`hero ${name}: Try the demo visible`, cta && cta.width > 0, cta ? `bottom ${Math.round(cta.y + cta.height)} / ${vp.height}` : "missing");
+  if (vp.width >= 390) ok(`hero ${name}: Try the demo within the first screen`, cta.y + cta.height <= vp.height);
+  const pill = await p.getByText("No wallet needed. The demo is simulated.").boundingBox();
   ok(`hero ${name}: walletless message near the CTA`, pill && Math.abs(cta.y - (pill.y + pill.height)) < 200, `${Math.round(cta.y - pill.y)}px`);
   const sw = await p.evaluate(() => document.documentElement.scrollWidth);
   ok(`hero ${name}: no horizontal overflow`, sw <= vp.width, String(sw));
@@ -317,9 +317,9 @@ for (const [name, vp, mobile] of [
 {
   const [c, p] = await ctx({}, SEEN);
   await p.goto(B + "/");
-  await p.getByRole("link", { name: /ENTER THE HATCHERY/ }).first().click();
-  await p.waitForURL("**/hatchery");
-  ok("hero: Enter the Hatchery navigates", p.url().endsWith("/hatchery"));
+  await p.getByRole("link", { name: /TRY THE DEMO/ }).first().click();
+  await p.waitForSelector('[data-testid="demo-badge"]', { timeout: 10000 }).catch(() => {});
+  ok("hero: Try the demo opens the simulated Hatchery", new URL(p.url()).pathname === "/hatchery" && (await p.locator('[data-testid="demo-badge"]').count()) === 1);
   await p.goto(B + "/");
   await p.getByRole("link", { name: /EXPLORE SOLANITES/ }).click();
   await p.waitForURL("**/collection");

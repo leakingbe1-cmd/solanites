@@ -29,6 +29,13 @@ export function ConnectGate() {
       .catch(() => {});
   }, []);
 
+  // /hatchery?demo=1 (the homepage's "Try the demo") opens the simulated demo straight away.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("demo") !== "1") return;
+    window.history.replaceState(null, "", window.location.pathname);
+    void h.connect("demo");
+  }, [h]);
+
   function submit(e: React.FormEvent) {
     e.preventDefault();
     const a = address.trim();

@@ -42,18 +42,19 @@ export default function Home() {
               {CATALOGUE_SIZE} creatures sleep in sealed eggs, from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.
             </p>
             <div className="sl-awake-in mt-5 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
-              <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
-                EXPLORE SOLANITES
+              {/* pre-launch, the demo is the thing to try: it opens straight into the simulated Hatchery */}
+              <Link href="/hatchery?demo=1" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]" data-testid="hero-demo-cta">
+                TRY THE DEMO
                 <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
               </Link>
-              <Link href="/hatchery" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
-                ENTER THE HATCHERY
+              <Link href="/collection" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
+                EXPLORE SOLANITES
               </Link>
             </div>
             {/* walletless exploration: nothing on the site asks for a wallet today */}
             <p className="sl-awake-in mt-6 inline-flex items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
-              No wallet needed to explore.
+              No wallet needed. The demo is simulated.
             </p>
             <div className="sl-awake-in mt-3 max-lg:order-1" style={{ animationDelay: "0.65s" }}>
               <SocialLine className="justify-center lg:justify-start" />

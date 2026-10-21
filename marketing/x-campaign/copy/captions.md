@@ -33,7 +33,7 @@ this is solanites.
 ```text
 the hatchery is where your eggs will live.
 
-once it opens, every 1,000,000 $SLNT you hold earns one. it sits there, warming, until it's ready.
+once it opens, holding $SLNT earns eggs. each one sits there, warming, until it's ready.
 
 no wallet needed to explore.
 
@@ -64,20 +64,20 @@ you'll see what you're holding before your coffee's done ☕
 #Solanites
 ```
 
-## 4 · Rarity tiers ✅
-**Headline:** Six bloodlines.
-**Supporting line:** From Common to Secret. Every species is sealed the moment its egg is earned.
-**Image:** the site's six-tier cards (60 · 25 · 10 · 4 · 1 · 0.2, as the site rounds them)
+## 4 · Rarity tiers ✅ (art-free odds card, owner-approved 21 Oct)
+**Headline:** Six tiers. One shared origin.
+**Supporting line:** The published odds for every egg.
+**Image:** `posts/04-odds-card-1600x900.jpg` (4:5: `posts/04-odds-card-1080x1350.jpg`). Text only, no creature art. Rendered from `gameConfig.rarityWeights` by `build/render-odds.mjs`: 40 · 30 · 17 · 8 · 3.5 · 1.5.
 
 ```text
-six bloodlines. one shared origin.
+six tiers. one shared origin.
 
-from common to secret, every species is sealed the moment its egg is earned. hatching just reveals it.
+the published odds for every egg. rarity is sealed the moment it's earned, and hatching just reveals it.
 
 #Solanites
 ```
 
-*The caption quotes no odds, so it can never disagree with the image. If `feature/fast-track` ships its 40/30/17/8/3.5/1.5 odds, the image's cards change too: re-capture the graphic before posting.*
+*The old `04-rarity.jpg` (60/25/10/4/1/0.2 cards with Mythic/Secret art) is retired: never post it.*
 
 ## 5 · Evolution ✅
 **Headline:** One creature. Four forms.
@@ -89,7 +89,7 @@ every solanite grows through four forms.
 
 eggling → hatchling → evolved → ascended
 
-it grows while you hold. if your balance drops below an egg's worth, it rests and picks up where it left off when you're back.
+it grows while you hold. progress pauses if your balance drops below the threshold.
 
 #Solanites
 ```
@@ -109,22 +109,8 @@ which one is yours?
 #Solanites
 ```
 
-## 7 · Mythic and Secret ⏳ all 28 public
-**Headline:** The rarest of all.
-**Supporting line:** Six of the 28 species are Mythic or Secret. Will you be the one to hatch one?
-**Image:** GENESIS on its biome
-
-```text
-six of the 28 species are mythic or secret.
-
-you can see every one of them. hatching one is another story.
-
-will you be the first? 👁️
-
-#Solanites
-```
-
-*Gate: all 28 species became public by owner decision on 20 Oct (`docs/mythic-secret-species.md` on `design/eclipse-vigil-code`). `main` still shows Mythic and Secret as classified, so post this only once that change is live in production.*
+## 7 · Mythic and Secret ⛔ DROPPED (owner, 21 Oct)
+Mythic and Secret designs stay off X entirely. `posts/07-mythic-secret.jpg` and its caption are retired.
 
 ## 8 · Keeper leaderboard ⏳ live soon
 **Headline:** The Keepers' board.
@@ -149,7 +135,7 @@ live soon.
 **Image:** Collection capture
 
 ```text
-one egg per 1,000,000 $SLNT, once the hatchery opens.
+holding $SLNT earns eggs, once the hatchery opens.
 
 hold more, and more eggs arrive. hold longer, and they grow further.
 

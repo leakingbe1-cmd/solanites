@@ -27,6 +27,9 @@ export default function CollectionPage() {
     return m;
   }, [h.records, h.config]);
 
+  // Demo hatches are simulated: labelled Demo on the counter and plates (retention item 1 on integration separates them fully).
+  const isDemo = h.wallet?.kind === "demo";
+  const watched = h.wallet?.kind === "watch" ? h.wallet.address : null;
   const discovery = (s: Species) => discoveryOf(s, h.discovered);
 
   // /collection?species=<id> (e.g. from the homepage Market Bond section) opens that species.
@@ -58,7 +61,7 @@ export default function CollectionPage() {
           </div>
           <div className="sl-glass w-full rounded-md p-5 lg:w-80">
             <div className="flex items-baseline justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your discoveries</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">{isDemo ? "Demo discoveries (not real)" : "Your discoveries"}</p>
               <p className="font-display text-2xl text-bone">
                 {ownedCount}
                 <span className="text-base text-mist">/{CATALOGUE_SIZE}</span>

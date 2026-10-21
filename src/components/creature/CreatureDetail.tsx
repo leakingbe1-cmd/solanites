@@ -13,6 +13,8 @@ import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, FEATURED_STAGE, SPECIES, statsAt, type Species } from "@/lib/species";
 import { CreatureMarketPanel } from "@/components/market/CreatureMarketPanel";
 import { useHatchery } from "@/state/HatcheryProvider";
+import { ShareButton } from "@/components/share/ShareButton";
+import { demoShareable, type ShareTarget } from "@/lib/share";
 
 interface CreatureDetailProps {
   species: Species;
@@ -35,6 +37,8 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
   const discovery = discoveryOf(species, h.discovered);
   const design = designOf(species.id);
   const meta = RARITIES[species.rarity];
+  // Share: a tracked creature's card comes from the server record; a demo creature's card is stamped DEMO.
+  const share: ShareTarget | null = record && ownerAddress ? { kind: "egg", eggId: record.id } : record && h.isDemo && demoShareable(species) ? { kind: "demo", speciesId: species.id, stage: evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs).stage } : null;
 
   // Real progression only: the owned creature's stage, or the best stage among the viewer's hatched creatures of this species.
   const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs) : null;
@@ -108,6 +112,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
               {ELEMENT_GLYPH[species.element]} {species.element}
             </span>
           </div>
+          {share && <ShareButton target={share} speciesId={species.id} className="mt-4" />}
           {record?.nickname && <p className="mt-2 text-sm text-mist">{species.name} · {species.epithet}</p>}
           <p className="mt-4 text-sm leading-relaxed text-mist">
             {species.lore}

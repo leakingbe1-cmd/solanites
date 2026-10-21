@@ -14,6 +14,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { formatNumber } from "@/lib/format";
 import { phaseOf, tokensToNextEgg } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
+import { demoShareable } from "@/lib/share";
 import { SectionTitle, Stat } from "@/components/hatchery/HatcheryUi";
 import { TrackedHatchery } from "@/components/hatchery/TrackedHatchery";
 import { Sigil } from "@/components/brand/Sigil";
@@ -71,7 +72,7 @@ export default function HatcheryPage() {
             <span className="inline-flex items-center gap-2">
               <span className="relative inline-flex h-2 w-2 shrink-0 rounded-full bg-sol-green" />
               <span>
-                Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · <span className="whitespace-nowrap">×{formatNumber(h.speed)}</span>
+                Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} <span className="whitespace-nowrap">· ×{formatNumber(h.speed)}</span>
               </span>
             </span>
             {h.isDemo && (
@@ -193,6 +194,7 @@ export default function HatcheryPage() {
         <HatchReveal
           species={SPECIES_BY_ID[hatchRec.speciesId]}
           seed={hatchRec.seed}
+          share={h.isDemo && demoShareable(SPECIES_BY_ID[hatchRec.speciesId]) ? { kind: "demo", speciesId: hatchRec.speciesId, stage: 0 } : null}
           onHatched={() => h.hatch(hatchRec.id)}
           onClose={() => setHatching(null)}
           onView={() => {

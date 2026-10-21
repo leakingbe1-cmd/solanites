@@ -7,6 +7,8 @@ import { EggArt } from "@/components/egg/EggArt";
 import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, type Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
+import { ShareButton } from "@/components/share/ShareButton";
+import type { ShareTarget } from "@/lib/share";
 
 type Phase = "charge" | "burst" | "reveal";
 
@@ -19,9 +21,11 @@ interface HatchRevealProps {
   onHatched(): void;
   onClose(): void;
   onView(): void;
+  /** Offered after the reveal: the server card for a tracked egg, or a DEMO card. */
+  share?: ShareTarget | null;
 }
 
-export function HatchReveal({ species, seed, onHatched, onClose, onView }: HatchRevealProps) {
+export function HatchReveal({ species, seed, onHatched, onClose, onView, share }: HatchRevealProps) {
   const [phase, setPhase] = useState<Phase>("charge");
   const meta = RARITIES[species.rarity];
   const charge = CHARGE_MS[species.rarity];
@@ -93,6 +97,7 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView }: Hatch
               <button onClick={onView} className="sl-btn-outline rounded-full px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] text-bone">
                 MEET YOUR SOLANITE
               </button>
+              {share && <ShareButton target={share} speciesId={species.id} />}
               <button onClick={onClose} className="rounded-full border border-white/15 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
                 Back to Hatchery
               </button>

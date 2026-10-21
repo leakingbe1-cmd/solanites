@@ -307,6 +307,7 @@ export function TrackedHatchery({ address }: { address: string }) {
         <HatchReveal
           species={SPECIES_BY_ID[hatching.speciesId]}
           seed={hatching.record.seed}
+          share={{ kind: "egg", eggId: hatching.record.id }}
           onHatched={() => h.discover(hatching.speciesId)}
           onClose={() => {
             setHatching(null);

@@ -3,7 +3,6 @@
 ## Scope
 A painted biome background and a species-specific idle animation for every creature
 (28 species × 4 stages), shown on the homepage, Collection, Hatchery and detail views.
-
 ## Done (all pushed; integration went through Website & Preview into design/eclipse-vigil-code)
 - feature/creature-biomes `b949248`: 22 public biome plates (Runway, 88 credits, ledger in
   docs/creature-scenes/generation-ledger.md), idle system, 46 part rigs, glow maps, QA scripts.

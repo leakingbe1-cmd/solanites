@@ -11,6 +11,7 @@ import { StockShowcase } from "@/components/landing/StockShowcase";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
+import { VerifyPanel } from "@/components/trust/VerifyPanel";
 import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber } from "@/lib/format";
@@ -136,6 +137,13 @@ export default function Home() {
               Read the full rules →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── VERIFY: the buyer's checks, each fact shown only once the owner sets it ── */}
+      <section className="relative pb-8 pt-4">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <VerifyPanel compact />
         </div>
       </section>
 

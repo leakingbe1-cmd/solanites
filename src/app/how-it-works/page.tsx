@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VerifyPanel } from "@/components/trust/VerifyPanel";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -97,6 +98,11 @@ export default function HowItWorksPage() {
               <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its terms are published on the Rewards page before it happens.</li>
             </ul>
           </div>
+        </div>
+
+        {/* tokenomics and trust facts: only what the owner has set (src/config/tokenomics.ts) */}
+        <div id="tokenomics" className="mt-20 scroll-mt-28">
+          <VerifyPanel />
         </div>
 
         <div className="mt-20 text-center">

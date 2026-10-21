@@ -74,7 +74,7 @@ describe("the first two minutes (server clock only)", () => {
     expect(grown.evolution).toMatchObject({ stage: 1, label: "Hatchling", phase: "mature", matured: true, nextLabel: "Evolved", toNextMs: 1 * MIN });
   });
 
-  it("growth counts from when the egg hatched, so a late reveal still finds the creature grown on time", async () => {
+  it("fast-track creatures grow from the reveal, so a late reveal still shows every evolution", async () => {
     const { tracker, buy, chain, clock } = await setup();
     const a = W(101);
     const b = W(102);
@@ -83,23 +83,25 @@ describe("the first two minutes (server clock only)", () => {
     await tracker.syncOwner(a);
     await tracker.syncOwner(b);
 
-    // a opens the reveal 30 s after it hatched: still grown at 2:00.
+    // a opens the reveal 30 s after the egg was ready: growth starts then, grown a minute later.
     clock.t = T0 + 90 * SEC;
     const ea = (await tracker.holderView(a)).eggs[0];
     await tracker.hatch(ea.id);
-    expect((await tracker.holderView(a)).eggs[0].evolution).toMatchObject({ phase: "growing", toNextMs: 30 * SEC });
-    clock.t = T0 + 2 * MIN;
+    expect((await tracker.holderView(a)).eggs[0].evolution).toMatchObject({ phase: "growing", toNextMs: 1 * MIN });
+    clock.t = T0 + 150 * SEC;
     expect((await tracker.holderView(a)).eggs[0].evolution).toMatchObject({ phase: "mature" });
 
-    // b comes back after 10 minutes: the overdue milestones are already settled on reveal.
+    // b comes back after 10 minutes: nothing was skipped while the egg sat unopened.
     clock.t = T0 + 10 * MIN;
     const eb = (await tracker.holderView(b)).eggs[0];
     expect(eb.status).toBe("ready");
     await tracker.hatch(eb.id);
     const cb = (await tracker.holderView(b)).eggs[0];
-    expect(cb.growthMs).toBe(9 * MIN);
-    // Fast track: Hatchling at 1 min, Evolved at 2, Ascended at 3; ranks keep their normal timings.
-    expect(cb.evolution).toMatchObject({ phase: "ascended", label: "Ascended", nextLabel: "Ascended II", toNextMs: 1 * MIN + 8 * HOUR - 9 * MIN });
+    expect(cb.growthMs).toBe(0);
+    expect(cb.evolution).toMatchObject({ phase: "growing", label: "Eggling", toNextMs: 1 * MIN });
+    // Fast track: Hatchling 1 min after the reveal, Evolved at 2, Ascended at 3; ranks keep their normal timings.
+    clock.t = T0 + 13 * MIN;
+    expect((await tracker.holderView(b)).eggs[0].evolution).toMatchObject({ phase: "ascended", label: "Ascended", nextLabel: "Ascended II", toNextMs: 1 * MIN + 8 * HOUR - 3 * MIN });
   });
 
   it("survives a restart: a new tracker instance on the same database continues exactly", async () => {
@@ -155,7 +157,7 @@ describe("the early progression loop", () => {
     clock.t = T0 + 3 * MIN;
     const v = (await tracker.holderView(h)).eggs;
     expect(v[1].evolution).toMatchObject({ phase: "mature", label: "Hatchling" });
-    expect(v[0].evolution).toMatchObject({ phase: "evolved", label: "Evolved" }); // grown at 2:00, Evolved at 3:00
+    expect(v[0].evolution).toMatchObject({ phase: "mature", label: "Hatchling" }); // fast track: grows from its 2:00 reveal, like the second
   });
 
   it("changing the timer configuration does not touch eggs already issued", async () => {

@@ -24,7 +24,7 @@ export default function HowItWorksPage() {
     ["If your balance drops", "Earned eggs are kept", "They keep incubating. New eggs need tokens that have not already earned one"],
     ["Moving tokens to another wallet", "No new egg for the same tokens", "Tokens that already earned an egg carry that with them, so a transfer can't earn the same egg twice"],
     ["Growing up", describeGrowthSchedule(prog), `A newly hatched ${cfg.evolution.names[0]} becomes a fully grown ${cfg.evolution.names[1]} after this much qualifying holding. Your first creature is grown ${formatSpan(prog.initialGrowthScheduleMs[0])} after it hatches`],
-    ["Evolution schedule", cfg.evolution.names.map((n, i) => `${n} ${formUnlockText(i, cfg).toLowerCase()}`).join(" · "), "Growth and evolution count qualifying holding from when the egg hatched (its incubation ended), paused while the balance no longer backs the creature"],
+    ["Evolution schedule", cfg.evolution.names.map((n, i) => `${n} ${formUnlockText(i, cfg).toLowerCase()}`).join(" · "), "Growth and evolution count qualifying holding from when the egg hatched (its incubation ended; fast-track creatures from when you reveal them), paused while the balance no longer backs the creature"],
     [
       "After Ascended",
       cfg.evolution.ascensionRanksMs.map((ms, i) => `${["II", "III", "IV", "V", "VI", "VII"][i] ?? i + 2} at ${formatSpan(ms)}`).join(" · "),

@@ -25,7 +25,7 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     // Fast track: the first five eggs hatch in a minute and grow a stage a minute.
     expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
     expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
-    expect(v.fastTrack).toMatchObject({ total: 5, used: 3, remaining: 2, complete: false });
+    expect(v.fastTrack).toMatchObject({ total: 5, issued: 3, used: 0, remaining: 5, complete: false }); // none hatched yet
     expect(v.eggs.every((e) => e.speciesId === null)).toBe(true); // sealed until hatch
   });
 

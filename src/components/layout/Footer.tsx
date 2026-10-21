@@ -33,6 +33,7 @@ export function Footer() {
             <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
             <li><Link className="hover:text-bone" href="/updates">Updates</Link></li>
+            <li><Link className="hover:text-bone" href="/proof">Proof</Link></li>
             <li><Link className="hover:text-bone" href="/disclaimer">No promises</Link></li>
             {COMMUNITY && <li><a className="hover:text-bone" href={COMMUNITY.url} target="_blank" rel="noopener noreferrer">{COMMUNITY.label}</a></li>}
             {FIRST_VISIT_INTRO.enabled && <li><ReplayIntroButton className="hover:text-bone" /></li>}

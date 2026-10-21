@@ -1,8 +1,9 @@
 import { eggProgression, eggStatusAt, fastTrackAfterMaturityMs, initialGrowthMsFor, isFastTrack, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
-import { evolutionOf, rollSpecies } from "@/lib/progression";
+import { evolutionOf, rarityChances, rollSpecies } from "@/lib/progression";
 import { hashString } from "@/lib/rng";
-import { SPECIES } from "@/lib/species";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import type { Proof } from "@/shared/proof";
 import type { HatchResult, TrackedEgg, TrackedHolderView } from "@/shared/trackedHolder";
 import { formatBaseUnits, wholeTokensToBase } from "../amounts";
 import type { Db, Sql } from "../db/types";
@@ -580,7 +581,37 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     };
   }
 
-  return { discover, processTransaction, syncOwner, runSync, ingestSignatures, holderView, hatch, isExcluded, mint, health };
+  /** Public, read-only facts for /proof: sync position, egg and rarity counts, and the excluded wallets. */
+  async function proof(): Promise<Proof> {
+    const h = await health();
+    const slot = (await db.query<{ s: string | null }>(`SELECT max(balance_slot)::text AS s FROM holders`)).rows[0].s;
+    const start = await getState("tracking_start_slot");
+    const eggs = (await db.query<{ issued: number; hatched: number }>(`SELECT count(*)::int AS issued, count(hatched_ms)::int AS hatched FROM eggs`)).rows[0];
+    const chances = rarityChances(gameConfig);
+    const rarity = Object.fromEntries(Object.entries(chances).map(([r, c]) => [r, { hatched: 0, configured: c }])) as Proof["rarity"];
+    for (const row of (await db.query<{ species_id: string; n: number }>(`SELECT species_id, count(*)::int AS n FROM eggs WHERE hatched_ms IS NOT NULL GROUP BY species_id`)).rows) {
+      const s = SPECIES_BY_ID[row.species_id];
+      if (s) rarity[s.rarity].hatched += row.n;
+    }
+    // Configured project wallets first, then program-controlled owners discovery found holding the token
+    // (excluded owners are never synced, so their recorded balance isn't meaningful).
+    const program = (await db.query<{ owner: string }>(`SELECT owner FROM holders WHERE excluded AND NOT (owner = ANY($1)) ORDER BY owner LIMIT 100`, [[...config.excludedOwners]])).rows.map((r) => r.owner);
+    const all = [...[...config.excludedOwners].sort().map((address) => ({ address, reason: "project" as const })), ...program.map((address) => ({ address, reason: "program" as const }))];
+    return {
+      source: config.source,
+      generatedAt: now(),
+      lastSyncAt: h.lastSuccessfulSyncAt,
+      latestSlot: slot === null ? null : Number(slot) || null,
+      trackingStartSlot: start === null ? null : Number(start),
+      supplyMatchesConfig: h.mintSupplyMatchesConfig,
+      eggs: { issued: eggs.issued, hatched: eggs.hatched },
+      rarity,
+      excluded: all.slice(0, 100),
+      excludedCount: config.excludedOwners.size + (await db.query<{ n: number }>(`SELECT count(*)::int AS n FROM holders WHERE excluded AND NOT (owner = ANY($1))`, [[...config.excludedOwners]])).rows[0].n,
+    };
+  }
+
+  return { discover, processTransaction, syncOwner, runSync, ingestSignatures, holderView, hatch, isExcluded, mint, health, proof };
 }
 
 export type Tracker = ReturnType<typeof createTracker>;

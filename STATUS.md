@@ -1,7 +1,7 @@
 # Solanites — STATUS (source of truth)
 
 Owner rules: the manager plans, delegates and monitors only. Ask the owner only before deleting work, spending money, posting publicly or approving art.
-Updated: 2026-10-21, by SOL · Workstream Manager.
+Updated: 2026-10-21 21:30 UTC, by SOL · Workstream Manager.
 
 ## Live
 - Production: https://solanites.vercel.app, built from `main` 03084fb (identical to integration 8eb2675). It includes:
@@ -17,9 +17,13 @@ Updated: 2026-10-21, by SOL · Workstream Manager.
 | Lane | Session | Doing now | Report to |
 |---|---|---|---|
 | Manager | SOL · Workstream Manager | Plan, delegate, STATUS.md | Owner |
-| Site (Opus) | SOL · Site | Merge `feature/retention-1-3` @ 286c0bd (612 tests, 18/18 checks) into integration; check Preview; no prod | Manager |
+| Site (Opus) | SOL · Site | Buyer-review upgrade on `site/buyer-upgrade` (from main): visual QA, then O-004 a–d, j/k/l/n/o, g/i/m, e/f (hidden until configured), h kept as is. PR plus preview, no prod. a–d already built on `feature/o-004-buyer-review` and being moved across | Manager |
 | Creature Art (owner's PC) | Local Claude Code | Redo Aurelion in premium realism, then wait for art approval | Owner (art), Manager |
 | Marketing (Sonnet) | SOL · Marketing | Consolidated `marketing/PLAN.md`: inventory, conflicts, one posting order | Manager |
+
+## X schedule (Typefully, set 349175)
+- 21 Oct: 9 standalone posts, 20:15–23:35 UTC.
+- 22–24 Oct: 10 posts (odds card, hatchery, hatching, Neonyx, intro, catalogue, collection, teaser, leaderboard, CTA).
 
 ## Done
 - Phase 1, X warm-up: profile kit on `marketing/x-warmup`; 22 Typefully drafts, none scheduled.

@@ -2,3 +2,13 @@
 export const X_HANDLE = "@Solanites_";
 export const X_URL = "https://x.com/Solanites_";
 export const CONTRACT_LABEL = "Contract: coming soon";
+
+/**
+ * The public $SLNT contract (mint) address, set by the owner on launch day by copying it from the
+ * deploy transaction, never typed or guessed. While null, every contract display reads "coming soon".
+ */
+export const CONTRACT_ADDRESS: string | null = null;
+
+const BASE58_ADDRESS = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+export const isContractAddress = (a: string | null | undefined): a is string => typeof a === "string" && BASE58_ADDRESS.test(a);
+export const solscanTokenUrl = (address: string) => `https://solscan.io/token/${address}`;

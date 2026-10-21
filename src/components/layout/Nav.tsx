@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
+import { ContractAddress } from "./ContractAddress";
 import { WalletButton } from "./WalletButton";
 import { useHatchery } from "@/state/HatcheryProvider";
 
@@ -72,6 +73,7 @@ export function Nav() {
           />
         </div>
         <div className="flex items-center gap-2">
+          <ContractAddress variant="compact" className="mr-2 hidden xl:inline-flex" />
           <button
             onClick={h.toggleSound}
             aria-label={h.sound ? "Mute sound" : "Enable sound"}
@@ -105,6 +107,7 @@ export function Nav() {
               {l.label}
             </Link>
           ))}
+          <ContractAddress variant="compact" className="mt-4 flex" />
           <button onClick={h.toggleSound} className="mt-4 font-mono text-xs uppercase tracking-[0.2em] text-mist sm:hidden">
             Sound: {h.sound ? "On" : "Off"}
           </button>

@@ -11,6 +11,35 @@ import type { RarityId } from "@/config/gameConfig";
 import { evolutionOf } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { CATALOGUE_SIZE, ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
+import { shortAddress } from "@/lib/format";
+import type { TrackedHolderView } from "@/shared/trackedHolder";
+
+/**
+ * A watched holder's real creatures, from the tracker (the same data as their Hatchery).
+ * Null while loading or when the server can't answer; the page then shows no discoveries
+ * rather than demo ones.
+ */
+function useTrackedCreatures(address: string | null) {
+  const [view, setView] = useState<{ owned: string[]; bestForm: Record<string, number> } | null>(null);
+  useEffect(() => {
+    setView(null);
+    if (!address) return;
+    let alive = true;
+    fetch(`/api/holders/${encodeURIComponent(address)}`, { cache: "no-store" })
+      .then((r) => (r.ok ? (r.json() as Promise<TrackedHolderView>) : null))
+      .then((v) => {
+        if (!alive || !v) return;
+        const bestForm: Record<string, number> = {};
+        for (const e of v.eggs) if (e.status === "hatched" && e.speciesId) bestForm[e.speciesId] = Math.max(bestForm[e.speciesId] ?? 0, e.evolution?.stage ?? 0);
+        setView({ owned: Object.keys(bestForm), bestForm });
+      })
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [address]);
+  return view;
+}
 
 
 
@@ -21,13 +50,19 @@ export default function CollectionPage() {
   const [status, setStatus] = useState<"all" | "owned" | "missing">("all");
   const [open, setOpen] = useState<Species | null>(null);
 
-  const bestForm = useMemo(() => {
+  // A watched address shows its real tracked creatures; only the demo shows demo discoveries.
+  const watched = h.wallet?.kind === "watch" ? h.wallet.address : null;
+  const tracked = useTrackedCreatures(watched);
+  const demoBestForm = useMemo(() => {
     const m: Record<string, number> = {};
     for (const r of h.records) if (r.hatchedAt !== null) m[r.speciesId] = Math.max(m[r.speciesId] ?? 0, evolutionOf(r.growthMs, h.config, r.maturityMs).stage);
     return m;
   }, [h.records, h.config]);
+  const isDemo = h.wallet?.kind === "demo";
+  const discovered = watched ? (tracked?.owned ?? []) : isDemo ? h.discovered : [];
+  const bestForm = watched ? (tracked?.bestForm ?? {}) : isDemo ? demoBestForm : {};
 
-  const discovery = (s: Species) => discoveryOf(s, h.discovered);
+  const discovery = (s: Species) => discoveryOf(s, discovered);
 
   // /collection?species=<id> (e.g. from the homepage Market Bond section) opens that species.
   useEffect(() => {
@@ -44,7 +79,7 @@ export default function CollectionPage() {
       (element === "all" || s.element === element) &&
       (status === "all" || (status === "owned" ? discovery(s) === "owned" : discovery(s) !== "owned")),
   );
-  const ownedCount = catalogue.filter((s) => h.discovered.includes(s.id)).length;
+  const ownedCount = catalogue.filter((s) => discovered.includes(s.id)).length;
 
   return (
     <div className="relative min-h-screen pt-24 lg:pt-28">
@@ -58,13 +93,17 @@ export default function CollectionPage() {
           </div>
           <div className="sl-glass w-full rounded-md p-5 lg:w-80">
             <div className="flex items-baseline justify-between">
-              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your discoveries</p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">
+                {watched ? `Discovered by ${shortAddress(watched)}` : isDemo ? "Demo discoveries (not real)" : "Your discoveries"}
+              </p>
               <p className="font-display text-2xl text-bone">
                 {ownedCount}
                 <span className="text-base text-mist">/{CATALOGUE_SIZE}</span>
               </p>
             </div>
             <ProgressBar value={ownedCount / CATALOGUE_SIZE} className="mt-3" />
+            {watched && !tracked && <p className="mt-2 text-xs text-mist">Loading your tracked creatures…</p>}
+            {!watched && !isDemo && <p className="mt-2 text-xs text-mist">Find your eggs in the Hatchery to mark the Solanites you've hatched.</p>}
           </div>
         </div>
 

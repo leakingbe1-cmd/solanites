@@ -1,15 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
 import { RarityBadge } from "@/components/ui/RarityBadge";
-import { columnText, formName, freshness, HOLDERS_NOTE, metricText, sourceBadge, TABS } from "@/lib/leaderboard";
+import { columnText, formName, freshness, HOLDERS_NOTE, metricText, RANK_RULES, SAMPLE_LABEL, SAMPLE_PODIUM, sourceBadge, TABS } from "@/lib/leaderboard";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
 import { LEADERBOARD_POLL_MS, type Leaderboard, type LeaderboardCategory, type LeaderRow } from "@/shared/leaderboard";
 
-type Load = { board: Leaderboard | null; refreshFailed: boolean; unavailable: string | null };
+type Load = { board: Leaderboard | null; refreshFailed: boolean; unavailable: string | null; notConfigured?: boolean };
 
 /** Polls /api/leaderboard every 30 s while the tab is visible; keeps the last good answer on failure. */
 function useLeaderboard(): Load {
@@ -23,7 +24,8 @@ function useLeaderboard(): Load {
         const body = await res.json().catch(() => null);
         if (!res.ok) {
           const message: string = body?.error?.message ?? "The leaderboard is temporarily unavailable.";
-          if (alive) setState((s) => (s.board ? { ...s, refreshFailed: true } : { board: null, refreshFailed: true, unavailable: message }));
+          const notConfigured = body?.error?.code === "NOT_CONFIGURED";
+          if (alive) setState((s) => (s.board ? { ...s, refreshFailed: true } : { board: null, refreshFailed: true, unavailable: message, notConfigured }));
           return;
         }
         if (alive) setState({ board: body as Leaderboard, refreshFailed: false, unavailable: null });
@@ -48,6 +50,63 @@ function useLeaderboard(): Load {
   return state;
 }
 
+/** Before launch: the three lists, what it takes to rank, and a clearly labelled sample podium. */
+function PreLaunchLeaderboard() {
+  const podium = [SAMPLE_PODIUM[1], SAMPLE_PODIUM[0], SAMPLE_PODIUM[2]];
+  return (
+    <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28" data-testid="leaderboard-prelaunch">
+      <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
+      <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <p className="sl-eyebrow">Hall of Keepers</p>
+          <h1 className="mt-3 sl-display-l text-bone">Leaderboard</h1>
+          <p className="mx-auto mt-4 max-w-lg text-mist">Three lists, ranked from on-chain holding and the creatures you hatch.</p>
+          <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/5 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-300/90">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
+            Opens at launch
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-3 md:grid-cols-3">
+          {TABS.map((x) => (
+            <div key={x.id} className="sl-panel rounded-md p-5">
+              <p className="font-display text-xl text-bone">{x.label}</p>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{RANK_RULES[x.id]}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative mt-14">
+          <p className="mb-4 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-amber-300/90" data-testid="sample-label">
+            {SAMPLE_LABEL} · {TABS[0].label}
+          </p>
+          <div className="grid grid-cols-3 items-end gap-2 opacity-80 sm:gap-5">
+            {podium.map((e) => {
+              const species = e.creature ? SPECIES_BY_ID[e.creature.speciesId] : undefined;
+              const color = species ? RARITIES[species.rarity].color : undefined;
+              return (
+                <div key={e.rank} className={`sl-plate relative flex flex-col items-center rounded-md border border-dashed border-amber-300/20 p-3 text-center sm:p-6 ${e.rank === 1 ? "pb-8 sm:pb-12" : ""}`}>
+                  <span className="relative font-display text-xl text-[#f6d488]/55 sm:text-3xl">#{e.rank}</span>
+                  <Art row={e} size={e.rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"} />
+                  <p className="relative truncate font-display text-sm text-bone sm:text-lg">{species?.name}</p>
+                  <p className="relative font-mono text-[10px] uppercase tracking-wider text-amber-300/80 sm:text-xs">Sample</p>
+                  <p className="relative mt-2 font-mono text-[10px] uppercase tracking-wider sm:text-xs" style={color ? { color } : undefined}>
+                    {metricText("evolved", e)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <p className="mx-auto mt-10 max-w-xl text-center text-sm text-mist">
+          Want to see how ranking feels? <Link href="/hatchery?demo=1" className="text-bone underline-offset-4 hover:underline">Try the demo</Link>. Demo creatures never appear here.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /** Re-renders every few seconds so "updated Xs ago" stays true between polls. */
 function useNow(stepMs = 5_000): number {
   const [now, setNow] = useState(() => Date.now());
@@ -65,13 +124,15 @@ function Art({ row, size, aura = true }: { row: LeaderRow; size: string; aura?: 
 
 export default function LeaderboardPage() {
   const [tab, setTab] = useState<LeaderboardCategory>("evolved");
-  const { board, refreshFailed, unavailable } = useLeaderboard();
+  const { board, refreshFailed, unavailable, notConfigured } = useLeaderboard();
   const now = useNow();
   const t = TABS.find((x) => x.id === tab)!;
   const rows = board?.categories[tab] ?? [];
   const podium = [rows[1], rows[0], rows[2]];
   const badge = board ? sourceBadge(board) : null;
   const fresh = board ? freshness(board, now, refreshFailed) : null;
+
+  if (!board && notConfigured) return <PreLaunchLeaderboard />;
 
   return (
     <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28">

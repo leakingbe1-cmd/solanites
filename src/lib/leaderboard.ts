@@ -2,7 +2,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { RARITIES } from "@/lib/rarity";
 import type { Leaderboard, LeaderboardCategory, LeaderRow } from "@/shared/leaderboard";
 import { LEADERBOARD_POLL_MS } from "@/shared/leaderboard";
-import { formatDuration } from "./format";
+import { formatDuration, formatNumber } from "./format";
 import { ago } from "./homeMetrics";
 
 /** What /leaderboard shows for each tab, worked out from /api/leaderboard (no fetching, no timers). */
@@ -49,3 +49,21 @@ export function freshness(board: Leaderboard, now: number, refreshFailed: boolea
   if (refreshFailed) return { text: `${base} · couldn't refresh, retrying`, stale };
   return { text: stale ? `${base} · may be out of date` : `${base} · refreshes every 30 s`, stale };
 }
+
+/** Before launch (/api/leaderboard answers NOT_CONFIGURED): what it takes to rank in each list. */
+export const RANK_RULES: Record<LeaderboardCategory, string> = {
+  evolved: "Hatch Solanites and keep holding: ranked by the total of their evolution stages, then the best single form.",
+  holders: `Hold at least ${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} without dropping below it: ranked by verified continuous holding.`,
+  rarest: "Ranked by the rarest Solanite you have hatched, then how many you have at that rarity.",
+};
+
+/**
+ * A sample podium for the pre-launch leaderboard, always shown labelled "Sample, not real holders".
+ * Invented rows, never real keepers; common to legendary species only (no Mythic or Secret).
+ */
+export const SAMPLE_PODIUM: LeaderRow[] = [
+  { rank: 1, keeper: "Sample keeper", creature: { speciesId: "solvanth", stage: 3 }, creatures: 3, stageSum: 8, bestStage: 3, heldMs: null, rarity: "legendary", rarityCount: 1 },
+  { rank: 2, keeper: "Sample keeper", creature: { speciesId: "neonyx", stage: 3 }, creatures: 2, stageSum: 6, bestStage: 3, heldMs: null, rarity: "epic", rarityCount: 1 },
+  { rank: 3, keeper: "Sample keeper", creature: { speciesId: "driftfin", stage: 2 }, creatures: 2, stageSum: 4, bestStage: 2, heldMs: null, rarity: "common", rarityCount: 2 },
+];
+export const SAMPLE_LABEL = "Sample, not real holders";

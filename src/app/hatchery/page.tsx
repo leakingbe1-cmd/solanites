@@ -81,6 +81,12 @@ export default function HatcheryPage() {
         </div>
 
         {h.isDemo && (
+          // Stays on screen while scrolling, so demo progress is never mistaken for real eggs.
+          <p className="pointer-events-none fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-full border border-amber-300/40 bg-black/80 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.25em] text-amber-200 backdrop-blur" data-testid="demo-badge">
+            Demo · simulated, not your real eggs
+          </p>
+        )}
+        {h.isDemo && (
           <div role="note" className="mt-6 flex flex-col gap-3 rounded-md border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-100/90 sm:flex-row sm:items-center sm:justify-between">
             <p>
               <strong className="font-semibold text-amber-200">Demo.</strong> The balance, eggs and creatures here are simulated and kept only in this browser. Nothing is read from or written to Solana.

@@ -41,6 +41,28 @@ function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord
   };
 }
 
+/**
+ * Hatched eggs this browser has already revealed, per address. Anyone viewing an address can hatch
+ * its ready eggs (the outcome is sealed at issue, so nothing is gained), so when someone else got
+ * there first the owner still gets the reveal the first time they look.
+ */
+const seenKey = (address: string) => `solanites:revealed:${address}`;
+function readSeen(address: string): Set<string> | null {
+  try {
+    const raw = localStorage.getItem(seenKey(address));
+    return raw ? new Set(JSON.parse(raw) as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+function writeSeen(address: string, ids: Set<string>) {
+  try {
+    localStorage.setItem(seenKey(address), JSON.stringify([...ids]));
+  } catch {
+    /* storage unavailable: the reveal may simply not replay */
+  }
+}
+
 /** A balance not re-verified for this long is shown as possibly out of date. */
 const STALE_AFTER_MS = 30 * 60_000;
 
@@ -113,6 +135,20 @@ export function TrackedHatchery({ address }: { address: string }) {
     return () => window.clearTimeout(t);
   }, [load, refresh]);
 
+  // Reveal eggs hatched while this browser wasn't looking (by the owner elsewhere or by a visitor).
+  // The first visit only records what is already hatched, so returning holders don't get a replay of old hatches.
+  useEffect(() => {
+    if (load.kind !== "ready" || hatching) return;
+    const hatched = load.view.eggs.filter((e) => e.status === "hatched" && e.speciesId);
+    const seen = readSeen(address);
+    if (!seen) return writeSeen(address, new Set(hatched.map((e) => e.id)));
+    const unseen = hatched.find((e) => !seen.has(e.id));
+    if (!unseen) return;
+    seen.add(unseen.id);
+    writeSeen(address, seen);
+    setHatching({ record: toRecord(unseen, Date.now() + load.offset, load.view.serverNow), speciesId: unseen.speciesId! });
+  }, [load, hatching, address]);
+
   async function hatch(egg: TrackedEgg, record: SolaniteRecord) {
     setHatchError(null);
     const res = await fetch(`/api/eggs/${encodeURIComponent(egg.id)}/hatch`, { method: "POST" });
@@ -122,6 +158,9 @@ export function TrackedHatchery({ address }: { address: string }) {
       return refresh();
     }
     setInspect(null);
+    const seen = readSeen(address) ?? new Set<string>();
+    seen.add(egg.id);
+    writeSeen(address, seen);
     setHatching({ record, speciesId: body.speciesId });
   }
 

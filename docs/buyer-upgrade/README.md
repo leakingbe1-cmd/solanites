@@ -1,0 +1,35 @@
+# Buyer upgrade (O-004): screenshots and visual QA
+
+Branch `site/buyer-upgrade`, cut from `main` 03084fb. Screenshots are at 390 px and 1440 px, named
+`<item>-<page>-<width>.png`, taken from a local production build in the pre-launch state (no mint,
+RPC or database), so the metrics, leaderboard and proof show their pre-launch designs. Files with
+`fixture` in the name come from local fixture mode (test holders, labelled on screen). No page has
+horizontal scroll at either width.
+
+## Visual QA (item 0)
+
+Before = `main`; after = this branch. Pairs are in `screens/qa/`.
+
+| # | Page, width | Bug | Fix |
+|---|---|---|---|
+| 1 | Home, both | Hero metrics "Unavailable" ×3 | Pre-launch panel (O-004a) |
+| 3 | Home 1440 | Market Bond chip "Pallow" alone on a second row | Even 3×2 grid (layout only) |
+| 4 | Collection 390 | "Ø NULLB…" truncated | Names wrap |
+| 6 | Collection 1440 | Last card alone in its row | 4 columns from xl |
+| 8 | Home | Evolution player said 1 min / +30 min / +2 h under a +1 min timeline | Player follows the fast track |
+| 9 | Hatchery demo 390 | Status dot alone on its own line | Dot kept with its text (tracked Hatchery too) |
+| 11 | Hatchery gate 1440 | "Your eggs find / you." | Balanced heading wrap, site-wide |
+| 12 | Hatchery gate | Tour link looked like plain text; disabled button unreadable | Underlined link; legible disabled state |
+| 14 | Leaderboard | Dead-end empty panel | Pre-launch leaderboard (O-004j) |
+| 15 | Leaderboard 390 | Tab labels wrap to two lines | Short labels on phones |
+| 16 | Rewards | Grey "PENDING" pills | Unset terms hidden (O-004e) |
+| 17 | How It Works | Repo file paths in visitor copy | "Rules are fixed in code…" (O-004o) |
+| 18 | How It Works | Mythic 4 % / Secret 2 % vs 3.5 % / 1.5 % on Home | One decimal, matches Home |
+| 20 | Creature detail 1440 | Stage cards stretched with empty space | Sized to content |
+| 21 | Footer | Copyright line nearly invisible | Brighter |
+| — | Header 390 | Menu button clipped at the right edge | Narrower "Find my eggs" pill on phones |
+| — | Home 1440 | Scroll cue against the metrics panel | Hidden on wide screens |
+
+Not changed: #2 the stock card's "Unavailable" pill (local only: Preview and Production set
+`MARKET_WIDGET=tradingview` and show the chart); #5, #7, #10, #13, #19 were low-severity or capture
+artefacts (lazy images, hover lift, intentional scroll peek).

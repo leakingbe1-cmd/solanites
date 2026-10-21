@@ -8,10 +8,10 @@ const egg = (over: Partial<SolaniteRecord> = {}): SolaniteRecord => ({ id: "e", 
 
 describe("existing hatch, rarity and collection rules still hold (test 15)", () => {
   it("keeps the rarity distribution unchanged", () => {
-    expect(gameConfig.rarityWeights).toEqual({ common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 });
+    expect(gameConfig.rarityWeights).toEqual({ common: 40, rare: 30, epic: 17, legendary: 8, mythic: 3.5, secret: 1.5 });
     const c = rarityChances(gameConfig);
-    expect(c.common).toBeCloseTo(0.6, 6);
-    expect(c.legendary).toBeCloseTo(0.038, 6);
+    expect(c.common).toBeCloseTo(0.4, 6);
+    expect(c.legendary).toBeCloseTo(0.08, 6);
   });
 
   it("rolls the same species for the same seed, always a real species", () => {

@@ -103,12 +103,12 @@ export const gameConfig: GameConfig = {
     ascensionRanksMs: [8 * HOUR, 24 * HOUR, 3 * DAY, 7 * DAY, 30 * DAY],
   },
   rarityWeights: {
-    common: 60,
-    rare: 25,
-    epic: 10,
-    legendary: 3.8,
-    mythic: 1,
-    secret: 0.2,
+    common: 40,
+    rare: 30,
+    epic: 17,
+    legendary: 8,
+    mythic: 3.5,
+    secret: 1.5,
   },
   policies: {
     belowThreshold: "pause",

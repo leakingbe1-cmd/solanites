@@ -13,8 +13,8 @@ import { SPECIES, type Species } from "@/lib/species";
  * multiplied, then every weight is divided by the new total so the chances sum to
  * 100%. Because the total grows too, a 10× multiplier does not make a tier exactly
  * ten times more likely. With Mythic and Secret boosted 10×, Mythic goes from
- * 1 / 100 = 1.00% to 10 / 110.8 = 9.03%; with every tier above Common boosted, the
- * Rare weight absorbs most of the gain and Mythic only reaches 2.46% even at 100×.
+ * 3.5 / 100 = 3.50% to 35 / 145 = 24.14%; with every tier above Common boosted, the
+ * Rare weight absorbs most of the gain and Mythic only reaches 5.79% even at 100×.
  * Boosted tiers keep their ratios to each other; unboosted tiers lose share.
  *
  * A tier whose base weight is 0 is excluded from the hatch pool, and multiplying 0

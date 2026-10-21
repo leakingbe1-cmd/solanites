@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SocialLine } from "@/components/layout/SocialLine";
+import { EvolutionTimeline } from "@/components/landing/EvolutionTimeline";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { HomeMetrics } from "@/components/landing/HomeMetrics";
@@ -11,8 +13,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
 import { gameConfig } from "@/config/gameConfig";
-import { formatNumber, formatSpan } from "@/lib/format";
-import { FIRST_MATURITY_MS } from "@/lib/progression";
+import { formatNumber } from "@/lib/format";
 import { RARITY_ORDER } from "@/lib/rarity";
 import { CATALOGUE_SIZE, SPECIES_BY_ID } from "@/lib/species";
 
@@ -50,6 +51,9 @@ export default function Home() {
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
               No wallet needed to explore.
             </p>
+            <div className="sl-awake-in mt-3 max-lg:order-1" style={{ animationDelay: "0.65s" }}>
+              <SocialLine className="justify-center lg:justify-start" />
+            </div>
             {/* live holders, eggs collected and market cap (/api/home-stats); on phones above the buttons, so they're on the first screen */}
             <div className="sl-awake-in mt-4 lg:mt-5" style={{ animationDelay: "0.45s" }}>
               <HomeMetrics />
@@ -108,10 +112,9 @@ export default function Home() {
       <section id="evolution" className="relative py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <SectionHeading eyebrow="Evolution" title={<>One creature.<br className="hidden sm:block" /> Four forms.</>}>
-            Every species grows into its own shape. A newly hatched Solanite is fully grown, its {gameConfig.evolution.names[1]} form, after {formatSpan(FIRST_MATURITY_MS)} for
-            your first creature (later ones take longer). It becomes {gameConfig.evolution.names[2]} after {formatSpan(gameConfig.evolution.afterMaturityMs[0])} more of holding, and{" "}
-            {gameConfig.evolution.names[3]} {formatSpan(gameConfig.evolution.afterMaturityMs[1])} after it grew up.
+            Every species grows into its own shape. Here is the whole journey of your first Solanite, from egg to {gameConfig.evolution.names[3]}.
           </SectionHeading>
+          <EvolutionTimeline />
           <EvolutionShowcase />
         </div>
       </section>

@@ -32,7 +32,7 @@ export function RarityShowcase() {
           const meta = RARITIES[r];
           const s = SPECIES_BY_ID[FEATURED[r]];
           const c = chances[r] * 100;
-          const rate = c < 1 ? c.toFixed(1) : String(Math.round(c));
+          const rate = String(Number(c.toFixed(1)));
           return (
             <button
               key={r}

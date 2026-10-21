@@ -1,4 +1,4 @@
-import { eggProgression, eggStatusAt, initialGrowthMsFor, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
+import { eggProgression, eggStatusAt, fastTrackAfterMaturityMs, initialGrowthMsFor, isFastTrack, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { evolutionOf, rollSpecies } from "@/lib/progression";
 import { hashString } from "@/lib/rng";
@@ -90,6 +90,7 @@ interface EggRow {
   species_id: string;
   hatched_ms: string | null;
   maturity_ms: string | null;
+  fast_track: boolean;
 }
 
 const num = (v: string | number | null): number | null => (v === null ? null : Number(v));
@@ -320,8 +321,9 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
           const seed = randomSeed();
           // Plain INSERT: the UNIQUE(owner, sequence) constraint aborts the whole award if it would duplicate an egg.
           await sql.query(
-            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig, SPECIES), initialGrowthMsFor(sequence, config.progression)],
+            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms, fast_track) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+            // The species (and so rarity) is rolled here, sealed, with the same odds for every egg: the fast track only changes timings.
+            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig, SPECIES), initialGrowthMsFor(sequence, config.progression), isFastTrack(sequence, config.progression)],
           );
           prevReady = sch.readyAt;
         }
@@ -453,6 +455,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       speciesId: showSpecies ? r.species_id : null,
       // Fixed when the egg was issued; eggs from before that was stored use the configured value for their sequence.
       maturityMs: r.maturity_ms !== null ? Number(r.maturity_ms) : initialGrowthMsFor(r.sequence, config.progression),
+      fastTrack: r.fast_track === true,
+      afterMaturityMs: r.fast_track === true ? fastTrackAfterMaturityMs(gameConfig.evolution.afterMaturityMs.length, config.progression) : null,
       growthMs: null,
       growing: false,
       evolution: null,
@@ -484,7 +488,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         const g = qualifyingMs(e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
         e.growing = g.growing;
-        const evo = evolutionOf(g.ms, gameConfig, e.maturityMs);
+        const evo = evolutionOf(g.ms, gameConfig, e.maturityMs, e.afterMaturityMs ?? undefined);
         e.evolution = { stage: evo.stage, label: evo.label, phase: evo.phase, matured: evo.matured, nextLabel: evo.nextLabel, toNextMs: evo.toNextMs };
       });
     }
@@ -511,6 +515,12 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         excluded: row ? row.excluded : isExcluded(address),
       },
       counts,
+      // Tied to the wallet's egg sequence numbers, which the server assigns and never reuses: nothing in the browser can reset it.
+      fastTrack: (() => {
+        const ft = config.progression.fastTrack;
+        const used = Math.min(row?.eggs_earned ?? 0, ft.eggs);
+        return { total: ft.eggs, used, remaining: ft.eggs - used, complete: used >= ft.eggs, hatchMs: ft.hatchMs, stageMs: ft.stageMs };
+      })(),
       eggs,
       rules: {
         tokensPerEgg: config.progression.tokensPerEgg,

@@ -102,13 +102,14 @@ export const gameConfig: GameConfig = {
     // Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days after maturity.
     ascensionRanksMs: [8 * HOUR, 24 * HOUR, 3 * DAY, 7 * DAY, 30 * DAY],
   },
+  // Agreed distribution (owner, 20 Oct): the same for every egg, fast-track or not.
   rarityWeights: {
-    common: 60,
-    rare: 25,
-    epic: 10,
-    legendary: 3.8,
-    mythic: 1,
-    secret: 0.2,
+    common: 40,
+    rare: 30,
+    epic: 17,
+    legendary: 8,
+    mythic: 3.5,
+    secret: 1.5,
   },
   policies: {
     belowThreshold: "pause",

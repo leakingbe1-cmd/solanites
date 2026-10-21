@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { eggProgression, incubationMsFor, scheduleEgg } from "@/config/eggProgression";
-import { SPECIES_BY_ID } from "@/lib/species";
+import { gameConfig } from "@/config/gameConfig";
+import { rollSpecies } from "@/lib/progression";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { createPgliteDb } from "../db/pglite";
 import { migrate } from "../db/schema";
 import type { Db } from "../db/types";
@@ -179,27 +181,27 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     expect(v.eggs[0].speciesId).toBe(r.result.speciesId);
   });
 
-  it("second egg: queued behind the first, then incubates for five minutes", async () => {
+  it("second egg (fast track): queued behind the first, then incubates for one minute", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(11);
     buy(h, 2_000_000);
     await tracker.runSync({ force: true });
     const [e1, e2] = (await tracker.holderView(h)).eggs;
-    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 5 * MIN, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 5 * MIN, maturityMs: 5 * MIN });
+    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 1 * MIN, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 1 * MIN, maturityMs: 1 * MIN, fastTrack: true });
     clock.advance(1 * MIN);
     expect((await tracker.holderView(h)).eggs[1].status).toBe("incubating");
-    clock.advance(5 * MIN);
+    clock.advance(1 * MIN);
     expect((await tracker.holderView(h)).eggs.map((e) => e.status)).toEqual(["ready", "ready"]);
   });
 
-  it("later eggs: 15 min, 1 h, 6 h, then 12 h each", async () => {
+  it("after the five fast-track eggs, later eggs take the long-term 12 h each", async () => {
     const { tracker, buy } = await setup();
     const h = W(12);
     buy(h, 7_000_000);
     await tracker.runSync({ force: true });
     const eggs = (await tracker.holderView(h)).eggs;
-    expect(eggs.map((e) => e.incubationMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
-    expect(eggs.map((e) => e.maturityMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 3 * HOUR, 6 * HOUR, 6 * HOUR]);
+    expect(eggs.map((e) => e.incubationMs)).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 12 * HOUR, 12 * HOUR]);
+    expect(eggs.map((e) => e.maturityMs)).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 6 * HOUR, 6 * HOUR]);
     for (let i = 1; i < eggs.length; i++) expect(eggs[i].incubationStartedAt).toBe(eggs[i - 1].readyAt);
   });
 
@@ -212,14 +214,61 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
     const e2 = (await tracker.holderView(h)).eggs[1];
-    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 5 * MIN });
+    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 1 * MIN });
   });
 
   it("scheduleEgg and incubationMsFor follow the config", () => {
-    expect([1, 2, 3, 4, 5, 6, 9].map((s) => incubationMsFor(s))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
-    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 5 * MIN, readyAt: 500 + 5 * MIN });
+    expect([1, 2, 3, 4, 5, 6, 9].map((s) => incubationMsFor(s))).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 12 * HOUR, 12 * HOUR]);
+    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 1 * MIN, readyAt: 500 + 1 * MIN });
+    // Without the fast track the long-term schedule applies from the first egg.
+    const slow = { ...eggProgression, fastTrack: { ...eggProgression.fastTrack, eggs: 0 } };
+    expect([1, 2, 3, 6].map((s) => incubationMsFor(s, slow))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 12 * HOUR]);
     expect(scheduleEgg(2, 100, 500, { ...eggProgression, incubationMode: "parallel" }).incubationStartedAt).toBe(100);
     expect(() => incubationMsFor(0)).toThrow();
+  });
+});
+
+describe("onboarding fast track: first five eggs", () => {
+  it("applies to exactly the first five eggs, survives restarts, and is never granted again", async () => {
+    const { tracker, buy, make, db, clock } = await setup();
+    const h = W(80);
+    buy(h, 3_000_000);
+    await tracker.runSync({ force: true });
+    let v = await tracker.holderView(h);
+    expect(v.fastTrack).toEqual({ total: 5, used: 3, remaining: 2, complete: false, hatchMs: MIN, stageMs: MIN });
+    // Leaving and coming back (a new server instance on the same database) keeps the progress.
+    const again = make();
+    expect((await again.holderView(h)).fastTrack.used).toBe(3);
+    clock.advance(10 * MIN);
+    buy(h, 4_000_000);
+    await again.runSync({ force: true });
+    v = await again.holderView(h);
+    expect(v.eggs.map((e) => e.fastTrack)).toEqual([true, true, true, true, true, false, false]);
+    expect(v.eggs.slice(5).map((e) => e.incubationMs)).toEqual([12 * HOUR, 12 * HOUR]);
+    expect(v.fastTrack).toMatchObject({ used: 5, remaining: 0, complete: true });
+    // Stored per egg, so nothing a client sends can change it.
+    const stored = (await db.query<{ sequence: number; fast_track: boolean }>(`SELECT sequence, fast_track FROM eggs WHERE owner = $1 ORDER BY sequence`, [h])).rows;
+    expect(stored.map((r) => r.fast_track)).toEqual([true, true, true, true, true, false, false]);
+  });
+
+  it("does not change rarity: every egg's sealed species is the normal roll for its seed", async () => {
+    const { tracker, buy, db } = await setup();
+    const h = W(81);
+    buy(h, 6_000_000);
+    await tracker.runSync({ force: true });
+    const rows = (await db.query<{ seed: string; species_id: string; fast_track: boolean }>(`SELECT seed, species_id, fast_track FROM eggs WHERE owner = $1`, [h])).rows;
+    expect(rows.some((r) => r.fast_track) && rows.some((r) => !r.fast_track)).toBe(true);
+    for (const r of rows) expect(r.species_id).toBe(rollSpecies(Number(r.seed), gameConfig, SPECIES));
+  });
+
+  it("eggs issued before the fast track existed keep their timers and normal growth", async () => {
+    const { tracker, buy, db } = await setup();
+    const h = W(82);
+    buy(h, 1_000_000);
+    await tracker.runSync({ force: true });
+    await db.query(`UPDATE eggs SET fast_track = false, incubation_ms = $2 WHERE owner = $1`, [h, 5 * MIN]);
+    const [e] = (await tracker.holderView(h)).eggs;
+    expect(e).toMatchObject({ fastTrack: false, afterMaturityMs: null, incubationMs: 5 * MIN });
   });
 });
 

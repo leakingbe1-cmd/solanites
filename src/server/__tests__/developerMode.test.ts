@@ -36,7 +36,7 @@ const odds = (patch: Partial<DevOddsSettings> = {}): DevOddsSettings => ({ ...DE
 /* ── Developer hatch odds ───────────────────────────────────── */
 
 describe("developer hatch odds", () => {
-  const PUBLISHED = { common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 };
+  const PUBLISHED = { common: 40, rare: 30, epic: 17, legendary: 8, mythic: 3.5, secret: 1.5 };
 
   it("starts at 1×, which reproduces the public odds exactly", () => {
     expect(DEFAULT_DEV_ODDS.multiplier).toBe(1);
@@ -47,13 +47,13 @@ describe("developer hatch odds", () => {
 
   it("changing the multiplier updates the test odds, renormalised (not simply ×10)", () => {
     const c = chancesOf(effectiveWeights(gameConfig, odds({ multiplier: 10 })));
-    // Mythic and Secret boosted: weights 60, 25, 10, 3.8, 10, 2 → total 110.8
-    expect(c.mythic).toBeCloseTo(10 / 110.8, 12);
-    expect(c.secret).toBeCloseTo(2 / 110.8, 12);
-    expect(c.common).toBeCloseTo(60 / 110.8, 12);
+    // Mythic and Secret boosted: weights 40, 30, 17, 8, 35, 15 → total 145
+    expect(c.mythic).toBeCloseTo(35 / 145, 12);
+    expect(c.secret).toBeCloseTo(15 / 145, 12);
+    expect(c.common).toBeCloseTo(40 / 145, 12);
     expect(c.mythic / rarityChances(gameConfig).mythic).toBeLessThan(10);
     // boosted tiers keep their ratio to each other
-    expect(c.mythic / c.secret).toBeCloseTo(5, 12);
+    expect(c.mythic / c.secret).toBeCloseTo(3.5 / 1.5, 12);
   });
 
   it("reset restores 1× and the original base configuration, which is never modified", () => {
@@ -87,8 +87,8 @@ describe("developer hatch odds", () => {
     const over = effectiveWeights(zero, odds({ multiplier: 100, includeZeroWeight: true }));
     expect(over.mythic).toBeGreaterThan(0);
     expect(over.secret).toBeGreaterThan(0);
-    // the stand-in weight is the smallest positive base weight (Legendary's 3.8), then boosted
-    expect(over.mythic).toBeCloseTo(3.8 * 100, 9);
+    // the stand-in weight is the smallest positive base weight (Legendary's 8), then boosted
+    expect(over.mythic).toBeCloseTo(8 * 100, 9);
   });
 
   it("forcing Mythic or Secret makes every simulated hatch that tier", () => {
@@ -250,7 +250,7 @@ describe("production hatches are isolated from developer odds", () => {
 
   it("eggs are sealed with the published config", () => {
     expect(src("src/server/tracker/service.ts")).toMatch(/rollSpecies\(seed, gameConfig, SPECIES\)/);
-    expect(gameConfig.rarityWeights).toEqual({ common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 });
+    expect(gameConfig.rarityWeights).toEqual({ common: 40, rare: 30, epic: 17, legendary: 8, mythic: 3.5, secret: 1.5 });
   });
 
   it("the public hatch endpoint does not respond to developer settings in a request", async () => {

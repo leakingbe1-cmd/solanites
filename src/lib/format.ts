@@ -3,6 +3,13 @@ const HOUR = 60 * MIN;
 const DAY = 24 * HOUR;
 
 /** "3d 04h 12m" style duration. */
+/** "00:42" / "01:05": a short countdown for minute-scale timers. Longer spans fall back to formatDuration. */
+export function formatClock(ms: number): string {
+  const v = Math.max(0, Math.ceil(ms / 1000));
+  if (v >= 3600) return formatDuration(ms);
+  return `${String(Math.floor(v / 60)).padStart(2, "0")}:${String(v % 60).padStart(2, "0")}`;
+}
+
 export function formatDuration(ms: number, opts: { seconds?: boolean } = {}): string {
   const v = Math.max(0, ms);
   const d = Math.floor(v / DAY);

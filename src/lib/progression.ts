@@ -29,6 +29,10 @@ export interface SolaniteRecord {
   growthMs: number;
   /** This creature's initial growth to its mature form. Falls back to the first creature's. */
   maturityMs?: number;
+  /** Fast-track creatures: cumulative growth after maturity per later form (one stage a minute). */
+  afterMaturityMs?: number[];
+  /** One of the wallet's first five (fast-track) eggs. */
+  fastTrack?: boolean;
   /** Whether the last tick found this record backed by the wallet's balance. */
   backed: boolean;
   nickname?: string;
@@ -174,17 +178,17 @@ export const FIRST_MATURITY_MS = initialGrowthMsFor(1);
  * creature with this initial growth: newborn at 0, mature at `maturityMs`,
  * later evolutions after maturity.
  */
-export function formThresholdsMs(maturityMs: number, cfg: GameConfig): number[] {
-  return [0, maturityMs, ...cfg.evolution.afterMaturityMs.map((ms) => maturityMs + ms)];
+export function formThresholdsMs(maturityMs: number, cfg: GameConfig, afterMaturityMs: number[] = cfg.evolution.afterMaturityMs): number[] {
+  return [0, maturityMs, ...afterMaturityMs.map((ms) => maturityMs + ms)];
 }
 
 /**
  * Growth and evolution from cumulative qualifying holding time since
  * hatching. A milestone is reached exactly at its threshold (>=), never before.
  */
-export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: number = FIRST_MATURITY_MS): EvolutionInfo {
+export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: number = FIRST_MATURITY_MS, afterMaturityMs?: number[]): EvolutionInfo {
   const g = Math.max(0, growthMs);
-  const t = formThresholdsMs(maturityMs, cfg);
+  const t = formThresholdsMs(maturityMs, cfg, afterMaturityMs);
   const names = cfg.evolution.names;
   let stage = 0;
   for (let i = 0; i < t.length; i++) if (g >= t[i]) stage = i;

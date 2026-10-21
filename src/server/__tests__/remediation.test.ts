@@ -75,15 +75,15 @@ describe("token configuration", () => {
 });
 
 describe("incubation and evolution boundaries (server clock only)", () => {
-  it("eggs 2 and 3 become ready exactly 5 min and 15 min after they start, not a millisecond before", async () => {
+  it("fast-track eggs 2 and 3 become ready exactly 1 min after they start, not a millisecond before", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(10);
     buy(h, 3_000_000);
     await tracker.runSync({ force: true });
     const [e1, e2, e3] = (await tracker.holderView(h)).eggs;
     for (const [egg, ms] of [
-      [e2, 5 * MIN],
-      [e3, 15 * MIN],
+      [e2, 1 * MIN],
+      [e3, 1 * MIN],
     ] as const) {
       expect(egg.readyAt - egg.incubationStartedAt).toBe(ms);
       clock.t = egg.readyAt - 1;
@@ -95,7 +95,7 @@ describe("incubation and evolution boundaries (server clock only)", () => {
     expect(e1.readyAt - e1.incubationStartedAt).toBe(1 * MIN);
   });
 
-  it("the server decides growth and each evolution stage: grown 1 min after hatching, Evolved 30 min and Ascended 2 h after that", async () => {
+  it("the server decides growth and each evolution stage: a fast-track creature is grown 1 min after hatching, Evolved 1 min and Ascended 2 min after that", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(11);
     buy(h, 1_000_000);
@@ -110,13 +110,13 @@ describe("incubation and evolution boundaries (server clock only)", () => {
     };
     expect(await at(1 * MIN - 1)).toMatchObject({ stage: 0, label: "Eggling", phase: "growing", matured: false, toNextMs: 1 });
     expect(await at(1 * MIN)).toMatchObject({ stage: 1, label: "Hatchling", phase: "mature", matured: true, nextLabel: "Evolved" });
-    expect(await at(31 * MIN - 1)).toMatchObject({ stage: 1, label: "Hatchling" });
-    expect(await at(31 * MIN)).toMatchObject({ stage: 2, label: "Evolved", phase: "evolved" });
-    expect(await at(121 * MIN - 1)).toMatchObject({ stage: 2, label: "Evolved" });
-    expect(await at(121 * MIN)).toMatchObject({ stage: 3, label: "Ascended", phase: "ascended" });
+    expect(await at(2 * MIN - 1)).toMatchObject({ stage: 1, label: "Hatchling" });
+    expect(await at(2 * MIN)).toMatchObject({ stage: 2, label: "Evolved", phase: "evolved" });
+    expect(await at(3 * MIN - 1)).toMatchObject({ stage: 2, label: "Evolved" });
+    expect(await at(3 * MIN)).toMatchObject({ stage: 3, label: "Ascended", phase: "ascended" });
     expect(await at(1 * MIN + 8 * HOUR)).toMatchObject({ stage: 3, label: "Ascended II" });
     // Repeated reads don't advance anything on their own.
-    expect(await at(121 * MIN)).toMatchObject({ stage: 3, label: "Ascended" });
+    expect(await at(3 * MIN)).toMatchObject({ stage: 3, label: "Ascended" });
   });
 
   it("concurrent hatch requests reveal one outcome exactly once", async () => {

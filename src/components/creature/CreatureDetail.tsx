@@ -151,7 +151,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-mist/60">Stage {i + 1}</p>
                     <p className="mt-0.5 font-display text-base text-bone">{n}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-mist">
-                      {isLocked ? `Unlocks: ${formUnlockText(i, gameConfig, record?.maturityMs).toLowerCase()}.` : (design?.stages[i]?.summary ?? "")}
+                      {isLocked ? `Unlocks: ${formUnlockText(i, gameConfig, record?.maturityMs, record?.afterMaturityMs).toLowerCase()}.` : (design?.stages[i]?.summary ?? "")}
                     </p>
                   </div>
                 </button>
@@ -170,7 +170,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">Stage {selected + 1} of 4</p>
           <h3 className="mt-1 font-display text-2xl text-bone">{names[selected]} form</h3>
           <>
-              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. ${formUnlockText(selected, gameConfig, record?.maturityMs)}, counting only time the balance still backs it.` : design?.stages[selected]?.summary}</p>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. ${formUnlockText(selected, gameConfig, record?.maturityMs, record?.afterMaturityMs)}, counting only time the balance still backs it.` : design?.stages[selected]?.summary}</p>
               {design && !selLocked && (
                 <dl className="mt-4 space-y-2 text-xs leading-relaxed">
                   {[

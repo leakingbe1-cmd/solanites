@@ -83,6 +83,8 @@ describe("initial growth, evolution and Ascension are separate milestones", () =
   it("describes each milestone in words", () => {
     expect([0, 1, 2, 3].map((i) => formUnlockText(i, gameConfig, 5 * MIN))).toEqual(["At hatch", "After 5 min of growth", "30 min of holding after maturity", "2 h of holding after maturity"]);
     expect(formUnlockText(1, gameConfig)).toBe("When initial growth completes (1 min for a first creature)");
+    // A fast-track creature's locked forms quote its own one-minute stages, not the standard timings.
+    expect([2, 3].map((i) => formUnlockText(i, gameConfig, 1 * MIN, [1 * MIN, 2 * MIN]))).toEqual(["1 min of holding after maturity", "2 min of holding after maturity"]);
   });
 
   it("formats milestone lengths readably", () => {

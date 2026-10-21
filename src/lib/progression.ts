@@ -228,10 +228,10 @@ export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: numbe
  * When form `i` is reached, in words. With a creature's own initial growth the
  * maturity time is exact; without one (browsing a species) it is described.
  */
-export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number): string {
+export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number, afterMaturityMs: number[] = cfg.evolution.afterMaturityMs): string {
   if (i <= 0) return "At hatch";
   if (i === 1) return maturityMs !== undefined ? `After ${formatSpan(maturityMs)} of growth` : `When initial growth completes (${formatSpan(FIRST_MATURITY_MS)} for a first creature)`;
-  return `${formatSpan(cfg.evolution.afterMaturityMs[i - 2])} of holding after maturity`;
+  return `${formatSpan(afterMaturityMs[i - 2])} of holding after maturity`;
 }
 
 /* ── Rarity roll ────────────────────────────────────────────── */

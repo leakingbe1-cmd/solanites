@@ -17,7 +17,7 @@ Updated: 2026-10-21 21:30 UTC, by SOL · Workstream Manager.
 | Lane | Session | Doing now | Report to |
 |---|---|---|---|
 | Manager | SOL · Workstream Manager | Plan, delegate, STATUS.md | Owner |
-| Site (Opus) | SOL · Site | Buyer-review upgrade on `site/buyer-upgrade` (from main): visual QA, then O-004 a–d, j/k/l/n/o, g/i/m, e/f (hidden until configured), h kept as is. PR plus preview, no prod. a–d already built on `feature/o-004-buyer-review` and being moved across | Manager |
+| Site (Opus) | SOL · Site | `site/buyer-upgrade` @ f6c8d1b pushed (22 commits from main; 640 tests; build and art:check OK). e/f hidden; h kept. Waiting for the owner to approve a PR and a preview | Manager |
 | Creature Art (owner's PC) | Local Claude Code | Redo Aurelion in premium realism, then wait for art approval | Owner (art), Manager |
 | Marketing (Sonnet) | SOL · Marketing | Consolidated `marketing/PLAN.md`: inventory, conflicts, one posting order | Manager |
 

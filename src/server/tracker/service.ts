@@ -1,7 +1,8 @@
-import { eggProgression, eggStatusAt, initialGrowthMsFor, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
+import { eggProgression, eggStatusAt, fastTrackAfterMaturityMs, initialGrowthMsFor, isFastTrack, scheduleEgg, type EggProgressionConfig } from "@/config/eggProgression";
 import { gameConfig } from "@/config/gameConfig";
 import { evolutionOf, rollSpecies } from "@/lib/progression";
 import { hashString } from "@/lib/rng";
+import { SPECIES } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView } from "@/shared/trackedHolder";
 import { formatBaseUnits, wholeTokensToBase } from "../amounts";
 import type { Db, Sql } from "../db/types";
@@ -17,6 +18,9 @@ import { applyTransferCredit, eggsToAward } from "./ledger";
 /** What the public holder view says about a failed sync; the raw error stays in the database and logs. */
 const PUBLIC_SYNC_ERROR = "The last update for this address didn't complete. It will retry automatically.";
 
+/** Safety cap on signatures listed per token account in one pass (listing only; processing has its own budget). */
+const HISTORY_LISTING_CAP = 50_000;
+
 /** Eggs and holding history only ever use finalized data, so a rolled-back block can't award an egg. */
 const COMMITMENT: Commitment = "finalized";
 
@@ -27,8 +31,10 @@ export interface TrackerConfig {
   /** Also exclude program-controlled owners (off-curve addresses such as pool authorities and vaults). */
   excludeOffCurveOwners: boolean;
   source: "chain" | "fixture";
-  /** History fetched per token account per sync before giving up for this round. */
+  /** Transactions processed per wallet per sync; a longer history continues, oldest first, on the next sync. */
   maxSignaturesPerAccount: number;
+  /** Signatures listed per token account in one pass (default 50,000); only lowered in tests. */
+  historyListingCap?: number;
   progression: EggProgressionConfig;
 }
 
@@ -84,6 +90,7 @@ interface EggRow {
   species_id: string;
   hatched_ms: string | null;
   maturity_ms: string | null;
+  fast_track: boolean;
 }
 
 const num = (v: string | number | null): number | null => (v === null ? null : Number(v));
@@ -144,13 +151,19 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const snap = await fetchMintTokenAccounts(rpc, m, COMMITMENT);
     await trackingStartSlot(snap.slot);
     const changed = new Set<string>();
-    const owners = new Set(snap.accounts.map((a) => a.owner));
+    // Only wallets holding a positive balance are holders. Pump.fun mints leave many empty
+    // accounts behind; tracking them would inflate the holder count and cost a sync round each.
+    // Known holders whose accounts drain still get needs_sync below, so credit can move.
+    const owners = new Set(snap.accounts.filter((a) => a.amount > 0n).map((a) => a.owner));
     await db.tx(async (sql) => {
       const existing = new Map(
         (await sql.query<{ address: string; owner: string; amount_base: string; state: string; closed: boolean }>(`SELECT address, owner, amount_base, state, closed FROM token_accounts`)).rows.map((r) => [r.address, r]),
       );
       for (const a of snap.accounts) {
         const prev = existing.get(a.address);
+        // Never-seen empty accounts (most of a pump.fun mint's) carry nothing to track; skipping them
+        // keeps the first discovery within the cron's time limit on networked Postgres.
+        if (!prev && a.amount === 0n) continue;
         if (prev && !prev.closed && prev.owner === a.owner && BigInt(prev.amount_base) === a.amount && prev.state === a.state) continue;
         changed.add(a.owner);
         if (prev && prev.owner !== a.owner) changed.add(prev.owner);
@@ -166,7 +179,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         changed.add(prev.owner);
         await sql.query(`UPDATE token_accounts SET closed = true, amount_base = 0, last_seen_slot = $2 WHERE address = $1`, [address, snap.slot]);
       }
-      for (const o of [...owners, ...changed]) await ensureHolder(sql, o);
+      for (const o of owners) await ensureHolder(sql, o);
       if (changed.size) await sql.query(`UPDATE holders SET needs_sync = true WHERE owner = ANY($1) AND NOT excluded`, [[...changed]]);
     });
     await setState("last_discovery_ms", String(now()));
@@ -235,25 +248,41 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     const known = (await db.query<{ address: string; sig_cursor: string | null; sig_cursor_slot: string }>(`SELECT address, sig_cursor, sig_cursor_slot FROM token_accounts WHERE owner = $1`, [owner])).rows;
 
     let complete = true;
-    const pending = new Map<string, SignatureInfo>();
-    const cursorUpdates: { address: string; signature: string; slot: number }[] = [];
+    // Each account's unprocessed history up to S, oldest first. Listing is cheap (one call per
+    // 1,000 signatures), so it covers everything; processing is what the per-pass budget limits.
+    // minContextSlot: S makes a node that hasn't reached the balance read refuse instead of
+    // returning a list missing a transfer the balance already includes (that would double-award).
+    const history = new Map<string, SignatureInfo[]>();
     for (const acc of known) {
       const res = await fetchSignaturesSince(rpc, acc.address, {
         until: acc.sig_cursor,
         minSlot: Math.max(startSlot, Number(acc.sig_cursor_slot)),
         commitment: COMMITMENT,
-        maxSignatures: config.maxSignaturesPerAccount,
+        maxSignatures: config.historyListingCap ?? HISTORY_LISTING_CAP,
+        minContextSlot: S,
       });
-      if (!res.complete) complete = false;
-      const upToS = res.signatures.filter((s) => s.slot <= S);
-      for (const s of upToS) pending.set(s.signature, s);
-      if (res.complete && upToS.length) cursorUpdates.push({ address: acc.address, signature: upToS[0].signature, slot: upToS[0].slot });
+      if (!res.complete) {
+        // Older history can't be reached oldest-first. Hold the whole wallet back: processing its other
+        // accounts alone would move credit ahead of this account's older transactions.
+        complete = false;
+        log.warn("history.too_long", { account: acc.address, listed: res.signatures.length });
+        history.clear();
+        break;
+      }
+      history.set(acc.address, res.signatures.filter((s) => s.slot <= S).reverse());
     }
-    // Oldest first, so credit moves in the order it happened.
-    const ordered = [...pending.values()].sort((a, b) => a.slot - b.slot);
-    for (const s of ordered) {
+    // Oldest first, so credit moves in the order it happened. The sort is stable, so each account keeps
+    // its own order within a slot. A transaction touching two of the owner's accounts is processed once.
+    const seen = new Set<string>();
+    const ordered = [...history.values()].flat().sort((a, b) => a.slot - b.slot).filter((s) => !seen.has(s.signature) && seen.add(s.signature));
+    // Process at most the budget this pass, extended to the end of a slot so a cursor never splits one.
+    let end = Math.min(ordered.length, config.maxSignaturesPerAccount);
+    while (end > 0 && end < ordered.length && ordered[end].slot === ordered[end - 1].slot) end++;
+    if (end < ordered.length) complete = false;
+    let done = 0;
+    for (; done < end; done++) {
       try {
-        await processTransaction(s.signature);
+        await processTransaction(ordered[done].signature);
       } catch (e) {
         if (e instanceof TransactionNotAvailableError) {
           complete = false;
@@ -262,8 +291,12 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         throw e;
       }
     }
-    if (complete) {
-      for (const c of cursorUpdates) await db.query(`UPDATE token_accounts SET sig_cursor = $2, sig_cursor_slot = $3 WHERE address = $1 AND sig_cursor_slot <= $3`, [c.address, c.signature, c.slot]);
+    // Everything before the first unprocessed slot is done: move each account's cursor there, so the next
+    // pass continues from it instead of re-reading the newest page. Re-processing a transaction is a no-op.
+    const boundary = done < ordered.length ? ordered[done].slot : Infinity;
+    for (const [address, sigs] of history) {
+      const last = sigs.filter((s) => s.slot < boundary).at(-1);
+      if (last) await db.query(`UPDATE token_accounts SET sig_cursor = $2, sig_cursor_slot = $3 WHERE address = $1 AND sig_cursor_slot <= $3`, [address, last.signature, last.slot]);
     }
 
     const t = now();
@@ -288,8 +321,9 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
           const seed = randomSeed();
           // Plain INSERT: the UNIQUE(owner, sequence) constraint aborts the whole award if it would duplicate an egg.
           await sql.query(
-            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig), initialGrowthMsFor(sequence, config.progression)],
+            `INSERT INTO eggs (id, owner, sequence, source, earned_ms, earned_slot, incubation_started_ms, incubation_ms, ready_ms, seed, species_id, maturity_ms, fast_track) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+            // The species (and so rarity) is rolled here, sealed, with the same odds for every egg: the fast track only changes timings.
+            [`egg_${owner}_${sequence}`, owner, sequence, row.source, t, S, sch.incubationStartedAt, sch.incubationMs, sch.readyAt, seed, rollSpecies(seed, gameConfig, SPECIES), initialGrowthMsFor(sequence, config.progression), isFastTrack(sequence, config.progression)],
           );
           prevReady = sch.readyAt;
         }
@@ -421,6 +455,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       speciesId: showSpecies ? r.species_id : null,
       // Fixed when the egg was issued; eggs from before that was stored use the configured value for their sequence.
       maturityMs: r.maturity_ms !== null ? Number(r.maturity_ms) : initialGrowthMsFor(r.sequence, config.progression),
+      fastTrack: r.fast_track === true,
+      afterMaturityMs: r.fast_track === true ? fastTrackAfterMaturityMs(gameConfig.evolution.afterMaturityMs.length, config.progression) : null,
       growthMs: null,
       growing: false,
       evolution: null,
@@ -440,6 +476,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     // (readyAt), not when someone pressed the reveal. So a first egg earned at 0:00 hatches at
     // 1:00 and is fully grown at 2:00 however late the reveal is opened. The k-th hatched
     // creature (oldest first) grows while the recorded balance is at least k × tokensPerEgg.
+    // Fast-track creatures are the exception: their stages are a minute apart, so they grow from
+    // the reveal itself, or a late reveal would skip straight past the evolutions.
     const hatched = eggs.filter((e) => e.hatchedAt !== null);
     if (hatched.length) {
       const changes = (
@@ -449,10 +487,10 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         )
       ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }));
       hatched.forEach((e, k) => {
-        const g = qualifyingMs(e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
+        const g = qualifyingMs(e.fastTrack ? Math.max(e.readyAt, e.hatchedAt!) : e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
         e.growing = g.growing;
-        const evo = evolutionOf(g.ms, gameConfig, e.maturityMs);
+        const evo = evolutionOf(g.ms, gameConfig, e.maturityMs, e.afterMaturityMs ?? undefined);
         e.evolution = { stage: evo.stage, label: evo.label, phase: evo.phase, matured: evo.matured, nextLabel: evo.nextLabel, toNextMs: evo.toNextMs };
       });
     }
@@ -479,6 +517,14 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         excluded: row ? row.excluded : isExcluded(address),
       },
       counts,
+      // Tied to the wallet's egg sequence numbers, which the server assigns and never reuses: nothing in the browser can reset it.
+      fastTrack: (() => {
+        const ft = config.progression.fastTrack;
+        const issued = Math.min(row?.eggs_earned ?? 0, ft.eggs);
+        // Progress is hatches, not issues: a wallet that earned ten eggs at once has used none of its fast track until one hatches.
+        const used = eggs.filter((e) => e.fastTrack && e.status === "hatched").length;
+        return { total: ft.eggs, issued, used, remaining: ft.eggs - used, complete: used >= ft.eggs, hatchMs: ft.hatchMs, stageMs: ft.stageMs };
+      })(),
       eggs,
       rules: {
         tokensPerEgg: config.progression.tokensPerEgg,
@@ -514,6 +560,11 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     )).rows[0];
     const ok = (await db.query<{ finished_ms: string }>(`SELECT finished_ms FROM sync_runs WHERE status = 'ok' ORDER BY id DESC LIMIT 1`)).rows[0];
     const holders = (await db.query<{ n: number; pending: number }>(`SELECT count(*)::int AS n, count(*) FILTER (WHERE needs_sync)::int AS pending FROM holders WHERE NOT excluded`)).rows[0];
+    // Unique non-excluded wallets with a positive balance in open token accounts, as of the last snapshot.
+    const current = (await db.query<{ n: number }>(
+      `SELECT count(DISTINCT t.owner)::int AS n FROM token_accounts t JOIN holders h ON h.owner = t.owner
+       WHERE NOT t.closed AND t.amount_base > 0 AND NOT h.excluded`,
+    )).rows[0];
     const supply = await getState("mint_supply_matches_config");
     const lastOkAt = ok ? Number(ok.finished_ms) : null;
     return {
@@ -521,6 +572,9 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       lastSuccessfulSyncAt: lastOkAt,
       syncStale: lastOkAt === null || now() - lastOkAt > staleAfterMs,
       trackedHolders: holders.n,
+      // Explorer-comparable holder count. Frozen balances count here, though they earn no eggs;
+      // trackedHolders also includes ex-holders, so never present it as the holder count.
+      currentHolders: current.n,
       holdersAwaitingSync: holders.pending,
       mintSupplyMatchesConfig: supply === null ? null : supply === "true",
     };

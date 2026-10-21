@@ -44,19 +44,19 @@ export function HatcheryGuide() {
   ];
   return (
     <section aria-labelledby="hatchery-guide" className="relative mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-      <h2 id="hatchery-guide" className="font-mono text-[11px] uppercase tracking-[0.35em] text-sol-green/80">
+      <h2 id="hatchery-guide" className="sl-eyebrow">
         How the Hatchery works
       </h2>
       <div className="mt-6 grid gap-4 md:grid-cols-3" data-tour="guide">
         {cards.map((c) => (
-          <div key={c.key} className="sl-gradient-border relative flex flex-col rounded-3xl bg-white/[0.02] p-6">
+          <div key={c.key} className="sl-gradient-border relative flex flex-col rounded-md bg-white/[0.02] p-6">
             <div className="flex items-start justify-between gap-4">
               <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">{c.eyebrow}</p>
               <div className="-mr-1 -mt-2 h-16 w-16 shrink-0" aria-hidden>
                 {c.art}
               </div>
             </div>
-            <h3 className="mt-1 font-display text-lg text-white">{c.title}</h3>
+            <h3 className="mt-1 font-display text-lg text-bone">{c.title}</h3>
             <p className="mt-2 flex-1 text-sm leading-relaxed text-mist">{c.body}</p>
             {c.link && (
               <Link href={c.link.href} className="mt-4 text-sm text-sol-green/90 underline-offset-4 hover:underline">

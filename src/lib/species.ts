@@ -1,4 +1,4 @@
-import type { RarityId } from "@/config/gameConfig";
+import { gameConfig, type RarityId } from "@/config/gameConfig";
 
 
 export type Element =
@@ -554,7 +554,6 @@ export const SPECIES: Species[] = [
     lore: "Thalor patrols the cold trench beneath every ledger, its armoured brow turned toward anything that sinks too fast. It has never surfaced without a reason.",
     stats: { power: 90, spirit: 78, agility: 60 },
   },
-
   // ── MYTHIC ── platinum & cosmic
   {
     id: "astravex",
@@ -692,7 +691,19 @@ export const SPECIES: Species[] = [
   },
 ];
 
+/** Every species in the game: the number the site advertises. */
+export const CATALOGUE_SIZE = SPECIES.length;
+
+/** Lookup by id. Own properties only, so ids like "constructor" resolve to nothing. */
 export const SPECIES_BY_ID: Record<string, Species> = Object.fromEntries(SPECIES.map((s) => [s.id, s]));
+
+/**
+ * The stage a creature is shown at when no stage is chosen (the Collection's plates, related
+ * cards and the detail view's opening stage): its final evolution, taken from the evolution
+ * data (0-indexed, so Ascended is 3 with four forms). A viewer's own creature, or a stage
+ * someone picks, still shows that stage.
+ */
+export const FEATURED_STAGE = gameConfig.evolution.names.length - 1;
 
 export function speciesOfRarity(r: RarityId): Species[] {
   return SPECIES.filter((s) => s.rarity === r);

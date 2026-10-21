@@ -1,0 +1,272 @@
+/* ── Creature scenes: biome plate + species idle (src/lib/creatureScenes.ts) ─────────────
+   The biome sits behind the transparent creature art and never draws ground, a horizon,
+   a halo, rays or sparkles (canon W1–W2): it is a painted place, framed per stage. Every
+   movement is a transform or an opacity, paused off screen ([data-active] is set by an
+   IntersectionObserver) and removed under prefers-reduced-motion. */
+
+/* position comes from the caller's classes (CreatureScene adds `relative` when none is given):
+   these rules are unlayered, so setting it here would beat Tailwind's layered utilities */
+.sl-scene {
+  overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size;
+}
+.sl-scene-art {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── the biome ── */
+.sl-biome {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(110% 85% at 28% 18%, color-mix(in srgb, var(--sc-0) 55%, transparent) 0%, transparent 60%),
+    radial-gradient(120% 100% at 50% 55%, var(--sc-1) 0%, var(--sc-2) 100%);
+  pointer-events: none;
+  /* its own layer: the blurred plate is rasterised once, not again under every idle frame */
+  will-change: transform;
+}
+.sl-biome-plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(var(--bz, 1));
+  transform-origin: var(--bx, 50%) var(--by, 50%);
+  /* depth of field scales with the box: --bf is in px at 1024 */
+  filter: brightness(var(--bl, 1)) saturate(var(--bs, 1)) blur(calc(var(--bf, 0) * 100cqw / 1024));
+}
+.sl-biome-plate[data-missing] {
+  display: none;
+}
+/* The world's own light, as painted: the warm key from the upper left and the violet from
+   behind, stronger as the creature grows. A wash over the whole plate, never a glow shape
+   behind the creature. */
+.sl-biome-air {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(150deg, rgba(255, 226, 168, 0.14) 0%, transparent 42%),
+    linear-gradient(330deg, rgba(125, 92, 240, 0.16) 0%, transparent 46%);
+  mix-blend-mode: soft-light;
+  opacity: var(--ba, 0.6);
+}
+/* canon C6/W1: the lower plate dissolves into the biome's own deep tone, so nothing reads as ground */
+.sl-biome-floor {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--sc-2) 0%, color-mix(in srgb, var(--sc-2) 82%, transparent) calc(var(--fl) * 0.45), transparent var(--fl));
+}
+.sl-biome-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 72% 70% at 50% 48%, transparent 40%, rgba(5, 4, 10, var(--bv, 0.5)) 100%);
+}
+.sl-scene[data-stir] .sl-biome-air {
+  animation: sl-scene-air 16s ease-in-out infinite;
+}
+@keyframes sl-scene-air {
+  0%, 100% { opacity: var(--ba, 0.6); }
+  50% { opacity: calc(var(--ba, 0.6) * 0.72); }
+}
+
+/* environmental particles: a full-height column drifts, a small soft dot rides in it */
+.sl-mote {
+  position: absolute;
+  top: 0;
+  left: var(--x);
+  width: 0;
+  height: 100%;
+  animation: sl-mote-rise var(--d) linear var(--w) infinite;
+  will-change: transform;
+}
+.sl-mote::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c) 0%, transparent 70%);
+  opacity: 0;
+  animation: sl-mote-fade var(--d) ease-in-out var(--w) infinite, sl-mote-sway calc(var(--d) / 2.7) ease-in-out var(--w) infinite alternate;
+}
+.sl-mote[data-fall] {
+  animation-name: sl-mote-fall;
+}
+.sl-mote[data-fall]::after {
+  top: -4%;
+}
+@keyframes sl-mote-rise {
+  from { transform: translateY(0); }
+  to { transform: translateY(-104%); }
+}
+@keyframes sl-mote-fall {
+  from { transform: translateY(0); }
+  to { transform: translateY(104%); }
+}
+@keyframes sl-mote-fade {
+  0%, 100% { opacity: 0; }
+  20%, 70% { opacity: var(--o, 0.5); }
+}
+@keyframes sl-mote-sway {
+  from { translate: calc(var(--s) * -1.5) 0; }
+  to { translate: calc(var(--s) * 1.5) 0; }
+}
+
+/* ── idle: two nested layers with unrelated periods, so the motion never loops exactly ── */
+.sl-idle,
+.sl-idle-a,
+.sl-idle-b,
+.sl-idle-seg {
+  position: absolute;
+  inset: 0;
+}
+.sl-idle-seg > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.sl-idle-glow {
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: sl-idle-glow calc(var(--p) * 1.7) ease-in-out var(--dl) infinite;
+}
+@keyframes sl-idle-glow {
+  0%, 30%, 100% { opacity: 0; }
+  55% { opacity: 0.42; }
+}
+
+.sl-idle-a { animation: var(--ka) var(--p) ease-in-out var(--dl) infinite; }
+/* a moving card composites its creature layer instead of repainting the card */
+.sl-scene-card[data-active] .sl-idle-a { will-change: transform; }
+.sl-idle-b { animation: var(--kb) calc(var(--p) * 2.37) ease-in-out var(--dl) infinite; }
+.sl-idle[data-body="rock"] { --ka: sl-idle-rock; --kb: none; }
+.sl-idle[data-body="breathe"] { --ka: sl-idle-breathe; --kb: sl-idle-shift; }
+.sl-idle[data-body="stalk"] { --ka: sl-idle-breathe; --kb: sl-idle-lean; }
+.sl-idle[data-body="hover"] { --ka: sl-idle-hover; --kb: sl-idle-drift; }
+.sl-idle[data-body="swim"] { --ka: sl-idle-swim; --kb: sl-idle-pitch; }
+.sl-idle[data-body="glide"] { --ka: sl-idle-hover; --kb: sl-idle-bank; }
+.sl-idle[data-body="pulse"] { --ka: sl-idle-pulse; --kb: sl-idle-drift; }
+.sl-idle[data-body="coil"] { --ka: sl-idle-coilbreath; --kb: sl-idle-turn; }
+.sl-idle[data-body="breathe"] .sl-idle-a,
+.sl-idle[data-body="stalk"] .sl-idle-a,
+.sl-idle[data-body="rock"] .sl-idle-a,
+.sl-idle[data-body="stalk"] .sl-idle-b,
+.sl-idle[data-body="breathe"] .sl-idle-b {
+  transform-origin: 50% 90%;
+}
+
+/* --a is the peak displacement in % of the box */
+@keyframes sl-idle-rock {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(calc(var(--a) * 0.9deg)); }
+  70% { transform: rotate(calc(var(--a) * -0.9deg)); }
+}
+@keyframes sl-idle-breathe {
+  0%, 100% { transform: scale(1, 1); }
+  42% { transform: scale(calc(1 + var(--a) * 0.0028), calc(1 + var(--a) * 0.0085)); }
+}
+@keyframes sl-idle-coilbreath {
+  0%, 100% { transform: scale(1, 1); }
+  45% { transform: scale(calc(1 + var(--a) * 0.006), calc(1 + var(--a) * 0.006)); }
+}
+@keyframes sl-idle-shift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(calc(var(--a) * 0.35%)); }
+}
+@keyframes sl-idle-lean {
+  0%, 100% { transform: rotate(0deg); }
+  35% { transform: rotate(calc(var(--a) * 0.32deg)); }
+  75% { transform: rotate(calc(var(--a) * -0.22deg)); }
+}
+@keyframes sl-idle-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(calc(var(--a) * -1%)); }
+}
+@keyframes sl-idle-drift {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(calc(var(--a) * 0.45%)); }
+}
+@keyframes sl-idle-swim {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(calc(var(--a) * -0.6%), calc(var(--a) * -0.45%)); }
+  50% { transform: translate(0, 0); }
+  75% { transform: translate(calc(var(--a) * 0.6%), calc(var(--a) * -0.45%)); }
+}
+@keyframes sl-idle-pitch {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(calc(var(--a) * -0.45deg)); }
+}
+@keyframes sl-idle-bank {
+  0%, 100% { transform: rotate(calc(var(--a) * -0.5deg)); }
+  50% { transform: rotate(calc(var(--a) * 0.5deg)); }
+}
+@keyframes sl-idle-pulse {
+  0%, 100% { transform: translateY(0) scale(1, 1); animation-timing-function: ease-in; }
+  14% { transform: translateY(calc(var(--a) * -0.15%)) scale(0.982, 1.016); animation-timing-function: ease-out; }
+  38% { transform: translateY(calc(var(--a) * -1%)) scale(1, 1); animation-timing-function: ease-in-out; }
+}
+@keyframes sl-idle-turn {
+  0%, 100% { transform: rotate(calc(var(--a) * -0.28deg)); }
+  50% { transform: rotate(calc(var(--a) * 0.28deg)); }
+}
+
+/* parts: --r is the peak angle (negative mirrors it), the transform origin is the hinge on the body */
+.sl-idle-seg[data-motion="sway"] { animation: sl-part-sway var(--pp) ease-in-out var(--dl) infinite; }
+.sl-idle-seg[data-motion="skew"] { animation: sl-part-skew var(--pp) ease-in-out var(--dl) infinite; }
+.sl-idle-seg[data-motion="bend"] { animation: sl-part-bend var(--pp) ease-in-out var(--dl) infinite; }
+.sl-idle-seg[data-motion="flick"] { animation: sl-part-flick var(--pp) ease-in-out var(--dl) infinite; }
+.sl-idle-seg[data-motion="fold"] { animation: sl-part-fold var(--pp) ease-in-out var(--dl) infinite; }
+@keyframes sl-part-sway {
+  0%, 100% { transform: rotate(calc(var(--r) * -1deg)); }
+  50% { transform: rotate(calc(var(--r) * 1deg)); }
+}
+@keyframes sl-part-skew {
+  0%, 100% { transform: skewX(calc(var(--r) * -1deg)); }
+  50% { transform: skewX(calc(var(--r) * 1deg)); }
+}
+@keyframes sl-part-bend {
+  0%, 100% { transform: skewY(calc(var(--r) * -1deg)); }
+  50% { transform: skewY(calc(var(--r) * 1deg)); }
+}
+@keyframes sl-part-flick {
+  0%, 80%, 100% { transform: rotate(0deg); }
+  83% { transform: rotate(calc(var(--r) * 1deg)); }
+  86% { transform: rotate(calc(var(--r) * -0.25deg)); }
+  89% { transform: rotate(calc(var(--r) * 0.7deg)); }
+  93% { transform: rotate(0deg); }
+}
+/* fold: a frontal wing eases toward the body (--r is % of width), from its vertical attachment line */
+@keyframes sl-part-fold {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(calc(1 - var(--r) * 0.01)); }
+}
+
+/* small sizes, many at once: one body layer only, so a full Collection stays cheap */
+.sl-scene-card .sl-idle-b,
+.sl-scene-quiet .sl-idle-b {
+  animation: none;
+}
+
+/* off screen, before the first sighting, or a card beyond CARD_IDLE_CAP: hold the rest pose
+   (a capped card still idles while hovered or while its link has keyboard focus) */
+.sl-scene:not([data-active]):not(:hover):not(:focus-visible *) :is(.sl-idle-a, .sl-idle-b, .sl-idle-seg, .sl-idle-glow, .sl-mote, .sl-mote::after, .sl-biome-air) {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sl-scene :is(.sl-idle-a, .sl-idle-b, .sl-idle-seg, .sl-idle-glow, .sl-biome-air) {
+    animation: none !important;
+  }
+  .sl-scene .sl-mote {
+    display: none;
+  }
+}

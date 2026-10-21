@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { gameConfig } from "@/config/gameConfig";
-import { formatDuration } from "@/lib/format";
+import { formatClock, formatDuration } from "@/lib/format";
 import { evolutionOf, type GrowthPhase, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
@@ -15,7 +15,8 @@ const PHASE_LABEL: Record<GrowthPhase, string> = { growing: "Growing", mature: "
 
 export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpen(): void }) {
   const s = SPECIES_BY_ID[record.speciesId];
-  const evo = evolutionOf(record.growthMs, gameConfig, record.maturityMs);
+  const evo = evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs);
+  const fast = !!record.fastTrack && !evo.isMax;
   const meta = RARITIES[s.rarity];
   const paused = !record.backed;
 
@@ -45,10 +46,9 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
         onOpen();
       }}
       onMouseEnter={() => sfx.hover()}
-      className="sl-card-hover group relative overflow-hidden rounded-3xl border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
+      className="sl-card-hover group relative overflow-hidden rounded-md border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 text-left hover:border-white/15"
       style={{ "--card-glow": meta.glow, ...(celebrate ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 40px -8px ${meta.color}` } : {}) } as React.CSSProperties}
     >
-      <div className="absolute -top-20 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full opacity-30 blur-3xl transition group-hover:opacity-60" style={{ background: meta.color }} />
       <div className="relative flex items-center justify-between gap-2">
         <RarityBadge rarity={s.rarity} />
         <span
@@ -59,23 +59,28 @@ export function CreatureCard({ record, onOpen }: { record: SolaniteRecord; onOpe
           {paused ? "Paused" : PHASE_LABEL[evo.phase]}
         </span>
       </div>
-      <div className="sl-art-host relative mx-auto mt-1 aspect-square w-full max-w-[240px]" style={{ "--sl-glow": meta.glow } as React.CSSProperties}>
-        <CreatureArt species={s} stage={evo.stage} />
+      <div className="relative mx-auto mt-1 aspect-square w-full max-w-[240px]">
+        <CreatureScene species={s} stage={evo.stage} size="card" className="absolute inset-0 rounded-md" artClassName="sl-art-host" />
         {celebrate && (
-          <span role="status" className="sl-pop absolute inset-x-0 top-3 mx-auto w-fit rounded-full px-3 py-1 font-display text-xs text-black" style={{ background: meta.color }}>
+          <span role="status" className="sl-pop absolute inset-x-0 top-3 z-[2] mx-auto w-fit rounded-full px-3 py-1 font-display text-xs text-black" style={{ background: meta.color }}>
             {celebrate}
           </span>
         )}
       </div>
-      <p className="relative font-display text-xl text-white">{record.nickname ?? s.name}</p>
+      {fast && (
+        <p className="relative mb-1 w-fit rounded-full border border-sol-green/30 bg-sol-green/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.2em] text-sol-green" data-testid="fast-growth">
+          Fast growth active
+        </p>
+      )}
+      <p className="relative font-display text-xl text-bone">{record.nickname ?? s.name}</p>
       <p className="relative text-xs text-mist">
         {evo.label} form · {record.nickname ? s.name : s.epithet}
       </p>
       <div className="relative mt-4">
         <div className="flex justify-between gap-2 font-mono text-[10px] uppercase tracking-wider text-mist/70">
-          <span>{next}</span>
-          <span className="tabular-nums text-white/80" data-testid="creature-next-in">
-            {evo.isFinal ? "MAX" : paused ? "—" : formatDuration(evo.toNextMs)}
+          <span>{fast && !paused ? "Evolves in" : next}</span>
+          <span className="tabular-nums text-bone/80" data-testid="creature-next-in">
+            {evo.isFinal ? "MAX" : paused ? "—" : fast ? formatClock(evo.toNextMs) : formatDuration(evo.toNextMs)}
           </span>
         </div>
         <ProgressBar

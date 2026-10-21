@@ -4,11 +4,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
-import { LogoMark } from "@/components/layout/Logo";
-import { ParticleField } from "@/components/ui/ParticleField";
+import { Sigil } from "@/components/brand/Sigil";
 import { gameConfig } from "@/config/gameConfig";
 import { PHOENIX_INTRO } from "@/config/intro";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
+import { CATALOGUE_SIZE, SPECIES_BY_ID } from "@/lib/species";
 import { PhoenixVideo } from "./PhoenixVideo";
 import { INTRO_ATTR, INTRO_REPLAY_EVENT, markIntroSeen } from "./introState";
 
@@ -157,7 +156,7 @@ export function FirstVisitIntro() {
         ref={primary}
         type="button"
         onClick={() => close("/hatchery")}
-        className={`${variant === "video" ? "sl-btn-gold" : "sl-btn-primary text-white"} w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto`}
+        className={`sl-btn-gold w-full whitespace-nowrap rounded-full px-8 py-4 font-display text-sm font-semibold tracking-[0.2em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green focus-visible:ring-offset-2 focus-visible:ring-offset-[#05040a] sm:w-auto`}
       >
         ENTER THE HATCHERY <span aria-hidden>→</span>
       </button>
@@ -202,20 +201,15 @@ export function FirstVisitIntro() {
       aria-describedby="sl-intro-desc"
       className={`sl-intro fixed inset-0 z-[100] overflow-y-auto overflow-x-hidden bg-[#05040a] ${replay ? "is-replay" : ""} ${leaving ? "is-leaving" : ""}`}
     >
-      {/* light: violet from above, blue from below, a vignette to hold the eye in the centre */}
+      {/* a vignette to hold the eye in the centre (canon W2: no nebula blobs, particles or halos behind artwork) */}
       <div className="sl-intro-light pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-        <div className="absolute left-1/2 top-[-20%] h-[70vmax] w-[70vmax] -translate-x-1/2 rounded-full bg-sol-purple/25 blur-[120px]" />
-        <div className="absolute bottom-[-30%] left-1/2 h-[60vmax] w-[60vmax] -translate-x-1/2 rounded-full bg-sol-blue/15 blur-[120px]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.75)_100%)]" />
-      </div>
-      <div className="sl-intro-light pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-        <ParticleField density={0.00012} colors={["#9945ff", "#00c2ff", "#7cc4ff", "#ffffff"]} />
       </div>
 
       <div className="relative mx-auto flex min-h-full max-w-3xl flex-col items-center justify-between gap-5 overflow-x-clip px-5 pb-7 pt-8 text-center sm:pb-9 sm:pt-10">
         {/* wordmark */}
         <div className="flex flex-col items-center">
-          <LogoMark className="sl-intro-mark h-9 w-9 sm:h-11 sm:w-11" />
+          <Sigil variant="emblem" className="sl-intro-mark h-9 w-10 sm:h-11 sm:w-12" />
           <p className="mt-4 flex font-display text-lg font-semibold text-white sm:text-2xl" aria-label="Solanites">
             {WORDMARK.map((ch, i) => (
               <span key={i} className="sl-intro-letter inline-block px-[0.14em] sm:px-[0.18em]" style={{ animationDelay: `${0.9 + i * 0.07}s` }} aria-hidden>
@@ -227,7 +221,6 @@ export function FirstVisitIntro() {
 
         {/* the egg wakes, breaks into light, and the creature rises */}
         <div className="relative aspect-square w-[min(68vw,40svh,400px)] shrink-0" aria-hidden>
-          <div className="sl-intro-halo absolute inset-[12%] rounded-full" style={{ background: `radial-gradient(circle, ${FEATURED.palette.accent}55 0%, transparent 65%)` }} />
           <div className="sl-intro-egg absolute inset-[8%]">
             <div className="sl-hero-float h-full w-full">
               <EggArt stage={4} seed={3} />
@@ -252,7 +245,7 @@ export function FirstVisitIntro() {
             waiting to <span className="sl-gradient-text">hatch.</span>
           </h1>
           <p id="sl-intro-desc" className="sl-intro-rise mx-auto mt-4 max-w-md text-sm sm:max-w-xl leading-relaxed text-mist sm:text-base" style={{ animationDelay: "5.1s" }}>
-            Discover {SPECIES.length} species. Hold {gameConfig.token.symbol} to earn eggs, hatch them, and watch your Solanites grow from Eggling to Ascended.
+            Discover {CATALOGUE_SIZE} species. Hold {gameConfig.token.symbol} to earn eggs, hatch them, and watch your Solanites grow from Eggling to Ascended.
           </p>
         </div>
 

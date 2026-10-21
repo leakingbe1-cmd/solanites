@@ -11,7 +11,7 @@ import {
   type Ctx,
   type EyeKind,
   type Renderer,
-} from "../kit";
+} from "@/components/creature/kit";
 
 /** Astravex — a platinum stag whose antlers are constellations. Drawn as four separate forms. */
 

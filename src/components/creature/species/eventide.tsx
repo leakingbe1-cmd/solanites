@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { blade, byStage, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type Ctx, type EyeKind, type Renderer } from "../kit";
+import { blade, byStage, Dots, Eye, Gem, MIRROR, polar, rim, round, Spec, type Ctx, type EyeKind, type Renderer } from "@/components/creature/kit";
 
 /**
  * Eventide — an eclipse-headed dragonfly with four long glass wings, drawn as four separate forms.

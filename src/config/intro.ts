@@ -13,10 +13,20 @@
  * Generate or replace the clips with docs/phoenix-intro.md.
  */
 
+/**
+ * The first-visit intro overlay as a whole. Off by the owner's decision (19 Oct): the
+ * current intro footage is 720p, so the homepage opens straight onto the approved Phoenix
+ * still and its headline, with no overlay, video request or replay button. The intro code
+ * and the 720p files stay in the repo, unused, until a genuine native 1080p replacement is
+ * approved (docs/intro-1080p-quote.md). Turn it back on here.
+ */
+export const FIRST_VISIT_INTRO = { enabled: false } as const;
+
 const base = (process.env.NEXT_PUBLIC_INTRO_VIDEO_BASE ?? "/intro").replace(/\/$/, "");
 
 export const PHOENIX_INTRO = {
-  enabled: true,
+  /** Off: the 720p footage is retired from the active site (see FIRST_VISIT_INTRO). */
+  enabled: false,
   /** Desktop and landscape screens. */
   landscape: { webm: `${base}/phoenix-16x9.webm`, mp4: `${base}/phoenix-16x9.mp4`, poster: `${base}/phoenix-16x9-poster.jpg` },
   /** Phones and portrait screens. */

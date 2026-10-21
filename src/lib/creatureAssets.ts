@@ -10,17 +10,24 @@ export interface StageAsset {
   thumb: string;
   /** False when the artwork has an opaque (dark) background. */
   alpha: boolean;
-  /** Shape-only version for classified species, so "???" never needs the real art. */
+  /** Shape-only version, used for a silhouette instead of darkening the real art. */
   silhouette?: string;
 }
 
 const SPECIES = (manifest as { species: Record<string, (StageAsset | null)[]> }).species;
 
+/** Painted stages registered at runtime (none today); they win over the built-in manifest. */
+const RUNTIME: Record<string, (StageAsset | null)[]> = {};
+
+export function registerStageAssets(speciesId: string, stages: (StageAsset | null)[]): void {
+  RUNTIME[speciesId] = stages;
+}
+
 export function stageAsset(speciesId: string, stage: number): StageAsset | null {
-  return SPECIES[speciesId]?.[stage] ?? null;
+  return (RUNTIME[speciesId] ?? SPECIES[speciesId])?.[stage] ?? null;
 }
 
 /** Number of real stage assets supplied for a species (0–4). */
 export function assetCount(speciesId: string): number {
-  return (SPECIES[speciesId] ?? []).filter(Boolean).length;
+  return (RUNTIME[speciesId] ?? SPECIES[speciesId] ?? []).filter(Boolean).length;
 }

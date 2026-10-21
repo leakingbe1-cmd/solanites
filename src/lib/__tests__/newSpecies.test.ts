@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { gameConfig } from "@/config/gameConfig";
 import { discoveryOf } from "@/lib/discovery";
 import { rarityChances, rollSpecies } from "@/lib/progression";
-import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { RENDERERS } from "@/components/creature/species";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import designs from "@/data/creatureDesigns.json";
 
 const NEW = [
@@ -29,11 +29,11 @@ describe("Nyxara, Thalor and Helivane", () => {
     expect(rarityChances(gameConfig).legendary).toBeCloseTo(8 / 100, 6);
   });
 
-  it("can roll each new species, and Helivane is classified until discovered like other Mythics", () => {
+  it("can roll each new species, and Helivane is catalogued like every other species", () => {
     const hits = new Set<string>();
-    for (let seed = 1; seed < 200000 && NEW.some((n) => !hits.has(n.id)); seed++) hits.add(rollSpecies(seed, gameConfig));
+    for (let seed = 1; seed < 200000 && NEW.some((n) => !hits.has(n.id)); seed++) hits.add(rollSpecies(seed, gameConfig, SPECIES));
     for (const n of NEW) expect(hits.has(n.id)).toBe(true);
-    expect(discoveryOf(SPECIES_BY_ID.helivane, [])).toBe("classified");
+    expect(discoveryOf(SPECIES_BY_ID.helivane, [])).toBe("catalogued");
     expect(discoveryOf(SPECIES_BY_ID.thalor, [])).toBe("catalogued");
   });
 });

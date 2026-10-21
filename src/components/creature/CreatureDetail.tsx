@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CreatureArt } from "./CreatureArt";
+import { CreatureScene } from "./CreatureScene";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { gameConfig } from "@/config/gameConfig";
@@ -10,7 +10,8 @@ import { discoveryOf, type Discovery } from "@/lib/discovery";
 import { formatDuration, formatSpan } from "@/lib/format";
 import { evolutionOf, formUnlockText, type SolaniteRecord } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
-import { ELEMENT_GLYPH, SPECIES, statsAt, type Species } from "@/lib/species";
+import { ELEMENT_GLYPH, FEATURED_STAGE, SPECIES, statsAt, type Species } from "@/lib/species";
+import { CreatureMarketPanel } from "@/components/market/CreatureMarketPanel";
 import { useHatchery } from "@/state/HatcheryProvider";
 
 interface CreatureDetailProps {
@@ -22,33 +23,34 @@ interface CreatureDetailProps {
   onSelectSpecies?: (s: Species) => void;
   onPrev?: () => void;
   onNext?: () => void;
+  /** Public address whose hatched creature this is (tracked Hatchery). */
+  ownerAddress?: string | null;
 }
 
-const STATUS_LABEL: Record<Discovery, string> = { owned: "Discovered by you", catalogued: "Catalogued", classified: "Classified" };
+const STATUS_LABEL: Record<Discovery, string> = { owned: "Discovered by you", catalogued: "Catalogued" };
 
-export function CreatureDetail({ species, record, onRename, onSelectSpecies, onPrev, onNext }: CreatureDetailProps) {
+export function CreatureDetail({ species, record, onRename, onSelectSpecies, onPrev, onNext, ownerAddress }: CreatureDetailProps) {
   const h = useHatchery();
   const names = gameConfig.evolution.names;
   const discovery = discoveryOf(species, h.discovered);
-  const hidden = discovery === "classified";
   const design = designOf(species.id);
   const meta = RARITIES[species.rarity];
 
   // Real progression only: the owned creature's stage, or the best stage among the viewer's hatched creatures of this species.
-  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs) : null;
+  const evoInfo = record ? evolutionOf(record.growthMs, gameConfig, record.maturityMs, record.afterMaturityMs) : null;
   const bestOwned = useMemo(() => {
     let best = -1;
-    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig, r.maturityMs).stage);
+    for (const r of h.records) if (r.speciesId === species.id && r.hatchedAt !== null) best = Math.max(best, evolutionOf(r.growthMs, gameConfig, r.maturityMs, r.afterMaturityMs).stage);
     return best;
   }, [h.records, species.id]);
   const current = evoInfo?.stage ?? (bestOwned >= 0 ? bestOwned : null);
 
-  const [selected, setSelected] = useState(current ?? 3);
+  const [selected, setSelected] = useState(current ?? FEATURED_STAGE);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(record?.nickname ?? "");
 
-  /** A stage is locked when this specific creature hasn't reached it, or the whole species is classified. */
-  const locked = (i: number) => hidden || (record ? i > (evoInfo?.stage ?? 0) : false);
+  /** A stage is locked when this specific creature hasn't reached it. */
+  const locked = (i: number) => (record ? i > (evoInfo?.stage ?? 0) : false);
   const selLocked = locked(selected);
   const stats = statsAt(species, selected);
 
@@ -63,10 +65,10 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
     <div className="p-5 sm:p-7">
       {(onPrev || onNext) && (
         <div className="mb-5 flex gap-2 pr-12">
-          <button onClick={onPrev} disabled={!onPrev} className="rounded-full border border-white/10 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-mist transition enabled:hover:text-white disabled:opacity-30">
+          <button onClick={onPrev} disabled={!onPrev} className="rounded-full border border-white/10 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-mist transition enabled:hover:text-bone disabled:opacity-30">
             ‹ Prev
           </button>
-          <button onClick={onNext} disabled={!onNext} className="rounded-full border border-white/15 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-white transition enabled:hover:border-white/30 disabled:opacity-30">
+          <button onClick={onNext} disabled={!onNext} className="rounded-full border border-white/15 px-4 py-1.5 font-mono text-[11px] uppercase tracking-[0.2em] text-bone transition enabled:hover:border-white/30 disabled:opacity-30">
             Next ›
           </button>
         </div>
@@ -85,14 +87,14 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                 setEditing(false);
               }}
             >
-              <input id="creature-nickname" autoFocus value={name} maxLength={24} onChange={(e) => setName(e.target.value)} placeholder={species.name} className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 font-display text-xl text-white outline-none focus:border-sol-purple" />
+              <input id="creature-nickname" autoFocus value={name} maxLength={24} onChange={(e) => setName(e.target.value)} placeholder={species.name} className="w-full rounded-xl border border-white/15 bg-white/5 px-3 py-2 font-display text-xl text-bone outline-none focus:border-gilt" />
               <button className="rounded-xl bg-white/10 px-4 text-sm">Save</button>
             </form>
           ) : (
-            <h2 className="mt-1 flex items-center gap-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              {hidden ? "???" : (record?.nickname ?? species.name)}
+            <h2 className="mt-1 flex items-center gap-3 font-display text-4xl font-semibold text-bone sm:text-5xl">
+              {record?.nickname ?? species.name}
               {record && (
-                <button onClick={() => setEditing(true)} className="text-mist/50 transition hover:text-white" aria-label="Rename">
+                <button onClick={() => setEditing(true)} className="text-mist/50 transition hover:text-bone" aria-label="Rename">
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <path d="M4 20h4L19 9l-4-4L4 16v4z" />
                   </svg>
@@ -101,28 +103,26 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
             </h2>
           )}
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <RarityBadge rarity={species.rarity} size="md" hidden={hidden && species.rarity === "secret"} />
-            {!hidden && (
-              <span className="text-sm text-mist">
-                {ELEMENT_GLYPH[species.element]} {species.element}
-              </span>
-            )}
+            <RarityBadge rarity={species.rarity} size="md" />
+            <span className="text-sm text-mist">
+              {ELEMENT_GLYPH[species.element]} {species.element}
+            </span>
           </div>
           {record?.nickname && <p className="mt-2 text-sm text-mist">{species.name} · {species.epithet}</p>}
           <p className="mt-4 text-sm leading-relaxed text-mist">
-            {hidden ? "This Solanite's signature has been detected, but no keeper has revealed it to you. Hatch one to see its true form." : species.lore}
+            {species.lore}
           </p>
           <dl className="mt-5 divide-y divide-white/5 border-y border-white/5 text-sm">
             {[
-              ["Element", hidden ? "???" : `${ELEMENT_GLYPH[species.element]} ${species.element}`],
-              ["Rarity", hidden && species.rarity === "secret" ? "Unknown" : meta.label],
+              ["Element", `${ELEMENT_GLYPH[species.element]} ${species.element}`],
+              ["Rarity", meta.label],
               ["Evolution stages", String(names.length)],
               ["Status", record ? (record.backed ? "Bonded" : "Dormant — balance below threshold") : STATUS_LABEL[discovery]],
               ["Your best", current !== null ? names[current] : "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-3 py-2.5">
                 <dt className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/60">{k}</dt>
-                <dd className="text-right text-white/90">{v}</dd>
+                <dd className="text-right text-bone/90">{v}</dd>
               </div>
             ))}
           </dl>
@@ -138,20 +138,20 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                 <button
                   onClick={() => setSelected(i)}
                   aria-pressed={isSel}
-                  className={`relative flex h-full w-full flex-col overflow-hidden rounded-2xl border text-left transition ${isSel ? "border-white/30 bg-white/[0.06]" : "border-white/[0.07] bg-white/[0.02] hover:border-white/15"}`}
+                  className={`relative flex h-full w-full flex-col overflow-hidden rounded-md border text-left transition ${isSel ? "border-white/30 bg-white/[0.06]" : "border-white/[0.07] bg-white/[0.02] hover:border-white/15"}`}
                   style={isCurrent ? { boxShadow: `0 0 0 1px ${meta.color}, 0 0 30px -10px ${meta.glow}` } : undefined}
                 >
-                  <div className="relative aspect-square w-full" style={{ background: `radial-gradient(circle at 50% 60%, ${isLocked ? "rgba(110,90,255,0.12)" : meta.glow}, transparent 70%)` }}>
-                    <CreatureArt species={species} stage={i} animated={false} showAura={false} silhouette={isLocked} />
+                  <div className="relative aspect-square w-full">
+                    <CreatureScene species={species} stage={i} size="card" silhouette={isLocked} className="absolute inset-0" />
                     {isCurrent && <span className="absolute left-2 top-2 rounded-full px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-black" style={{ background: meta.color }}>{record ? "Current" : "Your best"}</span>}
-                    {isLocked && !hidden && <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-mist">Locked</span>}
+                    {isLocked && <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-mist">Locked</span>}
                     {i < names.length - 1 && <span className="absolute -right-2 top-1/2 hidden text-lg text-mist/40 sm:block" aria-hidden>›</span>}
                   </div>
                   <div className="flex flex-1 flex-col p-3">
                     <p className="font-mono text-[9px] uppercase tracking-[0.25em] text-mist/60">Stage {i + 1}</p>
-                    <p className="mt-0.5 font-display text-base text-white">{n}</p>
+                    <p className="mt-0.5 font-display text-base text-bone">{n}</p>
                     <p className="mt-1.5 text-xs leading-relaxed text-mist">
-                      {hidden ? "Undiscovered." : isLocked ? `Unlocks: ${formUnlockText(i, gameConfig, record?.maturityMs).toLowerCase()}.` : (design?.stages[i]?.summary ?? "")}
+                      {isLocked ? `Unlocks: ${formUnlockText(i, gameConfig, record?.maturityMs, record?.afterMaturityMs).toLowerCase()}.` : (design?.stages[i]?.summary ?? "")}
                     </p>
                   </div>
                 </button>
@@ -162,20 +162,15 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
       </div>
 
       {/* ── featured stage ── */}
-      <div className="mt-6 grid overflow-hidden rounded-3xl border border-white/[0.07] bg-white/[0.02] md:grid-cols-[1.3fr_1fr]">
-        <div className="relative aspect-square md:aspect-auto md:min-h-[420px]" style={{ background: `radial-gradient(circle at 50% 55%, ${selLocked ? "rgba(110,90,255,0.15)" : meta.glow}, transparent 70%)` }}>
-          <div className="absolute inset-0 mx-auto max-w-[520px]">
-            <CreatureArt species={species} stage={selected} silhouette={selLocked} />
-          </div>
+      <div className="mt-6 grid overflow-hidden rounded-md border border-white/[0.07] bg-white/[0.02] md:grid-cols-[1.3fr_1fr]">
+        <div className="relative aspect-square md:aspect-auto md:min-h-[420px]">
+          <CreatureScene species={species} stage={selected} size="detail" silhouette={selLocked} className="absolute inset-0" artClassName="mx-auto max-w-[520px]" />
         </div>
         <div className="flex min-w-0 flex-col p-5 sm:p-7">
           <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/60">Stage {selected + 1} of 4</p>
-          <h3 className="mt-1 font-display text-2xl text-white">{names[selected]} form</h3>
-          {hidden ? (
-            <p className="mt-3 text-sm leading-relaxed text-mist">Its form is unknown until you discover it.</p>
-          ) : (
-            <>
-              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. ${formUnlockText(selected, gameConfig, record?.maturityMs)}, counting only time the balance still backs it.` : design?.stages[selected]?.summary}</p>
+          <h3 className="mt-1 font-display text-2xl text-bone">{names[selected]} form</h3>
+          <>
+              <p className="mt-3 text-sm leading-relaxed text-mist">{selLocked ? `Not reached yet. ${formUnlockText(selected, gameConfig, record?.maturityMs, record?.afterMaturityMs)}, counting only time the balance still backs it.` : design?.stages[selected]?.summary}</p>
               {design && !selLocked && (
                 <dl className="mt-4 space-y-2 text-xs leading-relaxed">
                   {[
@@ -185,7 +180,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                   ].map(([k, v]) => (
                     <div key={k} className="grid grid-cols-[76px_1fr] gap-2">
                       <dt className="font-mono text-[10px] uppercase tracking-[0.18em] text-mist/60">{k}</dt>
-                      <dd className="text-white/80">{v}</dd>
+                      <dd className="text-bone/80">{v}</dd>
                     </div>
                   ))}
                 </dl>
@@ -196,7 +191,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                     <div key={k} className="grid grid-cols-[64px_1fr_32px] items-center gap-3 text-xs">
                       <span className="uppercase tracking-widest text-mist/70">{k}</span>
                       <ProgressBar value={stats[k] / 250} colors={[meta.color2, meta.color]} glow={false} />
-                      <span className="text-right font-mono text-white/80">{stats[k]}</span>
+                      <span className="text-right font-mono text-bone/80">{stats[k]}</span>
                     </div>
                   ))}
                 </div>
@@ -208,12 +203,11 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
                   </span>
                 ))}
               </div>
-            </>
-          )}
+          </>
           {record && evoInfo && (
             <div className="mt-auto pt-5">
               <div className="flex items-baseline justify-between text-sm">
-                <span className="text-white">{evoInfo.isFinal ? evoInfo.label : `${evoInfo.label} → ${evoInfo.nextLabel}`}</span>
+                <span className="text-bone">{evoInfo.isFinal ? evoInfo.label : `${evoInfo.label} → ${evoInfo.nextLabel}`}</span>
                 <span className="font-mono text-xs text-mist">{evoInfo.isFinal ? "MAX" : formatDuration(evoInfo.toNextMs)}</span>
               </div>
               <ProgressBar value={evoInfo.toNextProgress} className="mt-2.5" colors={[meta.color2, meta.color]} />
@@ -225,37 +219,37 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
         </div>
       </div>
 
+      {/* ── linked stock (information only; never recolours the art) ── */}
+      <CreatureMarketPanel key={species.id} speciesId={species.id} accent={species.palette.accent} owner={record ? ownerAddress : null} className="mt-6" />
+
       {/* ── related ── */}
       {related.length > 0 && (
         <div className="mt-7">
-          <h3 className="flex items-center gap-3 font-display text-lg text-white">
-            Related creatures <span className="font-sans text-xs text-mist">{hidden ? "" : `${species.element} & ${meta.label}`}</span>
+          <h3 className="flex items-center gap-3 font-display text-lg text-bone">
+            Related creatures <span className="font-sans text-xs text-mist">{`${species.element} & ${meta.label}`}</span>
           </h3>
           <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {related.map((s) => {
               const d = discoveryOf(s, h.discovered);
-              const rh = d === "classified";
               const body = (
                 <>
                   <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-wider">
                     <span className="text-mist/60">#{String(s.dex).padStart(3, "0")}</span>
                     {d === "owned" && <span className="text-sol-green">● Discovered</span>}
                   </div>
-                  <div className="sl-art-host aspect-square" style={{ "--sl-glow": rh ? "rgba(110,90,255,0.3)" : RARITIES[s.rarity].glow } as React.CSSProperties}>
-                    <CreatureArt species={s} stage={2} showAura={false} silhouette={rh} />
-                  </div>
-                  <p className="truncate font-display text-sm text-white">{rh ? "???" : s.name}</p>
+                  <CreatureScene species={s} stage={FEATURED_STAGE} size="card" className="my-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
+                  <p className="truncate font-display text-sm text-bone">{s.name}</p>
                   <div className="mt-1.5">
-                    <RarityBadge rarity={s.rarity} hidden={rh && s.rarity === "secret"} />
+                    <RarityBadge rarity={s.rarity} />
                   </div>
                 </>
               );
               return onSelectSpecies ? (
-                <button key={s.id} onClick={() => onSelectSpecies(s)} className="sl-card-hover group rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3 text-left hover:border-white/15">
+                <button key={s.id} onClick={() => onSelectSpecies(s)} className="sl-card-hover group rounded-md border border-white/[0.07] bg-white/[0.02] p-3 text-left hover:border-white/15">
                   {body}
                 </button>
               ) : (
-                <div key={s.id} className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-3">
+                <div key={s.id} className="rounded-md border border-white/[0.07] bg-white/[0.02] p-3">
                   {body}
                 </div>
               );

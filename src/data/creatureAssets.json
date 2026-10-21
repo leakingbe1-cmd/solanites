@@ -9,172 +9,727 @@
   },
   "species": {
     "mossling": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/mossling/1-eggling.webp",
+        "thumb": "/creatures/mossling/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 30170
+      },
+      {
+        "src": "/creatures/mossling/2-hatchling.webp",
+        "thumb": "/creatures/mossling/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 47798
+      },
+      {
+        "src": "/creatures/mossling/3-evolved.webp",
+        "thumb": "/creatures/mossling/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 76270
+      },
+      {
+        "src": "/creatures/mossling/4-ascended.webp",
+        "thumb": "/creatures/mossling/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 135156
+      }
     ],
     "driftfin": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/driftfin/1-eggling.webp",
+        "thumb": "/creatures/driftfin/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 23152
+      },
+      {
+        "src": "/creatures/driftfin/2-hatchling.webp",
+        "thumb": "/creatures/driftfin/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 27108
+      },
+      {
+        "src": "/creatures/driftfin/3-evolved.webp",
+        "thumb": "/creatures/driftfin/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 64448
+      },
+      {
+        "src": "/creatures/driftfin/4-ascended.webp",
+        "thumb": "/creatures/driftfin/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 81560
+      }
     ],
     "pallow": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/pallow/1-eggling.webp",
+        "thumb": "/creatures/pallow/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 42910
+      },
+      {
+        "src": "/creatures/pallow/2-hatchling.webp",
+        "thumb": "/creatures/pallow/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 70612
+      },
+      {
+        "src": "/creatures/pallow/3-evolved.webp",
+        "thumb": "/creatures/pallow/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 135596
+      },
+      {
+        "src": "/creatures/pallow/4-ascended.webp",
+        "thumb": "/creatures/pallow/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 103588
+      }
     ],
     "glimmeray": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/glimmeray/1-eggling.webp",
+        "thumb": "/creatures/glimmeray/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 28660
+      },
+      {
+        "src": "/creatures/glimmeray/2-hatchling.webp",
+        "thumb": "/creatures/glimmeray/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 35066
+      },
+      {
+        "src": "/creatures/glimmeray/3-evolved.webp",
+        "thumb": "/creatures/glimmeray/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 42152
+      },
+      {
+        "src": "/creatures/glimmeray/4-ascended.webp",
+        "thumb": "/creatures/glimmeray/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 76516
+      }
     ],
     "sproutwyrm": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/sproutwyrm/1-eggling.webp",
+        "thumb": "/creatures/sproutwyrm/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 33110
+      },
+      {
+        "src": "/creatures/sproutwyrm/2-hatchling.webp",
+        "thumb": "/creatures/sproutwyrm/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 36086
+      },
+      {
+        "src": "/creatures/sproutwyrm/3-evolved.webp",
+        "thumb": "/creatures/sproutwyrm/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 64132
+      },
+      {
+        "src": "/creatures/sproutwyrm/4-ascended.webp",
+        "thumb": "/creatures/sproutwyrm/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 129658
+      }
     ],
     "frostkit": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/frostkit/1-eggling.webp",
+        "thumb": "/creatures/frostkit/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 35720
+      },
+      {
+        "src": "/creatures/frostkit/2-hatchling.webp",
+        "thumb": "/creatures/frostkit/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 42168
+      },
+      {
+        "src": "/creatures/frostkit/3-evolved.webp",
+        "thumb": "/creatures/frostkit/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 64510
+      },
+      {
+        "src": "/creatures/frostkit/4-ascended.webp",
+        "thumb": "/creatures/frostkit/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 75614
+      }
     ],
     "abyssal-vael": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/abyssal-vael/1-eggling.webp",
+        "thumb": "/creatures/abyssal-vael/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 34080
+      },
+      {
+        "src": "/creatures/abyssal-vael/2-hatchling.webp",
+        "thumb": "/creatures/abyssal-vael/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 46962
+      },
+      {
+        "src": "/creatures/abyssal-vael/3-evolved.webp",
+        "thumb": "/creatures/abyssal-vael/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 71250
+      },
+      {
+        "src": "/creatures/abyssal-vael/4-ascended.webp",
+        "thumb": "/creatures/abyssal-vael/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 105088
+      }
     ],
     "stormquill": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/stormquill/1-eggling.webp",
+        "thumb": "/creatures/stormquill/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 34378
+      },
+      {
+        "src": "/creatures/stormquill/2-hatchling.webp",
+        "thumb": "/creatures/stormquill/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 42278
+      },
+      {
+        "src": "/creatures/stormquill/3-evolved.webp",
+        "thumb": "/creatures/stormquill/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 69698
+      },
+      {
+        "src": "/creatures/stormquill/4-ascended.webp",
+        "thumb": "/creatures/stormquill/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 119804
+      }
     ],
     "duskwing": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/duskwing/1-eggling.webp",
+        "thumb": "/creatures/duskwing/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 31134
+      },
+      {
+        "src": "/creatures/duskwing/2-hatchling.webp",
+        "thumb": "/creatures/duskwing/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 63728
+      },
+      {
+        "src": "/creatures/duskwing/3-evolved.webp",
+        "thumb": "/creatures/duskwing/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 80908
+      },
+      {
+        "src": "/creatures/duskwing/4-ascended.webp",
+        "thumb": "/creatures/duskwing/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 145592
+      }
     ],
     "cryovant": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/cryovant/1-eggling.webp",
+        "thumb": "/creatures/cryovant/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 33406
+      },
+      {
+        "src": "/creatures/cryovant/2-hatchling.webp",
+        "thumb": "/creatures/cryovant/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 75212
+      },
+      {
+        "src": "/creatures/cryovant/3-evolved.webp",
+        "thumb": "/creatures/cryovant/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 138730
+      },
+      {
+        "src": "/creatures/cryovant/4-ascended.webp",
+        "thumb": "/creatures/cryovant/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 167576
+      }
     ],
     "emberlisk": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/emberlisk/1-eggling.webp",
+        "thumb": "/creatures/emberlisk/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 26260
+      },
+      {
+        "src": "/creatures/emberlisk/2-hatchling.webp",
+        "thumb": "/creatures/emberlisk/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 35080
+      },
+      {
+        "src": "/creatures/emberlisk/3-evolved.webp",
+        "thumb": "/creatures/emberlisk/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 56812
+      },
+      {
+        "src": "/creatures/emberlisk/4-ascended.webp",
+        "thumb": "/creatures/emberlisk/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 105000
+      }
     ],
     "neonyx": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/neonyx/1-eggling.webp",
+        "thumb": "/creatures/neonyx/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 38474
+      },
+      {
+        "src": "/creatures/neonyx/2-hatchling.webp",
+        "thumb": "/creatures/neonyx/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 47602
+      },
+      {
+        "src": "/creatures/neonyx/3-evolved.webp",
+        "thumb": "/creatures/neonyx/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 94096
+      },
+      {
+        "src": "/creatures/neonyx/4-ascended.webp",
+        "thumb": "/creatures/neonyx/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 158896
+      }
     ],
     "aurorath": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/aurorath/1-eggling.webp",
+        "thumb": "/creatures/aurorath/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 36036
+      },
+      {
+        "src": "/creatures/aurorath/2-hatchling.webp",
+        "thumb": "/creatures/aurorath/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 50562
+      },
+      {
+        "src": "/creatures/aurorath/3-evolved.webp",
+        "thumb": "/creatures/aurorath/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 91374
+      },
+      {
+        "src": "/creatures/aurorath/4-ascended.webp",
+        "thumb": "/creatures/aurorath/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 140932
+      }
     ],
     "zephrax": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/zephrax/1-eggling.webp",
+        "thumb": "/creatures/zephrax/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 45068
+      },
+      {
+        "src": "/creatures/zephrax/2-hatchling.webp",
+        "thumb": "/creatures/zephrax/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 47956
+      },
+      {
+        "src": "/creatures/zephrax/3-evolved.webp",
+        "thumb": "/creatures/zephrax/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 102530
+      },
+      {
+        "src": "/creatures/zephrax/4-ascended.webp",
+        "thumb": "/creatures/zephrax/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 146466
+      }
     ],
     "prismara": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/prismara/1-eggling.webp",
+        "thumb": "/creatures/prismara/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 39112
+      },
+      {
+        "src": "/creatures/prismara/2-hatchling.webp",
+        "thumb": "/creatures/prismara/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 53666
+      },
+      {
+        "src": "/creatures/prismara/3-evolved.webp",
+        "thumb": "/creatures/prismara/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 108572
+      },
+      {
+        "src": "/creatures/prismara/4-ascended.webp",
+        "thumb": "/creatures/prismara/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 189328
+      }
     ],
     "aurelion": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/aurelion/1-eggling.webp",
+        "thumb": "/creatures/aurelion/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 38442
+      },
+      {
+        "src": "/creatures/aurelion/2-hatchling.webp",
+        "thumb": "/creatures/aurelion/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 56288
+      },
+      {
+        "src": "/creatures/aurelion/3-evolved.webp",
+        "thumb": "/creatures/aurelion/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 89038
+      },
+      {
+        "src": "/creatures/aurelion/4-ascended.webp",
+        "thumb": "/creatures/aurelion/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 139052
+      }
     ],
     "solvanth": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/solvanth/1-eggling.webp",
+        "thumb": "/creatures/solvanth/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 42628
+      },
+      {
+        "src": "/creatures/solvanth/2-hatchling.webp",
+        "thumb": "/creatures/solvanth/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 60576
+      },
+      {
+        "src": "/creatures/solvanth/3-evolved.webp",
+        "thumb": "/creatures/solvanth/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 87618
+      },
+      {
+        "src": "/creatures/solvanth/4-ascended.webp",
+        "thumb": "/creatures/solvanth/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 114708
+      }
     ],
     "pyraurum": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/pyraurum/1-eggling.webp",
+        "thumb": "/creatures/pyraurum/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 26242
+      },
+      {
+        "src": "/creatures/pyraurum/2-hatchling.webp",
+        "thumb": "/creatures/pyraurum/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 62312
+      },
+      {
+        "src": "/creatures/pyraurum/3-evolved.webp",
+        "thumb": "/creatures/pyraurum/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 95186
+      },
+      {
+        "src": "/creatures/pyraurum/4-ascended.webp",
+        "thumb": "/creatures/pyraurum/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 136602
+      }
     ],
     "aurelith": [
-      null,
-      null,
-      null,
-      null
-    ],
-    "astravex": [
-      null,
-      null,
-      null,
-      null
-    ],
-    "orbelith": [
-      null,
-      null,
-      null,
-      null
-    ],
-    "eventide": [
-      null,
-      null,
-      null,
-      null
-    ],
-    "genesis": [
-      null,
-      null,
-      null,
-      null
-    ],
-    "nullborn": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/aurelith/1-eggling.webp",
+        "thumb": "/creatures/aurelith/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 26798
+      },
+      {
+        "src": "/creatures/aurelith/2-hatchling.webp",
+        "thumb": "/creatures/aurelith/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 42914
+      },
+      {
+        "src": "/creatures/aurelith/3-evolved.webp",
+        "thumb": "/creatures/aurelith/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 63500
+      },
+      {
+        "src": "/creatures/aurelith/4-ascended.webp",
+        "thumb": "/creatures/aurelith/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 74466
+      }
     ],
     "velynx": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/velynx/1-eggling.webp",
+        "thumb": "/creatures/velynx/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 32326
+      },
+      {
+        "src": "/creatures/velynx/2-hatchling.webp",
+        "thumb": "/creatures/velynx/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 48312
+      },
+      {
+        "src": "/creatures/velynx/3-evolved.webp",
+        "thumb": "/creatures/velynx/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 59322
+      },
+      {
+        "src": "/creatures/velynx/4-ascended.webp",
+        "thumb": "/creatures/velynx/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 74008
+      }
     ],
     "nyxara": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/nyxara/1-eggling.webp",
+        "thumb": "/creatures/nyxara/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 38016
+      },
+      {
+        "src": "/creatures/nyxara/2-hatchling.webp",
+        "thumb": "/creatures/nyxara/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 55484
+      },
+      {
+        "src": "/creatures/nyxara/3-evolved.webp",
+        "thumb": "/creatures/nyxara/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 102868
+      },
+      {
+        "src": "/creatures/nyxara/4-ascended.webp",
+        "thumb": "/creatures/nyxara/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 128586
+      }
     ],
     "thalor": [
+      {
+        "src": "/creatures/thalor/1-eggling.webp",
+        "thumb": "/creatures/thalor/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 45822
+      },
+      {
+        "src": "/creatures/thalor/2-hatchling.webp",
+        "thumb": "/creatures/thalor/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 66806
+      },
+      {
+        "src": "/creatures/thalor/3-evolved.webp",
+        "thumb": "/creatures/thalor/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 91048
+      },
+      {
+        "src": "/creatures/thalor/4-ascended.webp",
+        "thumb": "/creatures/thalor/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 176250
+      }
+    ],
+    "astravex": [
+      {
+        "src": "/creatures/astravex/1-eggling.webp",
+        "thumb": "/creatures/astravex/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 30560
+      },
+      {
+        "src": "/creatures/astravex/2-hatchling.webp",
+        "thumb": "/creatures/astravex/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 56866
+      },
+      {
+        "src": "/creatures/astravex/3-evolved.webp",
+        "thumb": "/creatures/astravex/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 82068
+      },
+      {
+        "src": "/creatures/astravex/4-ascended.webp",
+        "thumb": "/creatures/astravex/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 99608
+      }
+    ],
+    "orbelith": [
+      {
+        "src": "/creatures/orbelith/1-eggling.webp",
+        "thumb": "/creatures/orbelith/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 37092
+      },
+      {
+        "src": "/creatures/orbelith/2-hatchling.webp",
+        "thumb": "/creatures/orbelith/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 66802
+      },
+      {
+        "src": "/creatures/orbelith/3-evolved.webp",
+        "thumb": "/creatures/orbelith/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 89336
+      },
+      {
+        "src": "/creatures/orbelith/4-ascended.webp",
+        "thumb": "/creatures/orbelith/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 151916
+      }
+    ],
+    "eventide": [
+      {
+        "src": "/creatures/eventide/1-eggling.webp",
+        "thumb": "/creatures/eventide/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 33790
+      },
       null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/eventide/3-evolved.webp",
+        "thumb": "/creatures/eventide/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 118098
+      },
+      {
+        "src": "/creatures/eventide/4-ascended.webp",
+        "thumb": "/creatures/eventide/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 159682
+      }
     ],
     "helivane": [
-      null,
-      null,
-      null,
-      null
+      {
+        "src": "/creatures/helivane/1-eggling.webp",
+        "thumb": "/creatures/helivane/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 32940
+      },
+      {
+        "src": "/creatures/helivane/2-hatchling.webp",
+        "thumb": "/creatures/helivane/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 64556
+      },
+      {
+        "src": "/creatures/helivane/3-evolved.webp",
+        "thumb": "/creatures/helivane/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 80608
+      },
+      {
+        "src": "/creatures/helivane/4-ascended.webp",
+        "thumb": "/creatures/helivane/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 103840
+      }
+    ],
+    "genesis": [
+      {
+        "src": "/creatures/genesis/1-eggling.webp",
+        "thumb": "/creatures/genesis/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 34286
+      },
+      {
+        "src": "/creatures/genesis/2-hatchling.webp",
+        "thumb": "/creatures/genesis/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 39112
+      },
+      {
+        "src": "/creatures/genesis/3-evolved.webp",
+        "thumb": "/creatures/genesis/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 57248
+      },
+      {
+        "src": "/creatures/genesis/4-ascended.webp",
+        "thumb": "/creatures/genesis/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 160764
+      }
+    ],
+    "nullborn": [
+      {
+        "src": "/creatures/nullborn/1-eggling.webp",
+        "thumb": "/creatures/nullborn/1-eggling-384.webp",
+        "alpha": true,
+        "bytes": 47820
+      },
+      {
+        "src": "/creatures/nullborn/2-hatchling.webp",
+        "thumb": "/creatures/nullborn/2-hatchling-384.webp",
+        "alpha": true,
+        "bytes": 60236
+      },
+      {
+        "src": "/creatures/nullborn/3-evolved.webp",
+        "thumb": "/creatures/nullborn/3-evolved-384.webp",
+        "alpha": true,
+        "bytes": 103694
+      },
+      {
+        "src": "/creatures/nullborn/4-ascended.webp",
+        "thumb": "/creatures/nullborn/4-ascended-384.webp",
+        "alpha": true,
+        "bytes": 121546
+      }
     ]
   }
 }

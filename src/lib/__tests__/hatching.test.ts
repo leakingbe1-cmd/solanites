@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { gameConfig, type GameConfig } from "@/config/gameConfig";
 import { rarityChances, rollRarity, rollSpecies, validateRarityConfig } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
+// The game's full catalogue (classified included), as the server rolls it.
 import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { DEMO_UNHATCHED, demoRecords } from "@/state/HatcheryProvider";
 
@@ -19,10 +20,33 @@ const seq = (...xs: number[]) => {
   return () => xs[i++];
 };
 
+describe("one catalogue for every roll", () => {
+  it("a client-side (simulated) roll lands on exactly the species the server roll does, Mythic and Secret included", () => {
+    const tiers = new Set<string>();
+    for (let seed = 0; seed < 50_000; seed++) {
+      const real = rollSpecies(seed, gameConfig, SPECIES);
+      expect(rollSpecies(seed, gameConfig)).toBe(real);
+      tiers.add(SPECIES_BY_ID[real].rarity);
+    }
+    expect(tiers.size).toBe(RARITY_ORDER.length);
+  });
+
+  it("keeps the catalogue order production rolls were issued with (reordering would change existing eggs)", () => {
+    expect(SPECIES.map((s) => s.id)).toEqual([
+      "mossling", "driftfin", "pallow", "glimmeray", "sproutwyrm", "frostkit",
+      "abyssal-vael", "stormquill", "duskwing", "cryovant", "emberlisk",
+      "neonyx", "aurorath", "zephrax", "prismara", "nyxara",
+      "aurelion", "solvanth", "pyraurum", "aurelith", "velynx", "thalor",
+      "astravex", "orbelith", "eventide", "helivane", "genesis", "nullborn",
+    ]);
+  });
+});
+
 describe("the configured rarity model", () => {
   it("is the agreed design: weights 40 / 30 / 17 / 8 / 3.5 / 1.5 and every tier has species", () => {
     expect(gameConfig.rarityWeights).toEqual({ common: 40, rare: 30, epic: 17, legendary: 8, mythic: 3.5, secret: 1.5 });
     expect(() => validateRarityConfig(gameConfig)).not.toThrow();
+    expect(() => validateRarityConfig(gameConfig, SPECIES)).not.toThrow();
     for (const r of RARITY_ORDER) expect(SPECIES.some((s) => s.rarity === r)).toBe(true);
   });
 
@@ -49,7 +73,7 @@ describe("the configured rarity model", () => {
     const cfg = withWeights({ common: 1, secret: 1 });
     expect(rollRarity(seq(0.49), cfg)).toBe("common");
     expect(rollRarity(seq(0.5), cfg)).toBe("secret");
-    for (let s = 0; s < 2000; s++) expect(["pallow", "mossling", "driftfin", "glimmeray", "sproutwyrm", "frostkit", "genesis", "nullborn"]).toContain(rollSpecies(s, cfg));
+    for (let s = 0; s < 2000; s++) expect(["pallow", "mossling", "driftfin", "glimmeray", "sproutwyrm", "frostkit", "genesis", "nullborn"]).toContain(rollSpecies(s, cfg, SPECIES));
   });
 
   it("over 400,000 consecutive seeds, rarity shares match the weights and every species appears", () => {
@@ -57,7 +81,7 @@ describe("the configured rarity model", () => {
     const byRarity: Record<string, number> = {};
     const bySpecies: Record<string, number> = {};
     for (let s = 0; s < N; s++) {
-      const id = rollSpecies(s, gameConfig);
+      const id = rollSpecies(s, gameConfig, SPECIES);
       bySpecies[id] = (bySpecies[id] ?? 0) + 1;
       const r = SPECIES_BY_ID[id].rarity;
       byRarity[r] = (byRarity[r] ?? 0) + 1;
@@ -74,13 +98,13 @@ describe("the configured rarity model", () => {
   });
 
   it("different eggs can hatch different species, and the same species can hatch more than once", () => {
-    const outcomes = Array.from({ length: 60 }, (_, s) => rollSpecies(s, gameConfig));
+    const outcomes = Array.from({ length: 60 }, (_, s) => rollSpecies(s, gameConfig, SPECIES));
     expect(new Set(outcomes).size).toBeGreaterThan(5);
     expect(new Set(outcomes).size).toBeLessThan(outcomes.length); // duplicates happen
   });
 
   it("the same seed always gives the same species (so a stored egg can't be rerolled)", () => {
-    for (const s of [0, 1, 99, 2 ** 31, 2 ** 32 - 1]) expect(rollSpecies(s, gameConfig)).toBe(rollSpecies(s, gameConfig));
+    for (const s of [0, 1, 99, 2 ** 31, 2 ** 32 - 1]) expect(rollSpecies(s, gameConfig, SPECIES)).toBe(rollSpecies(s, gameConfig, SPECIES));
   });
 });
 

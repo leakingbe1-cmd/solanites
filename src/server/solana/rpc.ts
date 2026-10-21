@@ -22,7 +22,7 @@ export class RpcResponseError extends Error {
 }
 
 export interface RpcClient {
-  call<T>(method: string, params: unknown[]): Promise<T>;
+  call<T>(method: string, params: unknown[], opts?: { timeoutMs?: number }): Promise<T>;
 }
 
 export interface RpcClientOptions {
@@ -47,12 +47,12 @@ export function createRpcClient(opts: RpcClientOptions): RpcClient {
   let nextId = 1;
 
   return {
-    async call<T>(method: string, params: unknown[]): Promise<T> {
+    async call<T>(method: string, params: unknown[], callOpts?: { timeoutMs?: number }): Promise<T> {
       let lastError = "unknown error";
       for (let attempt = 0; attempt <= retries; attempt++) {
         if (attempt > 0) await sleep(base * 2 ** (attempt - 1) * (1 + Math.random() * 0.25));
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), timeoutMs);
+        const timer = setTimeout(() => controller.abort(), callOpts?.timeoutMs ?? timeoutMs);
         try {
           const res = await doFetch(opts.url, {
             method: "POST",
@@ -83,7 +83,7 @@ export function createRpcClient(opts: RpcClientOptions): RpcClient {
           clearTimeout(timer);
         }
       }
-      throw new RpcUnavailableError(`Solana RPC unavailable after ${retries + 1} attempts (${lastError})`, retries + 1);
+      throw new RpcUnavailableError(`Solana RPC unavailable after ${retries + 1} attempts (${lastError}, ${method})`, retries + 1);
     },
   };
 }

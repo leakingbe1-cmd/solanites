@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { gameConfig } from "@/config/gameConfig";
 import { rarityChances, rollSpecies } from "@/lib/progression";
-import { SPECIES, SPECIES_BY_ID, speciesOfRarity } from "@/lib/species";
+import { speciesOfRarity } from "@/lib/species";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 
 describe("Velynx joins the catalogue without changing anything else", () => {
   it("is a Legendary Shadow species with a unique id, name and dex number", () => {
@@ -24,7 +25,7 @@ describe("Velynx joins the catalogue without changing anything else", () => {
 
   it("can be rolled from a Legendary result", () => {
     const hits = new Set<string>();
-    for (let seed = 1; seed < 20000 && !hits.has("velynx"); seed++) hits.add(rollSpecies(seed, gameConfig));
+    for (let seed = 1; seed < 20000 && !hits.has("velynx"); seed++) hits.add(rollSpecies(seed, gameConfig, SPECIES));
     expect(hits.has("velynx")).toBe(true);
   });
 });

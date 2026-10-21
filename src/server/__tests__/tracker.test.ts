@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { eggProgression, incubationMsFor, scheduleEgg } from "@/config/eggProgression";
-import { SPECIES_BY_ID } from "@/lib/species";
+import { gameConfig } from "@/config/gameConfig";
+import { rollSpecies } from "@/lib/progression";
+import { SPECIES, SPECIES_BY_ID } from "@/lib/species";
 import { createPgliteDb } from "../db/pglite";
 import { migrate } from "../db/schema";
 import type { Db } from "../db/types";
@@ -32,11 +34,11 @@ async function setup() {
   chain.mintTo(pool, chain.tokens(900_000_000));
   chain.mintTo(treasury, chain.tokens(50_000_000));
   let seed = 1;
-  const make = () =>
+  const make = (maxSignaturesPerAccount = 500, historyListingCap?: number) =>
     createTracker({
       db,
       rpc: chain.rpc,
-      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount: 500, progression: eggProgression },
+      config: { mint: chain.mint, excludedOwners: new Set([treasury]), excludeOffCurveOwners: true, source: "fixture", maxSignaturesPerAccount, historyListingCap, progression: eggProgression },
       now: clock.now,
       randomSeed: () => seed++,
     });
@@ -179,27 +181,27 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     expect(v.eggs[0].speciesId).toBe(r.result.speciesId);
   });
 
-  it("second egg: queued behind the first, then incubates for five minutes", async () => {
+  it("second egg (fast track): queued behind the first, then incubates for one minute", async () => {
     const { tracker, buy, clock } = await setup();
     const h = W(11);
     buy(h, 2_000_000);
     await tracker.runSync({ force: true });
     const [e1, e2] = (await tracker.holderView(h)).eggs;
-    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 5 * MIN, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 5 * MIN, maturityMs: 5 * MIN });
+    expect(e2).toMatchObject({ sequence: 2, status: "queued", incubationMs: 1 * MIN, incubationStartedAt: e1.readyAt, readyAt: e1.readyAt + 1 * MIN, maturityMs: 1 * MIN, fastTrack: true });
     clock.advance(1 * MIN);
     expect((await tracker.holderView(h)).eggs[1].status).toBe("incubating");
-    clock.advance(5 * MIN);
+    clock.advance(1 * MIN);
     expect((await tracker.holderView(h)).eggs.map((e) => e.status)).toEqual(["ready", "ready"]);
   });
 
-  it("later eggs: 15 min, 1 h, 6 h, then 12 h each", async () => {
+  it("after the five fast-track eggs, later eggs take the long-term 12 h each", async () => {
     const { tracker, buy } = await setup();
     const h = W(12);
     buy(h, 7_000_000);
     await tracker.runSync({ force: true });
     const eggs = (await tracker.holderView(h)).eggs;
-    expect(eggs.map((e) => e.incubationMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
-    expect(eggs.map((e) => e.maturityMs)).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 3 * HOUR, 6 * HOUR, 6 * HOUR]);
+    expect(eggs.map((e) => e.incubationMs)).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 12 * HOUR, 12 * HOUR]);
+    expect(eggs.map((e) => e.maturityMs)).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 6 * HOUR, 6 * HOUR]);
     for (let i = 1; i < eggs.length; i++) expect(eggs[i].incubationStartedAt).toBe(eggs[i - 1].readyAt);
   });
 
@@ -212,14 +214,69 @@ describe("incubation schedule (tests 5, 6, 7)", () => {
     buy(h, 1_000_000);
     await tracker.runSync({ force: true });
     const e2 = (await tracker.holderView(h)).eggs[1];
-    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 5 * MIN });
+    expect(e2).toMatchObject({ status: "incubating", incubationStartedAt: clock.t, readyAt: clock.t + 1 * MIN });
   });
 
   it("scheduleEgg and incubationMsFor follow the config", () => {
-    expect([1, 2, 3, 4, 5, 6, 9].map((s) => incubationMsFor(s))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 1 * HOUR, 6 * HOUR, 12 * HOUR, 12 * HOUR]);
-    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 5 * MIN, readyAt: 500 + 5 * MIN });
+    expect([1, 2, 3, 4, 5, 6, 9].map((s) => incubationMsFor(s))).toEqual([1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 1 * MIN, 12 * HOUR, 12 * HOUR]);
+    expect(scheduleEgg(2, 100, 500)).toEqual({ incubationStartedAt: 500, incubationMs: 1 * MIN, readyAt: 500 + 1 * MIN });
+    // Without the fast track the long-term schedule applies from the first egg.
+    const slow = { ...eggProgression, fastTrack: { ...eggProgression.fastTrack, eggs: 0 } };
+    expect([1, 2, 3, 6].map((s) => incubationMsFor(s, slow))).toEqual([1 * MIN, 5 * MIN, 15 * MIN, 12 * HOUR]);
     expect(scheduleEgg(2, 100, 500, { ...eggProgression, incubationMode: "parallel" }).incubationStartedAt).toBe(100);
     expect(() => incubationMsFor(0)).toThrow();
+  });
+});
+
+describe("onboarding fast track: first five eggs", () => {
+  it("applies to exactly the first five eggs, survives restarts, and is never granted again", async () => {
+    const { tracker, buy, make, db, clock } = await setup();
+    const h = W(80);
+    buy(h, 3_000_000);
+    await tracker.runSync({ force: true });
+    let v = await tracker.holderView(h);
+    // Progress counts hatches, not issued eggs: three eggs waiting to hatch have used none of it.
+    expect(v.fastTrack).toEqual({ total: 5, issued: 3, used: 0, remaining: 5, complete: false, hatchMs: MIN, stageMs: MIN });
+    clock.advance(5 * MIN);
+    for (const e of v.eggs) await tracker.hatch(e.id);
+    expect((await tracker.holderView(h)).fastTrack).toMatchObject({ issued: 3, used: 3, remaining: 2, complete: false });
+    // Leaving and coming back (a new server instance on the same database) keeps the progress.
+    const again = make();
+    expect((await again.holderView(h)).fastTrack.used).toBe(3);
+    clock.advance(10 * MIN);
+    buy(h, 4_000_000);
+    await again.runSync({ force: true });
+    v = await again.holderView(h);
+    expect(v.eggs.map((e) => e.fastTrack)).toEqual([true, true, true, true, true, false, false]);
+    expect(v.eggs.slice(5).map((e) => e.incubationMs)).toEqual([12 * HOUR, 12 * HOUR]);
+    // All five fast eggs issued, but two still unhatched: not complete yet.
+    expect(v.fastTrack).toMatchObject({ issued: 5, used: 3, remaining: 2, complete: false });
+    clock.advance(5 * MIN);
+    for (const e of v.eggs.slice(3, 5)) await again.hatch(e.id);
+    expect((await again.holderView(h)).fastTrack).toMatchObject({ issued: 5, used: 5, remaining: 0, complete: true });
+    // Stored per egg, so nothing a client sends can change it.
+    const stored = (await db.query<{ sequence: number; fast_track: boolean }>(`SELECT sequence, fast_track FROM eggs WHERE owner = $1 ORDER BY sequence`, [h])).rows;
+    expect(stored.map((r) => r.fast_track)).toEqual([true, true, true, true, true, false, false]);
+  });
+
+  it("does not change rarity: every egg's sealed species is the normal roll for its seed", async () => {
+    const { tracker, buy, db } = await setup();
+    const h = W(81);
+    buy(h, 6_000_000);
+    await tracker.runSync({ force: true });
+    const rows = (await db.query<{ seed: string; species_id: string; fast_track: boolean }>(`SELECT seed, species_id, fast_track FROM eggs WHERE owner = $1`, [h])).rows;
+    expect(rows.some((r) => r.fast_track) && rows.some((r) => !r.fast_track)).toBe(true);
+    for (const r of rows) expect(r.species_id).toBe(rollSpecies(Number(r.seed), gameConfig, SPECIES));
+  });
+
+  it("eggs issued before the fast track existed keep their timers and normal growth", async () => {
+    const { tracker, buy, db } = await setup();
+    const h = W(82);
+    buy(h, 1_000_000);
+    await tracker.runSync({ force: true });
+    await db.query(`UPDATE eggs SET fast_track = false, incubation_ms = $2 WHERE owner = $1`, [h, 5 * MIN]);
+    const [e] = (await tracker.holderView(h)).eggs;
+    expect(e).toMatchObject({ fastTrack: false, afterMaturityMs: null, incubationMs: 5 * MIN });
   });
 });
 
@@ -410,6 +467,67 @@ describe("failures", () => {
     expect((await tracker.holderView(b)).sync.pending).toBe(false);
   });
 
+  it("a wallet with more history than one pass can read finishes over several passes, oldest first", async () => {
+    const { tracker: full, make, buy } = await setup();
+    await full.runSync({ force: true }); // tracking starts before b's history
+    const tracker = make(3); // 3 transactions per account per pass stands in for the real 500
+    const b = W(53);
+    for (let i = 0; i < 10; i++) buy(b, 100_000); // 10 transactions reach exactly 1,000,000
+    const passes: boolean[] = [];
+    for (let i = 0; i < 6 && !passes.at(-1); i++) passes.push((await tracker.syncOwner(b)).complete);
+    expect(passes.slice(0, -1).every((c) => !c)).toBe(true); // partial passes award nothing
+    expect(passes.at(-1)).toBe(true);
+    expect((await tracker.holderView(b)).counts.earned).toBe(1);
+    expect((await tracker.syncOwner(b)).complete).toBe(true); // and stays complete
+  });
+
+  it("credit still moves in order when a busy wallet's history spans passes", async () => {
+    const { tracker: full, make, buy, chain } = await setup();
+    const a = W(54);
+    const b = W(55);
+    buy(a, 1_000_000);
+    await full.syncOwner(a); // a earns the egg on these tokens
+    chain.transfer(a, b, chain.tokens(1_000_000)); // the credited tokens move to b first
+    for (let i = 0; i < 6; i++) buy(b, 100_000); // then b buys 600,000 of its own
+    const tracker = make(2);
+    for (let i = 0; i < 8; i++) if ((await tracker.syncOwner(b)).complete) break;
+    const v = await tracker.holderView(b);
+    expect(v.sync.pending).toBe(false);
+    expect(v.counts.earned).toBe(0); // 1,600,000 held, 1,000,000 of it already earned an egg
+  });
+
+  it("an account too long to list holds the whole wallet back, so its other accounts can't run ahead", async () => {
+    const { tracker: full, make, chain, pool, db } = await setup();
+    await full.runSync({ force: true }); // tracking starts before h's history
+    const h = W(58);
+    const firstSigs = [0, 1].map(() => chain.transfer(pool, h, chain.tokens(100_000))); // creates h's primary account
+    const second = chain.openAccount(h);
+    for (let i = 0; i < 4; i++) chain.transfer(pool, h, chain.tokens(100_000), { toAccount: second }); // over the cap of 3
+    const r = await make(500, 3).syncOwner(h);
+    expect(r.complete).toBe(false);
+    const processed = await db.query(`SELECT 1 FROM processed_transactions WHERE signature = ANY($1)`, [firstSigs]);
+    expect(processed.rows).toHaveLength(0); // the uncapped account was not processed ahead of the capped one
+    const cursors = await db.query<{ sig_cursor: string | null }>(`SELECT sig_cursor FROM token_accounts WHERE owner = $1`, [h]);
+    expect(cursors.rows.every((c) => c.sig_cursor === null)).toBe(true);
+    expect((await full.holderView(h)).counts.earned).toBe(0);
+  });
+
+  it("a history node behind the balance read can't cause a second egg for the same tokens", async () => {
+    const { tracker, chain, buy } = await setup();
+    const a = W(56);
+    const b = W(57);
+    buy(a, 1_000_000);
+    await tracker.syncOwner(a);
+    const before = chain.state.slot;
+    chain.transfer(a, b, chain.tokens(1_000_000)); // credited tokens arrive at b
+    chain.state.signaturesSlot = before; // the node listing history hasn't seen that transfer yet
+    await expect(tracker.syncOwner(b)).rejects.toThrow(/unavailable/i);
+    expect((await tracker.holderView(b)).counts.earned).toBe(0);
+    chain.state.signaturesSlot = Infinity;
+    await tracker.syncOwner(b);
+    expect((await tracker.holderView(b)).counts.earned).toBe(0); // credit moved with the tokens
+  });
+
   it("a missed webhook is caught by the reconciliation snapshot", async () => {
     const { tracker, buy } = await setup();
     const h = W(53);
@@ -430,6 +548,48 @@ describe("failures", () => {
     chain.closeAccount(extra);
     await tracker.runSync({ force: true });
     expect((await tracker.holderView(h)).holdings.amount).toBe("1000000");
+  });
+});
+
+describe("holder count: unique wallets with a positive balance", () => {
+  it("ignores empty token accounts and counts a wallet with several accounts once", async () => {
+    const { tracker, chain, pool, db, buy } = await setup();
+    const multi = W(70);
+    const second = chain.openAccount(multi);
+    chain.transfer(pool, multi, chain.tokens(10));
+    chain.transfer(pool, multi, chain.tokens(20), { toAccount: second });
+    buy(W(71), 5);
+    const empty = W(72);
+    chain.openAccount(empty); // pump.fun leaves many of these behind
+    await tracker.runSync({ force: true });
+    const h = await tracker.health();
+    expect(h.currentHolders).toBe(2);
+    // The empty wallet is never tracked, so it costs no sync round either.
+    expect((await db.query(`SELECT 1 FROM holders WHERE owner = $1`, [empty])).rows).toHaveLength(0);
+    // Nor is its empty account stored: the first snapshot of a big mint stays cheap.
+    expect((await db.query(`SELECT 1 FROM token_accounts WHERE owner = $1`, [empty])).rows).toHaveLength(0);
+  });
+
+  it("a wallet that sells everything stops counting as a holder but keeps its eggs", async () => {
+    const { tracker, chain, pool, buy } = await setup();
+    const seller = W(73);
+    buy(seller, 1_000_000);
+    buy(W(74), 1);
+    await tracker.runSync({ force: true });
+    expect((await tracker.health()).currentHolders).toBe(2);
+    chain.transfer(seller, pool, chain.tokens(1_000_000));
+    await tracker.runSync({ force: true });
+    const h = await tracker.health();
+    expect(h.currentHolders).toBe(1);
+    expect((await tracker.holderView(seller)).counts.earned).toBe(1);
+  });
+
+  it("excluded owners (treasury, pools) are not holders", async () => {
+    const { tracker, buy } = await setup();
+    buy(W(75), 1);
+    await tracker.runSync({ force: true });
+    // The setup funds the pool (off-curve) and the treasury (configured), and both are excluded.
+    expect((await tracker.health()).currentHolders).toBe(1);
   });
 });
 

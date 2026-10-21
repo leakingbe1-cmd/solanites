@@ -1,0 +1,262 @@
+{
+  "generated": "scripts/creature-scenes.mjs",
+  "spec": {
+    "plate": 1024,
+    "glow": 512,
+    "format": "webp"
+  },
+  "species": {
+    "mossling": {
+      "plate": "/scenes/mossling/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "driftfin": {
+      "plate": "/scenes/driftfin/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/driftfin/glow-3.webp",
+        "/scenes/driftfin/glow-4.webp"
+      ]
+    },
+    "pallow": {
+      "plate": "/scenes/pallow/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "glimmeray": {
+      "plate": "/scenes/glimmeray/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "sproutwyrm": {
+      "plate": "/scenes/sproutwyrm/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "frostkit": {
+      "plate": "/scenes/frostkit/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "abyssal-vael": {
+      "plate": "/scenes/abyssal-vael/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/abyssal-vael/glow-3.webp",
+        "/scenes/abyssal-vael/glow-4.webp"
+      ]
+    },
+    "stormquill": {
+      "plate": "/scenes/stormquill/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "duskwing": {
+      "plate": "/scenes/duskwing/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/duskwing/glow-3.webp",
+        "/scenes/duskwing/glow-4.webp"
+      ]
+    },
+    "cryovant": {
+      "plate": "/scenes/cryovant/plate.webp",
+      "glow": [
+        null,
+        "/scenes/cryovant/glow-2.webp",
+        "/scenes/cryovant/glow-3.webp",
+        "/scenes/cryovant/glow-4.webp"
+      ]
+    },
+    "emberlisk": {
+      "plate": "/scenes/emberlisk/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/emberlisk/glow-3.webp",
+        "/scenes/emberlisk/glow-4.webp"
+      ]
+    },
+    "neonyx": {
+      "plate": "/scenes/neonyx/plate.webp",
+      "glow": [
+        "/scenes/neonyx/glow-1.webp",
+        "/scenes/neonyx/glow-2.webp",
+        "/scenes/neonyx/glow-3.webp",
+        "/scenes/neonyx/glow-4.webp"
+      ]
+    },
+    "aurorath": {
+      "plate": "/scenes/aurorath/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "zephrax": {
+      "plate": "/scenes/zephrax/plate.webp",
+      "glow": [
+        "/scenes/zephrax/glow-1.webp",
+        "/scenes/zephrax/glow-2.webp",
+        "/scenes/zephrax/glow-3.webp",
+        "/scenes/zephrax/glow-4.webp"
+      ]
+    },
+    "prismara": {
+      "plate": "/scenes/prismara/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "nyxara": {
+      "plate": "/scenes/nyxara/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "aurelion": {
+      "plate": "/scenes/aurelion/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "solvanth": {
+      "plate": "/scenes/solvanth/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "pyraurum": {
+      "plate": "/scenes/pyraurum/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "aurelith": {
+      "plate": "/scenes/aurelith/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "velynx": {
+      "plate": "/scenes/velynx/plate.webp",
+      "glow": [
+        "/scenes/velynx/glow-1.webp",
+        "/scenes/velynx/glow-2.webp",
+        "/scenes/velynx/glow-3.webp",
+        "/scenes/velynx/glow-4.webp"
+      ]
+    },
+    "thalor": {
+      "plate": "/scenes/thalor/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/thalor/glow-3.webp",
+        "/scenes/thalor/glow-4.webp"
+      ]
+    },
+    "astravex": {
+      "plate": "/scenes/astravex/plate.webp",
+      "glow": [
+        null,
+        "/scenes/astravex/glow-2.webp",
+        "/scenes/astravex/glow-3.webp",
+        "/scenes/astravex/glow-4.webp"
+      ]
+    },
+    "orbelith": {
+      "plate": "/scenes/orbelith/plate.webp",
+      "glow": [
+        null,
+        "/scenes/orbelith/glow-2.webp",
+        "/scenes/orbelith/glow-3.webp",
+        "/scenes/orbelith/glow-4.webp"
+      ]
+    },
+    "eventide": {
+      "plate": "/scenes/eventide/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/eventide/glow-3.webp",
+        "/scenes/eventide/glow-4.webp"
+      ]
+    },
+    "helivane": {
+      "plate": "/scenes/helivane/plate.webp",
+      "glow": [
+        null,
+        null,
+        null,
+        null
+      ]
+    },
+    "genesis": {
+      "plate": "/scenes/genesis/plate.webp",
+      "glow": [
+        null,
+        "/scenes/genesis/glow-2.webp",
+        "/scenes/genesis/glow-3.webp",
+        "/scenes/genesis/glow-4.webp"
+      ]
+    },
+    "nullborn": {
+      "plate": "/scenes/nullborn/plate.webp",
+      "glow": [
+        null,
+        null,
+        "/scenes/nullborn/glow-3.webp",
+        "/scenes/nullborn/glow-4.webp"
+      ]
+    }
+  }
+}

@@ -3,7 +3,7 @@ import type { GameConfig, RarityId } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { mulberry32 } from "@/lib/rng";
 import { RARITY_ORDER } from "@/lib/rarity";
-import { SPECIES, speciesOfRarity, type Species } from "@/lib/species";
+import { SPECIES, type Species } from "@/lib/species";
 
 /**
  * Pure progression rules. No React, no storage, no clock — so the exact same
@@ -29,6 +29,10 @@ export interface SolaniteRecord {
   growthMs: number;
   /** This creature's initial growth to its mature form. Falls back to the first creature's. */
   maturityMs?: number;
+  /** Fast-track creatures: cumulative growth after maturity per later form (one stage a minute). */
+  afterMaturityMs?: number[];
+  /** One of the wallet's first five (fast-track) eggs. */
+  fastTrack?: boolean;
   /** Whether the last tick found this record backed by the wallet's balance. */
   backed: boolean;
   nickname?: string;
@@ -174,17 +178,17 @@ export const FIRST_MATURITY_MS = initialGrowthMsFor(1);
  * creature with this initial growth: newborn at 0, mature at `maturityMs`,
  * later evolutions after maturity.
  */
-export function formThresholdsMs(maturityMs: number, cfg: GameConfig): number[] {
-  return [0, maturityMs, ...cfg.evolution.afterMaturityMs.map((ms) => maturityMs + ms)];
+export function formThresholdsMs(maturityMs: number, cfg: GameConfig, afterMaturityMs: number[] = cfg.evolution.afterMaturityMs): number[] {
+  return [0, maturityMs, ...afterMaturityMs.map((ms) => maturityMs + ms)];
 }
 
 /**
  * Growth and evolution from cumulative qualifying holding time since
  * hatching. A milestone is reached exactly at its threshold (>=), never before.
  */
-export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: number = FIRST_MATURITY_MS): EvolutionInfo {
+export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: number = FIRST_MATURITY_MS, afterMaturityMs?: number[]): EvolutionInfo {
   const g = Math.max(0, growthMs);
-  const t = formThresholdsMs(maturityMs, cfg);
+  const t = formThresholdsMs(maturityMs, cfg, afterMaturityMs);
   const names = cfg.evolution.names;
   let stage = 0;
   for (let i = 0; i < t.length; i++) if (g >= t[i]) stage = i;
@@ -224,10 +228,10 @@ export function evolutionOf(growthMs: number, cfg: GameConfig, maturityMs: numbe
  * When form `i` is reached, in words. With a creature's own initial growth the
  * maturity time is exact; without one (browsing a species) it is described.
  */
-export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number): string {
+export function formUnlockText(i: number, cfg: GameConfig, maturityMs?: number, afterMaturityMs: number[] = cfg.evolution.afterMaturityMs): string {
   if (i <= 0) return "At hatch";
   if (i === 1) return maturityMs !== undefined ? `After ${formatSpan(maturityMs)} of growth` : `When initial growth completes (${formatSpan(FIRST_MATURITY_MS)} for a first creature)`;
-  return `${formatSpan(cfg.evolution.afterMaturityMs[i - 2])} of holding after maturity`;
+  return `${formatSpan(afterMaturityMs[i - 2])} of holding after maturity`;
 }
 
 /* ── Rarity roll ────────────────────────────────────────────── */
@@ -269,11 +273,14 @@ export function validateRarityConfig(cfg: GameConfig, catalogue: readonly Specie
  * species. The server supplies a cryptographically random seed when the egg is
  * issued and stores the result; nothing here reads the clock or the client.
  * Throws if the rolled rarity has no species (never substitutes another tier).
+ *
+ * Rolls use the whole catalogue (SPECIES), in its fixed order: reordering it would change
+ * which species an existing seed lands on.
  */
 export function rollSpecies(seed: number, cfg: GameConfig, catalogue: readonly Species[] = SPECIES): string {
   const rand = mulberry32(seed);
   const rarity = rollRarity(rand, cfg);
-  const pool = catalogue === SPECIES ? speciesOfRarity(rarity) : catalogue.filter((s) => s.rarity === rarity);
+  const pool = catalogue.filter((s) => s.rarity === rarity);
   if (!pool.length) throw new Error(`No species configured for rarity: ${rarity}`);
   return pool[Math.floor(rand() * pool.length)].id;
 }

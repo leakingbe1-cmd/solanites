@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { Sigil } from "@/components/brand/Sigil";
 import { Logo } from "./Logo";
 import { SocialLine } from "./SocialLine";
 import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
+import { FIRST_VISIT_INTRO } from "@/config/intro";
 
 export function Footer() {
   return (
@@ -12,28 +14,31 @@ export function Footer() {
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-mist">Discover your creature. Hatch the extraordinary. A creature-collecting universe where Solanites grow stronger through their evolution.</p>
           <SocialLine className="mt-4" />
           <p className="mt-6 max-w-sm rounded-xl border border-amber-400/15 bg-amber-400/5 p-3 text-xs leading-relaxed text-amber-200/80">
-            Once holder tracking is live, eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet and the leaderboard use simulated data. Solanites never asks for a seed phrase or private key.
+            Once holder tracking is live, eggs are tracked automatically from public on-chain balances; no wallet connection is needed. The demo wallet uses simulated data; the leaderboard ranks tracked holders. Solanites never asks for a seed phrase or private key.
           </p>
         </div>
         <div className="text-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">Explore</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/40">Explore</p>
           <ul className="mt-4 space-y-2.5 text-mist">
-            <li><Link className="hover:text-white" href="/hatchery">Hatchery</Link></li>
-            <li><Link className="hover:text-white" href="/collection">Collection</Link></li>
-            <li><Link className="hover:text-white" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-white" href="/claims">Holder Rewards</Link></li>
+            <li><Link className="hover:text-bone" href="/hatchery">Hatchery</Link></li>
+            <li><Link className="hover:text-bone" href="/collection">Collection</Link></li>
+            <li><Link className="hover:text-bone" href="/leaderboard">Leaderboard</Link></li>
+            <li><Link className="hover:text-bone" href="/claims">Holder Rewards</Link></li>
           </ul>
         </div>
         <div className="text-sm">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">Learn</p>
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-bone/40">Learn</p>
           <ul className="mt-4 space-y-2.5 text-mist">
-            <li><Link className="hover:text-white" href="/how-it-works">How It Works</Link></li>
-            <li><Link className="hover:text-white" href="/how-it-works#rules">Gameplay Rules</Link></li>
-            <li><ReplayIntroButton className="hover:text-white" /></li>
+            <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
+            <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
+            {FIRST_VISIT_INTRO.enabled && <li><ReplayIntroButton className="hover:text-bone" /></li>}
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/5 py-6 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-white/30">© Solanites · Built on conviction</div>
+      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/30">
+        <Sigil className="h-10 w-10 opacity-80" />
+        © Solanites · Built on conviction
+      </div>
     </footer>
   );
 }

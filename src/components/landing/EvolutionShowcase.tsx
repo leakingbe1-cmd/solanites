@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
+import { CreatureScene } from "@/components/creature/CreatureScene";
 import { gameConfig } from "@/config/gameConfig";
 import { formatSpan } from "@/lib/format";
 import { FIRST_MATURITY_MS, formUnlockText } from "@/lib/progression";
@@ -14,8 +15,7 @@ import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
  * form names come straight from `gameConfig.evolution`, so the copy can never
  * drift from the rules the tracker applies.
  *
- * Featured species span Common → Legendary and different body plans. Mythic
- * and Secret species stay classified, as everywhere else on the landing page.
+ * Featured species span Common → Legendary and different body plans.
  */
 const FEATURED = ["mossling", "emberlisk", "cryovant", "neonyx", "aurelion", "velynx"] as const;
 
@@ -111,7 +111,7 @@ export function EvolutionShowcase() {
                 aria-pressed={on}
                 onClick={() => chooseSpecies(i)}
                 className={`flex shrink-0 items-center gap-2 rounded-full border py-1 pl-1 pr-3.5 text-left transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green/70 ${
-                  on ? "border-white/20 bg-white/[0.07] text-white" : "border-transparent text-mist hover:bg-white/[0.04] hover:text-white"
+                  on ? "border-white/20 bg-white/[0.07] text-bone" : "border-transparent text-mist hover:bg-white/[0.04] hover:text-bone"
                 }`}
                 style={on ? { boxShadow: `inset 0 0 0 1px ${c}66, inset 0 0 14px -6px ${c}` } : undefined}
               >
@@ -128,7 +128,7 @@ export function EvolutionShowcase() {
           onClick={() => setPlaying((p) => !p)}
           aria-label={playing ? "Pause the evolution tour" : "Play the evolution tour"}
           title={playing ? "Pause" : "Play"}
-          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 text-mist transition hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green/70"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-white/10 text-mist transition hover:border-white/25 hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sol-green/70"
         >
           <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden>
             {playing ? <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" /> : <path d="M8 5.5v13l10.5-6.5z" />}
@@ -138,16 +138,9 @@ export function EvolutionShowcase() {
 
       {/* ── the forms ── */}
       <div className="relative px-4 pt-8 sm:px-8 sm:pt-10">
-        {/* backlight in the species' rarity colours, centred under the current form */}
-        <div
-          className="pointer-events-none absolute top-10 h-64 w-64 -translate-x-1/2 rounded-full opacity-50 blur-[80px] transition-[left,background-color] duration-700 ease-out max-md:left-1/2"
-          style={{ left: `${12.5 + stage * 25}%`, background: rarity.color2 }}
-          aria-hidden
-        />
-
         {/* phones and small tablets: the current form, large */}
         <div key={`${species.id}-${stage}`} className="sl-fade-in relative mx-auto aspect-square w-full max-w-[19rem] md:hidden">
-          <CreatureArt species={species} stage={stage} />
+          <CreatureScene species={species} stage={stage} size="feature" className="absolute inset-0 rounded-md" />
         </div>
 
         {/* tablets and up: all four forms in a row, each above its milestone */}
@@ -165,7 +158,7 @@ export function EvolutionShowcase() {
                   transform: on ? "translateY(-6px) scale(1.04)" : "none",
                 }}
               >
-                <CreatureArt species={species} stage={i} animated={on} showAura={on} />
+                <CreatureScene species={species} stage={i} size={on ? "feature" : "card"} still={!on} className="absolute inset-0 rounded-md" />
               </div>
             );
           })}
@@ -203,7 +196,7 @@ export function EvolutionShowcase() {
                     <span className={`h-2 w-2 rounded-full transition-all duration-500 ${on ? "scale-100 bg-sol-green shadow-[0_0_12px_#14f195]" : reached ? "scale-75 bg-sol-green/60" : "scale-50 bg-white/20"}`} />
                   </span>
                   <span className={`mt-3 whitespace-nowrap font-mono text-[9px] uppercase tracking-[0.14em] transition-colors sm:text-[10px] sm:tracking-[0.3em] ${on ? "text-sol-green" : "text-mist/60"}`}>{whenLabel(i)}</span>
-                  <span className={`mt-1 whitespace-nowrap font-display text-[11px] transition-colors min-[360px]:text-[12px] min-[400px]:text-[13px] sm:text-base ${on ? "text-white" : "text-mist group-hover:text-white"}`}>{form}</span>
+                  <span className={`mt-1 whitespace-nowrap font-display text-[11px] transition-colors min-[360px]:text-[12px] min-[400px]:text-[13px] sm:text-base ${on ? "text-bone" : "text-mist group-hover:text-bone"}`}>{form}</span>
                 </button>
               </li>
             );
@@ -212,10 +205,10 @@ export function EvolutionShowcase() {
 
         {/* caption: announced only when the visitor is in control, not on every auto-play step */}
         <p className="mt-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-sm text-mist" aria-live={playing ? "off" : "polite"}>
-          <span className="font-display text-white">{species.name}</span>
-          <span className="text-white/20" aria-hidden>·</span>
+          <span className="font-display text-bone">{species.name}</span>
+          <span className="text-bone/20" aria-hidden>·</span>
           <span>{species.epithet}</span>
-          <span className="text-white/20" aria-hidden>·</span>
+          <span className="text-bone/20" aria-hidden>·</span>
           <span className="whitespace-nowrap">
             <span style={{ color: rarity.color }}>{rarity.label}</span> {ELEMENT_GLYPH[species.element]} {species.element}
           </span>

@@ -19,3 +19,4 @@ export const STAGE_NAMES: string[] = designs.stageNames;
 export function designOf(speciesId: string): SpeciesDesign | null {
   return SPECIES[speciesId] ?? null;
 }
+

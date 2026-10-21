@@ -10,6 +10,10 @@ preview/dist
 art/creatures/*
 !art/creatures/README.md
 
+# Biome plate masters (large); optimised outputs live in public/scenes
+art/scenes/*
+!art/scenes/README.md
+
 # Secrets and local environment (templates like .env.example stay tracked)
 .env
 .env.*
@@ -26,3 +30,7 @@ pgdata/
 
 # Intro video masters (large, rebuilt by scripts/phoenix-intro.sh); web files live in public/intro
 art/intro/master-*.mp4
+
+# hero masters (scripts/hero-art.mjs publishes them to public/hero/eclipse)
+art/hero/*
+!art/hero/README.md

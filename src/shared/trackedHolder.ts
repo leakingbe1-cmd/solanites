@@ -28,6 +28,8 @@ export interface TrackedHolderView {
     excluded: boolean;
   };
   counts: { earned: number; queued: number; incubating: number; ready: number; hatched: number };
+  /** Onboarding fast track: the first `total` eggs a wallet earns. `issued` of them are earned so far, `used` of those hatched. */
+  fastTrack: { total: number; issued: number; used: number; remaining: number; complete: boolean; hatchMs: number; stageMs: number };
   eggs: TrackedEgg[];
   rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel"; initialGrowthScheduleMs: number[] };
   sync: { lastSyncedAt: number | null; pending: boolean; error: string | null };
@@ -48,6 +50,10 @@ export interface TrackedEgg {
   speciesId: string | null;
   /** Initial growth this creature needs to reach its mature form; fixed when the egg was issued. */
   maturityMs: number;
+  /** One of the wallet's onboarding fast-track eggs (fixed when issued): quick hatch and one stage per minute. */
+  fastTrack: boolean;
+  /** Fast-track creatures: cumulative growth after maturity for each later form. Null: the game's normal timings. */
+  afterMaturityMs: number[] | null;
   /**
    * Hatched creatures: qualifying holding time since the egg hatched (its
    * incubation completed), as of `serverNow`. Drives growth and evolution. Null for eggs.

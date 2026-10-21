@@ -22,8 +22,10 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
     expect(res.status).toBe(200);
     const v = (await res.json()) as TrackedHolderView;
     expect(v).toMatchObject({ source: "fixture", tracked: true, counts: { earned: 3 } });
-    expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
-    expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 5 * 60_000, 15 * 60_000]);
+    // Fast track: the first five eggs hatch in a minute and grow a stage a minute.
+    expect(v.eggs.map((e) => e.incubationMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
+    expect(v.eggs.map((e) => e.maturityMs)).toEqual([1 * 60_000, 1 * 60_000, 1 * 60_000]);
+    expect(v.fastTrack).toMatchObject({ total: 5, issued: 3, used: 0, remaining: 5, complete: false }); // none hatched yet
     expect(v.eggs.every((e) => e.speciesId === null)).toBe(true); // sealed until hatch
   });
 
@@ -81,6 +83,20 @@ describe("Workflow A routes: no wallet connection anywhere", () => {
   });
 });
 
+describe("GET /api/home-stats", () => {
+  it("serves real fixture holders and eggs, an honest unavailable market cap, and a shared CDN cache", async () => {
+    const { GET } = await import("@/app/api/home-stats/route");
+    const res = await GET();
+    expect(res.headers.get("cache-control")).toContain("s-maxage=30");
+    const b = await res.json();
+    expect(b.holders.status).toBe("live");
+    expect(b.holders.value).toBeGreaterThan(0);
+    expect(b.eggs.status).toBe("live");
+    expect(b.eggs.value).toBeGreaterThan(0);
+    expect(b.marketCap).toMatchObject({ value: null, status: "unavailable" });
+  });
+});
+
 describe("scheduler and webhook endpoints", () => {
   it("require their secrets", async () => {
     const cron = await import("@/app/api/cron/sync/route");
@@ -88,6 +104,15 @@ describe("scheduler and webhook endpoints", () => {
     expect((await cron.GET(req("/api/cron/sync", { headers: { authorization: "Bearer wrong" } }))).status).toBe(401);
     const ok = await cron.GET(req("/api/cron/sync", { headers: { authorization: "Bearer cron-secret-for-tests" } }));
     expect(ok.status).toBe(200);
+    // Vercel Preview (behind Deployment Protection, no Vercel Cron) lets the owner run a pass from the browser; Production never does.
+    try {
+      process.env.VERCEL_ENV = "preview";
+      expect((await cron.GET(req("/api/cron/sync"))).status).toBe(200);
+      process.env.VERCEL_ENV = "production";
+      expect((await cron.GET(req("/api/cron/sync"))).status).toBe(401);
+    } finally {
+      delete process.env.VERCEL_ENV;
+    }
 
     const hook = await import("@/app/api/webhooks/solana/route");
     expect((await hook.POST(req("/api/webhooks/solana", { method: "POST", body: "[]" }))).status).toBe(401);
@@ -127,7 +152,8 @@ describe("operations, demo isolation and request limits", () => {
   it("GET /api/health is public but reveals only status; details need the scheduler secret", async () => {
     const { GET } = await import("@/app/api/health/route");
     const pub = await (await GET(req("/api/health"))).json();
-    expect(Object.keys(pub).sort()).toEqual(["lastSuccessfulSyncAt", "source", "status"]);
+    expect(Object.keys(pub).sort()).toEqual(["holders", "lastSuccessfulSyncAt", "source", "status"]);
+    expect(pub.holders).toBeTypeOf("number");
     expect(pub.source).toBe("fixture");
     const detailed = await (await GET(req("/api/health", { headers: { authorization: "Bearer cron-secret-for-tests" } }))).json();
     expect(detailed.settingsPresent).toMatchObject({ cronSecret: true, webhookSecret: true });
@@ -158,5 +184,29 @@ describe("operations, demo isolation and request limits", () => {
     const big = JSON.stringify({ signatures: ["x".repeat(1_100_000)] });
     const res = await hook.POST(req("/api/webhooks/solana", { method: "POST", headers: { authorization: "webhook-secret-for-tests" }, body: big }));
     expect(res.status).toBe(413);
+  });
+});
+
+describe("Mythic and Secret species through the public API", () => {
+  it("an egg holding a Mythic species is named like any other, before and after it hatches", async () => {
+    const holders = await import("@/app/api/holders/[address]/route");
+    const { POST } = await import("@/app/api/eggs/[id]/hatch/route");
+    const rt = await getRuntime();
+    const owner = keypairFromSeed(1002).address; // 3,500,000 fixture holder (3 eggs)
+    const egg = (await rt.tracker.holderView(owner)).eggs[0];
+    // Test database only: give this egg a Mythic species and make it stir, then ready.
+    await rt.db.query(`UPDATE eggs SET species_id = 'orbelith', incubation_started_ms = 0, ready_ms = $2, incubation_ms = $2 WHERE id = $1`, [egg.id, Date.now() + 60_000]);
+    const view = async () => (await (await holders.GET(req(`/api/holders/${owner}`), { params: Promise.resolve({ address: owner }) })).json()) as TrackedHolderView;
+
+    const before = await view();
+    expect(before.eggs.find((e) => e.id === egg.id)?.speciesId).toBe("orbelith");
+
+    await rt.db.query(`UPDATE eggs SET ready_ms = 0, incubation_ms = 1 WHERE id = $1`, [egg.id]);
+    const hatched = await (await POST(req(`/api/eggs/${egg.id}/hatch`, { method: "POST" }), { params: Promise.resolve({ id: egg.id }) })).json();
+    expect(hatched.speciesId).toBe("orbelith");
+    expect(hatched.classified).toBeUndefined();
+
+    const after = await view();
+    expect(after.eggs.find((e) => e.id === egg.id)?.speciesId).toBe("orbelith");
   });
 });

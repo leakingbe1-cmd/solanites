@@ -12,7 +12,7 @@ function clean(fields: Fields): Fields {
   const out: Fields = {};
   for (const [k, v] of Object.entries(fields)) {
     if (SECRETISH.test(k)) out[k] = "[redacted]";
-    else if (typeof v === "string") out[k] = v.replace(/(api-key=|:\/\/[^:/@\s]+:)[^@&\s"]+/gi, "$1[redacted]").slice(0, 500);
+    else if (typeof v === "string") out[k] = v.replace(/(api-key=|api_key=|apikey=|apikey\s+|:\/\/[^:/@\s]+:)[^@&\s"]+/gi, "$1[redacted]").slice(0, 500);
     else if (typeof v === "bigint") out[k] = v.toString();
     else out[k] = v;
   }

@@ -63,6 +63,8 @@ export function createLedgerChain(opts: { mint?: string; decimals?: number; prog
     calls: [] as string[],
     /** Signatures getTransaction pretends not to have yet (indexing delay). */
     hidden: new Set<string>(),
+    /** Highest slot the node answering getSignaturesForAddress has seen (a lagging node); defaults to everything. */
+    signaturesSlot: Infinity as number,
   };
   let sigCounter = 0;
 
@@ -184,8 +186,12 @@ export function createLedgerChain(opts: { mint?: string; decimals?: number; prog
         case "getProgramAccounts":
           return { context: ctx, value: [...accounts.values()].filter((a) => !a.closed).map(parsedAccount) } as T;
         case "getSignaturesForAddress": {
-          const [address, o] = params as [string, { limit: number; before?: string; until?: string }];
-          let list = [...(history.get(address) ?? [])].reverse().filter((s) => visible(txs.get(s)!.slot));
+          const [address, o] = params as [string, { limit: number; before?: string; until?: string; minContextSlot?: number }];
+          // Like a real node: refuse (-32016, retried then reported unavailable) rather than answer from behind minContextSlot.
+          if (o.minContextSlot !== undefined && o.minContextSlot > Math.min(ctx.slot, state.signaturesSlot)) {
+            throw new RpcUnavailableError("Solana RPC unavailable after 4 attempts (RPC -32016)", 4);
+          }
+          let list = [...(history.get(address) ?? [])].reverse().filter((s) => visible(txs.get(s)!.slot) && txs.get(s)!.slot <= state.signaturesSlot);
           if (o.before) list = list.slice(list.indexOf(o.before) + 1);
           if (o.until) {
             const i = list.indexOf(o.until);

@@ -35,14 +35,14 @@ export function EggInspector({
 
   return (
     <div className="grid md:grid-cols-[1fr_1.05fr]">
-      <div className="relative flex items-center justify-center overflow-hidden p-8" style={{ background: "radial-gradient(circle at 50% 50%, rgba(153,69,255,0.25), transparent 70%)" }}>
+      <div className="relative flex items-center justify-center overflow-hidden p-8">
         <div className="h-[340px] w-full max-w-[300px]">
           <EggArt stage={stage} progress={stageProgress(record, cfg)} seed={record.seed} inside={SPECIES_BY_ID[record.speciesId]} paused={!record.backed} />
         </div>
       </div>
       <div className="p-6 sm:p-8">
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-sol-green/80">Stage {stage} of 4</p>
-        <h2 className="mt-2 font-display text-3xl font-bold text-white">{EGG_STAGE_NAMES[stage]}</h2>
+        <h2 className="mt-2 font-display text-3xl font-bold text-bone">{EGG_STAGE_NAMES[stage]}</h2>
         <p className="mt-2 leading-relaxed text-mist">{STAGE_COPY[stage]}</p>
 
         {/* stage stepper */}
@@ -50,48 +50,48 @@ export function EggInspector({
           {[1, 2, 3, 4].map((s) => (
             <div key={s}>
               <div className={`h-1 rounded-full ${s < stage ? "bg-sol-green" : s === stage ? "bg-gradient-to-r from-sol-purple to-sol-green" : "bg-white/10"}`} />
-              <p className={`mt-2 font-mono text-[9px] uppercase tracking-wider ${s <= stage ? "text-white/80" : "text-mist/40"}`}>{EGG_STAGE_NAMES[s]}</p>
+              <p className={`mt-2 font-mono text-[9px] uppercase tracking-wider ${s <= stage ? "text-bone/80" : "text-mist/40"}`}>{EGG_STAGE_NAMES[s]}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-7 flex items-center gap-6">
-          <ProgressRing value={progress} size={116} colors={ready ? ["#14f195", "#9fffd8"] : ["#9945ff", "#14f195"]}>
-            <span className="font-display text-xl text-white">{Math.floor(progress * 100)}%</span>
+          <ProgressRing value={progress} size={116} colors={ready ? ["#14f195", "#9fffd8"] : ["#a8692a", "#f6d488"]}>
+            <span className="font-display text-xl text-bone">{Math.floor(progress * 100)}%</span>
             <span className="font-mono text-[9px] uppercase tracking-widest text-mist">incubated</span>
           </ProgressRing>
           <dl className="grid flex-1 gap-3 text-sm">
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
               <dt className="text-mist">{tracked ? "Incubated" : "Qualifying hold"}</dt>
-              <dd className="font-mono text-white">{formatDuration(record.incubationMs)}</dd>
+              <dd className="font-mono text-bone">{formatDuration(record.incubationMs)}</dd>
             </div>
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
               <dt className="text-mist">{tracked ? "Ready in" : "Est. to hatch"}</dt>
-              <dd className="font-mono text-white">{ready ? "Now" : formatDuration(timeToHatch(record, cfg) + (tracked?.startsInMs ?? 0))}</dd>
+              <dd className="font-mono text-bone">{ready ? "Now" : formatDuration(timeToHatch(record, cfg) + (tracked?.startsInMs ?? 0))}</dd>
             </div>
             <div className="flex justify-between gap-2 border-b border-white/5 pb-2">
               <dt className="text-mist">{tracked ? `Egg #${tracked.sequence} earned` : "Egg age"}</dt>
-              <dd className="font-mono text-white">{tracked ? `${formatDuration(simNow - record.acquiredAt)} ago` : formatDuration(simNow - record.acquiredAt)}</dd>
+              <dd className="font-mono text-bone">{tracked ? `${formatDuration(simNow - record.acquiredAt)} ago` : formatDuration(simNow - record.acquiredAt)}</dd>
             </div>
             <div className="flex justify-between gap-2">
               <dt className="text-mist">Rarity</dt>
-              <dd className="font-mono text-white/70">??? sealed</dd>
+              <dd className="font-mono text-bone/70">??? sealed</dd>
             </div>
           </dl>
         </div>
 
         {tracked && tracked.startsInMs > 0 && (
-          <p className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-mist">
+          <p className="mt-6 rounded-md border border-white/10 bg-white/[0.03] p-4 text-sm leading-relaxed text-mist">
             Queued: eggs incubate one at a time. This one starts in {formatDuration(tracked.startsInMs)}, when the egg before it is ready.
           </p>
         )}
         {!record.backed && (
-          <p className="mt-6 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-4 text-sm leading-relaxed text-amber-200/90">
+          <p className="mt-6 rounded-md border border-amber-400/20 bg-amber-400/5 p-4 text-sm leading-relaxed text-amber-200/90">
             This egg isn&apos;t backed by your current balance. {policyText}
           </p>
         )}
         {ready ? (
-          <button onClick={onHatch} className="sl-btn-primary mt-7 w-full rounded-2xl py-4 font-display text-sm font-semibold tracking-[0.25em] text-white">
+          <button onClick={onHatch} className="sl-btn-gold mt-7 w-full rounded-full py-4 font-sans text-sm font-semibold tracking-[0.25em]">
             HATCH YOUR SOLANITE
           </button>
         ) : (

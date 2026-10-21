@@ -25,17 +25,28 @@ export class ConfigError extends Error {
   }
 }
 
+/**
+ * True only on Vercel's Production deployments. NODE_ENV is "production" on
+ * Preview deployments too, so it can't tell them apart.
+ */
+export function isProductionDeployment(env: Record<string, string | undefined> = process.env): boolean {
+  return env.VERCEL_ENV === "production";
+}
+
+const listOf = (raw: string | undefined) => (raw ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+
 export function readServerConfig(env: Record<string, string | undefined> = process.env): ServerConfig {
   const missing: string[] = [];
   const mint = env.SOLANITES_MINT?.trim() ?? "";
   if (!mint || !checkSolanaAddress(mint).ok) missing.push("SOLANITES_MINT");
+  else if (isProductionDeployment(env) && listOf(env.SOLANITES_TEST_MINTS).includes(mint)) missing.push("SOLANITES_MINT (a test mint is configured in production)");
   const rpcUrl = env.SOLANA_RPC_URL?.trim() ?? "";
   // HTTPS only; plain http is allowed for a local test validator / fake RPC.
   if (!/^https:\/\//.test(rpcUrl) && !/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/|$)/.test(rpcUrl)) missing.push("SOLANA_RPC_URL");
   const commitment = (env.SOLANA_COMMITMENT?.trim() || "confirmed") as ServerConfig["commitment"];
   if (!["confirmed", "finalized"].includes(commitment)) missing.push("SOLANA_COMMITMENT");
   const excludedOwners = new Set<string>();
-  for (const a of (env.SOLANITES_EXCLUDED_OWNERS ?? "").split(",").map((s) => s.trim()).filter(Boolean)) {
+  for (const a of listOf(env.SOLANITES_EXCLUDED_OWNERS)) {
     if (checkSolanaAddress(a).ok) excludedOwners.add(a);
     else missing.push(`SOLANITES_EXCLUDED_OWNERS (invalid entry)`);
   }

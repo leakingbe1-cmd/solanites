@@ -51,20 +51,20 @@ describe("discovery-safe image selection", () => {
   const art = { src: "/creatures/x/3-evolved.webp", thumb: "/creatures/x/3-evolved-384.webp", alpha: true };
 
   it("shows full art with a responsive srcset when not hidden", () => {
-    expect(pickImage(art, false, false)).toEqual({ src: art.src, srcSet: `${art.thumb} 384w, ${art.src} 1024w` });
+    expect(pickImage(art, false)).toEqual({ src: art.src, srcSet: `${art.thumb} 384w, ${art.src} 1024w` });
   });
 
-  it("classified species only ever expose the silhouette file", () => {
-    expect(pickImage({ ...art, silhouette: "/creatures/x/3-evolved-silhouette.webp" }, true, true)).toEqual({ src: "/creatures/x/3-evolved-silhouette.webp" });
-    expect(pickImage(art, true, true)).toBeNull(); // falls back to the vector silhouette
+  it("a silhouette uses its own file when there is one, else darkens transparent art", () => {
+    expect(pickImage({ ...art, silhouette: "/creatures/x/3-evolved-silhouette.webp" }, true)).toEqual({ src: "/creatures/x/3-evolved-silhouette.webp" });
+    expect(pickImage(art, true)).toEqual(art.alpha ? { src: art.thumb } : null);
   });
 
   it("opaque art can't be silhouetted, so it falls back to vector", () => {
-    expect(pickImage({ ...art, alpha: false }, true, false)).toBeNull();
+    expect(pickImage({ ...art, alpha: false }, true)).toBeNull();
   });
 
-  it("classifies Mythic/Secret until discovered", () => {
-    expect(discoveryOf(SPECIES_BY_ID.astravex, [])).toBe("classified");
+  it("treats Mythic and Secret like every other species: catalogued until discovered", () => {
+    expect(discoveryOf(SPECIES_BY_ID.astravex, [])).toBe("catalogued");
     expect(discoveryOf(SPECIES_BY_ID.astravex, ["astravex"])).toBe("owned");
     expect(discoveryOf(SPECIES_BY_ID.mossling, [])).toBe("catalogued");
   });

@@ -99,7 +99,7 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Balance drops | Earned eggs are kept and keep incubating; new eggs need tokens that haven't earned one |
 | Transfers | Tokens that earned an egg carry that "credit" to the receiving wallet, so they can't earn it twice |
 | Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
-| Rarity weights | Common 60 · Rare 25 · Epic 10 · Legendary 3.8 · Mythic 1 · Secret 0.2 |
+| Rarity weights | Common 40 · Rare 30 · Epic 17 · Legendary 8 · Mythic 3.5 · Secret 1.5 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
 | Holder distribution | Planned: 2 hours after launch, the locked developer supply divided equally among eligible holders. Eligibility, amount and process pending; not implemented |
 

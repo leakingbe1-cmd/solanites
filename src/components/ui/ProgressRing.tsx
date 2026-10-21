@@ -6,7 +6,7 @@ interface ProgressRingProps {
   children?: React.ReactNode;
 }
 
-export function ProgressRing({ value, size = 120, stroke = 6, colors = ["#9945ff", "#14f195"], children }: ProgressRingProps) {
+export function ProgressRing({ value, size = 120, stroke = 6, colors = ["#a8692a", "#f6d488"], children }: ProgressRingProps) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(1, value));

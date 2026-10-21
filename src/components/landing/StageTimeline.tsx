@@ -24,7 +24,7 @@ export function StageTimeline() {
               <p className="font-mono text-[10px] tracking-[0.3em] text-sol-green/80">
                 STAGE {s.n} · {s.when}
               </p>
-              <h3 className="mt-2 font-display text-lg text-white">{s.title}</h3>
+              <h3 className="mt-2 font-display text-lg text-bone">{s.title}</h3>
               <p className="mx-auto mt-2 max-w-[15rem] text-sm leading-relaxed text-mist">{s.text}</p>
             </div>
           </li>

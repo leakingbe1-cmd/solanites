@@ -1,4 +1,4 @@
-export function ProgressBar({ value, colors = ["#9945ff", "#14f195"], className = "", glow = true, label }: { value: number; colors?: [string, string]; className?: string; glow?: boolean; label?: string }) {
+export function ProgressBar({ value, colors = ["#a8692a", "#f6d488"], className = "", glow = true, label }: { value: number; colors?: [string, string]; className?: string; glow?: boolean; label?: string }) {
   const v = Math.max(0, Math.min(1, value));
   return (
     <div

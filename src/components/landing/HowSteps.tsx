@@ -34,10 +34,10 @@ export function HowSteps() {
   return (
     <div className="mt-14 grid gap-4 md:grid-cols-3">
       {steps.map((s) => (
-        <div key={s.n} className="sl-card-hover sl-gradient-border group relative overflow-hidden rounded-3xl bg-white/[0.02] p-7 sm:p-8">
+        <div key={s.n} className="sl-card-hover sl-gradient-border group relative overflow-hidden rounded-md bg-white/[0.02] p-7 sm:p-8">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-sol-purple/30 to-sol-green/20 text-white ring-1 ring-white/10">
+              <div className="grid h-12 w-12 place-items-center rounded-md bg-gradient-to-br from-sol-purple/30 to-sol-green/20 text-bone ring-1 ring-white/10">
                 <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   {s.icon}
                 </svg>
@@ -49,7 +49,7 @@ export function HowSteps() {
               {s.visual}
             </div>
           </div>
-          <h3 className="mt-5 font-display text-xl text-white">{s.title}</h3>
+          <h3 className="mt-5 font-display text-xl text-bone">{s.title}</h3>
           <p className="mt-3 leading-relaxed text-mist">{s.text}</p>
         </div>
       ))}

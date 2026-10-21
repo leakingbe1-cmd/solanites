@@ -1,8 +1,8 @@
 # Solanites: instructions for Claude Code
 
 Solanites holder experience: Next.js 15 App Router, React 19, TypeScript, Tailwind CSS v4, with a server
-side (holder tracking, egg issuance, Postgres) under `src/server` and `src/app/api`. The demo wallet and
-leaderboard are simulated mock data. See `README.md` for gameplay and structure and
+side (holder tracking, egg issuance, Postgres) under `src/server` and `src/app/api`. The demo wallet is
+simulated mock data; the leaderboard is live tracker data (`/api/leaderboard`). See `README.md` for gameplay and structure and
 `docs/holder-tracking.md` for the server, configuration and launch checklist.
 
 ## Precedence

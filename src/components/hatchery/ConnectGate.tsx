@@ -79,7 +79,7 @@ export function ConnectGate() {
                 maxLength={60}
                 className="min-w-0 flex-1 rounded-md border border-white/10 bg-black/30 px-4 py-3.5 font-mono text-sm text-bone outline-none placeholder:text-mist/50 focus:border-gilt"
               />
-              <button type="submit" disabled={!address.trim()} className="sl-btn-gold rounded-full px-7 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] disabled:opacity-50">
+              <button type="submit" disabled={!address.trim()} className="sl-btn-gold rounded-full px-7 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] disabled:cursor-not-allowed disabled:opacity-70">
                 FIND MY EGGS
               </button>
             </form>
@@ -115,7 +115,7 @@ export function ConnectGate() {
             </div>
 
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-mist md:justify-start">
-              <button type="button" onClick={() => setTouring(true)} className="underline-offset-4 transition hover:text-bone hover:underline">
+              <button type="button" onClick={() => setTouring(true)} className="underline decoration-white/25 underline-offset-4 transition hover:text-bone hover:decoration-current">
                 New here? Take the 3-step tour
               </button>
               {FIRST_VISIT_INTRO.enabled && <span className="text-white/15" aria-hidden>·</span>}

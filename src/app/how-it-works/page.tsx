@@ -83,7 +83,7 @@ export default function HowItWorksPage() {
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                     <div className="h-full rounded-full" style={{ width: `${Math.max(1.5, chances[r] * 100)}%`, background: `linear-gradient(90deg, ${RARITIES[r].color2}, ${RARITIES[r].color})` }} />
                   </div>
-                  <span className="text-right font-mono text-xs text-bone/70">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
+                  <span className="text-right font-mono text-xs text-bone/70">{Number((chances[r] * 100).toFixed(1))}%</span>
                 </div>
               ))}
             </div>

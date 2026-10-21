@@ -68,10 +68,12 @@ export default function HatcheryPage() {
             <h1 className="mt-3 sl-display-l text-bone">The Hatchery</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
-            <span className="relative flex h-2 w-2">
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-sol-green" />
+            <span className="inline-flex items-center gap-2">
+              <span className="relative inline-flex h-2 w-2 shrink-0 rounded-full bg-sol-green" />
+              <span>
+                Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · <span className="whitespace-nowrap">×{formatNumber(h.speed)}</span>
+              </span>
             </span>
-            Simulated clock · {new Date(h.simNow).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })} · ×{formatNumber(h.speed)}
             {h.isDemo && (
               <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-bone">
                 Exit demo

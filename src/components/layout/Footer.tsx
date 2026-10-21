@@ -39,7 +39,7 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/30">
+      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/55">
         <Sigil className="h-10 w-10 opacity-80" />
         © Solanites · Built on conviction
       </div>

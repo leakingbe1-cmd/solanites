@@ -75,7 +75,7 @@ export function CreatureDetail({ species, record, onRename, onSelectSpecies, onP
       )}
 
       {/* ── identity + four stages ── */}
-      <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+      <div className="grid gap-6 lg:grid-cols-[280px_1fr] lg:items-start">
         <div className="min-w-0">
           <p className="font-mono text-xs text-mist/60">#{String(species.dex).padStart(3, "0")}</p>
           {record && editing ? (

@@ -95,6 +95,7 @@ body {
   font-size: clamp(2.75rem, 1.8rem + 3.6vw, 5.25rem);
   line-height: 0.95;
   letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 .sl-display-m {
   font-family: var(--font-display);

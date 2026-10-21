@@ -6,10 +6,10 @@ import { formatDuration, formatNumber } from "./format";
 import { ago } from "./homeMetrics";
 
 /** What /leaderboard shows for each tab, worked out from /api/leaderboard (no fetching, no timers). */
-export const TABS: { id: LeaderboardCategory; label: string; column: string }[] = [
-  { id: "evolved", label: "Most Evolved", column: "Stage total" },
-  { id: "holders", label: "Longest Holders", column: "Held" },
-  { id: "rarest", label: "Rarest Discoveries", column: "Rarest" },
+export const TABS: { id: LeaderboardCategory; label: string; short: string; column: string }[] = [
+  { id: "evolved", label: "Most Evolved", short: "Evolved", column: "Stage total" },
+  { id: "holders", label: "Longest Holders", short: "Holders", column: "Held" },
+  { id: "rarest", label: "Rarest Discoveries", short: "Rarest", column: "Rarest" },
 ];
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? "" : "s"}`;

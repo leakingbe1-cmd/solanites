@@ -35,8 +35,8 @@ export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, de
       {/* the creature in its biome; only the creature lifts on hover */}
       <CreatureScene species={s} stage={stage ?? FEATURED_STAGE} size="card" className="sl-portrait mt-2 aspect-square rounded-[3px]" artClassName="sl-art-host" />
       <div className="relative border-t border-white/[0.06] pt-3">
-        <div className="flex items-baseline justify-between gap-2">
-          <p className="truncate font-display text-base text-bone sm:text-xl">{s.name}</p>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-2">
+          <p className="min-w-0 break-words font-display text-base text-bone sm:text-xl">{s.name}</p>
           <span className={`shrink-0 font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? (demo ? "text-amber-200" : "text-sol-green") : "text-mist/50"}`} data-demo={d === "owned" && demo ? "" : undefined}>{d === "owned" ? (demo ? "● Demo" : "● Discovered") : "Catalogued"}</span>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">

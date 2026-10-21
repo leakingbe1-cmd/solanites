@@ -161,8 +161,9 @@ export default function LeaderboardPage() {
 
         <div className="mx-auto mt-10 flex w-fit gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
           {TABS.map((x) => (
-            <button key={x.id} onClick={() => setTab(x.id)} className={`rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-bone" : "text-mist hover:text-bone"}`}>
-              {x.label}
+            <button key={x.id} onClick={() => setTab(x.id)} className={`whitespace-nowrap rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-bone" : "text-mist hover:text-bone"}`}>
+              <span className="sm:hidden">{x.short}</span>
+              <span className="hidden sm:inline">{x.label}</span>
             </button>
           ))}
         </div>

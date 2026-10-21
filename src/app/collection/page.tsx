@@ -99,7 +99,7 @@ export default function CollectionPage() {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 xl:grid-cols-4">
           {list.map((s) => {
             return (
               <CollectionPlate

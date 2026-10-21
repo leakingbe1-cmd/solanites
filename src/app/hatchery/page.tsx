@@ -92,6 +92,11 @@ export default function HatcheryPage() {
           </div>
         )}
 
+        {/* demo controls at the top, so speed is one tap away */}
+        <div className="mt-4">
+          <SimulationPanel />
+        </div>
+
         {/* status */}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Stat label="Wallet balance" value={`${formatNumber(h.balance)}`} sub={`${cfg.token.symbol}${h.balanceSource === "mock" ? " · mock" : " · RPC"}`} />
@@ -128,14 +133,14 @@ export default function HatcheryPage() {
 
         {/* eggs */}
         <SectionTitle title="Incubating" count={eggs.length} />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
           {eggs.map((r) => (
             <EggCard key={r.id} record={r} index={ordered.indexOf(r)} onOpen={() => setInspect(r.id)} onHatch={() => setHatching(r.id)} />
           ))}
           {h.canClaim && (
             <button
               onClick={h.claimEgg}
-              className="sl-card-hover group flex min-h-[380px] flex-col items-center justify-center rounded-md border border-dashed border-sol-green/40 bg-sol-green/[0.03] p-6 text-center transition hover:bg-sol-green/[0.06]"
+              className="sl-card-hover group flex min-h-[240px] flex-col items-center justify-center rounded-md border border-dashed border-sol-green/40 bg-sol-green/[0.03] p-4 text-center transition hover:bg-sol-green/[0.06] sm:min-h-[380px] sm:p-6"
             >
               <span className="grid h-16 w-16 place-items-center rounded-full border border-sol-green/40 text-3xl text-sol-green transition group-hover:scale-110 group-hover:shadow-[0_0_40px_rgba(20,241,149,0.4)]">+</span>
               <span className="mt-5 font-display text-lg text-bone">Claim new egg</span>
@@ -143,7 +148,7 @@ export default function HatcheryPage() {
             </button>
           )}
           {Array.from({ length: lockedSlots }).map((_, i) => (
-            <div key={i} className="flex min-h-[380px] flex-col items-center justify-center rounded-md border border-white/[0.05] bg-white/[0.01] p-6 text-center">
+            <div key={i} className="flex min-h-[240px] flex-col items-center justify-center rounded-md border border-white/[0.05] bg-white/[0.01] p-4 text-center sm:min-h-[380px] sm:p-6">
               <svg viewBox="0 0 24 24" className="h-8 w-8 text-bone/20" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
               <p className="mt-4 font-display text-bone/50">Locked slot</p>
               <p className="mt-1 text-xs text-mist/50">Hold {formatNumber((Math.max(h.allowedEggs, h.records.length) + i + 1) * cfg.token.tokensPerEgg)} tokens</p>
@@ -164,9 +169,6 @@ export default function HatcheryPage() {
           <p className="rounded-md border border-white/5 p-10 text-center text-mist">No Solanites yet. Your first hatch is waiting.</p>
         )}
 
-        <div className="mt-16">
-          <SimulationPanel />
-        </div>
       </div>
 
       <Modal open={!!inspected} onClose={() => setInspect(null)} label="Inspect" xl={inspected ? phaseOf(inspected, cfg) === "creature" : false}>

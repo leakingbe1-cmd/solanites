@@ -25,7 +25,7 @@ export default function Home() {
       <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
         <PhoenixHero />
         {/* phones: the Phoenix above, the copy beneath it; wide screens: the copy left, over the Phoenix's darkened wing */}
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[26svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[20svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
           <div className="flex max-w-xl flex-col text-center lg:block lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
@@ -59,8 +59,8 @@ export default function Home() {
             <div className="sl-awake-in mt-3 max-lg:order-1" style={{ animationDelay: "0.65s" }}>
               <SocialLine className="justify-center lg:justify-start" />
             </div>
-            {/* live holders, eggs collected and market cap (/api/home-stats); on phones above the buttons, so they're on the first screen */}
-            <div className="sl-awake-in mt-4 lg:mt-5" style={{ animationDelay: "0.45s" }}>
+            {/* live holders, eggs collected and market cap (/api/home-stats); on phones after the buttons: headline, pitch, CTA, then metrics */}
+            <div className="sl-awake-in mt-4 max-lg:order-2 lg:mt-5" style={{ animationDelay: "0.45s" }}>
               <HomeMetrics />
             </div>
           </div>

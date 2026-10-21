@@ -26,6 +26,8 @@
     radial-gradient(110% 85% at 28% 18%, color-mix(in srgb, var(--sc-0) 55%, transparent) 0%, transparent 60%),
     radial-gradient(120% 100% at 50% 55%, var(--sc-1) 0%, var(--sc-2) 100%);
   pointer-events: none;
+  /* its own layer: the blurred plate is rasterised once, not again under every idle frame */
+  will-change: transform;
 }
 .sl-biome-plate {
   position: absolute;
@@ -143,6 +145,8 @@
 }
 
 .sl-idle-a { animation: var(--ka) var(--p) ease-in-out var(--dl) infinite; }
+/* a moving card composites its creature layer instead of repainting the card */
+.sl-scene-card[data-active] .sl-idle-a { will-change: transform; }
 .sl-idle-b { animation: var(--kb) calc(var(--p) * 2.37) ease-in-out var(--dl) infinite; }
 .sl-idle[data-body="rock"] { --ka: sl-idle-rock; --kb: none; }
 .sl-idle[data-body="breathe"] { --ka: sl-idle-breathe; --kb: sl-idle-shift; }
@@ -252,8 +256,9 @@
   animation: none;
 }
 
-/* off screen or before the first sighting: hold the rest pose */
-.sl-scene:not([data-active]) :is(.sl-idle-a, .sl-idle-b, .sl-idle-seg, .sl-idle-glow, .sl-mote, .sl-mote::after, .sl-biome-air) {
+/* off screen, before the first sighting, or a card beyond CARD_IDLE_CAP: hold the rest pose
+   (a capped card still idles while hovered or while its link has keyboard focus) */
+.sl-scene:not([data-active]):not(:hover):not(:focus-visible *) :is(.sl-idle-a, .sl-idle-b, .sl-idle-seg, .sl-idle-glow, .sl-mote, .sl-mote::after, .sl-biome-air) {
   animation-play-state: paused;
 }
 

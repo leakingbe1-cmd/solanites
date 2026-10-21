@@ -1,4 +1,4 @@
-import type { HomeStats, Metric, MetricStatus } from "@/shared/homeStats";
+import { NOT_CONFIGURED_NOTE, type HomeStats, type Metric, type MetricStatus } from "@/shared/homeStats";
 
 /**
  * What the homepage shows for each live metric (src/components/landing/HomeMetrics.tsx), worked
@@ -67,6 +67,14 @@ export function freshnessParts(stats: HomeStats, now: number): { text: string; o
 }
 
 export const freshnessLine = (stats: HomeStats, now: number) => freshnessParts(stats, now).map((p) => p.text).join(" · ");
+
+/**
+ * Before launch the server has no mint or RPC, so there is nothing live to show: the homepage shows
+ * a designed pre-launch panel instead of three "Unavailable" boxes. A transient failure after launch
+ * still shows the live strip with its reasons.
+ */
+export const isPreLaunch = (stats: HomeStats): boolean =>
+  stats.holders.status === "unavailable" && stats.holders.note === NOT_CONFIGURED_NOTE && stats.marketCap.status === "unavailable";
 
 /** Shown in place of all three when the route itself can't be reached and there's no earlier answer. */
 export const UNREACHABLE_NOTE = "Live metrics are temporarily unavailable.";

@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { freshnessParts, metricViews, POLL_MS, UNREACHABLE_NOTE, type MetricView } from "@/lib/homeMetrics";
+import { gameConfig } from "@/config/gameConfig";
+import { formatNumber } from "@/lib/format";
+import { freshnessParts, isPreLaunch, metricViews, POLL_MS, UNREACHABLE_NOTE, type MetricView } from "@/lib/homeMetrics";
+import { CATALOGUE_SIZE } from "@/lib/species";
 import type { HomeStats } from "@/shared/homeStats";
 
 /**
@@ -48,6 +51,7 @@ function useHomeStats() {
 
 /** The metrics for a given answer; exported for tests (no fetching, no timers). */
 export function HomeMetricsView({ stats, error, now }: { stats: HomeStats | null; error: boolean; now: number }) {
+  if (stats && isPreLaunch(stats)) return <PreLaunchPanel />;
   const loading = !stats && !error;
   const views: MetricView[] | null = stats
     ? metricViews(stats, now)
@@ -96,6 +100,36 @@ export function HomeMetricsView({ stats, error, now }: { stats: HomeStats | null
             ? "Loading live data…"
             : "Retrying every 30 s"}
       </p>
+    </div>
+  );
+}
+
+/** Before launch: what is ready now and when tracking starts. Facts from config only, no live figures. */
+function PreLaunchPanel() {
+  const facts = [
+    { value: String(CATALOGUE_SIZE), label: "Species ready" },
+    { value: formatNumber(gameConfig.token.tokensPerEgg), label: `${gameConfig.token.symbol} = 1 egg` },
+  ];
+  return (
+    <div role="region" aria-label="Solanites before launch" className="sl-home-metrics" data-testid="home-metrics" data-state="prelaunch">
+      <div className="flex flex-col gap-3 rounded-md border border-white/[0.08] bg-void/55 px-4 py-3 backdrop-blur-sm sm:flex-row sm:items-center sm:gap-5 sm:py-3.5">
+        <div className="min-w-0 text-center sm:flex-1 sm:text-left">
+          <p className="flex items-center justify-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.22em] text-amber-200/90 sm:justify-start sm:text-[10px]">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-300/80" aria-hidden />
+            Pre-launch
+          </p>
+          <p className="mt-1 text-sm leading-snug text-bone">Live tracking switches on at launch.</p>
+          <p className="mt-0.5 text-[11px] leading-snug text-dust">Holders, eggs and market cap appear here once it does.</p>
+        </div>
+        <dl className="grid grid-cols-2 divide-x divide-white/10 sm:shrink-0">
+          {facts.map((f) => (
+            <div key={f.label} className="flex min-w-0 flex-col items-center px-3 text-center">
+              <dd className="font-display text-xl leading-tight tabular-nums text-bone sm:text-2xl">{f.value}</dd>
+              <dt className="order-first font-mono text-[9px] uppercase tracking-[0.12em] text-dust sm:text-[10px] sm:tracking-[0.18em]">{f.label}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
     </div>
   );
 }

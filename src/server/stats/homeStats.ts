@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { HomeStats, Metric } from "@/shared/homeStats";
+import { NOT_CONFIGURED_NOTE, type HomeStats, type Metric } from "@/shared/homeStats";
 import { fetchMintTokenAccounts } from "../solana/history";
 import { isOnCurve } from "../solana/curve";
 import type { RpcClient } from "../solana/rpc";
@@ -121,12 +121,11 @@ export function createHomeStats(deps: HomeStatsDeps) {
           })
         : Promise.resolve(),
     ]);
-    const notConfigured = "Token tracking is not configured on this server.";
     return {
-      holders: chain ? metric("holders", "Holder data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: notConfigured },
+      holders: chain ? metric("holders", "Holder data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: NOT_CONFIGURED_NOTE },
       // "Egg tracking …" messages are written for visitors (not configured / no sync yet); anything else is generic.
       eggs: eggsMetric(),
-      marketCap: chain ? metric("marketCap", "Market data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: notConfigured },
+      marketCap: chain ? metric("marketCap", "Market data is temporarily unavailable.") : { value: null, status: "unavailable", asOf: null, note: NOT_CONFIGURED_NOTE },
       generatedAt: now(),
     };
   }

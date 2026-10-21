@@ -4,8 +4,11 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { HomeMetricsView } from "@/components/landing/HomeMetrics";
-import { ago, formatCount, formatUsdCompact, freshnessLine, metricViews, UNREACHABLE_NOTE } from "@/lib/homeMetrics";
-import type { HomeStats } from "@/shared/homeStats";
+import { gameConfig } from "@/config/gameConfig";
+import { formatNumber } from "@/lib/format";
+import { ago, formatCount, formatUsdCompact, freshnessLine, isPreLaunch, metricViews, UNREACHABLE_NOTE } from "@/lib/homeMetrics";
+import { CATALOGUE_SIZE } from "@/lib/species";
+import { NOT_CONFIGURED_NOTE, type HomeStats } from "@/shared/homeStats";
 
 /** Homepage live metrics: every state the /api/home-stats contract allows, rendered as visitors see it. */
 const NOW = Date.UTC(2026, 9, 20, 19, 0, 0);
@@ -97,6 +100,25 @@ describe("states", () => {
     expect(text.match(/Unavailable/g)).toHaveLength(3);
     expect(text).toContain(UNREACHABLE_NOTE);
     expect(html).not.toContain("data-live-dot");
+  });
+
+  it("pre-launch (no mint or RPC on the server): a designed panel with config facts, no 'Unavailable' and no live figures", () => {
+    const off = { value: null, status: "unavailable", asOf: null, note: NOT_CONFIGURED_NOTE } as const;
+    const stats: HomeStats = { ...base, holders: off, eggs: { value: null, status: "unavailable", asOf: null, note: "Egg tracking is not configured on this server." }, marketCap: off };
+    expect(isPreLaunch(stats)).toBe(true);
+    const { html, text } = render(stats);
+    expect(html).toContain('data-state="prelaunch"');
+    expect(text).toContain("Live tracking switches on at launch.");
+    expect(text).toContain(`${CATALOGUE_SIZE} Species ready`);
+    expect(text).toContain(`${formatNumber(gameConfig.token.tokensPerEgg)} ${gameConfig.token.symbol} = 1 egg`);
+    expect(text).not.toContain("Unavailable");
+    expect(html).not.toContain("data-live-dot");
+  });
+
+  it("a temporary failure after launch keeps the live strip with its reasons, not the pre-launch panel", () => {
+    const stats: HomeStats = { ...base, holders: { value: null, status: "unavailable", asOf: null, note: "Holder data is temporarily unavailable." } };
+    expect(isPreLaunch(stats)).toBe(false);
+    expect(render(stats).html).not.toContain('data-state="prelaunch"');
   });
 });
 

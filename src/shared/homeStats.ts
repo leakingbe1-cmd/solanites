@@ -29,3 +29,6 @@ export interface HomeStats {
   /** Server time this response was assembled. */
   generatedAt: number;
 }
+
+/** The note on holders and market cap when the server has no mint or RPC configured (before launch). */
+export const NOT_CONFIGURED_NOTE = "Token tracking is not configured on this server.";

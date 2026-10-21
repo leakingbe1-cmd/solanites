@@ -31,6 +31,7 @@ export function Footer() {
           <ul className="mt-4 space-y-2.5 text-mist">
             <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
+            <li><Link className="hover:text-bone" href="/updates">Updates</Link></li>
             {FIRST_VISIT_INTRO.enabled && <li><ReplayIntroButton className="hover:text-bone" /></li>}
           </ul>
         </div>

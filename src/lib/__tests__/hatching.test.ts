@@ -20,27 +20,27 @@ const seq = (...xs: number[]) => {
 };
 
 describe("the configured rarity model", () => {
-  it("is the shipped design: weights 60 / 25 / 10 / 3.8 / 1 / 0.2 and every tier has species", () => {
-    expect(gameConfig.rarityWeights).toEqual({ common: 60, rare: 25, epic: 10, legendary: 3.8, mythic: 1, secret: 0.2 });
+  it("is the agreed design: weights 40 / 30 / 17 / 8 / 3.5 / 1.5 and every tier has species", () => {
+    expect(gameConfig.rarityWeights).toEqual({ common: 40, rare: 30, epic: 17, legendary: 8, mythic: 3.5, secret: 1.5 });
     expect(() => validateRarityConfig(gameConfig)).not.toThrow();
     for (const r of RARITY_ORDER) expect(SPECIES.some((s) => s.rarity === r)).toBe(true);
   });
 
   it("maps the random number onto cumulative weights exactly at each boundary", () => {
-    // Cumulative shares: common [0, .6), rare [.6, .85), epic [.85, .95), legendary [.95, .988), mythic [.988, .998), secret [.998, 1)
+    // Cumulative shares: common [0, .40), rare [.40, .70), epic [.70, .87), legendary [.87, .95), mythic [.95, .985), secret [.985, 1)
     const at = (u: number) => rollRarity(seq(u), gameConfig);
     expect(at(0)).toBe("common");
-    expect(at(0.5999999)).toBe("common");
-    expect(at(0.6)).toBe("rare");
-    expect(at(0.8499999)).toBe("rare");
-    expect(at(0.85)).toBe("epic");
-    // 3.8 and 0.2 aren't exact in binary, so test a hair either side of those boundaries.
-    expect(at(0.9499999)).toBe("epic");
-    expect(at(0.9500001)).toBe("legendary");
-    expect(at(0.9879999)).toBe("legendary");
-    expect(at(0.9880001)).toBe("mythic");
-    expect(at(0.9979999)).toBe("mythic");
-    expect(at(0.9980001)).toBe("secret");
+    // Fractional shares aren't exact in binary, so test a hair either side of each boundary.
+    expect(at(0.3999999)).toBe("common");
+    expect(at(0.4000001)).toBe("rare");
+    expect(at(0.6999999)).toBe("rare");
+    expect(at(0.7000001)).toBe("epic");
+    expect(at(0.8699999)).toBe("epic");
+    expect(at(0.8700001)).toBe("legendary");
+    expect(at(0.9499999)).toBe("legendary");
+    expect(at(0.9500001)).toBe("mythic");
+    expect(at(0.9849999)).toBe("mythic");
+    expect(at(0.9850001)).toBe("secret");
     expect(at(0.9999999999)).toBe("secret");
   });
 

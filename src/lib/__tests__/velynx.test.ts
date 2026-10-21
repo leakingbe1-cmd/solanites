@@ -18,7 +18,7 @@ describe("Velynx joins the catalogue without changing anything else", () => {
   });
 
   it("does not change tier odds — only the split inside the Legendary tier", () => {
-    expect(rarityChances(gameConfig).legendary).toBeCloseTo(3.8 / 100, 6);
+    expect(rarityChances(gameConfig).legendary).toBeCloseTo(8 / 100, 6);
     expect(speciesOfRarity("legendary").map((s) => s.id)).toContain("velynx");
   });
 

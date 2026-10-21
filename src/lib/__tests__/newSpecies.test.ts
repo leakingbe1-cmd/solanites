@@ -26,7 +26,7 @@ describe("Nyxara, Thalor and Helivane", () => {
   });
 
   it("keeps tier odds unchanged", () => {
-    expect(rarityChances(gameConfig).legendary).toBeCloseTo(3.8 / 100, 6);
+    expect(rarityChances(gameConfig).legendary).toBeCloseTo(8 / 100, 6);
   });
 
   it("can roll each new species, and Helivane is classified until discovered like other Mythics", () => {

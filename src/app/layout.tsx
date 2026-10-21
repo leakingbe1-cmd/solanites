@@ -16,9 +16,18 @@ import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
 import { FIRST_VISIT_INTRO } from "@/config/intro";
 import { INDEXING_ENABLED } from "@/config/indexing";
 
+const TITLE = "Solanites — Your Solanite Is Waiting";
+const DESCRIPTION = "Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.";
+// Absolute URLs for the link-preview image: the production domain on Vercel, this deployment otherwise.
+const SITE_HOST = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
+
 export const metadata: Metadata = {
-  title: "Solanites — Your Solanite Is Waiting",
-  description: "Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.",
+  metadataBase: new URL(SITE_HOST ? `https://${SITE_HOST}` : "http://localhost:3000"),
+  title: TITLE,
+  description: DESCRIPTION,
+  // The 1200×630 card is src/app/opengraph-image.png (and twitter-image.png); Next adds the image tags.
+  openGraph: { type: "website", siteName: "Solanites", title: TITLE, description: DESCRIPTION },
+  twitter: { card: "summary_large_image", site: "@Solanites_", creator: "@Solanites_", title: TITLE, description: DESCRIPTION },
   // Prelaunch: ask crawlers not to index (see src/config/indexing.ts).
   robots: INDEXING_ENABLED ? undefined : { index: false, follow: false },
 };

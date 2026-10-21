@@ -11,7 +11,7 @@ import { sfx } from "@/lib/sound";
  * One bestiary plate in the Collection grid (also previewed in Developer Mode).
  * `stage` is the viewer's best form of the species, if any.
  */
-export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, onOpen }: { species: Species; discovery: Discovery; stage?: number; bestLabel?: string; onOpen(): void }) {
+export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, demo = false, onOpen }: { species: Species; discovery: Discovery; stage?: number; bestLabel?: string; /** Demo discoveries are simulated: marked "Demo" so they never read as real. */ demo?: boolean; onOpen(): void }) {
   const meta = RARITIES[s.rarity];
   return (
     <button
@@ -37,13 +37,13 @@ export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, on
       <div className="relative border-t border-white/[0.06] pt-3">
         <div className="flex items-baseline justify-between gap-2">
           <p className="truncate font-display text-base text-bone sm:text-xl">{s.name}</p>
-          <span className={`shrink-0 font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? "text-sol-green" : "text-mist/50"}`}>{d === "owned" ? "● Discovered" : "Catalogued"}</span>
+          <span className={`shrink-0 font-mono text-[9px] uppercase tracking-wider ${d === "owned" ? (demo ? "text-amber-200" : "text-sol-green") : "text-mist/50"}`} data-demo={d === "owned" && demo ? "" : undefined}>{d === "owned" ? (demo ? "● Demo" : "● Discovered") : "Catalogued"}</span>
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <RarityBadge rarity={s.rarity} />
           <span className="text-[11px] text-mist">{ELEMENT_GLYPH[s.element]} {s.element}</span>
         </div>
-        <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-mist/50">{bestLabel ? `Your best: ${bestLabel}` : "Evolution: —"}</p>
+        <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-mist/50">{bestLabel ? `${demo ? "Demo best" : "Your best"}: ${bestLabel}` : "Evolution: —"}</p>
       </div>
     </button>
   );

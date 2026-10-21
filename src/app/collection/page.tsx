@@ -90,7 +90,7 @@ export default function CollectionPage() {
             </select>
             <select value={status} onChange={(e) => setStatus(e.target.value as typeof status)} className="shrink-0 rounded-full border border-white/10 bg-abyss px-3 py-1.5 text-xs text-mist outline-none" aria-label="Discovery filter">
               <option value="all">All statuses</option>
-              <option value="owned">Discovered by me</option>
+              <option value="owned">{isDemo && !watched ? "Demo discoveries" : "Discovered by me"}</option>
               <option value="missing">Not yet discovered</option>
             </select>
           </div>
@@ -105,6 +105,7 @@ export default function CollectionPage() {
                 discovery={discovery(s)}
                 stage={bestForm[s.id]}
                 bestLabel={bestForm[s.id] !== undefined ? h.config.evolution.names[bestForm[s.id]] : undefined}
+                demo={isDemo && !watched}
                 onOpen={() => setOpen(s)}
               />
             );

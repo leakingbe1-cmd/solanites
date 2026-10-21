@@ -13,11 +13,13 @@ Updated: 2026-10-21, by SOL · Workstream Manager.
   - `backup/integration-179015c`;
   - previous production deployment `dpl_FAjwhXvNcBLigP2U7EeRYHkD5MdR` (one-step Vercel rollback).
 
-## Running
-| Workstream | Task | Branch | Report to |
+## Lanes (since 21 Oct; 13 old workstreams handed off and archived; handoffs on `handoff/*` branches)
+| Lane | Session | Doing now | Report to |
 |---|---|---|---|
-| SOL · Website & Preview | Verify retention items 1–3 and merge them into integration (brief sent) | `feature/retention-1-3` (a36d9ee) | Manager |
-| Owner's local Claude Code (3D) | Redo Aurelion in premium realism (FLUX/RealVisXL, free and local) | `art/3d-creatures` | Owner (art approval), Manager (tech review) |
+| Manager | SOL · Workstream Manager | Plan, delegate, STATUS.md | Owner |
+| Site (Opus) | SOL · Site | Merge `feature/retention-1-3` @ 286c0bd (612 tests, 18/18 checks) into integration; check Preview; no prod | Manager |
+| Creature Art (owner's PC) | Local Claude Code | Redo Aurelion in premium realism, then wait for art approval | Owner (art), Manager |
+| Marketing (Sonnet) | SOL · Marketing | Consolidated `marketing/PLAN.md`: inventory, conflicts, one posting order | Manager |
 
 ## Done
 - Phase 1, X warm-up: profile kit on `marketing/x-warmup`; 22 Typefully drafts, none scheduled.

@@ -34,8 +34,12 @@ export default function Home() {
             <h1 className="sl-awake-in sl-display-xl mt-6 text-bone" style={{ animationDelay: "0.25s" }}>
               A world waiting to <span className="sl-phx-gold italic">awaken.</span>
             </h1>
-            <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              {CATALOGUE_SIZE} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
+            {/* what the coin does, in one line: the hold mechanic, from config */}
+            <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-bone sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }} data-testid="hero-pitch">
+              Hold {gameConfig.token.symbol} on Solana. Every {formatNumber(gameConfig.token.tokensPerEgg)} earns an egg. Keep holding and it evolves.
+            </p>
+            <p className="sl-awake-in mx-auto mt-2 max-w-lg text-base leading-relaxed text-mist lg:mx-0" style={{ animationDelay: "0.45s" }}>
+              {CATALOGUE_SIZE} creatures sleep in sealed eggs, from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.
             </p>
             <div className="sl-awake-in mt-5 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
               <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">

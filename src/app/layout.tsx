@@ -15,9 +15,13 @@ import { FirstVisitIntro } from "@/components/intro/FirstVisitIntro";
 import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
 import { FIRST_VISIT_INTRO } from "@/config/intro";
 import { INDEXING_ENABLED } from "@/config/indexing";
+import { gameConfig } from "@/config/gameConfig";
+import { formatNumber } from "@/lib/format";
+import { CATALOGUE_SIZE } from "@/lib/species";
 
-const TITLE = "Solanites — Your Solanite Is Waiting";
-const DESCRIPTION = "Discover your creature. Hatch the extraordinary. Watch your Solanite grow stronger through its evolution.";
+const { symbol, tokensPerEgg } = gameConfig.token;
+const TITLE = `Solanites (${symbol}) on Solana — Hold, Hatch, Evolve`;
+const DESCRIPTION = `Hold ${symbol} on Solana. Every ${formatNumber(tokensPerEgg)} earns an egg that hatches into one of ${CATALOGUE_SIZE} creatures, and it keeps evolving while you hold.`;
 // Absolute URLs for the link-preview image: the production domain on Vercel, this deployment otherwise.
 const SITE_HOST = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
 

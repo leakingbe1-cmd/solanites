@@ -389,7 +389,7 @@ function FastTrackBanner({ ft }: { ft: TrackedHolderView["fastTrack"] }) {
     >
       <div>
         <p className={`font-mono text-[11px] uppercase tracking-[0.25em] ${ft.complete ? "text-mist" : "text-sol-green"}`}>
-          {ft.complete ? "Fast track complete" : ft.used === 0 ? `Fast track: ${ft.total} eggs` : `Fast track: egg ${ft.used} of ${ft.total}`}
+          {ft.complete ? "Fast track complete" : ft.used === 0 ? `Fast track: ${ft.total} eggs` : `Fast track: ${ft.used} of ${ft.total} hatched`}
         </p>
         <p className="mt-1 text-sm text-mist">
           {ft.complete
@@ -399,7 +399,7 @@ function FastTrackBanner({ ft }: { ft: TrackedHolderView["fastTrack"] }) {
       </div>
       {!ft.complete && (
         <p className="shrink-0 font-mono text-sm text-bone" data-testid="fast-track-remaining">
-          {ft.remaining} fast {ft.remaining === 1 ? "egg" : "eggs"} left
+          {ft.remaining} fast {ft.remaining === 1 ? "hatch" : "hatches"} left
         </p>
       )}
     </div>

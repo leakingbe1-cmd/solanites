@@ -28,8 +28,8 @@ export interface TrackedHolderView {
     excluded: boolean;
   };
   counts: { earned: number; queued: number; incubating: number; ready: number; hatched: number };
-  /** Onboarding fast track: the first `total` eggs a wallet earns. `used` of them are earned so far. */
-  fastTrack: { total: number; used: number; remaining: number; complete: boolean; hatchMs: number; stageMs: number };
+  /** Onboarding fast track: the first `total` eggs a wallet earns. `issued` of them are earned so far, `used` of those hatched. */
+  fastTrack: { total: number; issued: number; used: number; remaining: number; complete: boolean; hatchMs: number; stageMs: number };
   eggs: TrackedEgg[];
   rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel"; initialGrowthScheduleMs: number[] };
   sync: { lastSyncedAt: number | null; pending: boolean; error: string | null };

@@ -235,7 +235,11 @@ describe("onboarding fast track: first five eggs", () => {
     buy(h, 3_000_000);
     await tracker.runSync({ force: true });
     let v = await tracker.holderView(h);
-    expect(v.fastTrack).toEqual({ total: 5, used: 3, remaining: 2, complete: false, hatchMs: MIN, stageMs: MIN });
+    // Progress counts hatches, not issued eggs: three eggs waiting to hatch have used none of it.
+    expect(v.fastTrack).toEqual({ total: 5, issued: 3, used: 0, remaining: 5, complete: false, hatchMs: MIN, stageMs: MIN });
+    clock.advance(5 * MIN);
+    for (const e of v.eggs) await tracker.hatch(e.id);
+    expect((await tracker.holderView(h)).fastTrack).toMatchObject({ issued: 3, used: 3, remaining: 2, complete: false });
     // Leaving and coming back (a new server instance on the same database) keeps the progress.
     const again = make();
     expect((await again.holderView(h)).fastTrack.used).toBe(3);
@@ -245,7 +249,11 @@ describe("onboarding fast track: first five eggs", () => {
     v = await again.holderView(h);
     expect(v.eggs.map((e) => e.fastTrack)).toEqual([true, true, true, true, true, false, false]);
     expect(v.eggs.slice(5).map((e) => e.incubationMs)).toEqual([12 * HOUR, 12 * HOUR]);
-    expect(v.fastTrack).toMatchObject({ used: 5, remaining: 0, complete: true });
+    // All five fast eggs issued, but two still unhatched: not complete yet.
+    expect(v.fastTrack).toMatchObject({ issued: 5, used: 3, remaining: 2, complete: false });
+    clock.advance(5 * MIN);
+    for (const e of v.eggs.slice(3, 5)) await again.hatch(e.id);
+    expect((await again.holderView(h)).fastTrack).toMatchObject({ issued: 5, used: 5, remaining: 0, complete: true });
     // Stored per egg, so nothing a client sends can change it.
     const stored = (await db.query<{ sequence: number; fast_track: boolean }>(`SELECT sequence, fast_track FROM eggs WHERE owner = $1 ORDER BY sequence`, [h])).rows;
     expect(stored.map((r) => r.fast_track)).toEqual([true, true, true, true, true, false, false]);

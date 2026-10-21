@@ -476,6 +476,8 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     // (readyAt), not when someone pressed the reveal. So a first egg earned at 0:00 hatches at
     // 1:00 and is fully grown at 2:00 however late the reveal is opened. The k-th hatched
     // creature (oldest first) grows while the recorded balance is at least k × tokensPerEgg.
+    // Fast-track creatures are the exception: their stages are a minute apart, so they grow from
+    // the reveal itself, or a late reveal would skip straight past the evolutions.
     const hatched = eggs.filter((e) => e.hatchedAt !== null);
     if (hatched.length) {
       const changes = (
@@ -485,7 +487,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         )
       ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }));
       hatched.forEach((e, k) => {
-        const g = qualifyingMs(e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
+        const g = qualifyingMs(e.fastTrack ? Math.max(e.readyAt, e.hatchedAt!) : e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
         e.growing = g.growing;
         const evo = evolutionOf(g.ms, gameConfig, e.maturityMs, e.afterMaturityMs ?? undefined);
@@ -518,8 +520,10 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
       // Tied to the wallet's egg sequence numbers, which the server assigns and never reuses: nothing in the browser can reset it.
       fastTrack: (() => {
         const ft = config.progression.fastTrack;
-        const used = Math.min(row?.eggs_earned ?? 0, ft.eggs);
-        return { total: ft.eggs, used, remaining: ft.eggs - used, complete: used >= ft.eggs, hatchMs: ft.hatchMs, stageMs: ft.stageMs };
+        const issued = Math.min(row?.eggs_earned ?? 0, ft.eggs);
+        // Progress is hatches, not issues: a wallet that earned ten eggs at once has used none of its fast track until one hatches.
+        const used = eggs.filter((e) => e.fastTrack && e.status === "hatched").length;
+        return { total: ft.eggs, issued, used, remaining: ft.eggs - used, complete: used >= ft.eggs, hatchMs: ft.hatchMs, stageMs: ft.stageMs };
       })(),
       eggs,
       rules: {

@@ -192,11 +192,11 @@ export function TrackedHatchery({ address }: { address: string }) {
             <p className="mt-3 break-all font-mono text-xs text-mist">{address}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
-            <span className="relative flex h-2 w-2" aria-hidden>
-              <span className={`relative inline-flex h-2 w-2 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} />
-            </span>
-            <span data-testid="verification-status">
-              {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
+            <span className="inline-flex items-start gap-2">
+              <span className={`relative mt-[3px] inline-flex h-2 w-2 shrink-0 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} aria-hidden />
+              <span data-testid="verification-status">
+                {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
+              </span>
             </span>
             <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-bone">
               Change address

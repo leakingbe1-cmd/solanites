@@ -107,6 +107,28 @@ const POSTS = {
 };
 window.POSTS = POSTS;
 
+// Pre-launch warm-up set (marketing/x-profile/). Same template; footer reads "Teaser" instead of "NN / 10".
+// Mythic and Secret designs never appear here.
+const SIL = (id, tier) => ({ kind: "silhouette", id, tier });
+const ONE = (id, name, tier) => ({ kind: "single", id, name, tier });
+const WARM = {
+  W01: { slug: "sil-mossling", kicker: "Bloodline unknown", h: "Who's <em>inside?</em>", s: "The first Solanite stirs. Name it in the replies.", hero: SIL("mossling", "Common"), label: "Silhouette · ???" },
+  W02: { slug: "reveal-mossling", kicker: "Common bloodline", h: "Meet <em>Mossling.</em>", s: "The Patient Sprout. It grows a little greener with every block its keeper holds.", hero: ONE("mossling", "Mossling", "Common"), label: "In-game art · Mossling" },
+  W03: { slug: "sil-frostkit", kicker: "Bloodline unknown", h: "Something <em>cold.</em>", s: "Small. Excitable. Breathes weather. Guess it.", hero: SIL("frostkit", "Common"), label: "Silhouette · ???" },
+  W04: { slug: "reveal-frostkit", kicker: "Common bloodline", h: "Meet <em>Frostkit.</em>", s: "Little Glacier. It breathes tiny snowstorms when excited. It is excited constantly.", hero: ONE("frostkit", "Frostkit", "Common"), label: "In-game art · Frostkit" },
+  W05: { slug: "sil-stormquill", kicker: "Bloodline unknown", h: "Hear the <em>wings?</em>", s: "A Rare one is coming through.", hero: SIL("stormquill", "Rare"), label: "Silhouette · ???" },
+  W06: { slug: "reveal-stormquill", kicker: "Rare bloodline", h: "Meet <em>Stormquill.</em>", s: "Thunder's Courier. Every wingbeat finalises a thousand transactions. Probably.", hero: ONE("stormquill", "Stormquill", "Rare"), label: "In-game art · Stormquill" },
+  W07: { slug: "sil-neonyx", kicker: "Bloodline unknown", h: "It <em>glows.</em>", s: "Epic bloodline. The longer it's held, the brighter it gets.", hero: SIL("neonyx", "Epic"), label: "Silhouette · ???" },
+  W08: { slug: "reveal-neonyx", kicker: "Epic bloodline", h: "Meet <em>Neonyx.</em>", s: "The Lantern Wyrm. A living lantern fed by conviction.", hero: ONE("neonyx", "Neonyx", "Epic"), label: "In-game art · Neonyx" },
+  W09: { slug: "sil-pyraurum", kicker: "Bloodline unknown", h: "It rises <em>again.</em>", s: "Legendary. Burns, falls, and comes back brighter.", hero: SIL("pyraurum", "Legendary"), label: "Silhouette · ???" },
+  W10: { slug: "reveal-pyraurum", kicker: "Legendary bloodline", h: "Meet <em>Pyraurum.</em>", s: "Phoenix of the Golden Pyre.", hero: ONE("pyraurum", "Pyraurum", "Legendary"), label: "In-game art · Pyraurum" },
+  W11: { slug: "lore-solgem", kicker: "Lore · the Solgem", h: "Every one carries <em>a Solgem.</em>", s: "A fragment of the chain that birthed it. What grows around it is up to fate, and to how long you hold.", hero: ONE("velynx", "Velynx", "Legendary"), label: "In-game art · Velynx" },
+  W12: { slug: "lore-bloodlines", kicker: "Lore · the bloodlines", h: "Not every <em>bloodline</em> is equal.", s: "Common, Rare, Epic, Legendary. And some we're not showing you yet.", hero: { kind: "trio", items: [["mossling", "Mossling", "Common"], ["cryovant", "Cryovant", "Rare"], ["velynx", "Velynx", "Legendary"]] }, label: "In-game art" },
+  W13: { slug: "lore-forms", kicker: "Lore · the four forms", h: "Hold, and it <em>grows.</em>", s: "Eggling, Hatchling, Evolved, Ascended.", hero: { kind: "forms", id: "frostkit" }, label: "In-game art · Frostkit" },
+  W14: { slug: "countdown", kicker: "Season 0", h: "The eggs are <em>warming.</em>", s: "No date yet. Follow so you're here for the first crack.", hero: { kind: "shot", src: CAP("hatchery-egg"), w: 690, h: 630 }, label: "Real site capture · the Hatchery", demo: true },
+};
+window.WARM = WARM;
+
 function el(html, parent = content) { const t = document.createElement("template"); t.innerHTML = html.trim(); const e = t.content.firstChild; parent.appendChild(e); return e; }
 
 function stars(seed, density = 1) {
@@ -152,6 +174,12 @@ function hero(p) {
     const box = el(`<div style="display:flex;flex-direction:column;gap:22px"></div>`, H);
     for (const half of [0, 1]) el(`<div class="shot" style="width:600px;height:${Math.round(600 * 725 / 1230)}px">
       <img src="${h.src}" style="width:200%;height:100%;object-fit:cover;object-position:${half ? "100%" : "0%"} 0;max-width:none;margin-left:${half ? "-100%" : "0"}"></div>`, box);
+  } else if (h.kind === "silhouette") {
+    // the creature as a pure black silhouette with a gilt rim, over its dimmed biome plate
+    el(`<div class="plate"><img src="${SCENE(h.id)}" style="filter:brightness(.32) saturate(.6) blur(2px)"></div>`, H);
+    el(`<img class="art" src="${C(`${h.id}/4-ascended`)}" style="position:relative;width:650px;height:650px;margin-top:-50px;
+      filter:brightness(0) drop-shadow(0 0 1.5px rgba(255,241,201,.9)) drop-shadow(0 0 14px rgba(232,183,92,.55)) drop-shadow(0 0 60px rgba(125,92,240,.45))">`, H);
+    el(`<div class="caption" style="position:absolute;left:0;right:0;bottom:34px;text-align:center"><b>???</b> · ${h.tier}</div>`, H);
   } else if (h.kind === "single") {
     // the creature over its own biome plate (public/scenes/<id>/plate.webp)
     el(`<div class="plate"><img src="${SCENE(h.id)}"></div>`, H);
@@ -167,6 +195,29 @@ function post(id) {
   el(`<div class="abs copy"><div class="kicker">${p.kicker}</div><h1>${p.h}</h1><div class="support">${p.s}</div>${p.pill ? `<div class="pill">${p.pill}</div>` : ""}</div>`);
   hero(p);
   el(`<div class="abs foot"><span>${id} / 10</span><span class="${p.demo ? "demo" : ""}">${p.label}</span></div>`);
+}
+
+function warm(id) {
+  const p = WARM[id];
+  stars(parseInt(id.slice(1), 10) * 7349 + 101);
+  lockup();
+  el(`<div class="abs copy"><div class="kicker">${p.kicker}</div><h1>${p.h}</h1><div class="support">${p.s}</div>${p.pill ? `<div class="pill">${p.pill}</div>` : ""}</div>`);
+  hero(p);
+  el(`<div class="abs foot"><span>Teaser</span><span class="${p.demo ? "demo" : ""}">${p.label}${p.demo ? " · demo" : ""}</span></div>`);
+}
+
+function warmBanner() {
+  // X header 1500×500, warm-up variant: wordmark left, a row of four silhouettes right. Lower-left 420×200 stays empty for the avatar.
+  frame.style.width = "1500px"; frame.style.height = "500px";
+  stars(9091, .8);
+  el(`<div class="abs" style="right:-60px;top:20px;width:980px;height:460px;background:radial-gradient(closest-side,rgba(125,92,240,.22),transparent)"></div>`);
+  const row = el(`<div class="abs" style="right:24px;top:70px;display:flex;align-items:flex-end;gap:0;z-index:3"></div>`);
+  [["mossling", 170], ["stormquill", 205], ["neonyx", 225], ["pyraurum", 260]].forEach(([id, sz]) => el(`<img class="art" src="${C(`${id}/4-ascended`)}" style="width:${sz}px;height:${sz}px;margin:0 -16px;
+    filter:brightness(0) drop-shadow(0 0 1.5px rgba(255,241,201,.9)) drop-shadow(0 0 12px rgba(232,183,92,.5)) drop-shadow(0 0 50px rgba(125,92,240,.45))">`, row));
+  el(`<div class="abs" style="left:120px;top:96px;display:flex;flex-direction:column;align-items:flex-start;z-index:4">
+    <div style="display:flex;align-items:center;gap:20px"><img src="assets/sigil-emblem.svg" style="width:84px;height:72px"><b style="font-family:Cormorant;font-weight:600;font-size:64px;letter-spacing:.3em;color:var(--bone)">SOLANITES</b></div>
+    <div style="margin-top:22px;font-family:Cormorant;font-size:42px;color:var(--vellum);font-style:italic">Something is stirring in the eggs.</div>
+    <div class="kicker" style="margin:22px 0 0">The hatching begins soon</div></div>`);
 }
 
 function banner() {
@@ -199,7 +250,7 @@ function blank() {
   el(`<div class="abs foot"><span>00 / 10</span><span>Hero label</span></div>`);
 }
 
-if (q.has("banner")) banner(); else if (q.has("avatar")) avatar(); else if (q.has("blank")) blank(); else post(q.get("post") || "01");
+if (q.has("warm")) warm(q.get("warm")); else if (q.has("warmbanner")) warmBanner(); else if (q.has("banner")) banner(); else if (q.has("avatar")) avatar(); else if (q.has("blank")) blank(); else post(q.get("post") || "01");
 (async () => {
   await document.fonts.ready;
   for (const i of document.images) {

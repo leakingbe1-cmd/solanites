@@ -51,16 +51,19 @@ function useLeaderboard(): Load {
   return state;
 }
 
-/** The watched address's own place in each category, refreshed with the board; null when nobody is watched. */
-function useStanding(address: string | null, generatedAt: number | undefined): LeaderboardStanding | null {
-  const [standing, setStanding] = useState<LeaderboardStanding | null>(null);
+/**
+ * The watched address's own place in each category, refreshed with the board; null when nobody is
+ * watched or before the first answer, "unavailable" when the request fails (the last good answer is kept).
+ */
+function useStanding(address: string | null, generatedAt: number | undefined): LeaderboardStanding | "unavailable" | null {
+  const [standing, setStanding] = useState<LeaderboardStanding | "unavailable" | null>(null);
   useEffect(() => {
     if (!address) return setStanding(null);
     let alive = true;
     fetch(`/api/leaderboard/standing?address=${encodeURIComponent(address)}`, { cache: "no-store" })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((b) => alive && setStanding(b as LeaderboardStanding | null))
-      .catch(() => alive && setStanding(null));
+      .then((r) => (r.ok ? (r.json() as Promise<LeaderboardStanding>) : Promise.reject(new Error(String(r.status)))))
+      .then((b) => alive && setStanding(b))
+      .catch(() => alive && setStanding((prev) => (prev && prev !== "unavailable" ? prev : "unavailable")));
     return () => {
       alive = false;
     };
@@ -69,8 +72,8 @@ function useStanding(address: string | null, generatedAt: number | undefined): L
 }
 
 /** "Your rank" for the open tab, including below the public top 25. */
-function YourStanding({ address, standing, tab }: { address: string; standing: LeaderboardStanding | null; tab: LeaderboardCategory }) {
-  const s = standing?.categories[tab];
+function YourStanding({ address, standing, tab }: { address: string; standing: LeaderboardStanding | "unavailable" | null; tab: LeaderboardCategory }) {
+  const s = standing && standing !== "unavailable" ? standing.categories[tab] : null;
   return (
     <div className="sl-panel mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-md px-5 py-4" data-testid="your-standing">
       <div>
@@ -80,7 +83,13 @@ function YourStanding({ address, standing, tab }: { address: string; standing: L
             #{s.row.rank} <span className="text-base text-mist">of {s.of}</span>
           </p>
         ) : (
-          <p className="mt-1 text-sm text-mist">{standing ? (tab === "holders" ? "Not ranked yet: hold at least one egg's worth to start the clock." : "Not ranked yet: hatch a Solanite to join this list.") : "Checking your rank…"}</p>
+          <p className="mt-1 text-sm text-mist">{standing === "unavailable"
+              ? "Your rank is temporarily unavailable."
+              : standing
+                ? tab === "holders"
+                  ? "Not ranked yet: hold at least one egg's worth to start the clock."
+                  : "Not ranked yet: hatch a Solanite to join this list."
+                : "Checking your rank…"}</p>
         )}
       </div>
       {s && <p className="font-mono text-xs text-bone/80">{metricText(tab, s.row)}</p>}

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
@@ -8,7 +7,10 @@ import { RarityBadge } from "@/components/ui/RarityBadge";
 import { columnText, formName, freshness, HOLDERS_NOTE, metricText, RANK_RULES, SAMPLE_LABEL, SAMPLE_PODIUM, sourceBadge, TABS } from "@/lib/leaderboard";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
-import { LEADERBOARD_POLL_MS, type Leaderboard, type LeaderboardCategory, type LeaderRow } from "@/shared/leaderboard";
+import Link from "next/link";
+import { shortAddress } from "@/lib/format";
+import { LEADERBOARD_POLL_MS, type Leaderboard, type LeaderboardCategory, type LeaderboardStanding, type LeaderRow } from "@/shared/leaderboard";
+import { useHatchery } from "@/state/HatcheryProvider";
 
 type Load = { board: Leaderboard | null; refreshFailed: boolean; unavailable: string | null; notConfigured?: boolean };
 
@@ -107,6 +109,52 @@ function PreLaunchLeaderboard() {
   );
 }
 
+/**
+ * The watched address's own place in each category, refreshed with the board; null when nobody is
+ * watched or before the first answer, "unavailable" when the request fails (the last good answer is kept).
+ */
+function useStanding(address: string | null, generatedAt: number | undefined): LeaderboardStanding | "unavailable" | null {
+  const [standing, setStanding] = useState<LeaderboardStanding | "unavailable" | null>(null);
+  useEffect(() => {
+    if (!address) return setStanding(null);
+    let alive = true;
+    fetch(`/api/leaderboard/standing?address=${encodeURIComponent(address)}`, { cache: "no-store" })
+      .then((r) => (r.ok ? (r.json() as Promise<LeaderboardStanding>) : Promise.reject(new Error(String(r.status)))))
+      .then((b) => alive && setStanding(b))
+      .catch(() => alive && setStanding((prev) => (prev && prev !== "unavailable" ? prev : "unavailable")));
+    return () => {
+      alive = false;
+    };
+  }, [address, generatedAt]);
+  return standing;
+}
+
+/** "Your rank" for the open tab, including below the public top 25. */
+function YourStanding({ address, standing, tab }: { address: string; standing: LeaderboardStanding | "unavailable" | null; tab: LeaderboardCategory }) {
+  const s = standing && standing !== "unavailable" ? standing.categories[tab] : null;
+  return (
+    <div className="sl-panel mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-md px-5 py-4" data-testid="your-standing">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your rank · {shortAddress(address)}</p>
+        {s ? (
+          <p className="mt-1 font-display text-2xl text-bone">
+            #{s.row.rank} <span className="text-base text-mist">of {s.of}</span>
+          </p>
+        ) : (
+          <p className="mt-1 text-sm text-mist">{standing === "unavailable"
+              ? "Your rank is temporarily unavailable."
+              : standing
+                ? tab === "holders"
+                  ? "Not ranked yet: hold at least one egg's worth to start the clock."
+                  : "Not ranked yet: hatch a Solanite to join this list."
+                : "Checking your rank…"}</p>
+        )}
+      </div>
+      {s && <p className="font-mono text-xs text-bone/80">{metricText(tab, s.row)}</p>}
+    </div>
+  );
+}
+
 /** Re-renders every few seconds so "updated Xs ago" stays true between polls. */
 function useNow(stepMs = 5_000): number {
   const [now, setNow] = useState(() => Date.now());
@@ -125,6 +173,9 @@ function Art({ row, size, aura = true }: { row: LeaderRow; size: string; aura?: 
 export default function LeaderboardPage() {
   const [tab, setTab] = useState<LeaderboardCategory>("evolved");
   const { board, refreshFailed, unavailable, notConfigured } = useLeaderboard();
+  const h = useHatchery();
+  const watched = h.wallet?.kind === "watch" ? h.wallet.address : null;
+  const standing = useStanding(board ? watched : null, board?.generatedAt);
   const now = useNow();
   const t = TABS.find((x) => x.id === tab)!;
   const rows = board?.categories[tab] ?? [];
@@ -167,6 +218,13 @@ export default function LeaderboardPage() {
             </button>
           ))}
         </div>
+        {board && (watched ? (
+          <YourStanding address={watched} standing={standing} tab={tab} />
+        ) : (
+          <p className="mx-auto mt-6 max-w-xl text-center text-xs text-mist">
+            <Link href="/hatchery" className="text-bone underline-offset-4 hover:underline">Find your eggs</Link> to see your own rank here.
+          </p>
+        ))}
         {tab === "holders" && board && <p className="mx-auto mt-4 max-w-xl text-center text-xs text-mist">{HOLDERS_NOTE}</p>}
 
         {!board && (

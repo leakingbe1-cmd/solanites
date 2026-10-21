@@ -2,7 +2,7 @@ import type { RarityId } from "@/config/gameConfig";
 import { shortAddress } from "@/lib/format";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
-import { LEADERBOARD_SIZE, type LeaderRow } from "@/shared/leaderboard";
+import { LEADERBOARD_SIZE, type KeeperStanding, type LeaderboardCategory, type LeaderRow } from "@/shared/leaderboard";
 
 /** A hatched creature as the tracker sees it (stage from the same server logic as holderView). */
 export interface KeeperCreature {
@@ -80,38 +80,59 @@ function row(k: Keeper, rank: number, shown: KeeperCreature | null): LeaderRow {
   };
 }
 
-const ranked = (list: Keeper[], cmp: (a: Keeper, b: Keeper) => number, shown: (k: Keeper) => KeeperCreature | null) =>
-  [...list]
-    .sort((a, b) => cmp(a, b) || byAddress(a, b))
+interface Rule {
+  include: (k: Keeper) => boolean;
+  cmp: (a: Keeper, b: Keeper) => number;
+  shown: (k: Keeper) => KeeperCreature | null;
+}
+
+const stageSum = (k: Keeper) => k.creatures.reduce((s, c) => s + c.stage, 0);
+const topRarity = (k: Keeper) => rarityOrder(bestByRarity(k.creatures)!.speciesId);
+const atTopRarity = (k: Keeper) => k.creatures.filter((c) => rarityOrder(c.speciesId) === topRarity(k));
+
+const RULES: Record<LeaderboardCategory, Rule> = {
+  evolved: {
+    include: (k) => k.creatures.length > 0,
+    cmp: (a, b) => stageSum(b) - stageSum(a) || bestByStage(b.creatures)!.stage - bestByStage(a.creatures)!.stage || bestByStage(a.creatures)!.readyAt - bestByStage(b.creatures)!.readyAt,
+    shown: (k) => bestByStage(k.creatures),
+  },
+  holders: {
+    include: (k) => k.heldMs !== null,
+    cmp: (a, b) => b.heldMs! - a.heldMs!,
+    shown: (k) => bestByStage(k.creatures),
+  },
+  rarest: {
+    include: (k) => k.creatures.length > 0,
+    cmp: (a, b) =>
+      topRarity(b) - topRarity(a) ||
+      atTopRarity(b).length - atTopRarity(a).length ||
+      Math.min(...atTopRarity(a).map((c) => c.hatchedAt)) - Math.min(...atTopRarity(b).map((c) => c.hatchedAt)),
+    shown: (k) => bestByRarity(k.creatures),
+  },
+};
+
+/** Every qualifying keeper in ranked order (ties end on the full address). */
+const ordered = (rule: Rule, keepers: Keeper[]) => keepers.filter(rule.include).sort((a, b) => rule.cmp(a, b) || byAddress(a, b));
+
+const top = (rule: Rule, keepers: Keeper[]) =>
+  ordered(rule, keepers)
     .slice(0, LEADERBOARD_SIZE)
-    .map((k, i) => row(k, i + 1, shown(k)));
+    .map((k, i) => row(k, i + 1, rule.shown(k)));
 
-export function rankEvolved(keepers: Keeper[]): LeaderRow[] {
-  const sum = (k: Keeper) => k.creatures.reduce((s, c) => s + c.stage, 0);
-  const best = (k: Keeper) => bestByStage(k.creatures)!;
-  return ranked(
-    keepers.filter((k) => k.creatures.length),
-    (a, b) => sum(b) - sum(a) || best(b).stage - best(a).stage || best(a).readyAt - best(b).readyAt,
-    (k) => bestByStage(k.creatures),
-  );
-}
+export const rankEvolved = (keepers: Keeper[]): LeaderRow[] => top(RULES.evolved, keepers);
+export const rankHolders = (keepers: Keeper[]): LeaderRow[] => top(RULES.holders, keepers);
+export const rankRarest = (keepers: Keeper[]): LeaderRow[] => top(RULES.rarest, keepers);
 
-export function rankHolders(keepers: Keeper[]): LeaderRow[] {
-  return ranked(
-    keepers.filter((k) => k.heldMs !== null),
-    (a, b) => b.heldMs! - a.heldMs!,
-    (k) => bestByStage(k.creatures),
-  );
-}
-
-export function rankRarest(keepers: Keeper[]): LeaderRow[] {
-  const top = (k: Keeper) => bestByRarity(k.creatures)!;
-  const order = (k: Keeper) => rarityOrder(top(k).speciesId);
-  const count = (k: Keeper) => k.creatures.filter((c) => rarityOrder(c.speciesId) === order(k)).length;
-  const firstAt = (k: Keeper) => Math.min(...k.creatures.filter((c) => rarityOrder(c.speciesId) === order(k)).map((c) => c.hatchedAt));
-  return ranked(
-    keepers.filter((k) => k.creatures.length),
-    (a, b) => order(b) - order(a) || count(b) - count(a) || firstAt(a) - firstAt(b),
-    (k) => bestByRarity(k.creatures),
-  );
+/**
+ * One keeper's place in every category, including below the public top list, for the
+ * "your rank" panel. Null in a category the keeper doesn't qualify for yet.
+ */
+export function standingsOf(keepers: Keeper[], address: string): Record<LeaderboardCategory, KeeperStanding | null> {
+  const out = {} as Record<LeaderboardCategory, KeeperStanding | null>;
+  for (const cat of Object.keys(RULES) as LeaderboardCategory[]) {
+    const list = ordered(RULES[cat], keepers);
+    const i = list.findIndex((k) => k.address === address);
+    out[cat] = i < 0 ? null : { row: row(list[i], i + 1, RULES[cat].shown(list[i])), of: list.length };
+  }
+  return out;
 }

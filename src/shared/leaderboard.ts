@@ -43,5 +43,17 @@ export interface Leaderboard {
   categories: Record<LeaderboardCategory, LeaderRow[]>;
 }
 
+/** A keeper's own place in one category: their row (rank may be below the top list) and how many are ranked. */
+export interface KeeperStanding {
+  row: LeaderRow;
+  of: number;
+}
+
+/** GET /api/leaderboard/standing?address=…: one address's place in each category. */
+export interface LeaderboardStanding {
+  generatedAt: number;
+  categories: Record<LeaderboardCategory, KeeperStanding | null>;
+}
+
 export const LEADERBOARD_SIZE = 25;
 export const LEADERBOARD_POLL_MS = 30_000;

@@ -11,6 +11,7 @@ import type { RarityId } from "@/config/gameConfig";
 import { evolutionOf } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
 import { CATALOGUE_SIZE, ELEMENT_GLYPH, SPECIES, type Element, type Species } from "@/lib/species";
+import { speciesOfDay } from "@/lib/dailyLoop";
 
 
 
@@ -20,6 +21,9 @@ export default function CollectionPage() {
   const [element, setElement] = useState<Element | "all">("all");
   const [status, setStatus] = useState<"all" | "owned" | "missing">("all");
   const [open, setOpen] = useState<Species | null>(null);
+  // Set after mount so the server render and the visitor's day can't disagree.
+  const [today, setToday] = useState<Species | null>(null);
+  useEffect(() => setToday(speciesOfDay(Date.now())), []);
 
   const bestForm = useMemo(() => {
     const m: Record<string, number> = {};
@@ -70,6 +74,15 @@ export default function CollectionPage() {
             <ProgressBar value={ownedCount / CATALOGUE_SIZE} className="mt-3" />
           </div>
         </div>
+
+        {today && (
+          <button type="button" onClick={() => setOpen(today)} className="sl-glass mt-8 flex w-full items-center gap-4 rounded-md p-4 text-left transition hover:bg-white/[0.04]" data-testid="species-of-day">
+            <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-gilt">Species of the day</span>
+            <span className="font-display text-xl text-bone">{today.name}</span>
+            <span className="hidden text-sm text-mist sm:inline">{today.epithet}</span>
+            <span className="ml-auto text-xs text-mist">Changes daily · open →</span>
+          </button>
+        )}
 
         {/* filters */}
         <div className="sticky top-16 z-20 -mx-4 mt-10 border-y border-white/5 bg-void/80 px-4 py-3 backdrop-blur-xl lg:top-20">

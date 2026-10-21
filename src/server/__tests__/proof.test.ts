@@ -66,6 +66,21 @@ describe("proof", () => {
     expect(p.excludedCount).toBe(p.excluded.length);
   });
 
+  it("holder view: a cosmetic holding streak with badges from gameConfig, none for excluded wallets", async () => {
+    const { tracker, buy, clock, treasury } = await world();
+    const a = W(302);
+    buy(a, 1_000_000);
+    await tracker.runSync({ force: true });
+    const fresh = (await tracker.holderView(a)).streak;
+    expect(fresh.heldMs).not.toBeNull();
+    expect(fresh.badges).toEqual([]);
+    clock.advance(2 * 24 * 60 * 60_000);
+    const later = (await tracker.holderView(a)).streak;
+    expect(later.heldMs!).toBeGreaterThanOrEqual(2 * 24 * 60 * 60_000);
+    expect(later.badges).toEqual(["day"]);
+    expect((await tracker.holderView(treasury)).streak).toEqual({ heldMs: null, badges: [] });
+  });
+
   it("the route answers 503 NOT_CONFIGURED when tracking is off", async () => {
     const res = await GET(new Request("http://localhost/api/proof"));
     expect(res.status).toBe(503);

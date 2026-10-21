@@ -16,6 +16,7 @@ import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
 import { useHatchery } from "@/state/HatcheryProvider";
+import { badgeLabel, milestoneIcs, nextStreakBadge } from "@/lib/dailyLoop";
 
 type Load = { kind: "loading" } | { kind: "error"; code: string; message: string } | { kind: "ready"; view: TrackedHolderView; offset: number };
 
@@ -39,6 +40,33 @@ function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord
     fastTrack: e.fastTrack,
     backed: e.hatchedAt === null || e.growing,
   };
+}
+
+/** Downloads a one-event calendar file for the milestone; the visitor's own calendar does the reminding. */
+function saveReminder(title: string, at: number) {
+  const ics = milestoneIcs({ title, at, url: window.location.href, now: Date.now() });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  a.download = "solanites-reminder.ics";
+  a.click();
+  window.setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/** Cosmetic holding streak from the server: how long this address has held at least one egg's worth, and its badges. */
+function StreakRow({ heldMs, badges }: { heldMs: number; badges: string[] }) {
+  const next = nextStreakBadge(heldMs);
+  return (
+    <div className="sl-glass mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md px-4 py-3 text-sm" data-testid="holding-streak">
+      <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Holding streak</span>
+      <span className="text-bone">{formatDuration(heldMs)}</span>
+      {badges.map((b) => (
+        <span key={b} className="rounded-full border border-gilt/40 bg-gilt/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-gilt">
+          {badgeLabel(b)}
+        </span>
+      ))}
+      {next && <span className="text-xs text-mist">{next.label} in {formatDuration(next.inMs)}</span>}
+    </div>
+  );
 }
 
 /** A balance not re-verified for this long is shown as possibly out of date. */
@@ -199,6 +227,8 @@ export function TrackedHatchery({ address }: { address: string }) {
           </div>
         </div>
 
+        {view.streak.heldMs !== null && <StreakRow heldMs={view.streak.heldMs} badges={view.streak.badges} />}
+
         <div className="mt-4 space-y-3">
           {view.holdings.excluded && <Note tone="warn">This is a project, pool or program-controlled address, so it does not earn eggs.</Note>}
           {!view.tracked && !view.holdings.excluded && <Note>No {gameConfig.token.symbol} has been seen at this address yet. Eggs appear here automatically once it holds {formatNumber(unit)} or more.</Note>}
@@ -230,9 +260,16 @@ export function TrackedHatchery({ address }: { address: string }) {
                 REVEAL
               </button>
             ) : (
-              <p className="shrink-0 font-mono text-2xl tabular-nums text-bone" data-testid="next-milestone-in">
-                {formatDuration(milestone.inMs)}
-              </p>
+              <div className="flex shrink-0 items-center gap-4">
+                <p className="font-mono text-2xl tabular-nums text-bone" data-testid="next-milestone-in">
+                  {formatDuration(milestone.inMs)}
+                </p>
+                {milestone.inMs > 10 * 60_000 && (
+                  <button type="button" onClick={() => saveReminder(milestone.text, now + milestone.inMs)} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-mist transition hover:text-bone" title="Save a calendar reminder (nothing is sent anywhere)">
+                    Remind me
+                  </button>
+                )}
+              </div>
             )}
           </div>
         )}

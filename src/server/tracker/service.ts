@@ -13,6 +13,7 @@ import { RpcUnavailableError, type Commitment, type RpcClient } from "../solana/
 import { fetchMintInfo, fetchOwnerBalance, type MintInfo } from "../solana/token";
 import { log } from "../log";
 import { pruneRateLimits } from "../rateLimitShared";
+import { continuousHoldingMs } from "../leaderboard/rank";
 import { qualifyingMs } from "./growth";
 import { applyTransferCredit, eggsToAward } from "./ledger";
 
@@ -480,13 +481,15 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
     // Fast-track creatures are the exception: their stages are a minute apart, so they grow from
     // the reveal itself, or a late reveal would skip straight past the evolutions.
     const hatched = eggs.filter((e) => e.hatchedAt !== null);
+    const changes = row
+      ? (
+          await db.query<{ pre_base: string; post_base: string; block_time_ms: string | null; processed_ms: string }>(
+            `SELECT hc.pre_base, hc.post_base, pt.block_time_ms, pt.processed_ms FROM holder_changes hc JOIN processed_transactions pt ON pt.signature = hc.signature WHERE hc.owner = $1 ORDER BY hc.slot`,
+            [address],
+          )
+        ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }))
+      : [];
     if (hatched.length) {
-      const changes = (
-        await db.query<{ pre_base: string; post_base: string; block_time_ms: string | null; processed_ms: string }>(
-          `SELECT hc.pre_base, hc.post_base, pt.block_time_ms, pt.processed_ms FROM holder_changes hc JOIN processed_transactions pt ON pt.signature = hc.signature WHERE hc.owner = $1 ORDER BY hc.slot`,
-          [address],
-        )
-      ).rows.map((c) => ({ at: Number(c.block_time_ms ?? c.processed_ms), preBase: BigInt(c.pre_base), postBase: BigInt(c.post_base) }));
       hatched.forEach((e, k) => {
         const g = qualifyingMs(e.fastTrack ? Math.max(e.readyAt, e.hatchedAt!) : e.readyAt, t, unitBase * BigInt(k + 1), changes, balance);
         e.growthMs = g.ms;
@@ -495,6 +498,9 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         e.evolution = { stage: evo.stage, label: evo.label, phase: evo.phase, matured: evo.matured, nextLabel: evo.nextLabel, toNextMs: evo.toNextMs };
       });
     }
+    // Cosmetic streak: the same verified continuous holding the leaderboard ranks by.
+    const heldMs = row && !row.excluded ? continuousHoldingMs(num(row.first_qualified_ms), balance, unitBase, changes, t) : null;
+    const streak = { heldMs, badges: gameConfig.streakBadges.filter((b) => heldMs !== null && heldMs >= b.ms).map((b) => b.id) };
     const uncredited = balance > credit ? balance - credit : 0n;
     const heldCredit = credit < balance ? credit : balance;
     const ownCredit = unitBase * BigInt(row?.eggs_earned ?? 0);
@@ -534,6 +540,7 @@ export function createTracker({ db, rpc, config, now = Date.now, randomSeed = de
         initialGrowthScheduleMs: config.progression.initialGrowthScheduleMs,
       },
       sync: { lastSyncedAt: row ? num(row.last_sync_ms) : null, pending: row ? row.needs_sync : false, error: row?.last_sync_error ? PUBLIC_SYNC_ERROR : null },
+      streak,
     };
   }
 

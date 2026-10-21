@@ -220,6 +220,19 @@ function warmBanner() {
     <div class="kicker" style="margin:22px 0 0">The hatching begins soon</div></div>`);
 }
 
+function og() {
+  // Link-preview card 1200×630 (Open Graph / summary_large_image): wordmark over a row of four silhouettes.
+  frame.style.width = "1200px"; frame.style.height = "630px";
+  stars(6301, .8);
+  el(`<div class="abs" style="left:100px;right:100px;top:250px;height:420px;background:radial-gradient(closest-side,rgba(125,92,240,.26),transparent)"></div>`);
+  el(`<div class="abs" style="left:0;right:0;top:78px;display:flex;flex-direction:column;align-items:center;z-index:4">
+    <div style="display:flex;align-items:center;gap:20px"><img src="assets/sigil-emblem.svg" style="width:84px;height:72px"><b style="font-family:Cormorant;font-weight:600;font-size:64px;letter-spacing:.3em;color:var(--bone)">SOLANITES</b></div>
+    <div style="margin-top:14px;font-family:Cormorant;font-size:40px;color:var(--vellum);font-style:italic">Something is stirring in the eggs.</div></div>`);
+  const row = el(`<div class="abs" style="left:0;right:0;bottom:46px;display:flex;justify-content:center;align-items:flex-end;z-index:3"></div>`);
+  [["mossling", 190], ["stormquill", 230], ["neonyx", 250], ["pyraurum", 290]].forEach(([id, sz]) => el(`<img class="art" src="${C(`${id}/4-ascended`)}" style="width:${sz}px;height:${sz}px;margin:0 -12px;
+    filter:brightness(0) drop-shadow(0 0 1.5px rgba(255,241,201,.9)) drop-shadow(0 0 12px rgba(232,183,92,.5)) drop-shadow(0 0 50px rgba(125,92,240,.45))">`, row));
+}
+
 function banner() {
   // X header 1500×500. X overlays the avatar on the lower-left, so nothing sits in x<420, y>300.
   frame.style.width = "1500px"; frame.style.height = "500px";
@@ -250,7 +263,7 @@ function blank() {
   el(`<div class="abs foot"><span>00 / 10</span><span>Hero label</span></div>`);
 }
 
-if (q.has("warm")) warm(q.get("warm")); else if (q.has("warmbanner")) warmBanner(); else if (q.has("banner")) banner(); else if (q.has("avatar")) avatar(); else if (q.has("blank")) blank(); else post(q.get("post") || "01");
+if (q.has("warm")) warm(q.get("warm")); else if (q.has("warmbanner")) warmBanner(); else if (q.has("og")) og(); else if (q.has("banner")) banner(); else if (q.has("avatar")) avatar(); else if (q.has("blank")) blank(); else post(q.get("post") || "01");
 (async () => {
   await document.fonts.ready;
   for (const i of document.images) {

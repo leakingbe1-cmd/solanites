@@ -38,6 +38,7 @@ const warm = await (async () => { const p = await browser.newPage(); await p.got
 for (const [id, slug] of warm) await shoot(`warm=${id}`, 1600, 900, `media/${id}-${slug}.jpg`, "jpg");
 await shoot("warmbanner", 1500, 500, "banner-1500x500.png", "png");
 await shoot("avatar", 400, 400, "avatar-400x400.png", "png");
+await shoot("og", 1200, 630, "og-1200x630.png", "png");
 await browser.close();
 if (problems.length) { console.error(problems.join("\n")); process.exit(1); }
 console.log("ok: all images loaded, nothing outside its frame");

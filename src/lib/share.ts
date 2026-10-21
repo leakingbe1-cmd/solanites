@@ -1,4 +1,5 @@
 import { gameConfig } from "@/config/gameConfig";
+import { SHARE_TOP_TIERS } from "@/config/share";
 import { X_HANDLE } from "@/config/social";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID, type Species } from "@/lib/species";
@@ -6,14 +7,18 @@ import { SPECIES_BY_ID, type Species } from "@/lib/species";
 /**
  * Share cards. A real card is drawn on the server from the tracker's egg record (species, rarity and
  * form come from there, never from the browser). A demo card is stamped DEMO and is only offered
- * for common to legendary species, so Mythic and Secret never appear on simulated marketing.
+ * for common to legendary species, so Mythic and Secret never appear on simulated marketing. Real
+ * Mythic and Secret cards also stay off until launch (SHARE_TOP_TIERS).
  */
 export type ShareTarget = { kind: "egg"; eggId: string } | { kind: "demo"; speciesId: string; stage: number };
 
 export const EGG_ID = /^egg_[1-9A-HJ-NP-Za-km-z]{32,44}_\d{1,6}$/;
 export const LAST_STAGE = gameConfig.evolution.names.length - 1;
 
-export const demoShareable = (s: Species | undefined): s is Species => !!s && s.rarity !== "mythic" && s.rarity !== "secret";
+const topTier = (s: Species) => s.rarity === "mythic" || s.rarity === "secret";
+export const demoShareable = (s: Species | undefined): s is Species => !!s && !topTier(s);
+/** A real (tracked) creature can be shared: any species once SHARE_TOP_TIERS is on, Common to Legendary until then. */
+export const shareable = (s: Species | undefined, topTiers: boolean = SHARE_TOP_TIERS): s is Species => !!s && (topTiers || !topTier(s));
 export const validStage = (n: number) => Number.isInteger(n) && n >= 0 && n <= LAST_STAGE;
 /** A stage from a query string; a missing or empty value is invalid, not stage 0. */
 export const stageParam = (raw: string | null | undefined) => (raw ? Number(raw) : NaN);

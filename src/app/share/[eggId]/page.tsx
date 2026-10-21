@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SharedCard } from "@/components/share/SharedCard";
 import { RARITIES } from "@/lib/rarity";
-import { cardPath, EGG_ID } from "@/lib/share";
+import { cardPath, EGG_ID, shareable } from "@/lib/share";
 import { SPECIES_BY_ID } from "@/lib/species";
 import { getRuntime } from "@/server/runtime";
 
@@ -16,7 +16,8 @@ async function hatched(id: string) {
   try {
     const view = await (await getRuntime()).tracker.holderView(id.slice(4, id.lastIndexOf("_")));
     const egg = view.eggs.find((e) => e.id === id);
-    return egg?.hatchedAt != null && egg.speciesId ? SPECIES_BY_ID[egg.speciesId] ?? null : null;
+    const s = egg?.hatchedAt != null && egg.speciesId ? SPECIES_BY_ID[egg.speciesId] : undefined;
+    return shareable(s) ? s : null;
   } catch {
     return null;
   }

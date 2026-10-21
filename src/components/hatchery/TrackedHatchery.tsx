@@ -17,6 +17,7 @@ import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
 import { useHatchery } from "@/state/HatcheryProvider";
 import { badgeLabel, milestoneIcs, nextStreakBadge } from "@/lib/dailyLoop";
+import { shareable } from "@/lib/share";
 
 type Load = { kind: "loading" } | { kind: "error"; code: string; message: string } | { kind: "ready"; view: TrackedHolderView; offset: number };
 
@@ -344,7 +345,7 @@ export function TrackedHatchery({ address }: { address: string }) {
         <HatchReveal
           species={SPECIES_BY_ID[hatching.speciesId]}
           seed={hatching.record.seed}
-          share={{ kind: "egg", eggId: hatching.record.id }}
+          share={shareable(SPECIES_BY_ID[hatching.speciesId]) ? { kind: "egg", eggId: hatching.record.id } : null}
           onHatched={() => h.discover(hatching.speciesId)}
           onClose={() => {
             setHatching(null);

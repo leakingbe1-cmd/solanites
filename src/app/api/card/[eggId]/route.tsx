@@ -2,7 +2,8 @@ import "server-only";
 import { fail, failFromError, rateLimit } from "@/server/http";
 import { getRuntime } from "@/server/runtime";
 import { renderCard } from "@/server/share/card";
-import { EGG_ID } from "@/lib/share";
+import { EGG_ID, shareable } from "@/lib/share";
+import { SPECIES_BY_ID } from "@/lib/species";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +22,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ eggId: s
     const view = await (await getRuntime()).tracker.holderView(owner);
     const egg = view.eggs.find((e) => e.id === id);
     if (!egg || egg.hatchedAt === null || !egg.speciesId) return fail(404, "NOT_FOUND", "No card for this egg yet.");
+    // Mythic and Secret cards stay off until launch (SHARE_TOP_TIERS).
+    if (!shareable(SPECIES_BY_ID[egg.speciesId])) return fail(404, "NOT_FOUND", "No card for this egg yet.");
     const card = await renderCard({ speciesId: egg.speciesId, stage: egg.evolution?.stage ?? 0, keeper: owner, demo: false });
     card.headers.set("cache-control", "public, s-maxage=300, stale-while-revalidate=600");
     return card;

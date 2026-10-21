@@ -1,0 +1,39 @@
+<!doctype html><meta charset="utf-8">
+<style>
+@font-face{font-family:Cormorant;src:url(../../../x-campaign/template/fonts/cormorant-latin-wght-normal.woff2);font-weight:300 700}
+@font-face{font-family:Cormorant;font-style:italic;src:url(../../../x-campaign/template/fonts/cormorant-latin-wght-italic.woff2);font-weight:300 700}
+@font-face{font-family:JB;src:url(../../../x-campaign/template/fonts/jetbrains-mono-latin-400-normal.woff2)}
+:root{--void:#07060a;--bone:#efe8da;--gilt:#e8b75c;--vellum:#bdb3a3}
+*{margin:0;box-sizing:border-box}body{background:#000}
+#f{position:relative;overflow:hidden;background:var(--void)}
+.art{position:absolute;background:url(key-art.jpg) no-repeat}
+.shade{position:absolute;inset:0}
+.word{font:600 54px/1 Cormorant;letter-spacing:.32em;color:var(--bone)}
+.tag{font:italic 500 34px/1.1 Cormorant;color:#d8cfbf}
+.gilt{background:linear-gradient(#fff1c9,#e8b75c 55%,#a8692a);-webkit-background-clip:text;color:transparent}
+.sig{position:absolute}
+</style>
+<div id="f"></div>
+<script>
+const q=new URLSearchParams(location.search).get("v"),f=document.getElementById("f");
+const S={
+ // avatar A: sigil on void with a gilt halo glow
+ avA:[400,400,`<div class="shade" style="background:radial-gradient(circle at 50% 50%,#3a2a12 0,#15100a 38%,#07060a 70%)"></div>
+   <img class="sig" src="../../../x-campaign/template/assets/sigil-full.svg" style="left:62px;top:62px;width:276px;height:276px;filter:drop-shadow(0 0 22px #e8b75c88)">`],
+ // avatar B: head and halo crop of the key art
+ avB:[400,400,`<div class="art" style="inset:0;background-image:url(key-art.jpg);background-size:1000px auto;background-position:-300px -50px"></div>
+   <div class="shade" style="background:radial-gradient(circle at 50% 46%,transparent 40%,#07060a 98%)"></div>`],
+ // banner 1: wingspan at right, wordmark and line at left
+ bn1:[1500,500,`<div class="art" style="inset:0;background-image:url(key-art.jpg);background-size:1500px auto;background-position:260px -170px"></div>
+   <div class="shade" style="background:linear-gradient(90deg,#07060a 0,#07060af2 28%,#07060a55 52%,transparent 70%),linear-gradient(0deg,#07060a99,transparent 35%)"></div>
+   <div style="position:absolute;left:64px;top:92px"><div class="word">SOLANITES</div>
+   <div class="tag" style="margin-top:20px">Something is stirring<br>in the <span class="gilt">eggs.</span></div></div>`],
+ // banner 2: phoenix centred, wordmark right
+ bn2:[1500,500,`<div class="art" style="inset:0;background-image:url(key-art.jpg);background-size:1360px auto;background-position:-30px -150px"></div>
+   <div class="shade" style="background:linear-gradient(270deg,#07060a 0,#07060ae8 26%,transparent 52%),linear-gradient(90deg,#07060acc 0,transparent 22%)"></div>
+   <div style="position:absolute;right:64px;top:150px;text-align:right"><div class="word" style="font-size:54px">SOLANITES</div>
+   <div class="tag" style="margin-top:16px;font-size:30px">28 creatures. <span class="gilt">Sealed in eggs.</span></div></div>`]
+};
+const [w,h,html]=S[q];f.style.width=w+"px";f.style.height=h+"px";f.innerHTML=html;
+document.fonts.ready.then(()=>Promise.all([...document.images].map(i=>i.decode().catch(()=>0)))).then(()=>document.body.dataset.ready=1);
+</script>

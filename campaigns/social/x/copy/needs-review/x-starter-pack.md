@@ -1,3 +1,5 @@
+> **OUTDATED ODDS (21 Oct):** the odds in this file (60/25/10/3.8/1/0.2) are old. The live odds are 40/30/17/8/3.5/1.5. Do not post them; replace before use.
+
 # Solanites: X starter pack
 
 Ten posts built only from features that exist in the code today. Pair them with the

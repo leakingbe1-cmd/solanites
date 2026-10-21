@@ -1,3 +1,5 @@
+> **OUTDATED ODDS (21 Oct):** the odds in this file (60/25/10/3.8/1/0.2) are old. The live odds are 40/30/17/8/3.5/1.5. Do not post them; replace before use.
+
 # Solanites X content pack · Phoenix campaign
 
 Drafts for review. Nothing here is posted automatically. Generated from `src/studio/contentPack.ts` by `npm run campaign:render`; every figure comes from the live game config.

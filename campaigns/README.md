@@ -1,3 +1,5 @@
+> **OUTDATED ODDS (21 Oct):** the odds in this file (60/25/10/3.8/1/0.2) are old. The live odds are 40/30/17/8/3.5/1.5. Do not post them; replace before use.
+
 # Solanites campaign library
 
 This folder holds every Solanites promotional asset found across the repository's campaign branches. Each file is a byte-identical copy of its original. [`MANIFEST.md`](MANIFEST.md) lists every file with its source branch and path, format, status and restrictions.

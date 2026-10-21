@@ -22,7 +22,7 @@ Before = `main`; after = this branch. Pairs are in `screens/qa/`.
 | 12 | Hatchery gate | Tour link looked like plain text; disabled button unreadable | Underlined link; legible disabled state |
 | 14 | Leaderboard | Dead-end empty panel | Pre-launch leaderboard (O-004j) |
 | 15 | Leaderboard 390 | Tab labels wrap to two lines | Short labels on phones |
-| 16 | Rewards | Grey "PENDING" pills | Unset terms hidden (O-004e) |
+| 16 | Rewards | Grey "PENDING" pills | Unset terms hidden (O-004e); the whole page is now hidden until launch |
 | 17 | How It Works | Repo file paths in visitor copy | "Rules are fixed in code…" (O-004o) |
 | 18 | How It Works | Mythic 4 % / Secret 2 % vs 3.5 % / 1.5 % on Home | One decimal, matches Home |
 | 20 | Creature detail 1440 | Stage cards stretched with empty space | Sized to content |
@@ -33,3 +33,12 @@ Before = `main`; after = this branch. Pairs are in `screens/qa/`.
 Not changed: #2 the stock card's "Unavailable" pill (local only: Preview and Production set
 `MARKET_WIDGET=tradingview` and show the chart); #5, #7, #10, #13, #19 were low-severity or capture
 artefacts (lazy images, hover lift, intentional scroll peek).
+
+## Held until launch (owner, 21 Oct)
+
+Two flags, both off; turn them on at launch.
+
+- `REWARDS_PAGE_LIVE` (`src/config/holderDistribution.ts`): `/rewards` (and `/claims`, which
+  redirects there) answers 404 and nothing links to it. Screens: `e2-*`.
+- `SHARE_TOP_TIERS` (`src/config/share.ts`): Mythic and Secret hatches get no share button, card or
+  share page. Screens: `g2-*`.

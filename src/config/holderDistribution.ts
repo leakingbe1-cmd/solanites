@@ -38,6 +38,13 @@ export const HOLDER_DISTRIBUTION = {
   lockProofUrl: null as string | null,
 };
 
+/**
+ * Pre-launch switch for the whole rewards surface (owner, 21 Oct: hold until launch). While false,
+ * /rewards answers 404 and nothing links to it or describes it: no nav, footer, guide card or How It
+ * Works row. Turn on at launch, together with the terms below.
+ */
+export const REWARDS_PAGE_LIVE = false;
+
 export const HOLDER_DISTRIBUTION_HOURS = HOLDER_DISTRIBUTION.afterLaunchMs / 3_600_000;
 
 export const TERM_LABELS: Record<keyof DistributionTerms, string> = { amount: "Amount", eligibility: "Eligibility", antiSybil: "One share per holder", snapshot: "Snapshot", process: "Process" };

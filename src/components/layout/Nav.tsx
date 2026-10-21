@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Logo } from "./Logo";
-import { rewardsTermsSet } from "@/config/holderDistribution";
+import { REWARDS_PAGE_LIVE, rewardsTermsSet } from "@/config/holderDistribution";
 import { COMMUNITY, X_HANDLE, X_URL } from "@/config/social";
 import { ContractAddress } from "./ContractAddress";
 import { XIcon } from "./XIcon";
@@ -17,7 +17,7 @@ const LINKS = [
   { href: "/how-it-works", label: "How It Works" },
   { href: "/leaderboard", label: "Leaderboard" },
   // Out of the main nav until the owner publishes the distribution's amount, eligibility and process.
-  ...(rewardsTermsSet() ? [{ href: "/rewards", label: "Rewards" }] : []),
+  ...(REWARDS_PAGE_LIVE && rewardsTermsSet() ? [{ href: "/rewards", label: "Rewards" }] : []),
   { href: "/updates", label: "Updates" },
 ];
 

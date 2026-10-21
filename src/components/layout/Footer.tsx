@@ -4,6 +4,7 @@ import { Logo } from "./Logo";
 import { SocialLine } from "./SocialLine";
 import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 import { FIRST_VISIT_INTRO } from "@/config/intro";
+import { REWARDS_PAGE_LIVE } from "@/config/holderDistribution";
 import { COMMUNITY } from "@/config/social";
 
 export function Footer() {
@@ -24,7 +25,7 @@ export function Footer() {
             <li><Link className="hover:text-bone" href="/hatchery">Hatchery</Link></li>
             <li><Link className="hover:text-bone" href="/collection">Collection</Link></li>
             <li><Link className="hover:text-bone" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-bone" href="/rewards">Holder Rewards</Link></li>
+            {REWARDS_PAGE_LIVE && <li><Link className="hover:text-bone" href="/rewards">Holder Rewards</Link></li>}
           </ul>
         </div>
         <div className="text-sm">

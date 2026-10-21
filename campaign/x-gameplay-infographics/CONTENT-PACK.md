@@ -1,5 +1,7 @@
 # Solanites X gameplay infographics
 
+> **21 Oct update (owner decisions):** infographic **2** (old odds 60/25/10/3.8/1/0.2, Mythic/Secret silhouettes) and **5** (Collection screenshot with Mythic/Secret cards) are RETIRED and must not be posted. Live odds are 40/30/17/8/3.5/1.5: use the art-free odds card on `marketing/plan`. Infographics **1, 3 and 4** are still cleared. Post 1's demo screens must keep their visible "demo" label.
+
 Five infographic posts that follow the "Gameplay Rules" format: a big headline, a structured panel, and enough detail to reward zooming in. Each one teaches one real part of the game. They are drafts for review. Nothing here has been posted or scheduled.
 
 **Rules for this set:**

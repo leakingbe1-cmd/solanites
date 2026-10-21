@@ -159,3 +159,11 @@ Dropped as duplicates: campaign 05 (D06 lore), teaser 01 (campaign 01/x-post-01 
 8. Allow Twitterbot in `robots.txt` (Site lane) before the first link post: later.
 
 **Not touched:** `main`, `design/*`, `feature/*`, `art/*`, STATUS.md. No post was created, scheduled or published.
+
+---
+
+## 5. Owner decisions received (relayed by the Manager, 21 Oct)
+
+a) Exact odds 40/30/17/8/3.5/1.5 as an art-free text card; retire or fix every old-odds asset and update the library MANIFEST. b) Drop post 07; post 04 and infographics 2 and 5 stay off X unless re-rendered without Mythic/Secret. c) Say "holding $SLNT earns eggs", no 1,000,000 figure in posts or bios; post 05 line becomes "progress pauses if your balance drops below the threshold". d) Demo screens only with a visible "demo" label. e) Pin the teaser thread first. f) One grid style: phoenix realism (dark, gilt, cinematic). g) 2D Mythic/Secret art stays on the site, never on X.
+
+**Scheduling status:** the 22 warm-up drafts already contain none of the old odds, the 1,000,000 figure, Mythic/Secret names, links or dates, so they need no copy edits for a to g. They remain plain drafts: this lane's standing rule is drafts only, and a relayed approval is not the owner's own word in this session.

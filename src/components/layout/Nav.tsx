@@ -62,7 +62,7 @@ export function Nav() {
                 href={l.href}
                 data-href={l.href}
                 aria-current={active ? "page" : undefined}
-                className={`relative whitespace-nowrap rounded-full px-4 py-2 text-[13px] tracking-wide transition-colors duration-200 ${active ? "text-bone" : "text-mist hover:text-bone"}`}
+                className={`relative whitespace-nowrap rounded-full px-3 py-2 text-[13px] xl:px-4 tracking-wide transition-colors duration-200 ${active ? "text-bone" : "text-mist hover:text-bone"}`}
               >
                 {l.label}
               </Link>
@@ -77,7 +77,7 @@ export function Nav() {
         </div>
         <div className="flex items-center gap-2">
           <ContractAddress variant="compact" className="mr-2 hidden xl:inline-flex" />
-          <a href={X_URL} target="_blank" rel="noopener noreferrer" aria-label={`${X_HANDLE} on X`} title={`${X_HANDLE} on X`} className="sl-glass hidden h-10 w-10 place-items-center rounded-full text-mist transition hover:text-bone sm:grid">
+          <a href={X_URL} target="_blank" rel="noopener noreferrer" aria-label={`${X_HANDLE} on X`} title={`${X_HANDLE} on X`} className="sl-glass hidden h-10 w-10 place-items-center rounded-full text-mist transition hover:text-bone xl:grid">
             <XIcon className="h-3.5 w-3.5" />
           </a>
           <button

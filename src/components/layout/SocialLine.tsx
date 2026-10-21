@@ -10,7 +10,7 @@ export function SocialLine({ className = "" }: { className?: string }) {
         </svg>
         Follow {X_HANDLE}
       </a>
-      <span aria-hidden className="text-bone/25">·</span>
+      <span aria-hidden className="text-bone/25 max-sm:hidden">·</span>
       <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-mist/80">{CONTRACT_LABEL}</span>
     </p>
   );

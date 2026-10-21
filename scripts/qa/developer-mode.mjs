@@ -97,11 +97,11 @@ const browser = await chromium.launch();
   ok("odds: at 1× test odds equal public odds", (await cell("mythic", "test")) === (await cell("mythic", "public")) && (await cell("secret", "test")) === (await cell("secret", "public")), `${await cell("mythic", "test")}`);
   await p.locator("#dev-multiplier").fill("50");
   ok("odds: slider sets 50×", (await mult()) === "50×");
-  ok("odds: Mythic test odds update (50 / (60+25+10+3.8+50+10) = 31.49%)", (await cell("mythic", "test")) === "31.49%", await cell("mythic", "test"));
-  ok("odds: public odds unchanged", (await cell("mythic", "public")) === "1.00%");
+  ok("odds: Mythic test odds update (175 / (40+30+17+8+175+75) = 50.72%)", (await cell("mythic", "test")) === "50.72%", await cell("mythic", "test"));
+  ok("odds: public odds unchanged", (await cell("mythic", "public")) === "3.50%", await cell("mythic", "public"));
   ok("odds: test odds total exactly 100%", (await p.getByTestId("test-total").innerText()) === "100.00%");
   await p.getByTestId("reset-odds").click();
-  ok("odds: reset returns to 1×", (await mult()) === "1×" && (await cell("mythic", "test")) === "1.00%");
+  ok("odds: reset returns to 1×", (await mult()) === "1×" && (await cell("mythic", "test")) === "3.50%");
   ok("odds: labelled as simulated, not public", (await p.getByTestId("simulated-badge").innerText()).toLowerCase().includes("not public"));
 
   // forced Secret simulation and a 10,000-hatch run

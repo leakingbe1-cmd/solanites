@@ -1,0 +1,302 @@
+[
+ {
+  "day": 1,
+  "pillar": "silhouette",
+  "title": "PINNED · teaser thread",
+  "posts": [
+   {
+    "text": "something is stirring in the eggs.\n\n28 creatures. sealed. waiting for their keepers.\n\nhere's what we can tell you so far 🧵",
+    "media": "banner-1500x500.png"
+   },
+   {
+    "text": "every solanite carries a solgem: a fragment of the chain that birthed it.\n\nwhat grows around it is up to fate, and to how long you hold.",
+    "media": "media/W11-lore-solgem.jpg"
+   },
+   {
+    "text": "each one grows through four forms.\n\neggling. hatchling. evolved. ascended.\n\npatience is the whole game.",
+    "media": "media/W13-lore-forms.jpg"
+   },
+   {
+    "text": "common. rare. epic. legendary.\n\nand some bloodlines we're not showing you yet.\n\nno date. no link. follow so you're here for the first crack.",
+    "media": "media/W12-lore-bloodlines.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 1,
+  "pillar": "silhouette",
+  "title": "D01 · silhouette: Mossling",
+  "posts": [
+   {
+    "text": "who's inside?\n\nthe first solanite stirs. small, green, in no hurry at all.\n\nname it in the replies.",
+    "media": "media/W01-sil-mossling.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 2,
+  "pillar": "silhouette",
+  "title": "D02 · reveal: Mossling",
+  "posts": [
+   {
+    "text": "meet mossling. 🌱\n\nthe patient sprout. it grows a little greener with every block its keeper holds.\n\ncommon bloodline. first of 28.",
+    "media": "media/W02-reveal-mossling.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 2,
+  "pillar": "poll",
+  "title": "D02 · POLL: first hatch",
+  "posts": [
+   {
+    "text": "what are you hoping cracks out of your first egg?\n\n🌱 something small and loyal\n❄️ something cold\n⚡ something loud\n🔥 something that rises again",
+    "media": null
+   }
+  ],
+  "note": "Convert to a native X poll before posting: options Small & loyal / Something cold / Something loud / Rises again (24h). Typefully's API can't create polls."
+ },
+ {
+  "day": 3,
+  "pillar": "lore",
+  "title": "D03 · lore: the Solgem",
+  "posts": [
+   {
+    "text": "lore drop 001: the solgem.\n\nevery solanite carries one. a fragment of the chain that birthed it.\n\nwhat grows around it is up to fate, and to how long you hold.",
+    "media": "media/W11-lore-solgem.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 4,
+  "pillar": "silhouette",
+  "title": "D04 · silhouette: Frostkit",
+  "posts": [
+   {
+    "text": "something cold is coming.\n\nsmall. excitable. breathes weather.\n\nguess it.",
+    "media": "media/W03-sil-frostkit.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 4,
+  "pillar": "bts",
+  "title": "D04 · BTS: the studio (media pending)",
+  "posts": [
+   {
+    "text": "a peek behind the eggshell: every solanite starts as a sketch, then gets rebuilt in 3D, one bloodline at a time.\n\nfirst model is on the bench. more soon.",
+    "media": null
+   }
+  ],
+  "note": "MEDIA PENDING Phase 2: attach the Mossling Blender turntable or a viewport screenshot once approved. Don't post without media."
+ },
+ {
+  "day": 5,
+  "pillar": "silhouette",
+  "title": "D05 · reveal: Frostkit",
+  "posts": [
+   {
+    "text": "meet frostkit. ❄️\n\nlittle glacier. it breathes tiny snowstorms when excited.\n\nit is excited constantly.",
+    "media": "media/W04-reveal-frostkit.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 6,
+  "pillar": "poll",
+  "title": "D06 · POLL: which form",
+  "posts": [
+   {
+    "text": "four forms. which one are you most excited to see?\n\n🥚 eggling\n🐣 hatchling\n🌿 evolved\n✨ ascended",
+    "media": null
+   }
+  ],
+  "note": "Convert to a native X poll before posting: Eggling / Hatchling / Evolved / Ascended (24h)."
+ },
+ {
+  "day": 6,
+  "pillar": "lore",
+  "title": "D06 · lore: four forms",
+  "posts": [
+   {
+    "text": "hold, and it grows.\n\neggling → hatchling → evolved → ascended.\n\nsame creature. four very different moods.",
+    "media": "media/W13-lore-forms.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 7,
+  "pillar": "countdown",
+  "title": "D07 · countdown: eggs warming",
+  "posts": [
+   {
+    "text": "the eggs are warming.\n\nno date yet. follow so you're here for the first crack.",
+    "media": "media/W14-countdown.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 8,
+  "pillar": "silhouette",
+  "title": "D08 · silhouette: Stormquill",
+  "posts": [
+   {
+    "text": "hear the wings?\n\na rare one is coming through.",
+    "media": "media/W05-sil-stormquill.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 9,
+  "pillar": "silhouette",
+  "title": "D09 · reveal: Stormquill",
+  "posts": [
+   {
+    "text": "meet stormquill. ⚡\n\nthunder's courier. every wingbeat finalises a thousand transactions.\n\nprobably.",
+    "media": "media/W06-reveal-stormquill.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 9,
+  "pillar": "bts",
+  "title": "D09 · BTS: 3D turntable (media pending)",
+  "posts": [
+   {
+    "text": "one full turn. 🌀\n\nfrom flat art to something you could walk around.",
+    "media": null
+   }
+  ],
+  "note": "MEDIA PENDING Phase 2: attach the approved Mossling turntable loop (MP4). Don't post without media."
+ },
+ {
+  "day": 10,
+  "pillar": "lore",
+  "title": "D10 · lore: bloodlines",
+  "posts": [
+   {
+    "text": "lore drop 002: the bloodlines.\n\ncommon. rare. epic. legendary.\n\nnot every bloodline is equal, and some we're not showing you yet.",
+    "media": "media/W12-lore-bloodlines.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 10,
+  "pillar": "poll",
+  "title": "D10 · POLL: rarest guess",
+  "posts": [
+   {
+    "text": "how many bloodlines do you think there really are?\n\n4️⃣ what you see is what you get\n5️⃣ one more hiding\n6️⃣ two more hiding\n❓ you're not telling us",
+    "media": null
+   }
+  ],
+  "note": "Convert to a native X poll (24h). Don't confirm the answer in replies."
+ },
+ {
+  "day": 11,
+  "pillar": "silhouette",
+  "title": "D11 · silhouette: Neonyx",
+  "posts": [
+   {
+    "text": "it glows.\n\nepic bloodline. the longer it's held, the brighter it gets.",
+    "media": "media/W07-sil-neonyx.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 12,
+  "pillar": "silhouette",
+  "title": "D12 · reveal: Neonyx",
+  "posts": [
+   {
+    "text": "meet neonyx. 🏮\n\nthe lantern wyrm. a living lantern fed by conviction.",
+    "media": "media/W08-reveal-neonyx.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 12,
+  "pillar": "countdown",
+  "title": "D12 · countdown: a crack",
+  "posts": [
+   {
+    "text": "did anyone else hear that?",
+    "media": null
+   }
+  ],
+  "note": "Text-only on purpose. Optional: attach a short egg-crack clip from Phase 5 if ready."
+ },
+ {
+  "day": 13,
+  "pillar": "silhouette",
+  "title": "D13 · silhouette: Pyraurum",
+  "posts": [
+   {
+    "text": "it rises again.\n\nlegendary. burns, falls, and comes back brighter.",
+    "media": "media/W09-sil-pyraurum.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 13,
+  "pillar": "poll",
+  "title": "D13 · POLL: name your keeper vibe",
+  "posts": [
+   {
+    "text": "what kind of keeper are you?\n\n🌱 patient gardener\n⚡ chaos collector\n🔥 legendary hunter\n🥚 just here for the eggs",
+    "media": null
+   }
+  ],
+  "note": "Convert to a native X poll (24h)."
+ },
+ {
+  "day": 14,
+  "pillar": "silhouette",
+  "title": "D14 · reveal: Pyraurum",
+  "posts": [
+   {
+    "text": "meet pyraurum. 🔥\n\nphoenix of the golden pyre.\n\nfive down. twenty-three still sleeping.",
+    "media": "media/W10-reveal-pyraurum.jpg"
+   }
+  ],
+  "note": null
+ },
+ {
+  "day": 14,
+  "pillar": "bts",
+  "title": "D14 · BTS: hatch reveal (media pending)",
+  "posts": [
+   {
+    "text": "what a hatch looks like. 🥚→✨",
+    "media": null
+   }
+  ],
+  "note": "MEDIA PENDING Phase 5: attach a Remotion hatch-reveal clip (Common or Rare only: never Mythic/Secret). Don't post without media."
+ },
+ {
+  "day": 14,
+  "pillar": "countdown",
+  "title": "D14 · countdown: soon",
+  "posts": [
+   {
+    "text": "two weeks of whispers. the eggs are almost ready.\n\nthe hatching begins soon.",
+    "media": "media/W14-countdown.jpg"
+   }
+  ],
+  "note": null
+ }
+]

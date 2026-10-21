@@ -31,8 +31,8 @@ explicitly approves the official launch URL.**
 - Unapproved token details (supply, allocations, fees, holder reward amounts or dates).
 - Financial promises: "guaranteed", "profit", "returns", "moon", price talk.
 - Claims the code cannot back. Verified facts today: 28 species, 1,000,000 $SLNT per egg,
-  four forms (Eggling, Hatchling, Evolved, Ascended), six rarities (Common 60%, Rare 25%,
-  Epic 10%, Legendary 3.8%, Mythic 1%, Secret 0.2%).
+  four forms (Eggling, Hatchling, Evolved, Ascended), six rarities (Common 40%, Rare 30%,
+  Epic 17%, Legendary 8%, Mythic 3.5%, Secret 1.5%).
 - Fake engagement, artificial scarcity ("only 10 left"), or "provably fair".
 
 The ticker is always `$SLNT`.

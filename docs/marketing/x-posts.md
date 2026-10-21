@@ -38,7 +38,7 @@ approved. See `prelaunch-rules.md`.
 **4. Rarity (square)**
 > Six bloodlines. One shared origin.
 >
-> Common 60% · Rare 25% · Epic 10% · Legendary 3.8% · Mythic 1% · Secret 0.2%
+> Common 40% · Rare 30% · Epic 17% · Legendary 8% · Mythic 3.5% · Secret 1.5%
 >
 > Mythic and Secret species stay classified until someone hatches one.
 

@@ -27,8 +27,8 @@ export function EvolutionTimeline() {
       <ol className="grid gap-3 sm:grid-cols-5 sm:gap-4">
         {steps.map((s, i) => (
           <li key={s.name} className="relative rounded-2xl border border-white/8 bg-white/[0.02] p-4">
-            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-gilt/80">{i === 0 ? s.at : `${s.at} later`}</p>
-            <p className="mt-2 font-display text-2xl text-bone">{s.name}</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-sol-green/80">{i === 0 ? s.at : `${s.at} later`}</p>
+            <p className="mt-2 font-display text-2xl text-white">{s.name}</p>
             <p className="mt-1 text-sm leading-relaxed text-mist">{s.text}</p>
           </li>
         ))}

@@ -26,11 +26,11 @@ export default function Home() {
       <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
         <PhoenixHero />
         {/* phones: the Phoenix above, the copy beneath it; wide screens: the copy left, over the Phoenix's darkened wing */}
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[20svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[14svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
           <div className="flex max-w-xl flex-col text-center lg:block lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
-              <p className="sl-eyebrow is-gilt">Genesis Hatchery · Season 0</p>
+              <p className="sl-eyebrow is-gilt max-lg:[text-shadow:0_1px_10px_rgba(0,0,0,0.95),0_0_2px_rgba(0,0,0,0.9)]">Genesis Hatchery · Season 0</p>
             </div>
             <h1 className="sl-awake-in sl-display-xl mt-6 text-bone" style={{ animationDelay: "0.25s" }}>
               A world waiting to <span className="sl-phx-gold italic">awaken.</span>
@@ -39,21 +39,22 @@ export default function Home() {
             <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-bone sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }} data-testid="hero-pitch">
               Hold {gameConfig.token.symbol} on Solana. Every {formatNumber(gameConfig.token.tokensPerEgg)} earns an egg. Keep holding and it evolves.
             </p>
-            <p className="sl-awake-in mx-auto mt-2 max-w-lg text-base leading-relaxed text-mist lg:mx-0" style={{ animationDelay: "0.45s" }}>
-              {CATALOGUE_SIZE} creatures sleep in sealed eggs, from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.
+            {/* why hold, in product terms only: what grows while you keep holding */}
+            <p className="sl-awake-in mx-auto mt-2 max-w-lg text-base leading-relaxed text-mist lg:mx-0" style={{ animationDelay: "0.45s" }} data-testid="hero-why-hold">
+              The longer you hold, the more you grow: new eggs keep arriving, your {CATALOGUE_SIZE}-species collection fills up, creatures evolve to {gameConfig.evolution.names[3]}, and your rank and daily holding streak climb.
             </p>
-            <div className="sl-awake-in mt-5 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
+            <div className="sl-awake-in mt-4 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
               {/* pre-launch, the demo is the thing to try: it opens straight into the simulated Hatchery */}
               <Link href="/hatchery?demo=1" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]" data-testid="hero-demo-cta">
                 TRY THE DEMO
                 <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
               </Link>
-              <Link href="/collection" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
+              <Link href="/collection" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-3 font-sans sm:py-4 text-sm font-semibold tracking-[0.2em]">
                 EXPLORE SOLANITES
               </Link>
             </div>
             {/* walletless exploration: nothing on the site asks for a wallet today */}
-            <p className="sl-awake-in mt-6 inline-flex items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
+            <p className="sl-awake-in mt-4 inline-flex sm:mt-6 items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
               No wallet needed. The demo is simulated.
             </p>

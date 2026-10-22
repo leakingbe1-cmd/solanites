@@ -102,25 +102,30 @@ export function HeroDemo() {
   );
 }
 
-/** The hatched demo creature with its rarity, name and form, then the two next steps. */
+/**
+ * The hatched demo creature with its rarity, name and form, then the next steps: the Hatchery as the
+ * main button (full width on phones) and the DEMO share card as the secondary one.
+ */
 function DemoResult({ species }: { species: Species }) {
   return (
-    <div className="flex items-center justify-center gap-4 lg:justify-start" data-testid="hero-demo-result">
-      <div className="relative h-28 w-28 shrink-0 sm:h-32 sm:w-32">
-        <CreatureArt species={species} stage={0} animated={false} />
-      </div>
-      <div className="flex min-w-0 flex-col items-start gap-1.5 text-left">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Demo · simulated</span>
-        <p className="font-display text-2xl leading-tight text-bone">{species.name}</p>
-        <p className="flex flex-wrap items-center gap-2 text-xs text-mist">
-          <RarityBadge rarity={species.rarity} /> {gameConfig.evolution.names[0]}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          {demoShareable(species) && <ShareButton target={{ kind: "demo", speciesId: species.id, stage: 0 }} speciesId={species.id} className="px-4 py-2" />}
-          <Link href="/hatchery?demo=1" className="whitespace-nowrap text-sm text-sol-green/90 underline-offset-4 hover:underline" data-testid="hero-keep-going">
-            Keep going in the Hatchery →
-          </Link>
+    <div className="flex w-full flex-col items-center gap-5 lg:items-start" data-testid="hero-demo-result">
+      <div className="flex items-center gap-4 sm:gap-6">
+        <div className="relative h-36 w-36 shrink-0 sm:h-44 sm:w-44 lg:h-48 lg:w-48" data-testid="hero-demo-creature">
+          <CreatureArt species={species} stage={0} animated={false} />
         </div>
+        <div className="flex min-w-0 flex-col items-start gap-1.5 text-left">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Demo · simulated</span>
+          <p className="font-display text-3xl leading-tight text-bone sm:text-4xl">{species.name}</p>
+          <p className="flex flex-wrap items-center gap-2 text-xs text-mist">
+            <RarityBadge rarity={species.rarity} /> {gameConfig.evolution.names[0]}
+          </p>
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center">
+        <Link href="/hatchery?demo=1" className="sl-btn-gold inline-flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.18em] sm:w-auto" data-testid="hero-keep-going">
+          KEEP GOING IN THE HATCHERY <span aria-hidden>→</span>
+        </Link>
+        {demoShareable(species) && <ShareButton target={{ kind: "demo", speciesId: species.id, stage: 0 }} speciesId={species.id} className="w-full py-4 sm:w-auto" />}
       </div>
     </div>
   );

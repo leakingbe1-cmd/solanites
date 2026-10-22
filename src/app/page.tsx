@@ -3,7 +3,7 @@ import { SocialLine } from "@/components/layout/SocialLine";
 import { EvolutionTimeline } from "@/components/landing/EvolutionTimeline";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { HomeMetrics } from "@/components/landing/HomeMetrics";
+import { ProofStrip } from "@/components/landing/ProofStrip";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { RarityShowcase } from "@/components/landing/RarityShowcase";
 import { StageTimeline } from "@/components/landing/StageTimeline";
@@ -59,10 +59,6 @@ export default function Home() {
             <div className="sl-awake-in mt-3 max-lg:order-1" style={{ animationDelay: "0.65s" }}>
               <SocialLine className="justify-center lg:justify-start" />
             </div>
-            {/* live holders, eggs collected and market cap (/api/home-stats); on phones after the buttons: headline, pitch, CTA, then metrics */}
-            <div className="sl-awake-in mt-4 max-lg:order-2 lg:mt-5" style={{ animationDelay: "0.45s" }}>
-              <HomeMetrics />
-            </div>
           </div>
         </div>
         <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex lg:hidden">
@@ -70,6 +66,9 @@ export default function Home() {
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
       </HeroSection>
+
+      {/* what is real today, then live numbers and a wallet lookup once tracking is on */}
+      <ProofStrip />
 
       {/* ── MARKET BOND: every species' stock, the second headline feature ── */}
       <section id="market" className="relative overflow-hidden border-b border-white/5 py-24 sm:py-32">

@@ -9,6 +9,7 @@ import { DemoTag } from "@/components/ui/DemoTag";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { HATCH_POSTER } from "@/config/hatchClips";
 import { gameConfig } from "@/config/gameConfig";
+import { RARITIES } from "@/lib/rarity";
 import { demoSeed, rollDemo } from "@/lib/heroDemo";
 import { demoShareable } from "@/lib/share";
 import type { Species } from "@/lib/species";
@@ -70,7 +71,7 @@ export function HeroDemo() {
 
   return (
     <div className="w-full" data-testid="hero-demo" data-phase={phase}>
-      {phase !== "done" || !result ? (
+      {phase !== "done" ? (
         <div className="flex items-center justify-center gap-4 lg:justify-start">
           <div className="relative h-28 w-24 shrink-0 sm:h-32 sm:w-28" aria-hidden>
             <EggArt stage={3} progress={0.92} seed={seed ?? 7} className="h-full w-full" />
@@ -93,8 +94,12 @@ export function HeroDemo() {
             </button>
           </div>
         </div>
-      ) : (
-        <DemoResult species={result} />
+      ) : null}
+      {/* mounted (hidden) from the tap, so its art is ready the moment the overlay hands back to it */}
+      {result && phase !== "idle" && (
+        <div className={phase === "done" ? undefined : "hidden"} aria-hidden={phase !== "done"}>
+          <DemoResult species={result} />
+        </div>
       )}
 
       {phase === "hatching" && result && seed !== null && <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />}
@@ -110,8 +115,12 @@ function DemoResult({ species }: { species: Species }) {
   return (
     <div className="flex w-full flex-col items-center gap-5 lg:items-start" data-testid="hero-demo-result">
       <div className="flex items-center gap-4 sm:gap-6">
+        {/* arrives from the overlay: a short glow in the rarity's colour, then the creature settles */}
         <div className="relative h-36 w-36 shrink-0 sm:h-44 sm:w-44 lg:h-48 lg:w-48" data-testid="hero-demo-creature">
-          <CreatureArt species={species} stage={0} animated={false} />
+          <div className="sl-arrive-glow pointer-events-none absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${RARITIES[species.rarity].glow} 0%, transparent 70%)` }} aria-hidden />
+          <div className="sl-arrive relative h-full w-full">
+            <CreatureArt species={species} stage={0} animated={false} />
+          </div>
         </div>
         <div className="flex min-w-0 flex-col items-start gap-1.5 text-left">
           <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Demo · simulated</span>

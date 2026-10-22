@@ -34,4 +34,19 @@ describe("hatch clips", () => {
     // real eggs open the reveal only with the server's hatch result
     expect(read("components/hatchery/TrackedHatchery.tsx")).toContain("species={SPECIES_BY_ID[hatching.speciesId]}");
   });
+
+  it("the creature comes out of the egg, never pops in: at the burst in the clip, in the built-in hatch, and into the hero", () => {
+    const reveal = read("components/hatchery/HatchReveal.tsx");
+    expect(reveal).not.toContain("sl-pop");
+    expect(reveal.match(/sl-emerge/g)?.length).toBe(2); // clip creature + built-in creature
+    expect(reveal).toContain("if (v.currentTime * 1000 >= HATCH_CLIP_BURST_MS) fireBurst();");
+    expect(reveal).toMatch(/\{burst && \(\s*<>\s*<div className="sl-egg-flash/);
+    expect(reveal).toContain("HATCH_CLIP_BURST_MS + DETAILS_AFTER_BURST_MS) onReveal()");
+    expect(read("components/landing/HeroDemo.tsx")).toContain('<div className="sl-arrive relative h-full w-full">');
+    const css = readFileSync(path.resolve(__dirname, "../../app/globals.css"), "utf8");
+    for (const k of ["@keyframes sl-emerge", "@keyframes sl-egg-flash", "@keyframes sl-arrive", "@keyframes sl-arrive-glow"]) expect(css).toContain(k);
+    // reduced motion: a quick fade, no movement, no flash
+    expect(css).toMatch(/\.sl-emerge,\s*\.sl-arrive \{\s*animation-name: sl-fade-in !important;/);
+    expect(css).toMatch(/\.sl-egg-flash,\s*\.sl-arrive-glow \{ display: none; \}/);
+  });
 });

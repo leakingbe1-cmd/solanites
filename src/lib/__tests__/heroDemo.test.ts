@@ -34,6 +34,9 @@ describe("homepage live demo", () => {
     expect(c).toContain("Demo · simulated");
     expect(c).toContain('demoShareable(species) && <ShareButton target={{ kind: "demo"');
     expect(c).toContain('href="/hatchery?demo=1"');
+    // the Hatchery is the main next step: the gold button, first, full width on phones; Share is secondary
+    expect(c).toMatch(/href="\/hatchery\?demo=1" className="sl-btn-gold inline-flex w-full[^"]*sm:w-auto"/);
+    expect(c.indexOf('data-testid="hero-keep-going"')).toBeLessThan(c.indexOf("<ShareButton target"));
     const page = read("app/page.tsx");
     expect(page.indexOf("<HeroDemo />")).toBeGreaterThan(page.indexOf("<PhoenixHero />"));
     expect(page.indexOf("<HeroDemo />")).toBeLessThan(page.indexOf("</HeroSection>"));

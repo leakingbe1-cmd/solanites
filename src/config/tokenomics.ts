@@ -29,10 +29,13 @@ export interface Tokenomics {
 }
 
 export const TOKENOMICS: Tokenomics = {
-  allocations: [],
+  allocations: [
+    { label: "Dev holding", percent: 0.5 },
+    { label: "Holder rewards (locked 2 h, then distributed)", percent: 1 },
+  ],
   liquidity: null,
   mintAuthority: null,
   freezeAuthority: null,
-  fees: null,
+  fees: "No transfer tax. Creator fees fund the next version of Solanites: a living world where your creatures have a purpose.",
   teamWallets: [],
 };

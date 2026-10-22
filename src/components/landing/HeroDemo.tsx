@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EggArt } from "@/components/egg/EggArt";
@@ -62,6 +63,9 @@ export function HeroDemo() {
 
   const hatch = () => result && setPhase("hatching");
   const finish = () => setPhase("done");
+  const router = useRouter();
+  // "Meet your Solanite" opens its page in the Collection
+  const meet = () => result && router.push(`/collection?species=${result.id}`);
   const clip = result ? clipFor(result) : null;
 
   return (
@@ -97,7 +101,7 @@ export function HeroDemo() {
         </div>
       )}
 
-      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
+      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={meet} closeLabel="Back to the egg" demo next={{ href: "/hatchery?demo=1", label: "KEEP GOING IN THE HATCHERY" }} share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
     </div>
   );
 }

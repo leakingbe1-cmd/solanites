@@ -34,6 +34,11 @@ describe("homepage live demo", () => {
     // the Hatchery is the main next step: the gold button, first, full width on phones; Share is secondary
     expect(c).toMatch(/href="\/hatchery\?demo=1" className="sl-btn-gold inline-flex w-full[^"]*sm:w-auto"/);
     expect(c.indexOf('data-testid="hero-keep-going"')).toBeLessThan(c.indexOf("<ShareButton target"));
+    // on the reveal: "Meet your Solanite" opens it in the Collection, and the Hatchery is the gold next step
+    expect(c).toContain("router.push(`/collection?species=${result.id}`)");
+    expect(c).toContain('onView={meet} closeLabel="Back to the egg" demo next={{ href: "/hatchery?demo=1", label: "KEEP GOING IN THE HATCHERY" }}');
+    const reveal = read("components/hatchery/HatchReveal.tsx");
+    expect(reveal.indexOf('data-testid="reveal-next"')).toBeLessThan(reveal.indexOf("MEET YOUR SOLANITE"));
     // the result never pops in: mounted (hidden) from the tap, then it settles with a short glow; reduced motion: a fade only
     expect(c).toContain('<div className={phase === "done" ? undefined : "hidden"} aria-hidden={phase !== "done"}>');
     expect(c).toContain('<div className="sl-arrive relative h-full w-full">');
@@ -51,7 +56,7 @@ describe("homepage live demo", () => {
     expect(reveal.indexOf("{demo && <DemoTag")).toBeGreaterThan(-1);
     expect(reveal.indexOf("{demo && <DemoTag")).toBeLessThan(reveal.indexOf("meta.label}"));
     const hero = read("components/landing/HeroDemo.tsx");
-    expect(hero).toContain('closeLabel="Back to the egg" demo share=');
+    expect(hero).toMatch(/closeLabel="Back to the egg" demo next=\{[^}]*\}\} share=/);
     expect(hero).toContain('<DemoTag testId="reveal-demo-label" />');
     expect(read("app/hatchery/page.tsx")).toContain("demo={h.isDemo}");
   });

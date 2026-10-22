@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { createPortal } from "react-dom";
 import { CreatureScene } from "@/components/creature/CreatureScene";
 import { EggArt } from "@/components/egg/EggArt";
@@ -28,9 +29,11 @@ interface HatchRevealProps {
   closeLabel?: string;
   /** A simulated result (homepage or Hatchery demo): labelled so a screenshot can't pass for a real hatch. */
   demo?: boolean;
+  /** The main next step, shown first as the gold button (the homepage demo: the Hatchery). */
+  next?: { href: string; label: string };
 }
 
-export function HatchReveal({ species, seed, onHatched, onClose, onView, share, closeLabel = "Back to Hatchery", demo = false }: HatchRevealProps) {
+export function HatchReveal({ species, seed, onHatched, onClose, onView, share, closeLabel = "Back to Hatchery", demo = false, next }: HatchRevealProps) {
   const [phase, setPhase] = useState<Phase>("charge");
   const meta = RARITIES[species.rarity];
   const charge = CHARGE_MS[species.rarity];
@@ -99,7 +102,12 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView, share, 
                 </span>
               ))}
             </div>
-            <div className="sl-fade-up mt-9 flex flex-col gap-3 sm:flex-row" style={{ animationDelay: "1s" }}>
+            {next && (
+              <Link href={next.href} className="sl-btn-gold sl-fade-up mt-9 inline-flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.18em] sm:w-auto" style={{ animationDelay: "1s" }} data-testid="reveal-next">
+                {next.label} <span aria-hidden>→</span>
+              </Link>
+            )}
+            <div className={`sl-fade-up flex flex-col gap-3 sm:flex-row ${next ? "mt-3" : "mt-9"}`} style={{ animationDelay: "1s" }}>
               <button onClick={onView} className="sl-btn-outline rounded-full px-8 py-3.5 font-sans text-xs font-semibold tracking-[0.2em] text-bone">
                 MEET YOUR SOLANITE
               </button>

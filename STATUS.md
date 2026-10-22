@@ -13,6 +13,14 @@ Updated: 2026-10-22 12:35 UTC, by SOL · Workstream Manager.
   - `backup/integration-179015c`;
   - previous production deployment `dpl_DvsnnLSyXfi2yvnH7i7uzt9UHLuE` (main 03084fb; one-step Vercel rollback).
 
+## Model routing and delegation (owner-approved, 22 Oct)
+- Manager: Opus 5.5. It plans, delegates, tracks and reports.
+- Fable 5.1: architecture, hard bugs, security- or money-sensitive code (for example the holder tracker), and anything Opus has failed at twice. Say in one line when Fable was used.
+- Opus 5.5: features, edits, tests, docs and refactors. Haiku 5.5: lookups, summaries, list checks and simple reads.
+- Pass `model` on every Agent call. One sub-agent per task, with a short plan first, and at most 3 running in parallel. Do tiny jobs directly.
+- Read reports, not whole files. Before anything ships, an independent reviewer sub-agent checks the real result (tests, screenshots, the live page).
+- Ask the owner before anything irreversible or money-related: deploys, wallets, payouts, the contract address.
+
 ## Lanes (since 21 Oct; 13 old workstreams handed off and archived; handoffs on `handoff/*` branches)
 | Lane | Session | Doing now | Report to |
 |---|---|---|---|

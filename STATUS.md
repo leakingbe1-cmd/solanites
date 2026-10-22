@@ -20,6 +20,7 @@ Updated: 2026-10-22 15:50 UTC, by SOL · Workstream Manager.
 - Pass `model` on every Agent call. One sub-agent per task, with a short plan first, and at most 3 running in parallel. Do tiny jobs directly.
 - Read reports, not whole files. Before anything ships, an independent reviewer sub-agent checks the real result (tests, screenshots, the live page).
 - Ask the owner before anything irreversible or money-related: deploys, wallets, payouts, the contract address.
+- No timed wake-ups: the hourly name check is paused and there are no idle progress checks. The manager wakes only on reports or owner messages and renames sessions only when a lane changes.
 
 ## Lanes (since 21 Oct; 13 old workstreams handed off and archived; handoffs on `handoff/*` branches)
 | Lane | Session | Doing now | Report to |

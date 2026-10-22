@@ -10,6 +10,7 @@ import { StageTimeline } from "@/components/landing/StageTimeline";
 import { StockShowcase } from "@/components/landing/StockShowcase";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { HeroDemo } from "@/components/landing/HeroDemo";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { VerifyPanel } from "@/components/trust/VerifyPanel";
 import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
@@ -39,20 +40,17 @@ export default function Home() {
             <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-bone sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }} data-testid="hero-pitch">
               Hold {gameConfig.token.symbol} on Solana. Every {formatNumber(gameConfig.token.tokensPerEgg)} earns an egg. Keep holding and it evolves.
             </p>
+            {/* the live demo: a simulated egg and one big "Hatch it", above the fold on phones and desktop */}
+            <div className="sl-awake-in mt-5 max-lg:order-1 lg:mt-7" style={{ animationDelay: "0.5s" }}>
+              <HeroDemo />
+            </div>
             {/* why hold, in product terms only: what grows while you keep holding */}
-            <p className="sl-awake-in mx-auto mt-2 max-w-lg text-base leading-relaxed text-mist lg:mx-0" style={{ animationDelay: "0.45s" }} data-testid="hero-why-hold">
+            <p className="sl-awake-in mx-auto mt-4 max-w-lg text-base leading-relaxed text-mist max-lg:order-1 lg:mx-0" style={{ animationDelay: "0.45s" }} data-testid="hero-why-hold">
               The longer you hold, the more you grow: new eggs keep arriving, your {CATALOGUE_SIZE}-species collection fills up, creatures evolve to {gameConfig.evolution.names[3]}, and your rank and daily holding streak climb.
             </p>
-            <div className="sl-awake-in mt-4 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
-              {/* pre-launch, the demo is the thing to try: it opens straight into the simulated Hatchery */}
-              <Link href="/hatchery?demo=1" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]" data-testid="hero-demo-cta">
-                TRY THE DEMO
-                <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
-              </Link>
-              <Link href="/collection" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-3 font-sans sm:py-4 text-sm font-semibold tracking-[0.2em]">
-                EXPLORE SOLANITES
-              </Link>
-            </div>
+            <Link href="/collection" className="sl-awake-in mt-3 block text-sm text-bone/85 underline-offset-4 hover:underline max-lg:order-2" style={{ animationDelay: "0.55s" }}>
+              Explore all {CATALOGUE_SIZE} Solanites →
+            </Link>
             {/* walletless exploration: nothing on the site asks for a wallet today */}
             <p className="sl-awake-in mt-4 inline-flex sm:mt-6 items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />

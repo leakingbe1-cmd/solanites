@@ -23,9 +23,11 @@ interface HatchRevealProps {
   onView(): void;
   /** Offered after the reveal: the server card for a tracked egg, or a DEMO card. */
   share?: ShareTarget | null;
+  /** Label of the closing button (the homepage demo says where it returns). */
+  closeLabel?: string;
 }
 
-export function HatchReveal({ species, seed, onHatched, onClose, onView, share }: HatchRevealProps) {
+export function HatchReveal({ species, seed, onHatched, onClose, onView, share, closeLabel = "Back to Hatchery" }: HatchRevealProps) {
   const [phase, setPhase] = useState<Phase>("charge");
   const meta = RARITIES[species.rarity];
   const charge = CHARGE_MS[species.rarity];
@@ -99,7 +101,7 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView, share }
               </button>
               {share && <ShareButton target={share} speciesId={species.id} />}
               <button onClick={onClose} className="rounded-full border border-white/15 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-mist transition hover:text-bone">
-                Back to Hatchery
+                {closeLabel}
               </button>
             </div>
           </div>

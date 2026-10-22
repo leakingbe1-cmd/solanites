@@ -1,0 +1,37 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+import { HATCH_CLIPS } from "@/config/hatchClips";
+import { gameConfig } from "@/config/gameConfig";
+import { clipFor, rollDemo } from "@/lib/heroDemo";
+import { rarityChances, rollSpecies } from "@/lib/progression";
+import { RARITY_ORDER } from "@/lib/rarity";
+
+/** The homepage live demo: gameConfig odds, rolled before the tap, a clip per rarity or the built-in hatch. */
+const read = (f: string) => readFileSync(path.resolve(__dirname, "../..", f), "utf8");
+
+describe("homepage live demo", () => {
+  it("rolls with the real odds (the same function as real eggs) and is deterministic per seed", () => {
+    for (let s = 1; s < 50; s++) expect(rollDemo(s).id).toBe(rollSpecies(s, gameConfig));
+    const counts = Object.fromEntries(RARITY_ORDER.map((r) => [r, 0])) as Record<string, number>;
+    const N = 20_000;
+    for (let s = 1; s <= N; s++) counts[rollDemo(s * 7919).rarity]++;
+    const chances = rarityChances(gameConfig);
+    for (const r of RARITY_ORDER) expect(Math.abs(counts[r] / N - chances[r])).toBeLessThan(0.02);
+  });
+
+  it("has a clip slot for every rarity; empty slots play the built-in hatch", () => {
+    expect(Object.keys(HATCH_CLIPS).sort()).toEqual([...RARITY_ORDER].sort());
+    expect(clipFor(rollDemo(1))).toBe(HATCH_CLIPS[rollDemo(1).rarity]);
+  });
+
+  it("is labelled simulated, offers a demo card only for Common to Legendary, and sits above the fold in the hero", () => {
+    const c = read("components/landing/HeroDemo.tsx");
+    expect(c).toContain("Demo · simulated");
+    expect(c).toContain('demoShareable(species) && <ShareButton target={{ kind: "demo"');
+    expect(c).toContain('href="/hatchery?demo=1"');
+    const page = read("app/page.tsx");
+    expect(page.indexOf("<HeroDemo />")).toBeGreaterThan(page.indexOf("<PhoenixHero />"));
+    expect(page.indexOf("<HeroDemo />")).toBeLessThan(page.indexOf("</HeroSection>"));
+  });
+});

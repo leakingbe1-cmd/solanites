@@ -34,6 +34,8 @@ Updated: 2026-10-22 15:50 UTC, by SOL · Workstream Manager.
 - 21 Oct: 9 standalone posts, 20:15–23:35 UTC.
 - 22–24 Oct: 10 posts (odds card, hatchery, hatching, Neonyx, intro, catalogue, collection, teaser, leaderboard, CTA).
 
+- 22 Oct: 4 new Typefully drafts from Site, unscheduled: 11415076 (demo hatch), 11415077 (Hatchery), 11415078 (Meet your Solanite), and 11415081, which is HELD until REWARDS_PAGE_LIVE. They're owned by the Manager/Marketing lane now. Publish only on the owner's go. Owner: "we aren't going live yet".
+
 ## Done
 - Phase 1, X warm-up: profile kit on `marketing/x-warmup`; 22 Typefully drafts, none scheduled.
 - Phase 3, site fixes: live.

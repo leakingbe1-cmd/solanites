@@ -8,6 +8,7 @@ import { RARITIES } from "@/lib/rarity";
 import { ELEMENT_GLYPH, type Species } from "@/lib/species";
 import { sfx } from "@/lib/sound";
 import { ShareButton } from "@/components/share/ShareButton";
+import { DemoTag } from "@/components/ui/DemoTag";
 import type { ShareTarget } from "@/lib/share";
 
 type Phase = "charge" | "burst" | "reveal";
@@ -25,9 +26,11 @@ interface HatchRevealProps {
   share?: ShareTarget | null;
   /** Label of the closing button (the homepage demo says where it returns). */
   closeLabel?: string;
+  /** A simulated result (homepage or Hatchery demo): labelled so a screenshot can't pass for a real hatch. */
+  demo?: boolean;
 }
 
-export function HatchReveal({ species, seed, onHatched, onClose, onView, share, closeLabel = "Back to Hatchery" }: HatchRevealProps) {
+export function HatchReveal({ species, seed, onHatched, onClose, onView, share, closeLabel = "Back to Hatchery", demo = false }: HatchRevealProps) {
   const [phase, setPhase] = useState<Phase>("charge");
   const meta = RARITIES[species.rarity];
   const charge = CHARGE_MS[species.rarity];
@@ -73,6 +76,7 @@ export function HatchReveal({ species, seed, onHatched, onClose, onView, share, 
 
         {phase === "reveal" && (
           <div className="flex w-full max-w-xl flex-col items-center text-center">
+            {demo && <DemoTag className="mb-3" testId="reveal-demo-label" />}
             <p className="sl-letter font-display text-xs font-semibold uppercase sm:text-sm" style={{ color: meta.color, textShadow: `0 0 24px ${meta.glow}` }}>
               {species.rarity === "secret" ? "▚ SECRET ▞" : meta.label}
             </p>

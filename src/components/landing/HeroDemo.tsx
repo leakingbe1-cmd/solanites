@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EggArt } from "@/components/egg/EggArt";
+import { DemoTag } from "@/components/ui/DemoTag";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { HATCH_POSTER } from "@/config/hatchClips";
 import { gameConfig } from "@/config/gameConfig";
@@ -91,7 +92,7 @@ export function HeroDemo() {
         <DemoResult species={result} />
       )}
 
-      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
+      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
     </div>
   );
 }
@@ -128,6 +129,9 @@ function ClipHatch({ src, onEnd }: { src: string; onEnd(): void }) {
   }, [onEnd]);
   return createPortal(
     <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching" onClick={onEnd}>
+      <div className="absolute top-6 left-1/2 -translate-x-1/2">
+        <DemoTag testId="reveal-demo-label" />
+      </div>
       <video ref={ref} src={src} poster={HATCH_POSTER ?? undefined} muted playsInline autoPlay onEnded={onEnd} onError={onEnd} className="max-h-[80vh] w-full max-w-xl" />
     </div>,
     document.body,

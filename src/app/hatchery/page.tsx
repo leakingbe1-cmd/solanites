@@ -200,6 +200,7 @@ export default function HatcheryPage() {
         <HatchReveal
           species={SPECIES_BY_ID[hatchRec.speciesId]}
           seed={hatchRec.seed}
+          demo={h.isDemo}
           share={h.isDemo && demoShareable(SPECIES_BY_ID[hatchRec.speciesId]) ? { kind: "demo", speciesId: hatchRec.speciesId, stage: 0 } : null}
           onHatched={() => h.hatch(hatchRec.id)}
           onClose={() => setHatching(null)}

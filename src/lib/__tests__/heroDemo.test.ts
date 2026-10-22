@@ -34,6 +34,17 @@ describe("homepage live demo", () => {
     expect(page.indexOf("<HeroDemo />")).toBeGreaterThan(page.indexOf("<PhoenixHero />"));
     expect(page.indexOf("<HeroDemo />")).toBeLessThan(page.indexOf("</HeroSection>"));
   });
+
+  it("labels the full-screen reveal and the clip as simulated whenever the result is a demo", () => {
+    expect(read("components/ui/DemoTag.tsx")).toContain("Demo · simulated");
+    const reveal = read("components/hatchery/HatchReveal.tsx");
+    expect(reveal.indexOf("{demo && <DemoTag")).toBeGreaterThan(-1);
+    expect(reveal.indexOf("{demo && <DemoTag")).toBeLessThan(reveal.indexOf("meta.label}"));
+    const hero = read("components/landing/HeroDemo.tsx");
+    expect(hero).toContain('closeLabel="Back to the egg" demo share=');
+    expect(hero).toContain('<DemoTag testId="reveal-demo-label" />');
+    expect(read("app/hatchery/page.tsx")).toContain("demo={h.isDemo}");
+  });
 });
 
 describe("homepage first load stays light", () => {

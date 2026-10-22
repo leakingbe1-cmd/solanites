@@ -112,35 +112,27 @@ export function DistributionProof({ proof = DISTRIBUTION_PROOF }: { proof?: type
         </p>
       )}
       {proof.payouts.length > 0 && (
-        <div className="mt-5 overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/70">
-              <tr>
-                <th className="py-2 pr-4 font-normal">Wallet</th>
-                <th className="py-2 pr-4 font-normal">Amount</th>
-                <th className="py-2 pr-4 font-normal">Transaction</th>
-                <th className="py-2 font-normal">Time (UTC)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.06] text-bone/85">
-              {proof.payouts.map((r) => (
-                <tr key={r.signature}>
-                  <td className="py-2.5 pr-4 font-mono text-xs" title={r.wallet}>
-                    {r.sample && <span className="mr-2 rounded-full border border-amber-300/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-amber-200">Sample</span>}
-                    {shortAddress(r.wallet)}
-                  </td>
-                  <td className="py-2.5 pr-4">{r.amount}</td>
-                  <td className="py-2.5 pr-4">
-                    <a href={solscanTxUrl(r.signature)} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-sol-green/90 underline-offset-4 hover:underline">
-                      {r.signature.slice(0, 8)}… ↗
-                    </a>
-                  </td>
-                  <td className="py-2.5 font-mono text-xs text-mist">{r.time.replace("T", " ").replace(/:\d\dZ$|Z$/, "")}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ul className="mt-5 divide-y divide-white/[0.06] border-t border-white/[0.06] text-sm text-bone/85">
+          <li className="hidden grid-cols-[1.3fr_1fr_1fr_1fr] gap-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-mist/70 sm:grid" aria-hidden>
+            <span>Wallet</span>
+            <span>Amount</span>
+            <span>Transaction</span>
+            <span>Time (UTC)</span>
+          </li>
+          {proof.payouts.map((r) => (
+            <li key={r.signature} className="grid grid-cols-2 gap-x-4 gap-y-1 py-3 sm:grid-cols-[1.3fr_1fr_1fr_1fr] sm:items-center">
+              <span className="flex items-center gap-2 font-mono text-xs" title={r.wallet}>
+                {r.sample && <span className="rounded-full border border-amber-300/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-amber-200">Sample</span>}
+                {shortAddress(r.wallet)}
+              </span>
+              <span className="text-right sm:text-left">{r.amount}</span>
+              <a href={solscanTxUrl(r.signature)} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-sol-green/90 underline-offset-4 hover:underline">
+                Tx {r.signature.slice(0, 8)}… ↗
+              </a>
+              <span className="text-right font-mono text-xs text-mist sm:text-left">{r.time.replace("T", " ").replace(/:\d\dZ$|Z$/, "")}</span>
+            </li>
+          ))}
+        </ul>
       )}
     </section>
   );

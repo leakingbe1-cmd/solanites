@@ -11,6 +11,7 @@
  * motion shows it at once.
  */
 
+import { preload } from "react-dom";
 import heroAssets from "@/data/heroAssets.json";
 
 type HeroSource = { src: string; w: number };
@@ -35,6 +36,8 @@ function HeroPicture() {
   const c = ECLIPSE.current;
   if (!d && c) {
     const fallback = c.sources.jpg[0];
+    // The still is the first screen's largest paint: start its download from <head>, before CSS and scripts.
+    preload(c.sources.avif[0].src, { as: "image", type: "image/avif", imageSrcSet: srcSet(c.sources.avif), imageSizes: CURRENT_SIZES, fetchPriority: "high" });
     return (
       <picture>
         <source type="image/avif" srcSet={srcSet(c.sources.avif)} sizes={CURRENT_SIZES} />

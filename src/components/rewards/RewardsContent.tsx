@@ -1,4 +1,5 @@
-import { HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS, isLocked, publishedTerms } from "@/config/holderDistribution";
+import { DISTRIBUTION_PROOF, HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS, isLocked, publishedTerms, solscanTxUrl } from "@/config/holderDistribution";
+import { shortAddress } from "@/lib/format";
 
 const HOURS_WORD = HOLDER_DISTRIBUTION_HOURS === 2 ? "Two" : String(HOLDER_DISTRIBUTION_HOURS);
 
@@ -15,8 +16,8 @@ export function RewardsContent() {
           {isLocked() ? "Locked developer supply" : "Developer supply"} <span className="italic">returns to holders.</span>
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-mist">
-          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the {supply} allocated for redistribution will be divided equally among eligible holders. Every eligible holder will
-          receive an equal share.
+          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the {supply} allocated for redistribution will be shared among eligible holders in proportion to their holdings. Each holder&apos;s share of it
+          matches their share of the eligible supply.
         </p>
 
         {/* When: launch, then the distribution two hours later. The clock is the launch, not the visit. */}
@@ -62,7 +63,7 @@ export function RewardsContent() {
             </p>
           </div>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-mist">
-            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The {supply} allocated for redistribution will be split equally among eligible holders.
+            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The {supply} allocated for redistribution will be shared among eligible holders in proportion to their holdings.
           </p>
 
           <dl className="mt-6 divide-y divide-white/[0.06] border-t border-white/[0.06]">
@@ -90,7 +91,57 @@ export function RewardsContent() {
             This is the planned distribution. There is nothing to claim, connect or sign here yet. Solanites will never ask for your seed phrase or private key.
           </p>
         </section>
+
+        <DistributionProof />
       </div>
     </div>
+  );
+}
+
+/** The snapshot hash and every transfer with its Solscan link, as the owner publishes them. Hidden while empty. */
+export function DistributionProof({ proof = DISTRIBUTION_PROOF }: { proof?: typeof DISTRIBUTION_PROOF }) {
+  if (!proof.snapshotHash && proof.payouts.length === 0) return null;
+  return (
+    <section aria-labelledby="sl-dist-proof" className="sl-glass relative mt-10 overflow-hidden rounded-md p-6 sm:p-8" data-testid="distribution-proof">
+      <h2 id="sl-dist-proof" className="font-mono text-[10px] uppercase tracking-[0.3em] text-mist/80">
+        Distribution proof
+      </h2>
+      {proof.snapshotHash && (
+        <p className="mt-4 text-sm text-mist">
+          Snapshot hash (SHA-256): <code className="break-all font-mono text-xs text-bone">{proof.snapshotHash}</code>
+        </p>
+      )}
+      {proof.payouts.length > 0 && (
+        <div className="mt-5 overflow-x-auto">
+          <table className="w-full min-w-[520px] text-left text-sm">
+            <thead className="font-mono text-[10px] uppercase tracking-[0.2em] text-mist/70">
+              <tr>
+                <th className="py-2 pr-4 font-normal">Wallet</th>
+                <th className="py-2 pr-4 font-normal">Amount</th>
+                <th className="py-2 pr-4 font-normal">Transaction</th>
+                <th className="py-2 font-normal">Time (UTC)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.06] text-bone/85">
+              {proof.payouts.map((r) => (
+                <tr key={r.signature}>
+                  <td className="py-2.5 pr-4 font-mono text-xs" title={r.wallet}>
+                    {r.sample && <span className="mr-2 rounded-full border border-amber-300/40 px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-[0.15em] text-amber-200">Sample</span>}
+                    {shortAddress(r.wallet)}
+                  </td>
+                  <td className="py-2.5 pr-4">{r.amount}</td>
+                  <td className="py-2.5 pr-4">
+                    <a href={solscanTxUrl(r.signature)} target="_blank" rel="noopener noreferrer" className="font-mono text-xs text-sol-green/90 underline-offset-4 hover:underline">
+                      {r.signature.slice(0, 8)}… ↗
+                    </a>
+                  </td>
+                  <td className="py-2.5 font-mono text-xs text-mist">{r.time.replace("T", " ").replace(/:\d\dZ$|Z$/, "")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
   );
 }

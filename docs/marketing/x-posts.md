@@ -73,9 +73,9 @@ approved. See `prelaunch-rules.md`.
 **10. Holder rewards (HELD until launch)**
 > Holder rewards are coming.
 >
-> The developer supply allocated for redistribution is planned to be divided equally among eligible holders. The full terms will be published before anything goes live.
+> The developer supply allocated for redistribution is planned to be shared among eligible holders in proportion to their holdings. The full terms will be published before anything goes live.
 
-*[HELD: don't post until the owner turns the rewards page on (`REWARDS_PAGE_LIVE`) and publishes its terms. Wording matches the site: an equal split, not "favouring those who held longer". Do not add a start time until the launch time is confirmed, or amounts until they are published.]*
+*[HELD: don't post until the owner turns the rewards page on (`REWARDS_PAGE_LIVE`) and publishes its terms. Wording matches the site: proportional to holdings at the snapshot, not "favouring those who held longer". Do not add a start time until the launch time is confirmed, or amounts until they are published.]*
 
 ---
 

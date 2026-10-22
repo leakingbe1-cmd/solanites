@@ -38,4 +38,15 @@ describe("tokenomics", () => {
     expect(tokenomicsProblems({ ...EMPTY, teamWallets: [{ label: "T", address: "nope" }] })).toEqual(["T: invalid address"]);
     expect(tokenomicsProblems({ ...EMPTY, allocations: [{ label: "L", percent: 1, proofUrl: "http://x" }] })).toEqual(["L: proof must be an https link"]);
   });
+
+  it("shows the owner's values (22 Oct) and hides everything still empty until launch day", () => {
+    const text = renderToStaticMarkup(createElement(VerifyPanel)).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+    expect(text).toContain("Dev holding 0.5% of supply");
+    expect(text).toContain("1% of supply");
+    expect(text).toContain("No transfer tax. Creator fees fund the next version of Solanites");
+    expect(text).toContain("Contract: coming soon");
+    // no addresses, lock proofs or authorities yet, so none of them shows
+    expect(TOKENOMICS.allocations.every((a) => !a.address && !a.proofUrl)).toBe(true);
+    expect(text).not.toMatch(/Lock proof|authority|Copy|Liquidity/i);
+  });
 });

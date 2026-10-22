@@ -35,7 +35,7 @@ export default function HowItWorksPage() {
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
     // Hidden with the rewards page until launch (REWARDS_PAGE_LIVE).
     ...(REWARDS_PAGE_LIVE
-      ? [["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The developer supply allocated for redistribution, divided equally among eligible holders. Its terms are on the Rewards page as they are published"] as [string, string, string]]
+      ? [["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The developer supply allocated for redistribution, shared among eligible holders in proportion to their holdings. Its terms are on the Rewards page as they are published"] as [string, string, string]]
       : []),
   ];
 

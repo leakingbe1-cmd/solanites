@@ -33,7 +33,13 @@ export const HOLDER_DISTRIBUTION = {
     { term: "Split", detail: "Divided equally: every eligible holder receives the same share." },
   ],
   /** Owner-set terms; null = not published (hidden). */
-  terms: { amount: null, eligibility: null, antiSybil: null, snapshot: null, process: null } as DistributionTerms,
+   terms: {
+    amount: "1% of total supply",
+    eligibility: "Every wallet holding $SLNT at the snapshot, excluding the liquidity pool, project and exchange wallets",
+    antiSybil: "Shares are proportional to each wallet's balance, so splitting a holding across wallets gains nothing",
+    snapshot: "Finalized balances exactly 2 hours after launch; the snapshot list and its hash are published on /rewards",
+    process: "Sent from the published distribution wallet in batches; every transaction is linked on /rewards",
+  } as DistributionTerms,
   /** Public link proving the allocation is locked (e.g. a Streamflow lock). Until set, it is never called "locked". */
   lockProofUrl: null as string | null,
 };

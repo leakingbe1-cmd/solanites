@@ -6,8 +6,8 @@ import { REWARDS_PAGE_LIVE } from "@/config/holderDistribution";
 export const metadata = REWARDS_PAGE_LIVE ? { title: "Holder Rewards — Solanites" } : {};
 
 /**
- * The planned holder distribution: the developer supply allocated for redistribution, divided
- * equally among eligible holders two hours after the official launch. Presentation only (see
+ * The planned holder distribution: the developer supply allocated for redistribution, shared among
+ * eligible holders in proportion to their holdings two hours after the official launch. Presentation only (see
  * src/config/holderDistribution.ts): nothing can be claimed, connected or signed here, no launch
  * time is shown, and terms the owner hasn't set are left out (never shown as pending). The supply
  * is only called "locked" once a lock proof link is set. Hidden (404) until REWARDS_PAGE_LIVE.

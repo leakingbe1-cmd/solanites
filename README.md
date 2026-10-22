@@ -101,7 +101,7 @@ Egg rules are in `src/config/eggProgression.ts`; everything else (rarity, evolut
 | Evolution | Counted from maturity: Evolved after 30 min more qualifying holding, Ascended after 2 h, then Ascended II at 8 h, III at 24 h, IV at 3 days, V at 7 days, VI at 30 days (`gameConfig.evolution`) |
 | Rarity weights | Common 40 · Rare 30 · Epic 17 · Legendary 8 · Mythic 3.5 · Secret 1.5 |
 | Hatching | Manual reveal; the outcome is sealed on the server when the egg is earned |
-| Holder distribution | Planned: 2 hours after launch, the developer supply allocated for redistribution divided equally among eligible holders. Terms not yet published; not implemented. The page is hidden until launch |
+| Holder distribution | Planned: 2 hours after launch, the developer supply allocated for redistribution (1% of total supply) shared among eligible holders in proportion to their holdings. Terms set in `src/config/holderDistribution.ts`; no payout code exists. The page is hidden until launch |
 
 ## Holder tracking, eggs and holder rewards
 

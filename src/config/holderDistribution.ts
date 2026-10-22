@@ -2,7 +2,7 @@
  * The planned holder distribution, shown on /rewards and How It Works.
  *
  * The rule (owner-approved copy): two hours after launch, the developer supply allocated for
- * redistribution is divided equally among eligible holders. The timer is the official launch time,
+ * redistribution is shared among eligible holders in proportion to their holdings (owner, 22 Oct). The timer is the official launch time,
  * the same for everyone, never a visitor's own visit.
  *
  * Copy only. Nothing distributes anything yet. The terms below are set by the owner; each one
@@ -30,7 +30,7 @@ export const HOLDER_DISTRIBUTION = {
   planned: [
     { term: "Timing", detail: "Two hours after the official launch time. The launch time will be announced; it is the same for everyone." },
     { term: "Source", detail: "The developer supply allocated for redistribution." },
-    { term: "Split", detail: "Divided equally: every eligible holder receives the same share." },
+    { term: "Share", detail: "Proportional: each eligible holder receives the part of the allocation that matches their share of the eligible supply." },
   ],
   /** Owner-set terms; null = not published (hidden). */
    terms: {
@@ -53,7 +53,7 @@ export const REWARDS_PAGE_LIVE = false;
 
 export const HOLDER_DISTRIBUTION_HOURS = HOLDER_DISTRIBUTION.afterLaunchMs / 3_600_000;
 
-export const TERM_LABELS: Record<keyof DistributionTerms, string> = { amount: "Amount", eligibility: "Eligibility", antiSybil: "One share per holder", snapshot: "Snapshot", process: "Process" };
+export const TERM_LABELS: Record<keyof DistributionTerms, string> = { amount: "Amount", eligibility: "Eligibility", antiSybil: "Wallet splitting", snapshot: "Snapshot", process: "Process" };
 
 /** The published terms, in display order; unset ones are left out. */
 export const publishedTerms = (t: DistributionTerms = HOLDER_DISTRIBUTION.terms) =>

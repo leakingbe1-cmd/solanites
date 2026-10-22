@@ -17,45 +17,38 @@ from memory. Each value is a one-line code change; tests fail if a value is malf
 ## Holder distribution (`src/config/holderDistribution.ts` · `HOLDER_DISTRIBUTION`)
 
 Shown on `/rewards` once `REWARDS_PAGE_LIVE` is on. Rewards joins the main nav only when
-**amount, eligibility and process** are all set. Enabling any payout needs separate approval.
+**amount, eligibility and process** are all set (they are). Enabling any payout needs separate
+approval; the site has no payout code. The rule: 1% of total supply, shared among eligible holders
+in proportion to their holdings at the snapshot.
 
-| Key | Controls | Example format | Until set |
-|---|---|---|---|
-| `terms.amount` | "Amount" row | `"10,000,000 $SLNT (1% of supply)"` | Row hidden |
-| `terms.eligibility` | "Eligibility" row | `"Wallets holding at least 1,000,000 $SLNT at the snapshot, excluding project, pool and exchange wallets"` | Row hidden |
-| `terms.antiSybil` | "One share per holder" row | `"Wallets funded from the same source are counted once"` (see options below) | Row hidden |
-| `terms.snapshot` | "Snapshot" row | `"Finalized balances at launch + 2 h; the list and its hash are published on /proof"` | Row hidden |
-| `terms.process` | "Process" row | `"Sent from the distribution wallet in batches; transaction links published"` | Row hidden |
-| `lockProofUrl` | Calls the supply "locked" and links the proof | `"https://app.streamflow.finance/…"` | Never says "locked" |
+| Key | Controls | Set to (owner, 22 Oct) |
+|---|---|---|
+| `terms.amount` | "Amount" row | `"1% of total supply"` |
+| `terms.eligibility` | "Eligibility" row | `"Every wallet holding $SLNT at the snapshot, excluding the liquidity pool, project and exchange wallets"` |
+| `terms.antiSybil` | "Wallet splitting" row | `"Shares are proportional to each wallet's balance, so splitting a holding across wallets gains nothing"` |
+| `terms.snapshot` | "Snapshot" row | `"Finalized balances exactly 2 hours after launch; the snapshot list and its hash are published on /rewards"` |
+| `terms.process` | "Process" row | `"Sent from the published distribution wallet in batches; every transaction is linked on /rewards"` |
+| `lockProofUrl` | Calls the supply "locked" and links the proof | Empty until launch day; until then the page never says "locked" |
 
-### Anti-sybil options (advice; choose one or combine)
-
-An equal share per wallet rewards splitting a bag across many wallets. Options, from simplest:
-
-1. **Minimum hold:** only wallets at or above a set balance at the snapshot (for example one egg's
-   worth, 1,000,000 $SLNT). Splitting below it earns nothing.
-2. **Hold duration:** only wallets that held that minimum continuously for a set time before the
-   snapshot (the tracker already measures verified continuous holding for the leaderboard).
-3. **Snapshot plus exclusions:** exclude project, pool, exchange and top-N wallets, and publish the
-   snapshot list with a hash so anyone can check it.
-4. **Proportional instead of equal:** share by balance (capped), so splitting gains nothing. This
-   changes the published rule, so it would need new copy.
-
-None of these changes wallet logic or thresholds in the code today; they are choices for the terms.
+Proportional shares remove the reason to split a holding across wallets: ten wallets holding a
+tenth each receive exactly what one wallet holding it all would. Exclusions (pool, project and
+exchange wallets) are still needed so the pool and the team don't take a share.
 
 ## Tokenomics (`src/config/tokenomics.ts` · `TOKENOMICS`)
 
 Shown in the "Verify $SLNT" panel on How It Works (`#tokenomics`) and, compact, on the homepage.
-Each fact appears only once set.
+Each fact appears only once set; an empty wallet, proof or authority is hidden.
 
-| Key | Controls | Example format | Until set |
+| Key | Controls | Set to (owner, 22 Oct) | Launch day |
 |---|---|---|---|
-| `mintAuthority` | "Mint authority: Revoked/Active" | `"revoked"` | Hidden |
-| `freezeAuthority` | "Freeze authority: Revoked/Active" | `"revoked"` | Hidden |
-| `allocations[]` | One row per allocation with % of supply, the wallet (copy button) and a lock proof link | `{ label: "Team", percent: 2.5, address: "<wallet>", proofUrl: "https://…" }` | No rows |
-| `liquidity` | "Liquidity" row | `"PumpSwap pool; LP tokens burned"` | Hidden |
-| `fees` | "Fees" row | `"No transfer tax"` | Hidden |
-| `teamWallets[]` | One row per published team or project wallet, with copy button | `{ label: "Treasury", address: "<wallet>" }` | No rows |
+| `allocations[]` | One row per allocation with % of supply, the wallet (copy button) and a lock proof link | `Dev holding` 0.5%; `Holder rewards (locked 2 h, then distributed)` 1% | Add each `address` and, if locked, its `proofUrl` |
+| `fees` | "Fees" row | `"No transfer tax. Creator fees fund the next version of Solanites: a living world where your creatures have a purpose."` | |
+| `liquidity` | "Liquidity" row | Not set (hidden) | Optional: `"pump.fun bonding curve, then PumpSwap"` |
+| `mintAuthority` / `freezeAuthority` | "Mint/Freeze authority: Revoked" | Not set (hidden) | `"revoked"`, only after checking on Solscan |
+| `teamWallets[]` | One row per published wallet, with copy button | Empty (hidden) | `{ label: "Dev", address }`, `{ label: "Distribution", address }`, `{ label: "Creator fees", address }` |
 
 Rules the tests enforce: allocations add up to 100 % or less, every percent is above 0, addresses are
 valid Solana addresses, proof links are `https://`.
+
+Note: the second allocation's label says "locked" as the owner wrote it; the lock proof link is
+added on launch day (`proofUrl`). Until then the label is the only place that word appears.

@@ -28,12 +28,14 @@ describe("rewards before launch", () => {
 });
 
 describe("Holder rewards page (once live)", () => {
-  it("states the rule: developer supply, divided equally, two hours after launch", () => {
+  it("states the rule: developer supply, shared in proportion to holdings, two hours after launch", () => {
     expect(HOLDER_DISTRIBUTION.afterLaunchMs).toBe(2 * 60 * 60 * 1000);
     expect(HOLDER_DISTRIBUTION_HOURS).toBe(2);
     expect(text).toContain("Holder rewards"); // eyebrow (shown in capitals by CSS)
     expect(text).toContain("Developer supply returns to holders.");
-    expect(text).toContain("Two hours after launch, the developer supply allocated for redistribution will be divided equally among eligible holders.");
+    expect(text).toContain("Two hours after launch, the developer supply allocated for redistribution will be shared among eligible holders in proportion to their holdings.");
+    expect(text).toContain("Each holder's share of it matches their share of the eligible supply.");
+    expect(text).not.toMatch(/\bequal(ly)?\b|same share/i);
     expect(text).toContain("Holder distribution");
     expect(text).toContain("Scheduled after launch");
     expect(text).toContain("+2h");
@@ -43,13 +45,14 @@ describe("Holder rewards page (once live)", () => {
     expect(text).toContain("The clock starts at the official launch time, the same moment for everyone. It does not depend on when you visit this page.");
   });
 
-  it("never says 'pending' or 'TBD', hides unset terms, and only says 'locked' with a lock proof", () => {
+  it("never says 'pending' or 'TBD', shows the owner's terms, and only says 'locked' with a lock proof", () => {
     expect(text).not.toMatch(/pending|\bTBD\b|to be confirmed/i);
     expect(HOLDER_DISTRIBUTION.lockProofUrl).toBeNull();
     expect(text).not.toMatch(/\blocked\b/i);
     expect(html.match(/>Planned</g)).toHaveLength(HOLDER_DISTRIBUTION.planned.length);
-    for (const label of Object.values(TERM_LABELS)) expect(text).not.toContain(label);
-    expect(publishedTerms()).toEqual([]);
+    for (const label of Object.values(TERM_LABELS)) expect(text).toContain(label);
+    expect(publishedTerms().map((t) => t.term)).toEqual(Object.values(TERM_LABELS));
+    expect(HOLDER_DISTRIBUTION.terms.amount).toBe("1% of total supply");
   });
 
   it("shows a term once the owner sets it, and joins the nav only when amount, eligibility and process are set", () => {
@@ -58,16 +61,17 @@ describe("Holder rewards page (once live)", () => {
     expect(rewardsTermsSet(none)).toBe(false);
     expect(rewardsTermsSet({ ...none, amount: "A", eligibility: "E" })).toBe(false);
     expect(rewardsTermsSet({ ...none, amount: "A", eligibility: "E", process: "P" })).toBe(true);
-    expect(rewardsTermsSet()).toBe(false);
+    expect(rewardsTermsSet()).toBe(true); // the owner's terms are set; the page itself stays off until REWARDS_PAGE_LIVE
     const nav = readFileSync(path.resolve(__dirname, "../../components/layout/Nav.tsx"), "utf8");
     expect(nav).toContain('...(REWARDS_PAGE_LIVE && rewardsTermsSet() ? [{ href: "/rewards", label: "Rewards" }] : [])');
   });
 
-  it("has no refund wording, claim action, launch time, amounts or promises", () => {
+  it("has no refund wording, claim action, launch time, token amounts or promises", () => {
     expect(text).not.toMatch(/refund|fee claim|connect wallet/i);
     expect(html).not.toMatch(/<button|<form|<input/);
     expect(text).not.toMatch(/\b20\d\d\b|\bUTC\b|\d{1,2}:\d{2}/); // no date or time
-    expect(text).not.toMatch(/\d[\d,.]*\s*(\$?SLNT|tokens|%)/i); // no amounts
+    expect(text).not.toMatch(/\d[\d,.]*\s*(\$?SLNT|tokens)/i); // no token amounts
+    expect(text.match(/\d[\d,.]*\s*%/g)).toEqual(["1%"]); // the one published share of supply
     expect(text).not.toMatch(/guarantee|automatic|instantly|airdrop/i);
     expect(text).toContain("There is nothing to claim, connect or sign here yet.");
   });

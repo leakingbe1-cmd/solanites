@@ -15,8 +15,8 @@ export function RewardsContent() {
           {isLocked() ? "Locked developer supply" : "Developer supply"} <span className="italic">returns to holders.</span>
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-mist">
-          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the {supply} allocated for redistribution will be divided equally among eligible holders. Every eligible holder will
-          receive an equal share.
+          <span className="text-bone">{HOURS_WORD} hours after launch</span>, the {supply} allocated for redistribution will be shared among eligible holders in proportion to their holdings. Each holder&apos;s share of it
+          matches their share of the eligible supply.
         </p>
 
         {/* When: launch, then the distribution two hours later. The clock is the launch, not the visit. */}
@@ -62,7 +62,7 @@ export function RewardsContent() {
             </p>
           </div>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-mist">
-            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The {supply} allocated for redistribution will be split equally among eligible holders.
+            The distribution is scheduled to take place {HOURS_WORD.toLowerCase()} hours after launch. The {supply} allocated for redistribution will be shared among eligible holders in proportion to their holdings.
           </p>
 
           <dl className="mt-6 divide-y divide-white/[0.06] border-t border-white/[0.06]">

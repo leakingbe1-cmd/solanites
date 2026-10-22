@@ -212,10 +212,10 @@ They also cover RPC outages, delayed indexing, missed webhooks, closed accounts,
 ## 7. Holder distribution (planned, not implemented)
 
 **Rule (page `/rewards`, hidden until launch):** two hours after the official launch, the developer
-supply allocated for redistribution is divided equally among eligible holders
+supply allocated for redistribution (1% of total supply) is shared among eligible holders in proportion to their holdings
 (`src/config/holderDistribution.ts`). While `REWARDS_PAGE_LIVE` is off the page answers 404
-(`/claims` redirects there) and nothing links to it. The terms (amount, eligibility, one share per
-holder, snapshot, process) are owner-set fields that stay hidden until set, and the supply is only
+(`/claims` redirects there) and nothing links to it. The terms (amount, eligibility, wallet
+splitting, snapshot, process) are owner-set fields that stay hidden until set, and the supply is only
 called "locked" once a lock proof link is set. See `docs/buyer-upgrade/OWNER-INPUTS.md`.
 
 **What exists today that it could build on**
@@ -231,9 +231,9 @@ called "locked" once a lock proof link is set. See `docs/buyer-upgrade/OWNER-INP
 1. **The locked developer supply.** Nothing in the code identifies it: no lock or vesting
    account, amount or release mechanism. It needs the actual on-chain arrangement (a lock or
    vesting program, or a multisig wallet), and its address configured and excluded from eligibility.
-2. **Eligibility rules.** With an equal share per wallet, splitting holdings across many wallets
-   multiplies the payout, so the rules need a minimum balance (and possibly a minimum holding time)
-   plus a decision on how to treat obvious splits. Pools, exchanges and project wallets must be excluded.
+2. **Eligibility rules.** Shares are proportional to balance, so spreading a holding across many
+   wallets gains nothing; the rules only need to exclude pools, exchanges and project wallets
+   (owner terms: every wallet holding $SLNT at the snapshot, minus those).
 3. **A snapshot at exactly launch + 2 h.** The tracker keeps current balances, not balances at a
    chosen moment, and the scheduler runs every 10 minutes at best (GitHub Actions, not configured
    yet) or once a day (Vercel Hobby cron). It needs a snapshot job pinned to a finalized slot at the

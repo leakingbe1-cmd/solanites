@@ -16,13 +16,19 @@ import heroAssets from "@/data/heroAssets.json";
 
 type HeroSource = { src: string; w: number };
 type HeroVariant = { width: number; height: number; sources: Record<"avif" | "webp" | "jpg", HeroSource[]> };
-const ECLIPSE = heroAssets as { current?: HeroVariant; desktop?: HeroVariant; mobile?: HeroVariant };
+const ECLIPSE = heroAssets as { current?: HeroVariant; phone?: HeroVariant; desktop?: HeroVariant; mobile?: HeroVariant };
 /**
  * What the art box really occupies, so the browser picks a file at least that many device
  * pixels wide: 130% of the viewport on wide screens; on phones the box is 56% of the
  * screen height and the 16:9 still fills it by height (≈ 100vh wide).
  */
 const CURRENT_SIZES = "(min-width: 1024px) 130vw, 100vh";
+/**
+ * Portrait phones get the lighter centre crop (1.3 : 1, full height): the 56% box is never
+ * wider than that there, so they see exactly what the full still showed them.
+ */
+const PHONE_MEDIA = "(max-width: 1023px) and (max-aspect-ratio: 2/3)";
+const PHONE_SIZES = "73vh";
 const srcSet = (list: HeroSource[]) => list.map((s) => `${s.src} ${s.w}w`).join(", ");
 
 /**
@@ -36,10 +42,15 @@ function HeroPicture() {
   const c = ECLIPSE.current;
   if (!d && c) {
     const fallback = c.sources.jpg[0];
+    const p = ECLIPSE.phone;
     // The still is the first screen's largest paint: start its download from <head>, before CSS and scripts.
-    preload(c.sources.avif[0].src, { as: "image", type: "image/avif", imageSrcSet: srcSet(c.sources.avif), imageSizes: CURRENT_SIZES, fetchPriority: "high" });
+    if (p) preload(p.sources.avif[0].src, { as: "image", type: "image/avif", imageSrcSet: srcSet(p.sources.avif), imageSizes: PHONE_SIZES, media: PHONE_MEDIA, fetchPriority: "high" });
+    preload(c.sources.avif[0].src, { as: "image", type: "image/avif", imageSrcSet: srcSet(c.sources.avif), imageSizes: CURRENT_SIZES, ...(p && { media: `not all and ${PHONE_MEDIA}` }), fetchPriority: "high" });
     return (
       <picture>
+        {p && <source media={PHONE_MEDIA} type="image/avif" srcSet={srcSet(p.sources.avif)} sizes={PHONE_SIZES} />}
+        {p && <source media={PHONE_MEDIA} type="image/webp" srcSet={srcSet(p.sources.webp)} sizes={PHONE_SIZES} />}
+        {p && <source media={PHONE_MEDIA} srcSet={srcSet(p.sources.jpg)} sizes={PHONE_SIZES} />}
         <source type="image/avif" srcSet={srcSet(c.sources.avif)} sizes={CURRENT_SIZES} />
         <source type="image/webp" srcSet={srcSet(c.sources.webp)} sizes={CURRENT_SIZES} />
         <img src={fallback.src} srcSet={srcSet(c.sources.jpg)} sizes={CURRENT_SIZES} alt="" width={c.width} height={c.height} fetchPriority="high" decoding="async" className="h-full w-full object-cover" />

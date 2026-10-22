@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { HATCH_CLIPS } from "@/config/hatchClips";
+import heroAssets from "@/data/heroAssets.json";
 import { gameConfig } from "@/config/gameConfig";
 import { clipFor, rollDemo } from "@/lib/heroDemo";
 import { rarityChances, rollSpecies } from "@/lib/progression";
@@ -57,5 +58,15 @@ describe("homepage first load stays light", () => {
     const hero = read("components/landing/HeroDemo.tsx");
     expect(hero).not.toMatch(/^import .*CreatureArt/m);
     expect(hero).not.toMatch(/^import .*HatchReveal/m);
+  });
+
+  it("portrait phones get the lighter centre crop of the Phoenix (same art, full height), first in the picture", () => {
+    const { current, phone } = heroAssets as unknown as Record<string, { width: number; height: number; sources: Record<string, { src: string; bytes: number }[]> }>;
+    expect(phone.height).toBe(current.height);
+    expect(phone.width / phone.height).toBeCloseTo(1.3, 2);
+    expect(phone.sources.avif[0].bytes).toBeLessThan(current.sources.avif[0].bytes * 0.6);
+    const hero = read("components/landing/PhoenixHero.tsx");
+    expect(hero.indexOf("media={PHONE_MEDIA}")).toBeLessThan(hero.indexOf("srcSet={srcSet(c.sources.avif)}"));
+    expect(hero).toContain('media: `not all and ${PHONE_MEDIA}`');
   });
 });

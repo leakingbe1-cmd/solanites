@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { HATCH_CLIPS } from "@/config/hatchClips";
+import { hatchClipFor } from "@/lib/hatchClip";
 import heroAssets from "@/data/heroAssets.json";
 import { gameConfig } from "@/config/gameConfig";
-import { clipFor, rollDemo } from "@/lib/heroDemo";
+import { rollDemo } from "@/lib/heroDemo";
 import { rarityChances, rollSpecies } from "@/lib/progression";
 import { RARITY_ORDER } from "@/lib/rarity";
 
@@ -21,9 +21,12 @@ describe("homepage live demo", () => {
     for (const r of RARITY_ORDER) expect(Math.abs(counts[r] / N - chances[r])).toBeLessThan(0.02);
   });
 
-  it("has a clip slot for every rarity; empty slots play the built-in hatch", () => {
-    expect(Object.keys(HATCH_CLIPS).sort()).toEqual([...RARITY_ORDER].sort());
-    expect(clipFor(rollDemo(1))).toBe(HATCH_CLIPS[rollDemo(1).rarity]);
+  it("warms only the rolled species' clip, after first paint, without the clip map in the first load", () => {
+    const c = read("components/landing/HeroDemo.tsx");
+    expect(c).toContain('void import("@/lib/hatchClip").then(({ hatchClipFor }) =>');
+    expect(c).toContain("hatchClipFor(result.id)");
+    expect(c).not.toMatch(/^import .*hatchClip"/m);
+    expect(hatchClipFor(rollDemo(1).id)).not.toBeNull();
   });
 
   it("is labelled simulated, offers a demo card only for Common to Legendary, and sits above the fold in the hero", () => {
@@ -43,7 +46,8 @@ describe("homepage live demo", () => {
     expect(reveal.indexOf("{demo && <DemoTag")).toBeLessThan(reveal.indexOf("meta.label}"));
     const hero = read("components/landing/HeroDemo.tsx");
     expect(hero).toContain('closeLabel="Back to the egg" demo share=');
-    expect(hero).toContain('<DemoTag testId="reveal-demo-label" />');
+    expect(reveal.match(/\{demo && <DemoTag/g)).toHaveLength(2); // the clip and the built-in hatch
+    expect(hero).toContain("<DemoTag className=\"mb-3\" />"); // the poster shown while the reveal loads
     expect(read("app/hatchery/page.tsx")).toContain("demo={h.isDemo}");
   });
 });

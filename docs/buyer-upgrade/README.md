@@ -47,7 +47,8 @@ Two flags, both off; turn them on at launch.
 
 The first screen is now the demo: a simulated egg labelled "Demo · simulated", the $SLNT pitch and one
 "Hatch it". The result is rolled with the real odds before the tap. The tap plays the hatch: the
-owner's clip for that rarity once it's in `src/config/hatchClips.ts`, otherwise the built-in hatch.
+owner's 3D clip for that species' rarity and element (`public/hatch/`, see `src/config/hatchClips.ts`;
+the same clips play on real hatches), or the built-in hatch if a clip can't play.
 Then the creature, a DEMO share card (Common to Legendary) and "Keep going in the Hatchery". The proof
 strip under the hero shows what is real today; after launch it switches to live numbers and a
 read-only wallet lookup.

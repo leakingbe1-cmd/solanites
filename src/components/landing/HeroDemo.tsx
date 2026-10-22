@@ -2,14 +2,14 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { EggArt } from "@/components/egg/EggArt";
 import { DemoTag } from "@/components/ui/DemoTag";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { HATCH_POSTER } from "@/config/hatchClips";
 import { gameConfig } from "@/config/gameConfig";
-import { clipFor, demoSeed, rollDemo } from "@/lib/heroDemo";
+import { demoSeed, rollDemo } from "@/lib/heroDemo";
 import { demoShareable } from "@/lib/share";
 import type { Species } from "@/lib/species";
 
@@ -30,7 +30,7 @@ const whenIdle = (cb: () => void) => (typeof window.requestIdleCallback === "fun
 /**
  * The homepage's live demo: a simulated egg, already incubating, and one big "Hatch it". The result
  * is rolled when the egg appears (same odds as real eggs) and only shown by the hatch: the owner's
- * clip for that rarity when configured, otherwise the built-in hatch. Then the creature, a demo
+ * clip for that species (its rarity and element), otherwise the built-in hatch. Then the creature, a demo
  * share card (Common to Legendary) and the way into the Hatchery demo. Nothing is recorded.
  */
 export function HeroDemo() {
@@ -44,24 +44,29 @@ export function HeroDemo() {
     setResult(rollDemo(s));
   }, []);
 
-  // After first paint: fetch the reveal code, then warm only the rolled rarity's clip (if configured).
+  // After first paint: fetch the reveal code and the clip poster, then warm only the rolled species' clip.
   useEffect(() => {
-    whenIdle(() => void Promise.all([loadReveal(), loadArt(), loadShare()]).catch(() => {}));
+    whenIdle(() => {
+      void Promise.all([loadReveal(), loadArt(), loadShare()]).catch(() => {});
+      new Image().src = HATCH_POSTER;
+    });
   }, []);
   useEffect(() => {
-    const clip = result ? clipFor(result) : null;
-    if (!clip) return;
-    whenIdle(() => {
-      const v = document.createElement("video");
-      v.preload = "auto";
-      v.muted = true;
-      v.src = clip;
-    });
+    if (!result) return;
+    whenIdle(() =>
+      void import("@/lib/hatchClip").then(({ hatchClipFor }) => {
+        const clip = hatchClipFor(result.id);
+        if (!clip) return;
+        const v = document.createElement("video");
+        v.preload = "auto";
+        v.muted = true;
+        v.src = v.canPlayType("video/webm") ? clip.webm : clip.mp4;
+      }),
+    );
   }, [result]);
 
   const hatch = () => result && setPhase("hatching");
   const finish = () => setPhase("done");
-  const clip = result ? clipFor(result) : null;
 
   return (
     <div className="w-full" data-testid="hero-demo" data-phase={phase}>
@@ -92,7 +97,7 @@ export function HeroDemo() {
         <DemoResult species={result} />
       )}
 
-      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
+      {phase === "hatching" && result && seed !== null && <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />}
     </div>
   );
 }
@@ -121,29 +126,15 @@ function DemoResult({ species }: { species: Species }) {
   );
 }
 
-/** The owner's hatch clip for the rolled rarity: muted, inline, poster first; tap or end to continue. */
-function ClipHatch({ src, onEnd }: { src: string; onEnd(): void }) {
-  const ref = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    ref.current?.play().catch(onEnd);
-  }, [onEnd]);
-  return createPortal(
-    <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching" onClick={onEnd}>
-      <div className="absolute top-6 left-1/2 -translate-x-1/2">
-        <DemoTag testId="reveal-demo-label" />
-      </div>
-      <video ref={ref} src={src} poster={HATCH_POSTER ?? undefined} muted playsInline autoPlay onEnded={onEnd} onError={onEnd} className="max-h-[80vh] w-full max-w-xl" />
-    </div>,
-    document.body,
-  );
-}
-
-/** The first frame of the hatch, shown instantly on the tap while the full reveal loads. */
+/** The clip's first frame, in the clip's place, shown instantly on the tap while the reveal code loads. */
 function RevealPoster() {
   return createPortal(
-    <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
-      <div className="h-56 w-44 sm:h-72 sm:w-56" aria-hidden>
-        <EggArt stage={4} progress={1} seed={3} hatching className="h-full w-full" />
+    <div className="fixed inset-0 z-[80] overflow-y-auto bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
+      <div className="flex flex-col items-center px-4 pt-[9vh]">
+        <DemoTag className="mb-3" />
+        <div className="h-5" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={HATCH_POSTER} alt="" className="mt-2 aspect-square w-[78vw] max-w-[400px] rounded-md bg-black object-cover" />
       </div>
     </div>,
     document.body,

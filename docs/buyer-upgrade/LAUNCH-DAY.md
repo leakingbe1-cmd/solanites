@@ -28,14 +28,14 @@ step 1.
 - **Format:**
   - allocations: add `address: "<wallet>"` to `Dev holding` and to `Holder rewards (locked 2 h, then distributed)`;
   - project wallets: `teamWallets: [{ label: "Dev", address: "<wallet>" }, { label: "Distribution", address: "<wallet>" }, { label: "Creator fees", address: "<wallet>" }]`.
-  A wallet with an empty address stays hidden.
+  Add only wallets you have; an entry with an empty or malformed address fails `npm test`.
 - **Verify:** How It Works → Verify $SLNT shows each wallet with a Copy button; each opens on Solscan
   with the expected balance.
 
 ## 3. Lock proof links
 
 - **Files:**
-  - `src/config/tokenomics.ts`: `proofUrl: "https://…"` on each locked allocation (and on a locked team wallet);
+  - `src/config/tokenomics.ts`: `proofUrl: "https://…"` on each locked allocation;
   - `src/config/holderDistribution.ts`: `lockProofUrl: "https://…"` (the holder-rewards lock).
 - **Format:** `https://` links only (e.g. a Streamflow lock page).
 - **Verify:** the panel shows "Lock proof ↗" on those rows, and /rewards heads "Locked developer

@@ -67,7 +67,7 @@ export function StockShowcase() {
         </p>
 
         {/* species picker */}
-        <div role="radiogroup" aria-label="Featured Solanite" className="sl-scrollbar-none -mx-4 mt-7 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+        <div role="radiogroup" aria-label="Featured Solanite" className="sl-scrollbar-none -mx-4 mt-7 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-3 sm:px-0">
           {FEATURED.map((id) => {
             const s = SPECIES_BY_ID[id];
             return (

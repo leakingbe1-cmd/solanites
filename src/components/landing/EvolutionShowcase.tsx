@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { CreatureScene } from "@/components/creature/CreatureScene";
 import { gameConfig } from "@/config/gameConfig";
+import { fastTrackAfterMaturityMs } from "@/config/eggProgression";
 import { formatSpan } from "@/lib/format";
 import { FIRST_MATURITY_MS, formUnlockText } from "@/lib/progression";
 import { RARITIES } from "@/lib/rarity";
@@ -20,11 +21,12 @@ import { ELEMENT_GLYPH, SPECIES_BY_ID } from "@/lib/species";
 const FEATURED = ["mossling", "emberlisk", "cryovant", "neonyx", "aurelion", "velynx"] as const;
 
 const FORMS = gameConfig.evolution.names;
-const AFTER = gameConfig.evolution.afterMaturityMs;
+// A first creature is fast-tracked, so its later forms follow the fast-track pace (same as the timeline above).
+const AFTER = fastTrackAfterMaturityMs(gameConfig.evolution.afterMaturityMs.length);
 const LAST = FORMS.length - 1;
 const STEP_MS = 2600;
 
-/** For a first creature: grown at 1 min, then later forms counted from maturity ("+30 min", "+2 h"). */
+/** For a first (fast-track) creature: grown at 1 min, then later forms counted from maturity ("+1 min", "+2 min"). */
 function whenLabel(i: number) {
   return i === 0 ? "At hatch" : i === 1 ? formatSpan(FIRST_MATURITY_MS) : `+${formatSpan(AFTER[i - 2])}`;
 }

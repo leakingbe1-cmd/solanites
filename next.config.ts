@@ -29,7 +29,16 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   // Database drivers run as plain Node modules on the server, not bundled.
-  serverExternalPackages: ["pg", "@electric-sql/pglite"],
+  serverExternalPackages: ["pg", "@electric-sql/pglite", "sharp"],
+  // Share cards read the 384 px creature art from /public at runtime.
+  outputFileTracingIncludes: {
+    "/api/card/[eggId]": ["./public/creatures/**/*-384.webp"],
+    "/api/card/demo": ["./public/creatures/**/*-384.webp"],
+  },
+  // The rewards page used to live at /claims.
+  async redirects() {
+    return [{ source: "/claims", destination: "/rewards", permanent: false }];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: securityHeaders },

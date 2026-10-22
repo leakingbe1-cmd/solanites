@@ -16,6 +16,8 @@ import { evolutionOf, type SolaniteRecord } from "@/lib/progression";
 import { SPECIES_BY_ID } from "@/lib/species";
 import type { HatchResult, TrackedEgg, TrackedHolderView, TrackerApiError } from "@/shared/trackedHolder";
 import { useHatchery } from "@/state/HatcheryProvider";
+import { badgeLabel, milestoneIcs, nextStreakBadge } from "@/lib/dailyLoop";
+import { shareable } from "@/lib/share";
 
 type Load = { kind: "loading" } | { kind: "error"; code: string; message: string } | { kind: "ready"; view: TrackedHolderView; offset: number };
 
@@ -39,6 +41,55 @@ function toRecord(e: TrackedEgg, now: number, serverNow: number): SolaniteRecord
     fastTrack: e.fastTrack,
     backed: e.hatchedAt === null || e.growing,
   };
+}
+
+/** Downloads a one-event calendar file for the milestone; the visitor's own calendar does the reminding. */
+function saveReminder(title: string, at: number) {
+  const ics = milestoneIcs({ title, at, url: window.location.href, now: Date.now() });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" }));
+  a.download = "solanites-reminder.ics";
+  a.click();
+  window.setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/** Cosmetic holding streak from the server: how long this address has held at least one egg's worth, and its badges. */
+function StreakRow({ heldMs, badges }: { heldMs: number; badges: string[] }) {
+  const next = nextStreakBadge(heldMs);
+  return (
+    <div className="sl-glass mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 rounded-md px-4 py-3 text-sm" data-testid="holding-streak">
+      <span className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Holding streak</span>
+      <span className="text-bone">{formatDuration(heldMs)}</span>
+      {badges.map((b) => (
+        <span key={b} className="rounded-full border border-gilt/40 bg-gilt/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-gilt">
+          {badgeLabel(b)}
+        </span>
+      ))}
+      {next && <span className="text-xs text-mist">{next.label} in {formatDuration(next.inMs)}</span>}
+    </div>
+  );
+}
+
+/**
+ * Hatched eggs this browser has already revealed, per address. Anyone viewing an address can hatch
+ * its ready eggs (the outcome is sealed at issue, so nothing is gained), so when someone else got
+ * there first the owner still gets the reveal the first time they look.
+ */
+const seenKey = (address: string) => `solanites:revealed:${address}`;
+function readSeen(address: string): Set<string> | null {
+  try {
+    const raw = localStorage.getItem(seenKey(address));
+    return raw ? new Set(JSON.parse(raw) as string[]) : null;
+  } catch {
+    return null;
+  }
+}
+function writeSeen(address: string, ids: Set<string>) {
+  try {
+    localStorage.setItem(seenKey(address), JSON.stringify([...ids]));
+  } catch {
+    /* storage unavailable: the reveal may simply not replay */
+  }
 }
 
 /** A balance not re-verified for this long is shown as possibly out of date. */
@@ -113,6 +164,20 @@ export function TrackedHatchery({ address }: { address: string }) {
     return () => window.clearTimeout(t);
   }, [load, refresh]);
 
+  // Reveal eggs hatched while this browser wasn't looking (by the owner elsewhere or by a visitor).
+  // The first visit only records what is already hatched, so returning holders don't get a replay of old hatches.
+  useEffect(() => {
+    if (load.kind !== "ready" || hatching) return;
+    const hatched = load.view.eggs.filter((e) => e.status === "hatched" && e.speciesId);
+    const seen = readSeen(address);
+    if (!seen) return writeSeen(address, new Set(hatched.map((e) => e.id)));
+    const unseen = hatched.find((e) => !seen.has(e.id));
+    if (!unseen) return;
+    seen.add(unseen.id);
+    writeSeen(address, seen);
+    setHatching({ record: toRecord(unseen, Date.now() + load.offset, load.view.serverNow), speciesId: unseen.speciesId! });
+  }, [load, hatching, address]);
+
   async function hatch(egg: TrackedEgg, record: SolaniteRecord) {
     setHatchError(null);
     const res = await fetch(`/api/eggs/${encodeURIComponent(egg.id)}/hatch`, { method: "POST" });
@@ -122,6 +187,9 @@ export function TrackedHatchery({ address }: { address: string }) {
       return refresh();
     }
     setInspect(null);
+    const seen = readSeen(address) ?? new Set<string>();
+    seen.add(egg.id);
+    writeSeen(address, seen);
     setHatching({ record, speciesId: body.speciesId });
   }
 
@@ -164,11 +232,11 @@ export function TrackedHatchery({ address }: { address: string }) {
             <p className="mt-3 break-all font-mono text-xs text-mist">{address}</p>
           </div>
           <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] uppercase tracking-[0.2em] text-mist">
-            <span className="relative flex h-2 w-2" aria-hidden>
-              <span className={`relative inline-flex h-2 w-2 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} />
-            </span>
-            <span data-testid="verification-status">
-              {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
+            <span className="inline-flex items-start gap-2">
+              <span className={`relative mt-[3px] inline-flex h-2 w-2 shrink-0 rounded-full ${stale || lastVerified === null ? "bg-amber-300" : "bg-sol-green"}`} aria-hidden />
+              <span data-testid="verification-status">
+                {lastVerified !== null ? `Balance verified on Solana ${formatDuration(now - lastVerified)} ago · slot ${view.holdings.slot.toLocaleString()}` : "Balance not verified yet"}
+              </span>
             </span>
             <button onClick={h.disconnect} className="rounded-full border border-white/10 px-3 py-1.5 normal-case tracking-normal text-mist transition hover:text-bone">
               Change address
@@ -198,6 +266,8 @@ export function TrackedHatchery({ address }: { address: string }) {
             )}
           </div>
         </div>
+
+        {view.streak.heldMs !== null && <StreakRow heldMs={view.streak.heldMs} badges={view.streak.badges} />}
 
         <div className="mt-4 space-y-3">
           {view.holdings.excluded && <Note tone="warn">This is a project, pool or program-controlled address, so it does not earn eggs.</Note>}
@@ -230,16 +300,23 @@ export function TrackedHatchery({ address }: { address: string }) {
                 REVEAL
               </button>
             ) : (
-              <p className="shrink-0 font-mono text-2xl tabular-nums text-bone" data-testid="next-milestone-in">
-                {formatDuration(milestone.inMs)}
-              </p>
+              <div className="flex shrink-0 items-center gap-4">
+                <p className="font-mono text-2xl tabular-nums text-bone" data-testid="next-milestone-in">
+                  {formatDuration(milestone.inMs)}
+                </p>
+                {milestone.inMs > 10 * 60_000 && (
+                  <button type="button" onClick={() => saveReminder(milestone.text, now + milestone.inMs)} className="rounded-full border border-white/15 px-3 py-1.5 text-xs text-mist transition hover:text-bone" title="Save a calendar reminder (nothing is sent anywhere)">
+                    Remind me
+                  </button>
+                )}
+              </div>
             )}
           </div>
         )}
 
         <SectionTitle title="Incubating" count={eggs.length} />
         {eggs.length ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {eggs.map((e) => {
               const rec = recordOf(e);
               const startsIn = e.incubationStartedAt - now;
@@ -307,6 +384,7 @@ export function TrackedHatchery({ address }: { address: string }) {
         <HatchReveal
           species={SPECIES_BY_ID[hatching.speciesId]}
           seed={hatching.record.seed}
+          share={shareable(SPECIES_BY_ID[hatching.speciesId]) ? { kind: "egg", eggId: hatching.record.id } : null}
           onHatched={() => h.discover(hatching.speciesId)}
           onClose={() => {
             setHatching(null);

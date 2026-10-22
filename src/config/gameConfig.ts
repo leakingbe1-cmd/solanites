@@ -67,6 +67,11 @@ export interface GameConfig {
   };
   /** Relative weights. They are normalised, so they don't need to sum to 100. */
   rarityWeights: Record<RarityId, number>;
+  /**
+   * Cosmetic holding-streak badges: verified continuous holding of at least one egg's worth.
+   * Computed on the server; they change nothing about eggs, odds or evolution.
+   */
+  streakBadges: { id: string; label: string; ms: number }[];
   policies: {
     belowThreshold: BelowThresholdPolicy;
     eggTransfer: TransferPolicy;
@@ -111,6 +116,11 @@ export const gameConfig: GameConfig = {
     mythic: 3.5,
     secret: 1.5,
   },
+  streakBadges: [
+    { id: "day", label: "1-day keeper", ms: DAY },
+    { id: "week", label: "7-day keeper", ms: 7 * DAY },
+    { id: "month", label: "30-day keeper", ms: 30 * DAY },
+  ],
   policies: {
     belowThreshold: "pause",
     eggTransfer: "locked",

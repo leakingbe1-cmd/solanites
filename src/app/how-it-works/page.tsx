@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { VerifyPanel } from "@/components/trust/VerifyPanel";
+import { WhatsNext } from "@/components/landing/WhatsNext";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -7,7 +9,7 @@ import { gameConfig } from "@/config/gameConfig";
 import { formatNumber, formatSpan } from "@/lib/format";
 import { formUnlockText, rarityChances } from "@/lib/progression";
 import { RARITIES, RARITY_ORDER } from "@/lib/rarity";
-import { HOLDER_DISTRIBUTION_HOURS } from "@/config/holderDistribution";
+import { HOLDER_DISTRIBUTION_HOURS, REWARDS_PAGE_LIVE } from "@/config/holderDistribution";
 
 export const metadata = { title: "How It Works — Solanites" };
 
@@ -31,7 +33,10 @@ export default function HowItWorksPage() {
       "Ascension ranks, counted from maturity: each milestone takes longer than the one before",
     ],
     ["Hatching", cfg.policies.manualHatch ? "Manual: you trigger the reveal" : "Automatic at full incubation", "The outcome is sealed when the egg is earned"],
-    ["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The locked developer supply, divided equally among eligible holders. Eligibility, the final amount and the process are pending and will be published first"],
+    // Hidden with the rewards page until launch (REWARDS_PAGE_LIVE).
+    ...(REWARDS_PAGE_LIVE
+      ? [["Holder distribution", `Planned: ${HOLDER_DISTRIBUTION_HOURS} hours after launch`, "The developer supply allocated for redistribution, shared among eligible holders in proportion to their holdings. Its terms are on the Rewards page as they are published"] as [string, string, string]]
+      : []),
   ];
 
   return (
@@ -53,7 +58,11 @@ export default function HowItWorksPage() {
 
         <div id="rules" className="mt-28 scroll-mt-28">
           <SectionHeading eyebrow="Current configuration" title="Gameplay rules.">
-            Every value is configurable in <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/eggProgression.ts</code> and <code className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-sm text-bone/80">src/config/gameConfig.ts</code>, and is enforced on the server.
+            The rules are fixed in code and enforced on the server. Any change is announced in the{" "}
+            <Link href="/updates" className="text-bone underline-offset-4 hover:underline">
+              shipping log
+            </Link>
+            .
           </SectionHeading>
           <div className="sl-panel mt-10 overflow-hidden rounded-md">
             {rules.map(([k, v, note]) => (
@@ -79,7 +88,7 @@ export default function HowItWorksPage() {
                   <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
                     <div className="h-full rounded-full" style={{ width: `${Math.max(1.5, chances[r] * 100)}%`, background: `linear-gradient(90deg, ${RARITIES[r].color2}, ${RARITIES[r].color})` }} />
                   </div>
-                  <span className="text-right font-mono text-xs text-bone/70">{(chances[r] * 100).toFixed(chances[r] < 0.01 ? 1 : 0)}%</span>
+                  <span className="text-right font-mono text-xs text-bone/70">{Number((chances[r] * 100).toFixed(1))}%</span>
                 </div>
               ))}
             </div>
@@ -90,10 +99,17 @@ export default function HowItWorksPage() {
               <li>◇ Eggs and evolution come from a server that reads public Solana balances, never from browser timers or anything you type in.</li>
               <li>◇ The demo wallet is <span className="text-bone">simulated</span>: its balance, eggs and fast-forward clock never count toward real eggs or rewards.</li>
               <li>◇ Rarity is rolled on the server with a random seed when an egg is earned and sealed until it hatches, so pressing hatch can&apos;t change it. It is not independently verifiable yet.</li>
-              <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its eligibility, amount and process will be published before it happens.</li>
+              {REWARDS_PAGE_LIVE && <li>◇ The planned holder distribution starts from the official launch time, not from anyone&apos;s visit. Its terms are published on the Rewards page before it happens.</li>}
             </ul>
           </div>
         </div>
+
+        {/* tokenomics and trust facts: only what the owner has set (src/config/tokenomics.ts) */}
+        <div id="tokenomics" className="mt-20 scroll-mt-28">
+          <VerifyPanel />
+        </div>
+
+        <WhatsNext className="mt-12" />
 
         <div className="mt-20 text-center">
           <Link href="/hatchery" className="sl-btn-gold inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-sans text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">

@@ -1,9 +1,9 @@
-import type { HomeStats, Metric, MetricStatus } from "@/shared/homeStats";
+import { NOT_CONFIGURED_NOTE, type HomeStats, type Metric, type MetricStatus } from "@/shared/homeStats";
 
 /**
- * What the homepage shows for each live metric (src/components/landing/HomeMetrics.tsx), worked
- * out from /api/home-stats. A value is shown only when the server has one: an unavailable metric
- * reads "Unavailable" with its reason, never 0 or a placeholder number.
+ * The homepage's live figures (src/components/landing/ProofStrip.tsx), worked out from
+ * /api/home-stats. A value is shown only when the server has one: a metric without data is left
+ * out, never shown as 0, a placeholder or "Unavailable".
  */
 export type MetricKey = "holders" | "eggs" | "marketCap";
 
@@ -59,16 +59,12 @@ export function metricViews(stats: HomeStats, now: number): MetricView[] {
   ];
 }
 
-/** The freshness line's parts, with attribution for the market source; `optional` parts may be hidden on phones. */
-export function freshnessParts(stats: HomeStats, now: number): { text: string; optional?: boolean }[] {
-  const parts: { text: string; optional?: boolean }[] = [{ text: `Updated ${ago(stats.generatedAt, now)}` }, { text: "refreshes every 30 s", optional: true }];
-  if (stats.marketCap.source && stats.marketCap.status !== "unavailable") parts.push({ text: `market data: ${stats.marketCap.source}` });
-  return parts;
-}
-
-export const freshnessLine = (stats: HomeStats, now: number) => freshnessParts(stats, now).map((p) => p.text).join(" · ");
-
-/** Shown in place of all three when the route itself can't be reached and there's no earlier answer. */
-export const UNREACHABLE_NOTE = "Live metrics are temporarily unavailable.";
+/**
+ * Before launch the server has no mint or RPC, so there is nothing live to show: the homepage shows
+ * a designed pre-launch panel instead of three "Unavailable" boxes. A transient failure after launch
+ * still shows the live strip with its reasons.
+ */
+export const isPreLaunch = (stats: HomeStats): boolean =>
+  stats.holders.status === "unavailable" && stats.holders.note === NOT_CONFIGURED_NOTE && stats.marketCap.status === "unavailable";
 
 export const POLL_MS = 30_000;

@@ -3,15 +3,14 @@ import { SocialLine } from "@/components/layout/SocialLine";
 import { EvolutionTimeline } from "@/components/landing/EvolutionTimeline";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroSection } from "@/components/landing/HeroSection";
-import { HomeMetrics } from "@/components/landing/HomeMetrics";
+import { ProofStrip } from "@/components/landing/ProofStrip";
+import { WhatsNext } from "@/components/landing/WhatsNext";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
-import { RarityShowcase } from "@/components/landing/RarityShowcase";
-import { StageTimeline } from "@/components/landing/StageTimeline";
-import { StockShowcase } from "@/components/landing/StockShowcase";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { HowSteps } from "@/components/landing/HowSteps";
-import { EvolutionShowcase } from "@/components/landing/EvolutionShowcase";
+import { EvolutionShowcase, HowSteps, RarityShowcase, StageTimeline, StockShowcase } from "@/components/landing/Deferred";
+import { HeroDemo } from "@/components/landing/HeroDemo";
+import { VerifyPanel } from "@/components/trust/VerifyPanel";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber } from "@/lib/format";
 import { RARITY_ORDER } from "@/lib/rarity";
@@ -25,46 +24,49 @@ export default function Home() {
       <HeroSection className="relative flex min-h-[100svh] items-end overflow-hidden bg-void pt-20 lg:items-center">
         <PhoenixHero />
         {/* phones: the Phoenix above, the copy beneath it; wide screens: the copy left, over the Phoenix's darkened wing */}
-        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[26svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
+        <div className="relative mx-auto w-full max-w-7xl px-4 pb-16 pt-[14svh] sm:px-6 sm:pt-[33svh] lg:px-8 lg:pb-20 lg:pt-10">
           <div className="flex max-w-xl flex-col text-center lg:block lg:text-left">
             <div className="sl-awake-in flex items-center justify-center gap-3 lg:justify-start" style={{ animationDelay: "0.1s" }}>
               <Sigil draw className="h-11 w-11 sm:h-12 sm:w-12" />
-              <p className="sl-eyebrow is-gilt">Genesis Hatchery · Season 0</p>
+              <p className="sl-eyebrow is-gilt max-lg:[text-shadow:0_1px_10px_rgba(0,0,0,0.95),0_0_2px_rgba(0,0,0,0.9)]">Genesis Hatchery · Season 0</p>
             </div>
             <h1 className="sl-awake-in sl-display-xl mt-6 text-bone" style={{ animationDelay: "0.25s" }}>
               A world waiting to <span className="sl-phx-gold italic">awaken.</span>
             </h1>
-            <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-mist sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }}>
-              {CATALOGUE_SIZE} creatures sleep in sealed eggs. <span className="text-bone">Hatch yours, raise it, and follow it from {gameConfig.evolution.names[0]} to {gameConfig.evolution.names[3]}.</span>
+            {/* what the coin does, in one line: the hold mechanic, from config */}
+            <p className="sl-awake-in mx-auto mt-6 max-w-lg text-lg leading-relaxed text-bone sm:text-xl lg:mx-0" style={{ animationDelay: "0.4s" }} data-testid="hero-pitch">
+              Hold {gameConfig.token.symbol} on Solana. Every {formatNumber(gameConfig.token.tokensPerEgg)} earns an egg. Keep holding and it evolves.
             </p>
-            <div className="sl-awake-in mt-5 flex flex-col flex-wrap items-center gap-3 max-lg:order-1 sm:gap-4 lg:mt-8 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "0.5s" }}>
-              <Link href="/collection" className="sl-btn-gold group inline-flex items-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
-                EXPLORE SOLANITES
-                <span className="transition-transform group-hover:translate-x-1" aria-hidden>→</span>
-              </Link>
-              <Link href="/hatchery" className="sl-btn-outline whitespace-nowrap rounded-full px-7 py-4 font-sans text-sm font-semibold tracking-[0.2em]">
-                ENTER THE HATCHERY
-              </Link>
+            {/* the live demo: a simulated egg and one big "Hatch it", above the fold on phones and desktop */}
+            <div className="sl-awake-in mt-5 max-lg:order-1 lg:mt-7" style={{ animationDelay: "0.5s" }}>
+              <HeroDemo />
             </div>
+            {/* why hold, in product terms only: what grows while you keep holding */}
+            <p className="sl-awake-in mx-auto mt-4 max-w-lg text-base leading-relaxed text-mist max-lg:order-1 lg:mx-0" style={{ animationDelay: "0.45s" }} data-testid="hero-why-hold">
+              The longer you hold, the more you grow: new eggs keep arriving, your {CATALOGUE_SIZE}-species collection fills up, creatures evolve to {gameConfig.evolution.names[3]}, and your rank and daily holding streak climb.
+            </p>
+            <Link href="/collection" className="sl-awake-in mt-3 block text-sm text-bone/85 underline-offset-4 hover:underline max-lg:order-2" style={{ animationDelay: "0.55s" }}>
+              Explore all {CATALOGUE_SIZE} Solanites →
+            </Link>
             {/* walletless exploration: nothing on the site asks for a wallet today */}
-            <p className="sl-awake-in mt-6 inline-flex items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
+            <p className="sl-awake-in mt-4 inline-flex sm:mt-6 items-center justify-center gap-2.5 text-sm text-mist max-lg:order-1" style={{ animationDelay: "0.6s" }}>
               <span className="h-1.5 w-1.5 rounded-full bg-sol-green shadow-[0_0_10px_#14f195]" aria-hidden />
-              No wallet needed to explore.
+              No wallet needed. The demo is simulated.
             </p>
             <div className="sl-awake-in mt-3 max-lg:order-1" style={{ animationDelay: "0.65s" }}>
               <SocialLine className="justify-center lg:justify-start" />
             </div>
-            {/* live holders, eggs collected and market cap (/api/home-stats); on phones above the buttons, so they're on the first screen */}
-            <div className="sl-awake-in mt-4 lg:mt-5" style={{ animationDelay: "0.45s" }}>
-              <HomeMetrics />
-            </div>
           </div>
         </div>
-        <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex">
+        <a href="#market" className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 font-mono text-[10px] uppercase tracking-[0.3em] text-mist/60 transition hover:text-bone md:flex lg:hidden">
           Scroll
           <span className="h-10 w-px bg-gradient-to-b from-mist/60 to-transparent" />
         </a>
       </HeroSection>
+
+      {/* what is real today, then live numbers and a wallet lookup once tracking is on */}
+      <ProofStrip />
+      <WhatsNext className="py-8" />
 
       {/* ── MARKET BOND: every species' stock, the second headline feature ── */}
       <section id="market" className="relative overflow-hidden border-b border-white/5 py-24 sm:py-32">
@@ -131,6 +133,13 @@ export default function Home() {
               Read the full rules →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* ── VERIFY: the buyer's checks, each fact shown only once the owner sets it ── */}
+      <section className="relative pb-8 pt-4">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <VerifyPanel compact />
         </div>
       </section>
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { REWARDS_PAGE_LIVE } from "@/config/holderDistribution";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
 import { describeGrowthSchedule, describeSchedule } from "@/config/eggProgression";
@@ -39,7 +40,7 @@ export function HatcheryGuide() {
           <path d="M23 32l6 6 12-13" />
         </svg>
       ),
-      link: { href: "/claims", label: "Holder rewards" },
+      link: REWARDS_PAGE_LIVE ? { href: "/rewards", label: "Holder rewards" } : undefined,
     },
   ];
   return (

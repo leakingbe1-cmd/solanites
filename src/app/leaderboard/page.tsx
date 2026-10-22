@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
 import { RarityBadge } from "@/components/ui/RarityBadge";
-import { columnText, formName, freshness, HOLDERS_NOTE, metricText, sourceBadge, TABS } from "@/lib/leaderboard";
+import { columnText, formName, freshness, HOLDERS_NOTE, metricText, RANK_RULES, SAMPLE_LABEL, SAMPLE_PODIUM, sourceBadge, TABS } from "@/lib/leaderboard";
 import { RARITIES } from "@/lib/rarity";
 import { SPECIES_BY_ID } from "@/lib/species";
-import { LEADERBOARD_POLL_MS, type Leaderboard, type LeaderboardCategory, type LeaderRow } from "@/shared/leaderboard";
+import Link from "next/link";
+import { shortAddress } from "@/lib/format";
+import { LEADERBOARD_POLL_MS, type Leaderboard, type LeaderboardCategory, type LeaderboardStanding, type LeaderRow } from "@/shared/leaderboard";
+import { useHatchery } from "@/state/HatcheryProvider";
 
-type Load = { board: Leaderboard | null; refreshFailed: boolean; unavailable: string | null };
+type Load = { board: Leaderboard | null; refreshFailed: boolean; unavailable: string | null; notConfigured?: boolean };
 
 /** Polls /api/leaderboard every 30 s while the tab is visible; keeps the last good answer on failure. */
 function useLeaderboard(): Load {
@@ -23,7 +26,8 @@ function useLeaderboard(): Load {
         const body = await res.json().catch(() => null);
         if (!res.ok) {
           const message: string = body?.error?.message ?? "The leaderboard is temporarily unavailable.";
-          if (alive) setState((s) => (s.board ? { ...s, refreshFailed: true } : { board: null, refreshFailed: true, unavailable: message }));
+          const notConfigured = body?.error?.code === "NOT_CONFIGURED";
+          if (alive) setState((s) => (s.board ? { ...s, refreshFailed: true } : { board: null, refreshFailed: true, unavailable: message, notConfigured }));
           return;
         }
         if (alive) setState({ board: body as Leaderboard, refreshFailed: false, unavailable: null });
@@ -48,6 +52,109 @@ function useLeaderboard(): Load {
   return state;
 }
 
+/** Before launch: the three lists, what it takes to rank, and a clearly labelled sample podium. */
+function PreLaunchLeaderboard() {
+  const podium = [SAMPLE_PODIUM[1], SAMPLE_PODIUM[0], SAMPLE_PODIUM[2]];
+  return (
+    <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28" data-testid="leaderboard-prelaunch">
+      <div className="sl-atmosphere pointer-events-none absolute inset-x-0 top-0 h-[700px]" />
+      <div className="relative mx-auto max-w-6xl px-4 pb-24 sm:px-6 lg:px-8">
+        <div className="text-center">
+          <p className="sl-eyebrow">Hall of Keepers</p>
+          <h1 className="mt-3 sl-display-l text-bone">Leaderboard</h1>
+          <p className="mx-auto mt-4 max-w-lg text-mist">Three lists, ranked from on-chain holding and the creatures you hatch.</p>
+          <p className="mx-auto mt-4 inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/5 px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-amber-300/90">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-300/80" aria-hidden="true" />
+            Opens at launch
+          </p>
+        </div>
+
+        <div className="mt-10 grid gap-3 md:grid-cols-3">
+          {TABS.map((x) => (
+            <div key={x.id} className="sl-panel rounded-md p-5">
+              <p className="font-display text-xl text-bone">{x.label}</p>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{RANK_RULES[x.id]}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative mt-14">
+          <p className="mb-4 text-center font-mono text-[10px] uppercase tracking-[0.25em] text-amber-300/90" data-testid="sample-label">
+            {SAMPLE_LABEL} · {TABS[0].label}
+          </p>
+          <div className="grid grid-cols-3 items-end gap-2 opacity-80 sm:gap-5">
+            {podium.map((e) => {
+              const species = e.creature ? SPECIES_BY_ID[e.creature.speciesId] : undefined;
+              const color = species ? RARITIES[species.rarity].color : undefined;
+              return (
+                <div key={e.rank} className={`sl-plate relative flex flex-col items-center rounded-md border border-dashed border-amber-300/20 p-3 text-center sm:p-6 ${e.rank === 1 ? "pb-8 sm:pb-12" : ""}`}>
+                  <span className="relative font-display text-xl text-[#f6d488]/55 sm:text-3xl">#{e.rank}</span>
+                  <Art row={e} size={e.rank === 1 ? "h-28 w-28 sm:h-56 sm:w-56" : "h-20 w-20 sm:h-40 sm:w-40"} />
+                  <p className="relative truncate font-display text-sm text-bone sm:text-lg">{species?.name}</p>
+                  <p className="relative font-mono text-[10px] uppercase tracking-wider text-amber-300/80 sm:text-xs">Sample</p>
+                  <p className="relative mt-2 font-mono text-[10px] uppercase tracking-wider sm:text-xs" style={color ? { color } : undefined}>
+                    {metricText("evolved", e)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <p className="mx-auto mt-10 max-w-xl text-center text-sm text-mist">
+          Want to see how ranking feels? <Link href="/hatchery?demo=1" className="text-bone underline-offset-4 hover:underline">Try the demo</Link>. Demo creatures never appear here.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The watched address's own place in each category, refreshed with the board; null when nobody is
+ * watched or before the first answer, "unavailable" when the request fails (the last good answer is kept).
+ */
+function useStanding(address: string | null, generatedAt: number | undefined): LeaderboardStanding | "unavailable" | null {
+  const [standing, setStanding] = useState<LeaderboardStanding | "unavailable" | null>(null);
+  useEffect(() => {
+    if (!address) return setStanding(null);
+    let alive = true;
+    fetch(`/api/leaderboard/standing?address=${encodeURIComponent(address)}`, { cache: "no-store" })
+      .then((r) => (r.ok ? (r.json() as Promise<LeaderboardStanding>) : Promise.reject(new Error(String(r.status)))))
+      .then((b) => alive && setStanding(b))
+      .catch(() => alive && setStanding((prev) => (prev && prev !== "unavailable" ? prev : "unavailable")));
+    return () => {
+      alive = false;
+    };
+  }, [address, generatedAt]);
+  return standing;
+}
+
+/** "Your rank" for the open tab, including below the public top 25. */
+function YourStanding({ address, standing, tab }: { address: string; standing: LeaderboardStanding | "unavailable" | null; tab: LeaderboardCategory }) {
+  const s = standing && standing !== "unavailable" ? standing.categories[tab] : null;
+  return (
+    <div className="sl-panel mx-auto mt-6 flex max-w-xl flex-wrap items-center justify-between gap-3 rounded-md px-5 py-4" data-testid="your-standing">
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-mist/70">Your rank · {shortAddress(address)}</p>
+        {s ? (
+          <p className="mt-1 font-display text-2xl text-bone">
+            #{s.row.rank} <span className="text-base text-mist">of {s.of}</span>
+          </p>
+        ) : (
+          <p className="mt-1 text-sm text-mist">{standing === "unavailable"
+              ? "Your rank is temporarily unavailable."
+              : standing
+                ? tab === "holders"
+                  ? "Not ranked yet: hold at least one egg's worth to start the clock."
+                  : "Not ranked yet: hatch a Solanite to join this list."
+                : "Checking your rank…"}</p>
+        )}
+      </div>
+      {s && <p className="font-mono text-xs text-bone/80">{metricText(tab, s.row)}</p>}
+    </div>
+  );
+}
+
 /** Re-renders every few seconds so "updated Xs ago" stays true between polls. */
 function useNow(stepMs = 5_000): number {
   const [now, setNow] = useState(() => Date.now());
@@ -65,13 +172,18 @@ function Art({ row, size, aura = true }: { row: LeaderRow; size: string; aura?: 
 
 export default function LeaderboardPage() {
   const [tab, setTab] = useState<LeaderboardCategory>("evolved");
-  const { board, refreshFailed, unavailable } = useLeaderboard();
+  const { board, refreshFailed, unavailable, notConfigured } = useLeaderboard();
+  const h = useHatchery();
+  const watched = h.wallet?.kind === "watch" ? h.wallet.address : null;
+  const standing = useStanding(board ? watched : null, board?.generatedAt);
   const now = useNow();
   const t = TABS.find((x) => x.id === tab)!;
   const rows = board?.categories[tab] ?? [];
   const podium = [rows[1], rows[0], rows[2]];
   const badge = board ? sourceBadge(board) : null;
   const fresh = board ? freshness(board, now, refreshFailed) : null;
+
+  if (!board && notConfigured) return <PreLaunchLeaderboard />;
 
   return (
     <div className="relative min-h-screen overflow-x-clip pt-24 lg:pt-28">
@@ -100,11 +212,19 @@ export default function LeaderboardPage() {
 
         <div className="mx-auto mt-10 flex w-fit gap-1 rounded-full border border-white/10 bg-white/[0.02] p-1">
           {TABS.map((x) => (
-            <button key={x.id} onClick={() => setTab(x.id)} className={`rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-bone" : "text-mist hover:text-bone"}`}>
-              {x.label}
+            <button key={x.id} onClick={() => setTab(x.id)} className={`whitespace-nowrap rounded-full px-3 py-2 text-xs transition sm:px-5 sm:text-sm ${tab === x.id ? "bg-white/10 text-bone" : "text-mist hover:text-bone"}`}>
+              <span className="sm:hidden">{x.short}</span>
+              <span className="hidden sm:inline">{x.label}</span>
             </button>
           ))}
         </div>
+        {board && (watched ? (
+          <YourStanding address={watched} standing={standing} tab={tab} />
+        ) : (
+          <p className="mx-auto mt-6 max-w-xl text-center text-xs text-mist">
+            <Link href="/hatchery" className="text-bone underline-offset-4 hover:underline">Find your eggs</Link> to see your own rank here.
+          </p>
+        ))}
         {tab === "holders" && board && <p className="mx-auto mt-4 max-w-xl text-center text-xs text-mist">{HOLDERS_NOTE}</p>}
 
         {!board && (

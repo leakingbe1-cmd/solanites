@@ -4,6 +4,8 @@ import { Logo } from "./Logo";
 import { SocialLine } from "./SocialLine";
 import { ReplayIntroButton } from "@/components/intro/ReplayIntroButton";
 import { FIRST_VISIT_INTRO } from "@/config/intro";
+import { REWARDS_PAGE_LIVE } from "@/config/holderDistribution";
+import { COMMUNITY } from "@/config/social";
 
 export function Footer() {
   return (
@@ -23,7 +25,7 @@ export function Footer() {
             <li><Link className="hover:text-bone" href="/hatchery">Hatchery</Link></li>
             <li><Link className="hover:text-bone" href="/collection">Collection</Link></li>
             <li><Link className="hover:text-bone" href="/leaderboard">Leaderboard</Link></li>
-            <li><Link className="hover:text-bone" href="/claims">Holder Rewards</Link></li>
+            {REWARDS_PAGE_LIVE && <li><Link className="hover:text-bone" href="/rewards">Holder Rewards</Link></li>}
           </ul>
         </div>
         <div className="text-sm">
@@ -31,11 +33,15 @@ export function Footer() {
           <ul className="mt-4 space-y-2.5 text-mist">
             <li><Link className="hover:text-bone" href="/how-it-works">How It Works</Link></li>
             <li><Link className="hover:text-bone" href="/how-it-works#rules">Gameplay Rules</Link></li>
+            <li><Link className="hover:text-bone" href="/updates">Updates</Link></li>
+            <li><Link className="hover:text-bone" href="/proof">Proof</Link></li>
+            <li><Link className="hover:text-bone" href="/disclaimer">No promises</Link></li>
+            {COMMUNITY && <li><a className="hover:text-bone" href={COMMUNITY.url} target="_blank" rel="noopener noreferrer">{COMMUNITY.label}</a></li>}
             {FIRST_VISIT_INTRO.enabled && <li><ReplayIntroButton className="hover:text-bone" /></li>}
           </ul>
         </div>
       </div>
-      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/30">
+      <div className="flex flex-col items-center gap-3 border-t border-white/5 py-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-bone/55">
         <Sigil className="h-10 w-10 opacity-80" />
         © Solanites · Built on conviction
       </div>

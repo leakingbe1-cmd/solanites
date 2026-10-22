@@ -1,10 +1,10 @@
 import { eggProgression } from "@/config/eggProgression";
-import type { Leaderboard } from "@/shared/leaderboard";
+import type { Leaderboard, LeaderboardStanding } from "@/shared/leaderboard";
 import { wholeTokensToBase } from "../amounts";
 import { ConfigError, isProductionDeployment } from "../config";
 import type { Db } from "../db/types";
 import type { Tracker } from "../tracker/service";
-import { continuousHoldingMs, rankEvolved, rankHolders, rankRarest, type HoldingChange, type Keeper } from "./rank";
+import { continuousHoldingMs, rankEvolved, rankHolders, rankRarest, standingsOf, type HoldingChange, type Keeper } from "./rank";
 
 export interface LeaderboardDeps {
   db: Db;
@@ -23,10 +23,10 @@ export interface LeaderboardDeps {
  * and each keeper's creatures are read once, so nothing is counted twice.
  */
 export function createLeaderboard({ db, tracker, source, now = Date.now, cacheMs = 30_000, env = process.env }: LeaderboardDeps) {
-  let cached: { at: number; value: Leaderboard } | null = null;
-  let inflight: Promise<Leaderboard> | null = null;
+  let cached: { at: number; value: Leaderboard; keepers: Keeper[] } | null = null;
+  let inflight: Promise<{ value: Leaderboard; keepers: Keeper[] }> | null = null;
 
-  async function compute(): Promise<Leaderboard> {
+  async function compute(): Promise<{ value: Leaderboard; keepers: Keeper[] }> {
     // Fixture holders are test data: never rank them on a production deployment.
     if (source === "fixture" && (isProductionDeployment(env) || env.NODE_ENV === "production")) throw new ConfigError(["SOLANITES_FIXTURES must not be enabled in production"]);
     const t = now();
@@ -73,21 +73,24 @@ export function createLeaderboard({ db, tracker, source, now = Date.now, cacheMs
       keepers.push({ address: h.owner, creatures, heldMs });
     }
     return {
-      source,
-      generatedAt: t,
-      lastSyncAt: (await tracker.health()).lastSuccessfulSyncAt,
-      categories: { evolved: rankEvolved(keepers), holders: rankHolders(keepers), rarest: rankRarest(keepers) },
+      keepers,
+      value: {
+        source,
+        generatedAt: t,
+        lastSyncAt: (await tracker.health()).lastSuccessfulSyncAt,
+        categories: { evolved: rankEvolved(keepers), holders: rankHolders(keepers), rarest: rankRarest(keepers) },
+      },
     };
   }
 
   /** The ranking, recomputed at most once per cacheMs; concurrent callers share one computation. */
-  async function get(): Promise<Leaderboard> {
-    if (cached && now() - cached.at < cacheMs) return cached.value;
+  async function current(): Promise<{ value: Leaderboard; keepers: Keeper[] }> {
+    if (cached && now() - cached.at < cacheMs) return cached;
     if (!inflight) {
       inflight = compute()
-        .then((value) => {
-          cached = { at: now(), value };
-          return value;
+        .then((r) => {
+          cached = { at: now(), ...r };
+          return r;
         })
         .finally(() => {
           inflight = null;
@@ -96,7 +99,15 @@ export function createLeaderboard({ db, tracker, source, now = Date.now, cacheMs
     return inflight;
   }
 
-  return { get, compute };
+  const get = async (): Promise<Leaderboard> => (await current()).value;
+
+  /** One address's place in each category, from the same cached ranking. */
+  async function standing(address: string): Promise<LeaderboardStanding> {
+    const { value, keepers } = await current();
+    return { generatedAt: value.generatedAt, categories: standingsOf(keepers, address) };
+  }
+
+  return { get, standing, compute: async () => (await compute()).value };
 }
 
 export type LeaderboardService = ReturnType<typeof createLeaderboard>;

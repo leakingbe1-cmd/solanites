@@ -33,6 +33,8 @@ export interface TrackedHolderView {
   eggs: TrackedEgg[];
   rules: { tokensPerEgg: number; incubationScheduleMs: number[]; incubationMode: "sequential" | "parallel"; initialGrowthScheduleMs: number[] };
   sync: { lastSyncedAt: number | null; pending: boolean; error: string | null };
+  /** Verified continuous holding of at least one egg's worth (null when not holding that now) and the cosmetic badges it has earned (ids from gameConfig.streakBadges). */
+  streak: { heldMs: number | null; badges: string[] };
 }
 
 export interface TrackedEgg {

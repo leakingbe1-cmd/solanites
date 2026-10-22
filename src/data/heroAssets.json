@@ -40,5 +40,47 @@
         }
       ]
     }
+  },
+  "phone": {
+    "width": 1997,
+    "height": 1536,
+    "sources": {
+      "avif": [
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1404.avif",
+          "w": 1404,
+          "bytes": 67709
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1997.avif",
+          "w": 1997,
+          "bytes": 115666
+        }
+      ],
+      "webp": [
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1404.webp",
+          "w": 1404,
+          "bytes": 158156
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1997.webp",
+          "w": 1997,
+          "bytes": 263240
+        }
+      ],
+      "jpg": [
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1404.jpg",
+          "w": 1404,
+          "bytes": 203762
+        },
+        {
+          "src": "/hero/current/phoenix-still-2752-phone-1997.jpg",
+          "w": 1997,
+          "bytes": 359192
+        }
+      ]
+    }
   }
 }

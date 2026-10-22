@@ -19,6 +19,8 @@
  *   100% review (scripts/lib/image-quality.mjs).
  * - The mobile composition is a separate file, never a crop of the desktop one.
  * The replacement (desktop + mobile) takes over only when its desktop master is accepted.
+ * - Exception (owner, 22 Oct): until then, phones get a lighter centre crop of the current still
+ *   (same art, cropped and compressed only), so the first screen loads faster on mobile data.
  */
 import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
@@ -33,9 +35,17 @@ const REPLACEMENT = { dir: path.join(ROOT, "art/hero"), out: "hero/eclipse" };
 const VARIANTS = {
   // the current still, at its native resolution (never enlarged); every width keeps the short edge ≥ 1080
   current: { dir: path.join(ROOT, "art/intro"), out: "hero/current", file: "phoenix-still-2752", orientation: "landscape", min: [1920, 1080], widths: [2000, 2752], budget1920: 380 * 1024 },
+  // the phone box shows the still's full height and its centre (≤ 1.3 wide per 1 high in portrait), so only that is sent
+  phone: { dir: path.join(ROOT, "art/intro"), out: "hero/current", file: "phoenix-still-2752", name: "phoenix-still-2752-phone", orientation: "landscape", min: [1920, 1080], crop: 1.3, widths: [1404, 1997], budget1920: 120 * 1024, lighter: true },
   desktop: { ...REPLACEMENT, file: "eclipse-phoenix-desktop", orientation: "landscape", min: [2560, 1440], widths: [1920, 2560, 3840], budget1920: 380 * 1024 },
   mobile: { ...REPLACEMENT, file: "eclipse-phoenix-mobile", orientation: "portrait", min: [1080, 1920], widths: [1080, 1440], budget1920: 260 * 1024 },
 };
+// phones see the still behind a dark shade at a smaller size: stronger compression is not visible there
+const PHONE_FORMATS = [
+  ["avif", (s) => s.avif({ quality: 45, effort: 6, chromaSubsampling: "4:2:0" })],
+  ["webp", (s) => s.webp({ quality: 76, effort: 6, smartSubsample: true })],
+  ["jpg", (s) => s.jpeg({ quality: 80, mozjpeg: true })],
+];
 const FORMATS = [
   ["avif", (s) => s.avif({ quality: 58, effort: 6, chromaSubsampling: "4:4:4" })],
   ["webp", (s) => s.webp({ quality: 84, effort: 6, smartSubsample: true })],
@@ -67,13 +77,16 @@ async function validate(name, v) {
 }
 
 async function encode(result, v) {
-  const widths = v.widths.filter((w) => w <= result.meta.width);
-  const out = { width: result.meta.width, height: result.meta.height, sources: {} };
-  for (const [fmt, enc] of FORMATS) {
+  const { width: W, height: H } = result.meta;
+  const cw = v.crop ? Math.min(W, Math.round(H * v.crop)) : W;
+  const region = { left: Math.round((W - cw) / 2), top: 0, width: cw, height: H };
+  const widths = v.widths.filter((w) => w <= cw);
+  const out = { width: cw, height: H, sources: {} };
+  for (const [fmt, enc] of v.lighter ? PHONE_FORMATS : FORMATS) {
     out.sources[fmt] = [];
     for (const w of widths) {
-      const name = `${v.file}-${w}.${fmt}`;
-      const buf = await enc(sharp(result.file).resize({ width: w, kernel: "lanczos3" })).toBuffer();
+      const name = `${v.name ?? v.file}-${w}.${fmt}`;
+      const buf = await enc(sharp(result.file).extract(region).resize({ width: w, kernel: "lanczos3" })).toBuffer();
       writeFileSync(path.join(ROOT, "public", v.out, name), buf);
       out.sources[fmt].push({ src: `/${v.out}/${name}`, w, bytes: buf.length });
       if (fmt === "avif" && w === Math.min(1920, widths.at(-1)) && buf.length > v.budget1920) result.warnings.push(`${name} is ${Math.round(buf.length / 1024)} KB (budget ${Math.round(v.budget1920 / 1024)} KB)`);

@@ -51,6 +51,45 @@ export const HOLDER_DISTRIBUTION = {
  */
 export const REWARDS_PAGE_LIVE = false;
 
+/**
+ * Proof of the distribution, filled in by the owner after sending it (the site sends nothing):
+ * the snapshot hash, then one row per transfer with its transaction signature. The "Distribution
+ * proof" section on /rewards stays hidden while both are empty.
+ */
+export interface DistributionPayout {
+  /** Recipient wallet (shown shortened). */
+  wallet: string;
+  /** As sent, e.g. "12,345.67 $SLNT". */
+  amount: string;
+  /** Transaction signature; links to Solscan. */
+  signature: string;
+  /** When it was sent, ISO 8601 UTC (e.g. "2026-11-01T14:05:00Z"). */
+  time: string;
+  /** Screenshots only: labels the row "Sample". Never set on a real row. */
+  sample?: boolean;
+}
+
+export const DISTRIBUTION_PROOF: { snapshotHash: string | null; payouts: DistributionPayout[] } = {
+  snapshotHash: null,
+  payouts: [],
+};
+
+const BASE58 = /^[1-9A-HJ-NP-Za-km-z]+$/;
+/** Problems with the proof rows (an empty list means valid). Checked by tests, so a bad paste fails CI. */
+export function distributionProofProblems(p = DISTRIBUTION_PROOF): string[] {
+  const out: string[] = [];
+  for (const [i, r] of p.payouts.entries()) {
+    if (!BASE58.test(r.wallet) || r.wallet.length < 32 || r.wallet.length > 44) out.push(`row ${i + 1}: invalid wallet`);
+    if (!BASE58.test(r.signature) || r.signature.length < 64 || r.signature.length > 88) out.push(`row ${i + 1}: invalid signature`);
+    if (!Number.isFinite(Date.parse(r.time))) out.push(`row ${i + 1}: invalid time`);
+    if (!r.amount.trim()) out.push(`row ${i + 1}: missing amount`);
+  }
+  if (p.snapshotHash !== null && !/^[0-9a-f]{64}$/i.test(p.snapshotHash)) out.push("snapshot hash must be 64 hex characters (SHA-256)");
+  return out;
+}
+
+export const solscanTxUrl = (signature: string) => `https://solscan.io/tx/${signature}`;
+
 export const HOLDER_DISTRIBUTION_HOURS = HOLDER_DISTRIBUTION.afterLaunchMs / 3_600_000;
 
 export const TERM_LABELS: Record<keyof DistributionTerms, string> = { amount: "Amount", eligibility: "Eligibility", antiSybil: "Wallet splitting", snapshot: "Snapshot", process: "Process" };

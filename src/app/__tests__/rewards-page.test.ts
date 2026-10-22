@@ -4,8 +4,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import RewardsPage, { metadata } from "../rewards/page";
-import { RewardsContent } from "@/components/rewards/RewardsContent";
-import { HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS, publishedTerms, REWARDS_PAGE_LIVE, rewardsTermsSet, TERM_LABELS } from "@/config/holderDistribution";
+import { DistributionProof, RewardsContent } from "@/components/rewards/RewardsContent";
+import { DISTRIBUTION_PROOF, distributionProofProblems, HOLDER_DISTRIBUTION, HOLDER_DISTRIBUTION_HOURS, publishedTerms, REWARDS_PAGE_LIVE, rewardsTermsSet, TERM_LABELS } from "@/config/holderDistribution";
 
 /** /rewards presents the planned holder distribution: nothing claimable, unset terms hidden, never "pending". */
 const html = renderToStaticMarkup(createElement(RewardsContent));
@@ -74,5 +74,37 @@ describe("Holder rewards page (once live)", () => {
     expect(text.match(/\d[\d,.]*\s*%/g)).toEqual(["1%"]); // the one published share of supply
     expect(text).not.toMatch(/guarantee|automatic|instantly|airdrop/i);
     expect(text).toContain("There is nothing to claim, connect or sign here yet.");
+  });
+});
+
+describe("Distribution proof (owner-pasted, no payout code)", () => {
+  const W = "11111111111111111111111111111111"; // syntactically valid example only
+  const SIG = "1".repeat(88);
+  const row = { wallet: W, amount: "1,000 $SLNT", signature: SIG, time: "2026-11-01T14:05:00Z", sample: true };
+
+  it("is empty and hidden until the owner pastes the snapshot hash or transfers", () => {
+    expect(DISTRIBUTION_PROOF).toEqual({ snapshotHash: null, payouts: [] });
+    expect(distributionProofProblems()).toEqual([]);
+    expect(html).not.toContain("distribution-proof");
+  });
+
+  it("shows the hash and each transfer with its Solscan link; sample rows say Sample", () => {
+    const out = renderToStaticMarkup(createElement(DistributionProof, { proof: { snapshotHash: "a".repeat(64), payouts: [row] } }));
+    expect(out).toContain("Distribution proof");
+    expect(out).toContain("a".repeat(64));
+    expect(out).toContain(`href="https://solscan.io/tx/${SIG}"`);
+    expect(out).toContain(">Sample<");
+    expect(out).toContain("2026-11-01 14:05");
+  });
+
+  it("catches a bad paste and contains no payout code", () => {
+    expect(distributionProofProblems({ snapshotHash: "xyz", payouts: [{ ...row, wallet: "nope", signature: "0OIl", time: "soon", amount: " " }] })).toEqual([
+      "row 1: invalid wallet",
+      "row 1: invalid signature",
+      "row 1: invalid time",
+      "row 1: missing amount",
+      "snapshot hash must be 64 hex characters (SHA-256)",
+    ]);
+    for (const f of ["components/rewards/RewardsContent.tsx", "config/holderDistribution.ts"]) expect(read(f)).not.toMatch(/fetch\(|sendTransaction|signTransaction|Keypair|@solana\/web3/);
   });
 });

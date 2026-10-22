@@ -2,7 +2,11 @@
 
 import { useId } from "react";
 import type { Species } from "@/lib/species";
-import { CreatureArt } from "@/components/creature/CreatureArt";
+import dynamic from "next/dynamic";
+
+// The silhouette inside a stirring egg needs every species renderer; load them only when one is drawn,
+// so a plain egg (the homepage demo) stays light.
+const CreatureArt = dynamic(() => import("@/components/creature/CreatureArt").then((m) => m.CreatureArt), { ssr: false });
 
 export type EggVisualStage = 1 | 2 | 3 | 4;
 

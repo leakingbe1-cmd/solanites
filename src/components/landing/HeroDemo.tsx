@@ -1,12 +1,10 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CreatureArt } from "@/components/creature/CreatureArt";
 import { EggArt } from "@/components/egg/EggArt";
-import { HatchReveal } from "@/components/hatchery/HatchReveal";
-import { ShareButton } from "@/components/share/ShareButton";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { HATCH_POSTER } from "@/config/hatchClips";
 import { gameConfig } from "@/config/gameConfig";
@@ -15,6 +13,18 @@ import { demoShareable } from "@/lib/share";
 import type { Species } from "@/lib/species";
 
 type Phase = "idle" | "hatching" | "done";
+
+// The reveal and the creature art are only needed after the tap: kept out of the first load, and
+// fetched in idle time after first paint so the tap still plays at once.
+const loadReveal = () => import("@/components/hatchery/HatchReveal").then((m) => m.HatchReveal);
+const loadArt = () => import("@/components/creature/CreatureArt").then((m) => m.CreatureArt);
+const loadShare = () => import("@/components/share/ShareButton").then((m) => m.ShareButton);
+// Until the reveal's code has arrived, the tap still answers at once: the egg, centred and shaking.
+const HatchReveal = dynamic(loadReveal, { ssr: false, loading: () => <RevealPoster /> });
+const CreatureArt = dynamic(loadArt, { ssr: false });
+const ShareButton = dynamic(loadShare, { ssr: false });
+
+const whenIdle = (cb: () => void) => (typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(cb, { timeout: 2000 }) : setTimeout(cb, 300));
 
 /**
  * The homepage's live demo: a simulated egg, already incubating, and one big "Hatch it". The result
@@ -33,12 +43,14 @@ export function HeroDemo() {
     setResult(rollDemo(s));
   }, []);
 
-  // After first paint, warm only the rolled rarity's clip (if one is configured).
+  // After first paint: fetch the reveal code, then warm only the rolled rarity's clip (if configured).
+  useEffect(() => {
+    whenIdle(() => void Promise.all([loadReveal(), loadArt(), loadShare()]).catch(() => {}));
+  }, []);
   useEffect(() => {
     const clip = result ? clipFor(result) : null;
     if (!clip) return;
-    const idle: (cb: () => void) => void = typeof window.requestIdleCallback === "function" ? (cb) => window.requestIdleCallback(cb) : (cb) => setTimeout(cb, 200);
-    idle(() => {
+    whenIdle(() => {
       const v = document.createElement("video");
       v.preload = "auto";
       v.muted = true;
@@ -117,6 +129,18 @@ function ClipHatch({ src, onEnd }: { src: string; onEnd(): void }) {
   return createPortal(
     <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching" onClick={onEnd}>
       <video ref={ref} src={src} poster={HATCH_POSTER ?? undefined} muted playsInline autoPlay onEnded={onEnd} onError={onEnd} className="max-h-[80vh] w-full max-w-xl" />
+    </div>,
+    document.body,
+  );
+}
+
+/** The first frame of the hatch, shown instantly on the tap while the full reveal loads. */
+function RevealPoster() {
+  return createPortal(
+    <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
+      <div className="h-56 w-44 sm:h-72 sm:w-56" aria-hidden>
+        <EggArt stage={4} progress={1} seed={3} hatching className="h-full w-full" />
+      </div>
     </div>,
     document.body,
   );

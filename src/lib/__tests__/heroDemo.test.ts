@@ -35,3 +35,16 @@ describe("homepage live demo", () => {
     expect(page.indexOf("<HeroDemo />")).toBeLessThan(page.indexOf("</HeroSection>"));
   });
 });
+
+describe("homepage first load stays light", () => {
+  it("no creature-art code is imported up front by the layout, the hero egg or the sections below the fold", () => {
+    expect(read("app/layout.tsx")).not.toMatch(/from "@\/components\/intro\/FirstVisitIntro"/);
+    expect(read("components/intro/IntroLoader.tsx")).toContain('import("./FirstVisitIntro")');
+    expect(read("components/egg/EggArt.tsx")).toMatch(/dynamic\(\(\) => import\("@\/components\/creature\/CreatureArt"\)[^;]*ssr: false/);
+    const page = read("app/page.tsx");
+    for (const s of ["StockShowcase", "RarityShowcase", "StageTimeline", "EvolutionShowcase", "HowSteps"]) expect(page).not.toContain(`from "@/components/landing/${s}"`);
+    const hero = read("components/landing/HeroDemo.tsx");
+    expect(hero).not.toMatch(/^import .*CreatureArt/m);
+    expect(hero).not.toMatch(/^import .*HatchReveal/m);
+  });
+});

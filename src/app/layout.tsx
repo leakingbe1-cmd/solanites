@@ -11,13 +11,14 @@ import { RealmLight } from "@/components/layout/RealmLight";
 import { HorizonLine } from "@/components/layout/HorizonLine";
 import { CosmicBackdrop } from "@/components/layout/CosmicBackdrop";
 import { Footer } from "@/components/layout/Footer";
-import { FirstVisitIntro } from "@/components/intro/FirstVisitIntro";
+import { IntroLoader } from "@/components/intro/IntroLoader";
 import { INTRO_BOOT_SCRIPT } from "@/components/intro/introState";
 import { FIRST_VISIT_INTRO } from "@/config/intro";
 import { INDEXING_ENABLED } from "@/config/indexing";
 import { gameConfig } from "@/config/gameConfig";
 import { formatNumber } from "@/lib/format";
 import { CATALOGUE_SIZE } from "@/lib/species";
+
 
 const { symbol, tokensPerEgg } = gameConfig.token;
 const TITLE = `Solanites (${symbol}) on Solana — Hold, Hatch, Evolve`;
@@ -56,7 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <PageTransition>{children}</PageTransition>
           </main>
           <Footer />
-          {FIRST_VISIT_INTRO.enabled && <FirstVisitIntro />}
+          {FIRST_VISIT_INTRO.enabled && <IntroLoader />}
         </HatcheryProvider>
       </body>
     </html>

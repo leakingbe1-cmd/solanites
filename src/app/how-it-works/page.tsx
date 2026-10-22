@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { VerifyPanel } from "@/components/trust/VerifyPanel";
+import { WhatsNext } from "@/components/landing/WhatsNext";
 import { HowSteps } from "@/components/landing/HowSteps";
 import { StageTimeline } from "@/components/landing/StageTimeline";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -107,6 +108,8 @@ export default function HowItWorksPage() {
         <div id="tokenomics" className="mt-20 scroll-mt-28">
           <VerifyPanel />
         </div>
+
+        <WhatsNext className="mt-12" />
 
         <div className="mt-20 text-center">
           <Link href="/hatchery" className="sl-btn-gold inline-flex items-center gap-3 whitespace-nowrap rounded-full px-6 py-4 font-sans text-sm font-semibold tracking-[0.14em] sm:px-9 sm:tracking-[0.2em]">

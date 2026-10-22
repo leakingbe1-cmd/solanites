@@ -4,6 +4,7 @@ import { EvolutionTimeline } from "@/components/landing/EvolutionTimeline";
 import { EggArt } from "@/components/egg/EggArt";
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProofStrip } from "@/components/landing/ProofStrip";
+import { WhatsNext } from "@/components/landing/WhatsNext";
 import { PhoenixHero } from "@/components/landing/PhoenixHero";
 import { Sigil } from "@/components/brand/Sigil";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -65,6 +66,7 @@ export default function Home() {
 
       {/* what is real today, then live numbers and a wallet lookup once tracking is on */}
       <ProofStrip />
+      <WhatsNext className="py-8" />
 
       {/* ── MARKET BOND: every species' stock, the second headline feature ── */}
       <section id="market" className="relative overflow-hidden border-b border-white/5 py-24 sm:py-32">

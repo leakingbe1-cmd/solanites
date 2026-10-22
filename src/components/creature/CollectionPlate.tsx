@@ -41,7 +41,7 @@ export function CollectionPlate({ species: s, discovery: d, stage, bestLabel, de
         </div>
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
           <RarityBadge rarity={s.rarity} />
-          <span className="text-[11px] text-mist">{ELEMENT_GLYPH[s.element]} {s.element}</span>
+          <span className="text-[11px] text-mist max-sm:basis-full">{ELEMENT_GLYPH[s.element]} {s.element}</span>
         </div>
         <p className="mt-2 font-mono text-[10px] uppercase tracking-wider text-mist/50">{bestLabel ? `${demo ? "Demo best" : "Your best"}: ${bestLabel}` : "Evolution: —"}</p>
       </div>

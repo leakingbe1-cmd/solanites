@@ -2,14 +2,15 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { EggArt } from "@/components/egg/EggArt";
 import { DemoTag } from "@/components/ui/DemoTag";
 import { RarityBadge } from "@/components/ui/RarityBadge";
 import { HATCH_POSTER } from "@/config/hatchClips";
 import { gameConfig } from "@/config/gameConfig";
-import { demoSeed, rollDemo } from "@/lib/heroDemo";
+import { RARITIES } from "@/lib/rarity";
+import { clipFor, demoSeed, rollDemo } from "@/lib/heroDemo";
 import { demoShareable } from "@/lib/share";
 import type { Species } from "@/lib/species";
 
@@ -30,7 +31,7 @@ const whenIdle = (cb: () => void) => (typeof window.requestIdleCallback === "fun
 /**
  * The homepage's live demo: a simulated egg, already incubating, and one big "Hatch it". The result
  * is rolled when the egg appears (same odds as real eggs) and only shown by the hatch: the owner's
- * clip for that species (its rarity and element), otherwise the built-in hatch. Then the creature, a demo
+ * clip for that rarity when configured, otherwise the built-in hatch. Then the creature, a demo
  * share card (Common to Legendary) and the way into the Hatchery demo. Nothing is recorded.
  */
 export function HeroDemo() {
@@ -44,33 +45,28 @@ export function HeroDemo() {
     setResult(rollDemo(s));
   }, []);
 
-  // After first paint: fetch the reveal code and the clip poster, then warm only the rolled species' clip.
+  // After first paint: fetch the reveal code, then warm only the rolled rarity's clip (if configured).
   useEffect(() => {
-    whenIdle(() => {
-      void Promise.all([loadReveal(), loadArt(), loadShare()]).catch(() => {});
-      new Image().src = HATCH_POSTER;
-    });
+    whenIdle(() => void Promise.all([loadReveal(), loadArt(), loadShare()]).catch(() => {}));
   }, []);
   useEffect(() => {
-    if (!result) return;
-    whenIdle(() =>
-      void import("@/lib/hatchClip").then(({ hatchClipFor }) => {
-        const clip = hatchClipFor(result.id);
-        if (!clip) return;
-        const v = document.createElement("video");
-        v.preload = "auto";
-        v.muted = true;
-        v.src = v.canPlayType("video/webm") ? clip.webm : clip.mp4;
-      }),
-    );
+    const clip = result ? clipFor(result) : null;
+    if (!clip) return;
+    whenIdle(() => {
+      const v = document.createElement("video");
+      v.preload = "auto";
+      v.muted = true;
+      v.src = clip;
+    });
   }, [result]);
 
   const hatch = () => result && setPhase("hatching");
   const finish = () => setPhase("done");
+  const clip = result ? clipFor(result) : null;
 
   return (
     <div className="w-full" data-testid="hero-demo" data-phase={phase}>
-      {phase !== "done" || !result ? (
+      {phase !== "done" ? (
         <div className="flex items-center justify-center gap-4 lg:justify-start">
           <div className="relative h-28 w-24 shrink-0 sm:h-32 sm:w-28" aria-hidden>
             <EggArt stage={3} progress={0.92} seed={seed ?? 7} className="h-full w-full" />
@@ -93,48 +89,75 @@ export function HeroDemo() {
             </button>
           </div>
         </div>
-      ) : (
-        <DemoResult species={result} />
+      ) : null}
+      {/* mounted (hidden) from the tap, so its art is ready the moment the overlay hands back to it */}
+      {result && phase !== "idle" && (
+        <div className={phase === "done" ? undefined : "hidden"} aria-hidden={phase !== "done"}>
+          <DemoResult species={result} />
+        </div>
       )}
 
-      {phase === "hatching" && result && seed !== null && <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />}
+      {phase === "hatching" && result && seed !== null && (clip ? <ClipHatch src={clip} onEnd={finish} /> : <HatchReveal species={result} seed={seed} onHatched={() => {}} onClose={finish} onView={finish} closeLabel="Back to the egg" demo share={demoShareable(result) ? { kind: "demo", speciesId: result.id, stage: 0 } : null} />)}
     </div>
   );
 }
 
-/** The hatched demo creature with its rarity, name and form, then the two next steps. */
+/**
+ * The hatched demo creature with its rarity, name and form, then the next steps: the Hatchery as the
+ * main button (full width on phones) and the DEMO share card as the secondary one.
+ */
 function DemoResult({ species }: { species: Species }) {
   return (
-    <div className="flex items-center justify-center gap-4 lg:justify-start" data-testid="hero-demo-result">
-      <div className="relative h-28 w-28 shrink-0 sm:h-32 sm:w-32">
-        <CreatureArt species={species} stage={0} animated={false} />
-      </div>
-      <div className="flex min-w-0 flex-col items-start gap-1.5 text-left">
-        <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Demo · simulated</span>
-        <p className="font-display text-2xl leading-tight text-bone">{species.name}</p>
-        <p className="flex flex-wrap items-center gap-2 text-xs text-mist">
-          <RarityBadge rarity={species.rarity} /> {gameConfig.evolution.names[0]}
-        </p>
-        <div className="mt-1 flex flex-wrap items-center gap-2">
-          {demoShareable(species) && <ShareButton target={{ kind: "demo", speciesId: species.id, stage: 0 }} speciesId={species.id} className="px-4 py-2" />}
-          <Link href="/hatchery?demo=1" className="whitespace-nowrap text-sm text-sol-green/90 underline-offset-4 hover:underline" data-testid="hero-keep-going">
-            Keep going in the Hatchery →
-          </Link>
+    <div className="flex w-full flex-col items-center gap-5 lg:items-start" data-testid="hero-demo-result">
+      <div className="flex items-center gap-4 sm:gap-6">
+        {/* arrives from the overlay: a short glow in the rarity's colour, then the creature settles */}
+        <div className="relative h-36 w-36 shrink-0 sm:h-44 sm:w-44 lg:h-48 lg:w-48" data-testid="hero-demo-creature">
+          <div className="sl-arrive-glow pointer-events-none absolute inset-0 rounded-full" style={{ background: `radial-gradient(circle, ${RARITIES[species.rarity].glow} 0%, transparent 70%)` }} aria-hidden />
+          <div className="sl-arrive relative h-full w-full">
+            <CreatureArt species={species} stage={0} animated={false} />
+          </div>
         </div>
+        <div className="flex min-w-0 flex-col items-start gap-1.5 text-left">
+          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-amber-200">Demo · simulated</span>
+          <p className="font-display text-3xl leading-tight text-bone sm:text-4xl">{species.name}</p>
+          <p className="flex flex-wrap items-center gap-2 text-xs text-mist">
+            <RarityBadge rarity={species.rarity} /> {gameConfig.evolution.names[0]}
+          </p>
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center">
+        <Link href="/hatchery?demo=1" className="sl-btn-gold inline-flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-full px-8 py-4 font-sans text-sm font-semibold tracking-[0.18em] sm:w-auto" data-testid="hero-keep-going">
+          KEEP GOING IN THE HATCHERY <span aria-hidden>→</span>
+        </Link>
+        {demoShareable(species) && <ShareButton target={{ kind: "demo", speciesId: species.id, stage: 0 }} speciesId={species.id} className="w-full py-4 sm:w-auto" />}
       </div>
     </div>
   );
 }
 
-/** The clip's first frame, in the clip's place, shown instantly on the tap while the reveal code loads. */
+/** The owner's hatch clip for the rolled rarity: muted, inline, poster first; tap or end to continue. */
+function ClipHatch({ src, onEnd }: { src: string; onEnd(): void }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    ref.current?.play().catch(onEnd);
+  }, [onEnd]);
+  return createPortal(
+    <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching" onClick={onEnd}>
+      <div className="absolute top-6 left-1/2 -translate-x-1/2">
+        <DemoTag testId="reveal-demo-label" />
+      </div>
+      <video ref={ref} src={src} poster={HATCH_POSTER ?? undefined} muted playsInline autoPlay onEnded={onEnd} onError={onEnd} className="max-h-[80vh] w-full max-w-xl" />
+    </div>,
+    document.body,
+  );
+}
+
+/** The first frame of the hatch, shown instantly on the tap while the full reveal loads. */
 function RevealPoster() {
   return createPortal(
-    <div className="fixed inset-0 z-[80] overflow-y-auto bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
-      <div className="flex flex-col items-center px-4 pt-[9vh]">
-        <DemoTag className="mb-3" />
-        <div className="h-5" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={HATCH_POSTER} alt="" className="mt-2 aspect-square w-[78vw] max-w-[400px] rounded-md bg-black object-cover" />
+    <div className="fixed inset-0 z-[80] grid place-items-center bg-black/90 backdrop-blur-xl" role="dialog" aria-modal="true" aria-label="Hatching">
+      <div className="h-56 w-44 sm:h-72 sm:w-56" aria-hidden>
+        <EggArt stage={4} progress={1} seed={3} hatching className="h-full w-full" />
       </div>
     </div>,
     document.body,

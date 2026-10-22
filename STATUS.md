@@ -1,10 +1,10 @@
 # Solanites — STATUS (source of truth)
 
 Owner rules: the manager plans, delegates and monitors only. Ask the owner only before deleting work, spending money, posting publicly or approving art.
-Updated: 2026-10-22 12:35 UTC, by SOL · Workstream Manager.
+Updated: 2026-10-22 15:50 UTC, by SOL · Workstream Manager.
 
 ## Live
-- Production: https://solanites.vercel.app, built from `main` 68f7624 (22 Oct). That merges PR #1 (buyer upgrade: live-demo hero, proof strip, tokenomics and proportional rewards config, LAUNCH-DAY.md) and PR #2 (3D hatch clips). Deployment dpl_31W2YRqk4vYiTesof6xP9duvYtCX. Before that: main 03084fb (identical to integration 8eb2675), which included:
+- Production: https://solanites.vercel.app, built from `main` 4f7feac (22 Oct). That merges PR #3: the 3D hatch clips were reverted to the original built-in hatch at the owner's request, and the bigger 'Keep going in the Hatchery' button was added. Deployment dpl_DZ3b1yfXioGmP6yJYKEGe6QN4zTb; rollback dpl_31W2YRqk4vYiTesof6xP9duvYtCX (main 68f7624). Before that: main 68f7624 (22 Oct). That merges PR #1 (buyer upgrade: live-demo hero, proof strip, tokenomics and proportional rewards config, LAUNCH-DAY.md) and PR #2 (3D hatch clips). Deployment dpl_31W2YRqk4vYiTesof6xP9duvYtCX. Before that: main 03084fb (identical to integration 8eb2675), which included:
   - redesign, biomes, home metrics, fast track (with 4 fixes), live leaderboard;
   - Phase 3: odds 40/30/17/8/3.5/1.5, @Solanites_ line, evolution timeline, X/OG card;
   - live TradingView charts on all 28 creatures (`MARKET_WIDGET=tradingview` on Production).

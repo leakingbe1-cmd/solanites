@@ -1,23 +1,23 @@
 # Solanites — STATUS (source of truth)
 
 Owner rules: the manager plans, delegates and monitors only. Ask the owner only before deleting work, spending money, posting publicly or approving art.
-Updated: 2026-10-21 21:30 UTC, by SOL · Workstream Manager.
+Updated: 2026-10-22 12:35 UTC, by SOL · Workstream Manager.
 
 ## Live
-- Production: https://solanites.vercel.app, built from `main` 03084fb (identical to integration 8eb2675). It includes:
+- Production: https://solanites.vercel.app, built from `main` 68f7624 (22 Oct). That merges PR #1 (buyer upgrade: live-demo hero, proof strip, tokenomics and proportional rewards config, LAUNCH-DAY.md) and PR #2 (3D hatch clips). Deployment dpl_31W2YRqk4vYiTesof6xP9duvYtCX. Before that: main 03084fb (identical to integration 8eb2675), which included:
   - redesign, biomes, home metrics, fast track (with 4 fixes), live leaderboard;
   - Phase 3: odds 40/30/17/8/3.5/1.5, @Solanites_ line, evolution timeline, X/OG card;
   - live TradingView charts on all 28 creatures (`MARKET_WIDGET=tradingview` on Production).
 - Holder tracking, metrics and the leaderboard show "not configured" until launch-day settings are added (see Launch checklist).
 - Fallbacks:
   - `backup/integration-179015c`;
-  - previous production deployment `dpl_FAjwhXvNcBLigP2U7EeRYHkD5MdR` (one-step Vercel rollback).
+  - previous production deployment `dpl_DvsnnLSyXfi2yvnH7i7uzt9UHLuE` (main 03084fb; one-step Vercel rollback).
 
 ## Lanes (since 21 Oct; 13 old workstreams handed off and archived; handoffs on `handoff/*` branches)
 | Lane | Session | Doing now | Report to |
 |---|---|---|---|
 | Manager | SOL · Workstream Manager | Plan, delegate, STATUS.md | Owner |
-| Site (Opus) | SOL · Site | `site/buyer-upgrade` @ f6c8d1b pushed (22 commits from main; 640 tests; build and art:check OK). e/f hidden; h kept. Waiting for the owner to approve a PR and a preview | Manager |
+| Site (Opus) | SOL · Site | Idle after shipping PRs #1 and #2. Still open: CA switch extras (refused by its safety check) | Manager |
 | Creature Art (owner's PC) | Local Claude Code | Redo Aurelion in premium realism, then wait for art approval | Owner (art), Manager |
 | Marketing (Sonnet) | SOL · Marketing | Consolidated `marketing/PLAN.md`: inventory, conflicts, one posting order | Manager |
 
@@ -50,5 +50,7 @@ Updated: 2026-10-21 21:30 UTC, by SOL · Workstream Manager.
 - Phase 6: the remaining species in 3D, after Aurelion is approved.
 
 ## Launch checklist (production settings)
+- Follow `docs/buyer-upgrade/LAUNCH-DAY.md` on main: contract address, wallets, lock proofs, authorities, REWARDS_PAGE_LIVE, SOLANITES_INDEXING=1, redeploy, live check; at +2 h the snapshot hash, then payout signatures.
+- Not built (refused by Site's safety check): CA env override, CA bar on every page, Dexscreener/pump.fun links, live market-cap strip, CA on the X card.
 - `SOLANITES_MINT` (real mint), `SOLANA_RPC_URL`, `CRON_SECRET`; a fresh database for the real mint.
 - Decide on `robots.txt` / noindex and the SSO setting before announcing.

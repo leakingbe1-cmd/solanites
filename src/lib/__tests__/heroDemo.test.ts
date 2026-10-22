@@ -34,6 +34,12 @@ describe("homepage live demo", () => {
     // the Hatchery is the main next step: the gold button, first, full width on phones; Share is secondary
     expect(c).toMatch(/href="\/hatchery\?demo=1" className="sl-btn-gold inline-flex w-full[^"]*sm:w-auto"/);
     expect(c.indexOf('data-testid="hero-keep-going"')).toBeLessThan(c.indexOf("<ShareButton target"));
+    // the result never pops in: mounted (hidden) from the tap, then it settles with a short glow; reduced motion: a fade only
+    expect(c).toContain('<div className={phase === "done" ? undefined : "hidden"} aria-hidden={phase !== "done"}>');
+    expect(c).toContain('<div className="sl-arrive relative h-full w-full">');
+    const css = readFileSync(path.resolve(__dirname, "../../app/globals.css"), "utf8");
+    expect(css).toContain("@keyframes sl-arrive");
+    expect(css).toMatch(/\.sl-arrive \{\s*animation-name: sl-fade-in !important;/);
     const page = read("app/page.tsx");
     expect(page.indexOf("<HeroDemo />")).toBeGreaterThan(page.indexOf("<PhoenixHero />"));
     expect(page.indexOf("<HeroDemo />")).toBeLessThan(page.indexOf("</HeroSection>"));

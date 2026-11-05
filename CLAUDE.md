@@ -41,6 +41,9 @@ Adapted from forrestchang/andrej-karpathy-skills (MIT), based on Andrej Karpathy
 - **Verify.** Define success, then prove it: typecheck, tests, build, and for UI changes screenshots at
   mobile and desktop width. Report real results; never claim something works because it compiled.
 
+## Working together (owner rule, 5 Nov 2026)
+- **Unattended runs:** long phases (research, modelling, build, polish, checks) can run overnight without the owner. At an owner gate, don't stop and wait: save the work for review (screenshots, recordings, a short note in STATUS.md under "Waiting for owner"), then carry on with anything that doesn't depend on that decision. Never pause to ask for approval on routine commands. Only stop for things that need the owner personally (a Windows admin prompt, a sign-in, a payment) or anything risky (deleting files, publishing, sending to a client); note those in STATUS.md and keep going with the rest.
+
 ## Project rules
 
 - Gameplay rules live in `src/config/gameConfig.ts`. Don't hard-code rule values elsewhere.
